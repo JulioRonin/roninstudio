@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+/* ===== Sistema visual "GENBA-BOX" =====
+   Tipografía Urbanist · tinta navy #000B1A · acento naranja #FE5E0E
+   fondo crema con degradado · tarjetas redondeadas + elevación suave */
+@theme {
+  --color-ink: #000b1a;
+  --color-ink-soft: #1b2735;
+  --color-muted: #5b6675;
+  --color-cream: #fbf7f1;
+  --color-cream-2: #f3ece1;
+  --color-line: #e7ddcf;
+  --color-accent: #fe5e0e;
+  --color-accent-2: #ff8a3d;
+  --color-amber: #f5a623;
+  --color-green: #1f9d6b;
+  --color-red: #e0492f;
+  --font-sans: "Urbanist", ui-sans-serif, system-ui, sans-serif;
+  --radius-card: 1.5rem;
+  --shadow-soft: 0 1px 2px rgba(0, 11, 26, 0.04), 0 12px 32px rgba(0, 11, 26, 0.08);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background:
+    radial-gradient(1200px 600px at 85% -10%, rgba(254, 94, 14, 0.1), transparent 60%),
+    radial-gradient(900px 500px at -10% 10%, rgba(255, 138, 61, 0.08), transparent 55%),
+    linear-gradient(180deg, var(--color-cream) 0%, var(--color-cream-2) 100%);
+  background-attachment: fixed;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.accent-gradient {
+  background: linear-gradient(100deg, var(--color-accent) 0%, var(--color-accent-2) 100%);
+}
+
+.text-accent-gradient {
+  background: linear-gradient(100deg, var(--color-accent) 0%, var(--color-accent-2) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-soft);
+}
+
+.pill {
+  border-radius: 9999px;
+  border: 1px solid var(--color-line);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+@keyframes floaty {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.animate-floaty { animation: floaty 6s ease-in-out infinite; }
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-rise { animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
