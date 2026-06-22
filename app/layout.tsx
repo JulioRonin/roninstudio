@@ -11,7 +11,7 @@ const urbanist = Urbanist({
 export const metadata: Metadata = {
   title: "Ronin Studio — Software e IA para la manufactura del norte de México",
   description:
-    "Software de ingeniería industrial e IA para la manufactura de Ciudad Juárez y el norte de México. Hecho por ingenieros de planta. Estudios de tiempo, Yamazumi y capacidad desde un video, en minutos.",
+    "Estudio de producto que crea software de ingeniería industrial e IA para la maquila del norte de México. Productos: GENBA (estudios de tiempo y Yamazumi desde un video) y Kanri (ERP/CRM para talleres CNC). Hecho por ingenieros de planta en Ciudad Juárez.",
   metadataBase: new URL("https://roninstudio.com.mx"),
   openGraph: {
     title: "Ronin Studio — Software e IA para la manufactura",

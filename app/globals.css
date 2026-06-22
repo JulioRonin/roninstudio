@@ -1,23 +1,26 @@
 @import "tailwindcss";
 
-/* ===== Sistema visual "GENBA-BOX" =====
-   Tipografía Urbanist · tinta navy #000B1A · acento naranja #FE5E0E
-   fondo crema con degradado · tarjetas redondeadas + elevación suave */
+/* ===== Sistema visual "GENBA-NIGHT" =====
+   Grafito + cian · oscuro, técnico, IA · tipografía Urbanist */
 @theme {
-  --color-ink: #000b1a;
-  --color-ink-soft: #1b2735;
-  --color-muted: #5b6675;
-  --color-cream: #fbf7f1;
-  --color-cream-2: #f3ece1;
-  --color-line: #e7ddcf;
-  --color-accent: #fe5e0e;
-  --color-accent-2: #ff8a3d;
-  --color-amber: #f5a623;
-  --color-green: #1f9d6b;
-  --color-red: #e0492f;
+  --color-bg: #0c0f14;
+  --color-bg-2: #090b0f;
+  --color-surface: #131a24;
+  --color-surface-2: #0f151d;
+  --color-ink: #e6edf3;
+  --color-ink-soft: #c2ccd6;
+  --color-muted: #8593a2;
+  --color-line: #202a36;
+  --color-accent: #22d3ee;
+  --color-accent-2: #3b82f6;
+  --color-green: #34d399;
+  --color-amber: #fbbf24;
+  --color-red: #f87171;
   --font-sans: "Urbanist", ui-sans-serif, system-ui, sans-serif;
-  --radius-card: 1.5rem;
-  --shadow-soft: 0 1px 2px rgba(0, 11, 26, 0.04), 0 12px 32px rgba(0, 11, 26, 0.08);
+  --radius-card: 1.25rem;
+  --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.4), 0 18px 48px rgba(0, 0, 0, 0.45);
+  --glow-1: rgba(34, 211, 238, 0.16);
+  --glow-2: rgba(59, 130, 246, 0.14);
 }
 
 html {
@@ -26,9 +29,9 @@ html {
 
 body {
   background:
-    radial-gradient(1200px 600px at 85% -10%, rgba(254, 94, 14, 0.1), transparent 60%),
-    radial-gradient(900px 500px at -10% 10%, rgba(255, 138, 61, 0.08), transparent 55%),
-    linear-gradient(180deg, var(--color-cream) 0%, var(--color-cream-2) 100%);
+    radial-gradient(1100px 600px at 82% -8%, var(--glow-1), transparent 60%),
+    radial-gradient(900px 520px at -8% 8%, var(--glow-2), transparent 55%),
+    linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg-2) 100%);
   background-attachment: fixed;
   color: var(--color-ink);
   font-family: var(--font-sans);
@@ -47,17 +50,33 @@ body {
 }
 
 .card {
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(8px);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.01));
   border: 1px solid var(--color-line);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-soft);
 }
 
+.card-solid {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-soft);
+}
+
+.surface {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--color-line);
+}
+
 .pill {
   border-radius: 9999px;
   border: 1px solid var(--color-line);
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.ring-accent {
+  border: 1px solid rgba(34, 211, 238, 0.45);
+  box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.12), 0 18px 48px rgba(0, 0, 0, 0.5);
 }
 
 @keyframes floaty {
