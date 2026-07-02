@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Kanri 管理 — De la cotización al cobro, todo tu taller bajo un solo techo</title>
+<meta name="description" content="ERP + CRM para tu taller, hecho en México. Cotizas, produces, controlas calidad, despachas, facturas CFDI y cobras en un solo lugar, con tu marca. Prueba 20 días sin tarjeta.">
+
+<!-- ============ FUENTES (Google Fonts, display=swap) ============ -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=Familjen+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Noto+Sans+JP:wght@700&display=swap" rel="stylesheet">
+
+<style>
+/* ==================================================================
+   KANRI — LANDING · Sistema visual editorial-industrial
+   Cream + Negro + Rojo · motivo línea-roja "el techo"
+   ================================================================== */
+
+:root{
+  /* --- BASE (heredado del gateway) --- */
+  --cream:#F0E7D4; --cream-deep:#E9DEC7; --cream-line:#D9CDB2;
+  --ink:#14110D; --ink-panel:#191510; --ink-soft:#4A433A; --ink-muted:#6A5F52;
+  /* --- ACENTO --- */
+  --red:#E63A20; --red-deep:#C22E17; --red-wash:#F6DACF;
+  /* --- sobre negro --- */
+  --on-ink:#F0E7D4; --on-ink-soft:#B8AF9E; --on-ink-line:#342E26;
+  --ok:#2F7D5B;
+  /* --- fuentes --- */
+  --font-display:'Archivo','Arial Black',sans-serif;
+  --font-body:'Familjen Grotesk',system-ui,sans-serif;
+  --font-mono:'Space Mono','Courier New',monospace;
+  --font-jp:'Noto Sans JP',sans-serif;
+  /* --- escala tipográfica --- */
+  --t-display:clamp(2.6rem,7vw,5.5rem);
+  --t-h2:clamp(1.9rem,4.5vw,3.25rem);
+  --t-h3:clamp(1.35rem,2.5vw,1.875rem);
+  --t-lead:clamp(1.1rem,1.6vw,1.375rem);
+  --t-body:1.0625rem;
+  --t-small:0.9375rem;
+  --t-micro:0.8125rem;
+  --t-kicker:0.75rem;
+  --t-price:clamp(2.4rem,4vw,3.5rem);
+  /* --- layout --- */
+  --maxw:1200px; --maxw-wide:1360px;
+  --gutter:clamp(1.25rem,4vw,2.5rem); --col-gap:1.5rem;
+  --s-1:.5rem; --s-2:.75rem; --s-3:1rem; --s-4:1.5rem;
+  --s-5:2rem; --s-6:3rem; --s-7:4rem; --s-8:6rem;
+  --section-y:clamp(4rem,9vw,8rem);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  background:var(--cream); color:var(--ink);
+  font-family:var(--font-body); font-size:var(--t-body); line-height:1.6;
+  -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--red);color:var(--cream)}
+
+/* ---------- utilidades de layout ---------- */
+.wrap{max-width:var(--maxw);margin:0 auto;padding-inline:var(--gutter)}
+.wrap-wide{max-width:var(--maxw-wide);margin:0 auto;padding-inline:var(--gutter)}
+.section{padding-block:var(--section-y)}
+.section--roofed{border-top:3px solid var(--red)}
+/* --- seccion en naranja-rojo (full-bleed) para dar fluidez y cortar la sobriedad --- */
+.section--red{background:var(--red);color:#FFF4EE;width:100vw;margin-inline:calc(50% - 50vw)}
+.section--red > .wrap{max-width:var(--maxw);margin:0 auto;padding-inline:var(--gutter)}
+.section--red .kicker{color:#FFFFFF}
+.section--red .kicker::after{background:#FFFFFF}
+.section--red .sec-title,.section--red .flow-step b{color:#FFFFFF}
+.section--red .flow-step .step-k{color:#FFFFFF;opacity:1;font-size:.8rem;letter-spacing:.14em}
+.section--red .lead,.section--red .muted,.section--red .small,.section--red .flow-close{color:#FFF4EE}
+.section--red .flow-dot,.section--red .flow-vline,.section--red .flow-line-h{background:#FFFFFF}
+.section--red .hl{background:rgba(255,255,255,.92);color:var(--red-deep)}
+
+/* ---------- kicker + roof-line (firma) ---------- */
+.kicker{
+  font-family:var(--font-mono); font-weight:700; font-size:var(--t-kicker);
+  text-transform:uppercase; letter-spacing:.18em; color:var(--red-deep);
+}
+.roof-kicker::after{
+  content:"";display:block;width:48px;height:3px;background:var(--red);margin-top:var(--s-2);
+}
+/* sobre negro el rojo puro sí pasa AA; sobre cream usamos red-deep */
+.on-ink .kicker{color:var(--red)}
+
+/* ---------- tipografía ---------- */
+.display{font-family:var(--font-display);font-weight:900;line-height:.95;letter-spacing:-.02em}
+h1.display{font-size:var(--t-display)}
+h2.sec-title{
+  font-family:var(--font-display);font-weight:800;font-size:var(--t-h2);
+  line-height:1.0;letter-spacing:-.015em;margin-block:var(--s-3) var(--s-4);max-width:20ch;
+}
+.h3{font-family:var(--font-display);font-weight:700;font-size:var(--t-h3);line-height:1.1}
+.lead{font-size:var(--t-lead);line-height:1.5;color:var(--ink-soft);font-weight:500;max-width:60ch}
+.small{font-size:var(--t-small)}
+.micro{font-size:var(--t-micro);color:var(--ink-muted)}
+.muted{color:var(--ink-soft)}
+.hl{background:var(--red-wash);padding:.05em .28em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.txt-red{color:var(--red-deep)}
+
+/* ---------- botones ---------- */
+.btn{
+  font-family:var(--font-body);font-weight:700;font-size:1.0625rem;
+  padding:1rem 1.75rem;border-radius:0;cursor:pointer;border:2px solid var(--ink);
+  display:inline-flex;align-items:center;gap:.625rem;justify-content:center;
+  transition:transform .18s ease,background .18s ease,box-shadow .18s ease,color .18s ease;
+  letter-spacing:-.005em;line-height:1.15;text-align:center;
+}
+.btn:focus-visible{outline:3px solid var(--red);outline-offset:3px}
+.btn--primary{background:var(--ink);color:var(--cream)}
+.btn--primary:hover{transform:translateY(-2px);box-shadow:4px 4px 0 var(--red)}
+.btn--secondary{background:transparent;color:var(--ink)}
+.btn--secondary:hover{background:var(--ink);color:var(--cream)}
+.on-ink .btn--primary{background:var(--cream);color:var(--ink);border-color:var(--cream)}
+.on-ink .btn--primary:hover{box-shadow:4px 4px 0 var(--red)}
+.on-ink .btn--secondary{color:var(--on-ink);border-color:var(--on-ink)}
+.on-ink .btn--secondary:hover{background:var(--cream);color:var(--ink)}
+.cta-row{display:flex;flex-wrap:wrap;gap:var(--s-3);margin-top:var(--s-5)}
+
+/* ---------- cards ---------- */
+.card{
+  background:var(--cream);border:1.5px solid var(--ink);border-radius:0;padding:var(--s-5);
+  transition:transform .2s ease,box-shadow .2s ease;
+}
+.card:hover{transform:translateY(-3px);box-shadow:5px 5px 0 var(--ink)}
+.on-ink .card{background:var(--ink-panel);border-color:var(--on-ink-line);color:var(--on-ink)}
+
+/* ---------- header ---------- */
+.site-header{
+  position:sticky;top:0;z-index:60;background:var(--cream);
+  border-bottom:1px solid var(--cream-line);
+}
+.site-header .wrap{display:flex;align-items:center;justify-content:space-between;padding-block:var(--s-3)}
+.brand{display:flex;align-items:baseline;gap:.4rem;font-family:var(--font-display);font-weight:900;font-size:1.5rem;letter-spacing:-.03em}
+.brand .jp{font-family:var(--font-jp);font-weight:700;font-size:1.05rem;color:var(--red)}
+.header-cta{display:none}
+@media(min-width:720px){.header-cta{display:inline-flex;padding:.65rem 1.15rem;font-size:.95rem}}
+
+/* ======================= SVG helpers (íconos trazo) ======================= */
+.ic{width:32px;height:32px;stroke:var(--ink);stroke-width:1.75;fill:none;stroke-linecap:round;stroke-linejoin:round;display:block}
+.ic--red{stroke:var(--red)}
+.on-ink .ic{stroke:var(--on-ink)}
+
+/* ======================= HERO ======================= */
+.hero{padding-block:clamp(3rem,7vw,6rem) var(--section-y)}
+.hero-grid{display:grid;gap:var(--s-6);align-items:center}
+@media(min-width:920px){.hero-grid{grid-template-columns:7fr 5fr;gap:var(--s-7)}}
+.hero h1{margin-block:var(--s-4) var(--s-4);max-width:16ch}
+.hero .lead{margin-bottom:var(--s-2)}
+.trust-line{
+  font-family:var(--font-mono);font-size:var(--t-micro);color:var(--ink-muted);
+  margin-top:var(--s-4);display:flex;flex-wrap:wrap;gap:.4rem .9rem;letter-spacing:.02em;
+}
+.trust-line span{white-space:nowrap}
+.hero-micro{margin-top:var(--s-4)}
+/* gráfico K + calibrador */
+.hero-art{position:relative;aspect-ratio:1/1;max-width:420px;margin-inline:auto;width:100%}
+.hero-art svg{width:100%;height:100%}
+
+/* ======================= DOLOR ======================= */
+.pain-grid{display:grid;gap:var(--s-4);margin-top:var(--s-6)}
+@media(min-width:640px){.pain-grid{grid-template-columns:1fr 1fr}}
+@media(min-width:640px){.pain-grid .pain-card:nth-child(5):last-child{grid-column:1 / -1}}
+.pain-card .ic{margin-bottom:var(--s-3)}
+.pain-card b{display:block;font-family:var(--font-display);font-weight:700;font-size:1.15rem;margin-bottom:.35rem}
+.pain-close{
+  margin-top:var(--s-6);font-family:var(--font-display);font-weight:700;
+  font-size:clamp(1.25rem,2.2vw,1.7rem);line-height:1.3;max-width:60ch;
+}
+
+/* ======================= FLUJO / TECHO ======================= */
+.flow{margin-top:var(--s-7)}
+.flow-track{display:flex;flex-direction:column;gap:0;position:relative}
+.flow-line-h{display:none}
+.flow-node{display:flex;gap:var(--s-4);align-items:flex-start;position:relative;padding-bottom:var(--s-5)}
+.flow-rail{display:flex;flex-direction:column;align-items:center;flex:0 0 auto}
+.flow-dot{width:20px;height:20px;background:var(--red);transform:rotate(45deg);flex:0 0 auto;margin-top:4px}
+.flow-vline{width:3px;flex:1;background:var(--red);transform-origin:top;margin-top:6px}
+.flow-node:last-child .flow-vline{display:none}
+.flow-step .step-k{font-family:var(--font-mono);font-weight:700;font-size:var(--t-kicker);letter-spacing:.16em;color:var(--red-deep);text-transform:uppercase}
+.flow-step b{display:block;font-family:var(--font-display);font-weight:700;font-size:1.2rem;margin:.2rem 0 .3rem}
+.flow-close{margin-top:var(--s-5);font-weight:500;color:var(--ink-soft);font-size:var(--t-lead)}
+@media(min-width:920px){
+  .flow-track{flex-direction:row;justify-content:space-between;gap:var(--s-3)}
+  .flow-line-h{display:block;position:absolute;top:10px;left:6%;right:6%;height:3px;background:var(--red);transform-origin:left;z-index:0}
+  .flow-node{flex-direction:column;align-items:flex-start;flex:1;padding-bottom:0;gap:var(--s-3);z-index:1}
+  .flow-rail{flex-direction:row}
+  .flow-dot{margin-top:0}
+  .flow-vline{display:none}
+}
+
+/* ======================= DEMO ======================= */
+.demo-frame{
+  margin-top:var(--s-6);border:2px solid var(--ink);background:var(--ink-panel);
+  aspect-ratio:16/9;position:relative;display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+.demo-badge{
+  position:absolute;top:0;left:0;background:var(--red-deep);color:#FFFFFF;
+  font-family:var(--font-mono);font-weight:700;font-size:.7rem;letter-spacing:.15em;
+  text-transform:uppercase;padding:.4rem .7rem;
+}
+.demo-inner{text-align:center;color:var(--on-ink);padding:var(--s-5)}
+.play-btn{
+  width:84px;height:84px;border:2px solid var(--on-ink);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;margin:0 auto var(--s-3);cursor:pointer;
+  transition:transform .18s ease,background .18s ease;background:transparent;
+}
+.play-btn:hover{transform:scale(1.06);background:var(--red);border-color:var(--red)}
+.play-btn svg{width:34px;height:34px;fill:var(--on-ink);margin-left:5px}
+.demo-note{font-family:var(--font-mono);font-size:var(--t-micro);color:var(--on-ink-soft);margin-top:var(--s-2)}
+
+/* ======================= MÓDULOS ======================= */
+.benefit-grid{display:grid;gap:var(--s-4);margin-top:var(--s-6)}
+@media(min-width:640px){.benefit-grid{grid-template-columns:1fr 1fr}}
+.benefit .ic{margin-bottom:var(--s-3)}
+.benefit b{display:block;font-family:var(--font-display);font-weight:700;font-size:1.1rem;margin-bottom:.3rem}
+
+/* ======================= GIROS ======================= */
+.giros{display:flex;flex-wrap:wrap;gap:var(--s-2);margin-top:var(--s-5)}
+.chip{
+  border:1.5px solid var(--red-deep);padding:.6rem 1rem;font-weight:600;font-size:var(--t-small);
+  background:var(--red);color:#FFF4EE;transition:background .12s,color .12s,box-shadow .12s,border-color .12s;
+}
+.chip:hover,.chip:focus-visible{background:var(--ink);color:var(--cream);border-color:var(--ink);box-shadow:3px 3px 0 var(--red)}
+.hero-grid--solo{grid-template-columns:1fr!important;max-width:900px}
+.site-nav{display:flex;gap:1.6rem;align-items:center}
+.site-nav a{color:var(--ink);text-decoration:none;font-weight:600;font-size:.9rem;border-bottom:2px solid transparent;padding-bottom:2px;transition:border-color .12s}
+.site-nav a:hover{border-color:var(--red)}
+@media(max-width:760px){.site-nav{display:none}}
+.chip--focus{background:var(--ink);color:var(--cream);border-color:var(--ink);position:relative}
+.chip--focus::before{content:"";position:absolute;inset:-4px -4px auto auto;width:0}
+.chip--focus{box-shadow:3px 3px 0 var(--red)}
+
+/* ======================= BONUS (3 columnas) ======================= */
+.bonus-grid{display:grid;gap:var(--s-4);margin-top:var(--s-6)}
+@media(min-width:820px){.bonus-grid{grid-template-columns:repeat(3,1fr)}}
+.bonus-col .ic{margin-bottom:var(--s-3)}
+.bonus-col h3{font-family:var(--font-display);font-weight:800;font-size:1.25rem;margin-bottom:var(--s-3)}
+.bonus-col ul{list-style:none;display:flex;flex-direction:column;gap:var(--s-3)}
+.bonus-col li{display:flex;gap:.6rem;font-size:var(--t-small);line-height:1.45}
+.check{flex:0 0 auto;width:20px;height:20px;stroke:var(--red);stroke-width:2.4;fill:none;margin-top:2px}
+
+/* ======================= WHITE-LABEL (panel negro) ======================= */
+.panel-ink{background:var(--ink-panel);color:var(--on-ink);border-top:3px solid var(--red)}
+.panel-ink .lead{color:var(--on-ink-soft)}
+.wl-grid{display:grid;gap:var(--s-6);align-items:center;margin-top:var(--s-6)}
+@media(min-width:900px){.wl-grid{grid-template-columns:1fr 1fr}}
+.wl-checks{list-style:none;display:flex;flex-direction:column;gap:var(--s-3);margin-top:var(--s-5)}
+.wl-checks li{display:flex;gap:.7rem;align-items:flex-start;color:var(--on-ink)}
+.wl-pride{font-family:var(--font-display);font-weight:800;font-size:var(--t-h3);line-height:1.2;margin-top:var(--s-6);max-width:22ch;color:var(--on-ink)}
+/* mock PDFs */
+.pdf-compare{display:grid;gap:var(--s-4);grid-template-columns:1fr;align-items:start}
+@media(min-width:520px){.pdf-compare{grid-template-columns:1.15fr .85fr}}
+.pdf{background:var(--cream);color:var(--ink);padding:var(--s-4);border:1px solid var(--cream-line);font-size:.72rem;line-height:1.4}
+.pdf-brand{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--ink);padding-bottom:.5rem;margin-bottom:.6rem}
+.pdf-logo{font-family:var(--font-display);font-weight:900;font-size:.95rem;letter-spacing:-.02em}
+.pdf-logo small{display:block;font-family:var(--font-body);font-weight:500;font-size:.6rem;letter-spacing:.05em;color:var(--ink-soft)}
+.pdf-tag{font-family:var(--font-mono);font-size:.6rem;color:var(--red-deep)}
+.pdf table{width:100%;border-collapse:collapse;margin:.5rem 0}
+.pdf td{padding:.22rem 0;border-bottom:1px solid var(--cream-line)}
+.pdf td:last-child{text-align:right;font-family:var(--font-mono)}
+.pdf-foot{margin-top:.6rem;font-size:.62rem;color:var(--ink-soft);border-top:1px solid var(--cream-line);padding-top:.4rem}
+.pdf--off{opacity:.42;position:relative;filter:grayscale(1)}
+.pdf--off::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom right,transparent 48%,var(--red) 49%,var(--red) 51%,transparent 52%);opacity:.55}
+.pdf--off .pdf-logo{color:var(--ink-muted)}
+.pdf-caption{font-family:var(--font-mono);font-size:.62rem;text-transform:uppercase;letter-spacing:.12em;margin-top:.5rem;color:var(--on-ink-soft)}
+
+/* ======================= PRECIOS ======================= */
+.price-grid{display:grid;gap:var(--s-4);margin-top:var(--s-6);align-items:start}
+@media(min-width:900px){.price-grid{grid-template-columns:repeat(3,1fr);gap:var(--s-3)}}
+.plan{background:var(--cream);border:1.5px solid var(--ink);padding:var(--s-5);display:flex;flex-direction:column;gap:var(--s-3)}
+.plan h3{font-family:var(--font-mono);font-weight:700;font-size:.9rem;letter-spacing:.14em;text-transform:uppercase}
+.plan .price{font-family:var(--font-mono);font-weight:700;font-size:var(--t-price);line-height:1;letter-spacing:-.02em}
+.plan .price small{font-family:var(--font-body);font-weight:500;font-size:1rem;color:var(--ink-soft)}
+.plan .desc{font-size:var(--t-small);color:var(--ink-soft)}
+.plan ul{list-style:none;display:flex;flex-direction:column;gap:.5rem;font-size:var(--t-small)}
+.plan ul li{display:flex;gap:.5rem;align-items:flex-start}
+.plan .btn{margin-top:auto;width:100%}
+.plan--pro{border:2.5px solid var(--red);position:relative;padding-top:calc(var(--s-5) + 1.4rem)}
+@media(min-width:900px){.plan--pro{transform:translateY(-12px)}}
+.plan--pro .ribbon{
+  position:absolute;top:0;left:0;right:0;background:var(--red-deep);color:#FFFFFF;
+  font-family:var(--font-mono);font-weight:700;font-size:var(--t-kicker);letter-spacing:.18em;
+  text-transform:uppercase;padding:.5rem;text-align:center;
+}
+.price-strike{font-family:var(--font-mono);text-decoration:line-through;color:var(--ink-muted);font-size:1.1rem}
+.price-off{font-family:var(--font-mono);font-weight:700;color:#A82813;font-size:.95rem;margin-left:.4rem}
+.price-launch{font-family:var(--font-mono);font-weight:700;color:var(--red-deep);font-size:.85rem;letter-spacing:.06em;text-transform:uppercase;display:inline-block;margin-top:.15rem}
+.price-launch[hidden]{display:none}
+.countdown{
+  font-family:var(--font-mono);font-weight:700;color:var(--red-deep);font-size:.9rem;
+  border:1px solid var(--red);padding:.5rem .7rem;text-align:center;letter-spacing:.03em;
+}
+.countdown[hidden]{display:none}
+
+/* ======================= ONBOARDING + REASEGURAMIENTO ======================= */
+.onb-grid{display:grid;gap:var(--s-4);margin-top:var(--s-6)}
+@media(min-width:640px){.onb-grid{grid-template-columns:1fr 1fr}}
+.onb-item{display:flex;gap:.8rem;align-items:flex-start}
+.onb-item b{font-family:var(--font-display);font-weight:700;display:block;margin-bottom:.2rem}
+.reassure{display:grid;gap:var(--s-4);margin-top:var(--s-6)}
+@media(min-width:820px){.reassure{grid-template-columns:repeat(3,1fr)}}
+.reassure .card .ic{margin-bottom:var(--s-3)}
+.reassure b{font-family:var(--font-display);font-weight:700;display:block;margin-bottom:.3rem}
+
+/* ======================= FAQ ======================= */
+.faq{margin-top:var(--s-6);border-top:1px solid var(--ink)}
+.faq details{border-bottom:1px solid var(--ink)}
+.faq summary{
+  list-style:none;cursor:pointer;padding:var(--s-4) 0;display:flex;justify-content:space-between;
+  align-items:center;gap:var(--s-3);font-family:var(--font-display);font-weight:700;font-size:1.1rem;
+}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary .sign{font-family:var(--font-mono);font-size:1.5rem;color:var(--red);flex:0 0 auto;transition:transform .2s ease}
+.faq details[open] summary .sign{transform:rotate(45deg)}
+.faq .ans{padding:0 0 var(--s-4);color:var(--ink-soft);max-width:65ch}
+
+/* ======================= TESTIMONIOS ======================= */
+.case-anchor{margin-top:var(--s-6);background:var(--ink-panel);border:1px solid var(--on-ink-line);padding:var(--s-6);color:var(--on-ink)}
+.case-anchor .placeholder{border:1.5px dashed var(--red);padding:var(--s-4);font-family:var(--font-mono);font-size:var(--t-small);color:var(--on-ink-soft);line-height:1.7}
+.case-metrics{display:grid;gap:var(--s-4);grid-template-columns:1fr 1fr;margin:var(--s-4) 0}
+.metric .num{font-family:var(--font-mono);font-weight:700;font-size:clamp(1.6rem,4vw,2.4rem);color:var(--red)}
+.metric .lbl{font-size:var(--t-small);color:var(--on-ink-soft)}
+.case-quote{font-family:var(--font-display);font-weight:700;font-size:var(--t-h3);line-height:1.3;margin:var(--s-4) 0;color:var(--on-ink)}
+.slots{display:grid;gap:var(--s-4);margin-top:var(--s-4)}
+@media(min-width:640px){.slots{grid-template-columns:1fr 1fr}}
+.slot{border:1.5px dashed var(--on-ink-line);padding:var(--s-5);font-family:var(--font-mono);font-size:var(--t-small);color:var(--on-ink-soft);text-align:center}
+
+/* ======================= CALENDARIO ======================= */
+.cal-embed{
+  margin-top:var(--s-6);border:2px dashed var(--ink);background:var(--cream-deep);
+  min-height:340px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:var(--s-6);gap:var(--s-3);
+}
+.cal-embed .ic{width:44px;height:44px}
+.cal-embed .note{font-family:var(--font-mono);font-size:var(--t-small);color:var(--ink-muted)}
+
+/* ======================= CTA FINAL ======================= */
+.cta-final{background:var(--ink-panel);color:var(--on-ink);text-align:center;border-top:3px solid var(--red)}
+.cta-final h2{font-family:var(--font-display);font-weight:900;font-size:var(--t-display);line-height:1;letter-spacing:-.02em;max-width:16ch;margin:0 auto var(--s-4);color:var(--on-ink)}
+.cta-final .lead{margin-inline:auto;color:var(--on-ink-soft)}
+.cta-final .cta-row{justify-content:center}
+.cta-final .brand{justify-content:center;margin-top:var(--s-7);color:var(--on-ink)}
+.cta-final .brand{display:inline-flex}
+
+/* ======================= FOOTER ======================= */
+.site-footer{background:var(--cream);border-top:1px solid var(--cream-line);padding-block:var(--s-6)}
+.site-footer .wrap{display:flex;flex-wrap:wrap;gap:var(--s-4);justify-content:space-between;align-items:center}
+.site-footer .micro{max-width:44ch}
+
+/* ======================= STICKY CTA MÓVIL ======================= */
+.sticky-cta{
+  position:fixed;left:0;right:0;bottom:0;z-index:70;background:var(--cream);
+  border-top:3px solid var(--red);padding:.7rem var(--gutter);
+  display:flex;gap:var(--s-3);align-items:center;
+  padding-bottom:calc(.7rem + env(safe-area-inset-bottom));
+  transform:translateY(120%);transition:transform .3s ease;
+  visibility:hidden;pointer-events:none;
+}
+.sticky-cta.show{transform:translateY(0);visibility:visible;pointer-events:auto}
+.sticky-cta .btn--primary{flex:1;padding:.85rem 1rem;font-size:1rem}
+.sticky-cta .agenda-link{font-weight:700;font-size:.9rem;color:var(--ink);white-space:nowrap;border-bottom:2px solid var(--red);padding-bottom:2px}
+@media(min-width:720px){.sticky-cta{display:none!important}}
+
+/* ======================= WHATSAPP FLOTANTE ======================= */
+.wa-float{
+  position:fixed;right:clamp(1rem,4vw,1.75rem);z-index:65;
+  bottom:calc(clamp(1rem,4vw,1.75rem) + env(safe-area-inset-bottom));
+  width:56px;height:56px;border-radius:50%;background:var(--ok);
+  display:none;align-items:center;justify-content:center;
+  box-shadow:3px 3px 0 var(--ink);border:2px solid var(--ink);
+  transition:transform .18s ease;
+}
+.wa-float.show{display:flex}
+.wa-float:hover{transform:translateY(-2px)}
+.wa-float:focus-visible{outline:3px solid var(--red);outline-offset:3px}
+.wa-float svg{width:30px;height:30px;fill:var(--cream)}
+/* subir el botón cuando el sticky-cta móvil está visible, para no encimarse */
+@media(max-width:719px){.sticky-cta.show ~ .wa-float.show{bottom:calc(4.6rem + env(safe-area-inset-bottom))}}
+.agenda-wa{font-family:var(--font-mono);font-size:var(--t-micro);color:var(--ink-soft);border-bottom:2px solid var(--ok);padding-bottom:2px;margin-top:.25rem}
+
+/* ======================= SCROLL REVEAL ======================= */
+.reveal{opacity:1;transform:none}
+.js .reveal{opacity:0;transform:translateY(24px);transition:opacity .5s cubic-bezier(.16,1,.3,1),transform .5s cubic-bezier(.16,1,.3,1)}
+.js .reveal.in{opacity:1;transform:none}
+.js .reveal.d1{transition-delay:.08s}
+.js .reveal.d2{transition-delay:.16s}
+.js .reveal.d3{transition-delay:.24s}
+
+/* draw de línea (JS agrega .drawn) */
+.js .flow-line-h,.js .flow-vline{transform:scaleX(0)}
+@media(min-width:920px){.js .flow-line-h.drawn{transform:scaleX(1);transition:transform .8s ease-out}}
+.js .flow-vline{transform:scaleY(0);transform-origin:top}
+.flow-vline.drawn{transform:scaleY(1)!important;transition:transform .6s ease-out}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .js .reveal{opacity:1;transform:none}
+  .js .flow-line-h,.js .flow-vline{transform:none}
+}
+</style>
+</head>
+<body>
+<script>document.body.classList.add('js');document.documentElement.classList.add('js');</script>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header">
+  <div class="wrap">
+    <a href="#top" class="brand" aria-label="Kanri, ir al inicio">kanri <span class="jp" aria-hidden="true">管理</span></a>
+    <nav class="site-nav" aria-label="Secciones de la página">
+      <a href="#modulos">Módulos</a>
+      <a href="#precios">Precios</a>
+      <a href="#agenda">Agenda</a>
+    </nav>
+    <a href="#precios" class="btn btn--primary header-cta" data-cta="probar" data-plan="header">Probar 20 días gratis</a>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ============ 1 · HERO ============ -->
+<section class="hero wrap" aria-labelledby="hero-h1">
+  <div class="hero-grid hero-grid--solo">
+    <div>
+      <p class="kicker roof-kicker reveal">ERP + CRM para tu taller · Hecho en México</p>
+      <h1 id="hero-h1" class="display reveal d1" style="margin-top:1.25rem;font-size:clamp(2rem,4.6vw,3.7rem);line-height:1.06;letter-spacing:-.015em">De la cotización al cobro, todo lo que hace tu taller, sin salir de un sistema.</h1>
+      <p class="lead reveal d2">Cotizas, produces, controlas calidad, embarcas y cobras en un solo lugar. Con tu logo y tus datos frente al cliente, nunca los nuestros.</p>
+      <div class="cta-row reveal d2">
+        <a href="#precios" class="btn btn--primary" data-cta="probar" data-plan="hero">Probar 20 días gratis</a>
+        <a href="#agenda" class="btn btn--secondary" data-cta="agendar" data-plan="hero">Agenda una llamada</a>
+      </div>
+      <p class="micro hero-micro reveal d3">Sin instalar nada. Registras, eliges tu giro y ya estás operando.</p>
+      <p class="trust-line reveal d3">
+        <span>Hecho en México para México</span><span aria-hidden="true">·</span>
+        <span>Prueba 20 días sin tarjeta</span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2 · TODO BAJO UN SOLO TECHO (flujo + línea roja) ============ -->
+<section class="section section--red" aria-labelledby="techo-h">
+  <div class="wrap">
+  <p class="kicker roof-kicker reveal">El sistema completo</p>
+  <h2 id="techo-h" class="sec-title reveal">Todo tu taller, bajo un solo techo</h2>
+  <p class="lead reveal">Todo lo que hoy corres en Excel, el WhatsApp y el cuaderno, en un solo lugar y con la marca de tu taller. Esto es lo que se conecta:</p>
+
+  <div class="flow" id="flow">
+    <div class="flow-track">
+      <div class="flow-line-h" aria-hidden="true"></div>
+      <div class="flow-node reveal">
+        <div class="flow-rail"><span class="flow-dot"></span><span class="flow-vline" aria-hidden="true"></span></div>
+        <div class="flow-step"><span class="step-k">Cotizas</span><b>Precio con margen a la vista</b><span class="muted small">Jalas precios de tu inventario, ves tu margen y mandas un PDF profesional con tu marca. Un clic y la cotización aprobada se vuelve proyecto.</span></div>
+      </div>
+      <div class="flow-node reveal d1">
+        <div class="flow-rail"><span class="flow-dot"></span><span class="flow-vline" aria-hidden="true"></span></div>
+        <div class="flow-step"><span class="step-k">Produces</span><b>El piso, a la vista</b><span class="muted small">El proyecto entra al piso: órdenes de trabajo, máquinas, etapas y avance, todo a la vista.</span></div>
+      </div>
+      <div class="flow-node reveal d2">
+        <div class="flow-rail"><span class="flow-dot"></span><span class="flow-vline" aria-hidden="true"></span></div>
+        <div class="flow-step"><span class="step-k">Calidad</span><b>Control de calidad adentro</b><span class="muted small">Inspecciones, piezas rechazadas y medidas, con herramientas para tu control ISO 9001 dentro del sistema, no en un Excel aparte.</span></div>
+      </div>
+      <div class="flow-node reveal d3">
+        <div class="flow-rail"><span class="flow-dot"></span><span class="flow-vline" aria-hidden="true"></span></div>
+        <div class="flow-step"><span class="step-k">Despachas</span><b>Envíos y etiquetas</b><span class="muted small">Preparas el envío y las etiquetas desde el mismo lugar donde nació la cotización.</span></div>
+      </div>
+      <div class="flow-node reveal d3">
+        <div class="flow-rail"><span class="flow-dot"></span><span class="flow-vline" aria-hidden="true"></span></div>
+        <div class="flow-step"><span class="step-k">Cobras</span><b>Timbras tu CFDI</b><span class="muted small">Timbras tu factura CFDI dentro de Kanri y el PDF sale con tus datos fiscales y bancarios listos. El cliente te paga sin vueltas.</span></div>
+      </div>
+    </div>
+  </div>
+  </div>
+</section>
+
+<!-- ============ 3 · CINCO MÓDULOS CLAVE ============ -->
+<section class="section wrap" id="modulos" aria-labelledby="dolor-h">
+  <p class="kicker roof-kicker reveal">El corazón del sistema</p>
+  <h2 id="dolor-h" class="sec-title reveal">Cinco módulos que trabajan como uno solo.</h2>
+  <p class="lead reveal">No es que te falte orden. Es que tienes cinco lugares donde vive tu taller y ninguno se habla con el otro. Lo que te falta es un solo lugar donde la cotización, el piso y el material ya estén conectados, para que veas el trabajo mientras pasa y no cuando ya no hay vuelta. Sin cinco programas. Sin un contador de planta. Sin volverte a quemar.</p>
+  <!-- SWAP-MODULOS: copy interino (solo capacidades confirmadas). Reemplazar cada
+       <span> con la descripción + funciones OFICIALES de Julio cuando lleguen. -->
+  <div class="pain-grid">
+    <article class="card pain-card reveal">
+      <svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>
+      <b>Inventario</b>
+      <span class="muted small">Sabes en tiempo real qué tienes, qué te falta y cuándo pedirlo. Mínimos y máximos con alertas, existencias que se mueven solas y carga de tu catálogo por Excel. Se acabó parar una máquina porque el material que la libreta juraba tener no estaba.</span>
+    </article>
+    <article class="card pain-card reveal d1">
+      <svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/><path d="M2 3h3l2.4 12.4a1 1 0 0 0 1 .8h9.2a1 1 0 0 0 1-.8L21 7H6"/></svg>
+      <b>Compras</b>
+      <span class="muted small">Pides con orden de compra formal y, al recibir la mercancía, tu inventario se actualiza solo. Sin doble captura y sin compras de urgencia más caras de lo necesario, porque ves venir el faltante antes de que te frene.</span>
+    </article>
+    <article class="card pain-card reveal d2">
+      <svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a1 1 0 0 1 1-1h5l2 2h8a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/></svg>
+      <b>Proyectos</b>
+      <span class="muted small">La cotización aprobada se vuelve proyecto con un clic, sin recapturar nada. Un solo expediente con lo comercial, la producción y la entrega, y su avance por etapas a la vista de todo tu equipo.</span>
+    </article>
+    <article class="card pain-card reveal d3">
+      <svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="8" width="18" height="11" rx="1"/><path d="M7 8V5h10v3M7 13h2M15 13h2"/><path d="M12 12v3"/></svg>
+      <b>Producción</b>
+      <span class="muted small">Ves el piso completo desde tu escritorio: qué se fabrica, en qué máquina y qué tan avanzado va. Órdenes de trabajo por máquina y etapa, con el avance en tiempo real. Dejas de cruzar el taller a preguntar cómo va cada pieza.</span>
+    </article>
+    <article class="card pain-card reveal d1">
+      <svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 4v5c0 5-3 7-7 9-4-2-7-4-7-9V7z"/><path d="M9 12l2 2 4-4"/></svg>
+      <b>Calidad</b>
+      <span class="muted small">Registras cada inspección y cada pieza para respaldar tu calidad ante quien la exija. Medidas, piezas rechazadas y control alineado a ISO 9001, anclado a cada proyecto con trazabilidad de principio a fin.</span>
+    </article>
+  </div>
+</section>
+
+
+<!-- ============ 4 · VE KANRI FUNCIONANDO (DEMO) ============
+     La sección tiene DOS estados. Por defecto muestra el estado HONESTO
+     ("demo en vivo") porque el video real AÚN NO ESTÁ GRABADO. Cuando exista
+     el video, poner data-video-ready="true" en <section> y pegar el <video>
+     real dentro de #demoVideoSlot; el JS mostrará el reproductor y ocultará
+     el copy de "demo en vivo". NUNCA dejar un placeholder de video visible. -->
+<section class="section wrap" id="demo-section" data-video-ready="false" aria-labelledby="demo-h" style="display:none" data-vsl-off="true">
+  <p class="kicker roof-kicker reveal">No es promesa, es producto</p>
+
+  <!-- ESTADO A · video real listo (oculto por defecto) -->
+  <div id="demoVideoState" hidden>
+    <h2 class="sec-title reveal">No te lo contamos. Míralo funcionando.</h2>
+    <p class="lead reveal">Aquí no hay maquetas ni humo. Esta es la pantalla real de Kanri: cotizas, sale el PDF con tu marca, entra al piso y ves tu costo y tu margen.</p>
+    <div class="demo-frame reveal" style="padding:0">
+      <span class="demo-badge">Demo real</span>
+      <!-- SWAP-VIDEO: pegar aquí el <video controls playsinline preload="none" poster="..."> real -->
+      <div id="demoVideoSlot" style="width:100%;height:100%"></div>
+    </div>
+  </div>
+
+  <!-- ESTADO B · honesto mientras no hay video (visible por defecto) -->
+  <div id="demoLiveState">
+    <h2 id="demo-h" class="sec-title reveal">¿Quieres verlo funcionando? Te lo mostramos en vivo.</h2>
+    <p class="lead reveal">Nada de maquetas ni humo: agenda 20 minutos y te enseñamos la pantalla real de Kanri con tu propio giro. Cotizas, sale el PDF con tu marca, entra al piso y ves tu costo y tu margen, en tiempo real y respondiendo tus dudas.</p>
+    <div class="cta-row reveal">
+      <a href="#agenda" class="btn btn--primary" data-cta="agendar" data-plan="demo">Agenda una llamada</a>
+      <a href="#precios" class="btn btn--secondary" data-cta="probar" data-plan="demo">O pruébalo tú mismo, 20 días gratis</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5 · MÓDULOS COMO BENEFICIOS ============ -->
+<section class="section wrap" aria-labelledby="mod-h">
+  <p class="kicker roof-kicker reveal">Lo que resuelve</p>
+  <h2 id="mod-h" class="sec-title reveal">No es un programa más. Es tu taller entero,&nbsp;ordenado.</h2>
+  <p class="lead reveal">Cada parte de Kanri resuelve algo que hoy te quita tiempo o te cuesta dinero:</p>
+  <div class="benefit-grid">
+    <article class="card benefit reveal"><svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l3 3v15H6z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg><b>Cotiza en minutos, no en días.</b><span class="muted small">Precios de tu inventario, tu margen a la vista y un PDF listo para enviar.</span></article>
+    <article class="card benefit reveal d1"><svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><b>Sabe cuánto te deja cada trabajo.</b><span class="muted small">Material, maquinado y margen antes de decir que sí.</span></article>
+    <article class="card benefit reveal d2"><svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l9-4 9 4-9 4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg><b>Inventario que se cuida solo.</b><span class="muted small">Te avisa cuándo resurtir, descuenta al vender y suma al comprar.</span></article>
+    <article class="card benefit reveal d3"><svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="18" cy="18" r="2"/></svg><b>Compras sin correos perdidos.</b><span class="muted small">Proveedores y órdenes de compra en un solo flujo; al recibir, tu stock sube solo.</span></article>
+    <article class="card benefit reveal"><svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="1"/><path d="M3 9h18M8 4v14"/></svg><b>Ve tu piso en tiempo real.</b><span class="muted small">Qué máquina está cargada, qué entrega viene, sin ir a preguntar.</span></article>
+    <article class="card benefit reveal d1"><svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 4v5c0 5-3 7-7 9-4-2-7-4-7-9V7z"/><path d="M9 12l2 2 4-4"/></svg><b>Menos piezas rechazadas.</b><span class="muted small">Tu control de calidad, con herramientas para ISO 9001, dentro del sistema y no en una hoja suelta.</span></article>
+    <article class="card benefit reveal d2"><svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M8 8h8M8 12h8M8 16h5"/><circle cx="18" cy="19" r="3" fill="none"/></svg><b>Tu cliente se atiende solo.</b><span class="muted small">Un link seguro y ve el avance de su pieza. Se acaban las llamadas de "¿cómo va?".</span></article>
+    <article class="card benefit reveal d3"><svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M7 15l3-4 3 2 4-6"/></svg><b>Un tablero que dice cómo va el negocio hoy.</b><span class="muted small">Ventas, carga de máquinas y próximas entregas de un vistazo.</span></article>
+  </div>
+</section>
+
+<!-- ============ 6 · HECHO PARA TU GIRO ============ -->
+<section class="section wrap" aria-labelledby="giro-h">
+  <p class="kicker roof-kicker reveal">Se acomoda a ti</p>
+  <h2 id="giro-h" class="sec-title reveal">Hecho para talleres. Flexible para tu giro.</h2>
+  <p class="lead reveal">Kanri nació en el piso de manufactura, donde el control tiene que ser serio. Pero desde el registro se configura a tu giro: cambian los módulos y hasta el vocabulario. No es un CRM genérico que te queda grande o chico. Es el tuyo.</p>
+  <div class="giros reveal" role="list" aria-label="Giros soportados">
+    <span class="chip" role="listitem">Manufactura CNC</span>
+    <span class="chip" role="listitem">Maquinados convencionales</span>
+    <span class="chip" role="listitem">MRO</span>
+    <span class="chip" role="listitem">Venta de herramientas e insumos</span>
+    <span class="chip" role="listitem">Publicidad y marketing</span>
+    <span class="chip" role="listitem">Diseño e ingeniería</span>
+    <span class="chip" role="listitem">Consultoría</span>
+    <span class="chip" role="listitem">Capacitación y cursos</span>
+  </div>
+  <p class="micro reveal" style="margin-top:1.25rem">Eliges tu giro al registrarte y la plataforma se acomoda a tus necesidades.</p>
+</section>
+
+<!-- ============ 7 · NÓMINA + CHECADOR + FACTURACIÓN ============ -->
+<section class="section wrap" aria-labelledby="bonus-h">
+  <p class="kicker roof-kicker reveal">Y además, lo que no esperabas</p>
+  <h2 id="bonus-h" class="sec-title reveal">Y además te resuelve la gestión</h2>
+  <p class="lead reveal">No solo cotizas y produces. Kanri también te controla la asistencia, te saca la nómina y te timbra tus facturas. Un ERP de taller que además te quita de encima la quincena y el SAT. Nadie espera eso, y por eso vale.</p>
+  <div class="bonus-grid">
+    <article class="card bonus-col reveal">
+      <svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+      <h3>Checador</h3>
+      <ul>
+        <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>Entradas y salidas, horario esperado y cumplimiento (a tiempo, retardo, falta).</span></li>
+        <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>Horas trabajadas y horas pagadas ajustables.</span></li>
+      </ul>
+    </article>
+    <article class="card bonus-col reveal d1">
+      <svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M8 8h8M8 12h6"/><path d="M15 16h2M8 16h3"/></svg>
+      <h3>Nómina</h3>
+      <ul>
+        <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>Percepciones, deducciones y neto por periodo (mensual, quincenal, semanal).</span></li>
+        <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>Recibo imprimible por colaborador y CSV listo para dispersión bancaria.</span></li>
+      </ul>
+    </article>
+    <article class="card bonus-col reveal d2">
+      <svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l3 3v15H6z"/><circle cx="12" cy="13" r="3"/><path d="M12 10v6M10.5 13h3"/></svg>
+      <h3>Facturación CFDI</h3>
+      <ul>
+        <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>Timbras tus facturas dentro de Kanri, sin brincar a otro programa.</span></li>
+        <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>Tus datos fiscales listos para México, del cobro directo a tu factura.</span></li>
+      </ul>
+    </article>
+  </div>
+</section>
+
+<!-- ============ 8 · WHITE-LABEL (panel negro) ============ -->
+<section class="section panel-ink on-ink" aria-labelledby="wl-h">
+  <div class="wrap-wide">
+    <p class="kicker roof-kicker reveal">Lo que nadie más te da</p>
+    <h2 id="wl-h" class="sec-title reveal display" style="color:var(--on-ink)">Tus clientes verán TU empresa.</h2>
+    <div class="wl-grid">
+      <div>
+        <p class="lead reveal">Subes tu logo, tu nombre comercial, tus colores y tus datos. Desde ahí, toda la app y cada cotización en PDF salen con tu identidad. Tu cliente ve la marca de tu taller, siempre. Kanri es el motor por debajo, invisible.</p>
+        <ul class="wl-checks reveal d1">
+          <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>Cotizaciones PDF con tu logo, tu RFC y tus datos bancarios.</span></li>
+          <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>La app completa con tus colores y tu nombre.</span></li>
+          <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>Tu cliente nunca ve "Kanri". Te ves grande frente a él.</span></li>
+        </ul>
+        <p class="wl-pride reveal d2">Te ves como la empresa que quieres ser, desde la primera cotización.</p>
+      </div>
+      <div class="reveal d1">
+        <!-- SWAP-WHITELABEL: mock ilustrativo de cotización. Datos de "Talleres del Norte" son FICTICIOS de demostración. -->
+        <div class="pdf-compare">
+          <div>
+            <div class="pdf" aria-label="Cotización de ejemplo con la marca del taller">
+              <div class="pdf-brand">
+                <div class="pdf-logo">Talleres del Norte<small>S.A. de C.V. · RFC TNO120534XY9</small></div>
+                <span class="pdf-tag">COTIZACIÓN 0182</span>
+              </div>
+              <table>
+                <tr><td>Maquinado de brida 6"</td><td>$ 8,400</td></tr>
+                <tr><td>Tratamiento térmico</td><td>$ 2,150</td></tr>
+                <tr><td>Inspección dimensional</td><td>$ 900</td></tr>
+                <tr><td><b>Total + IVA</b></td><td><b>$ 13,282</b></td></tr>
+              </table>
+              <div class="pdf-foot">Pago a: BBVA 0123 4567 89 · CLABE 012 000 00123456789 0 · Talleres del Norte, S.A. de C.V.</div>
+            </div>
+            <p class="pdf-caption">Con tu marca</p>
+          </div>
+          <div>
+            <div class="pdf pdf--off" aria-label="La misma cotización sin marca, mostrada tachada para contraste">
+              <div class="pdf-brand">
+                <div class="pdf-logo">Sistema genérico<small>proveedor externo</small></div>
+                <span class="pdf-tag">DOC 0182</span>
+              </div>
+              <table>
+                <tr><td>Servicio 1</td><td>$ 8,400</td></tr>
+                <tr><td>Servicio 2</td><td>$ 2,150</td></tr>
+                <tr><td>Total</td><td>$ 13,282</td></tr>
+              </table>
+              <div class="pdf-foot">Powered by otra plataforma</div>
+            </div>
+            <p class="pdf-caption">Sin marca</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 9 · PRECIOS + PRUEBA 20 DÍAS ============ -->
+<section class="section wrap" id="precios" aria-labelledby="precios-h">
+  <p class="kicker roof-kicker reveal">Precios claros</p>
+  <h2 id="precios-h" class="sec-title reveal">Precio de fundador, sin permanencia.</h2>
+  <p class="lead reveal">Sin tarjeta para empezar. Si te sirve, activas tu plan; ya con plan activo, mes a mes, sin permanencia ni penalización. Precios en pesos más IVA, pago con Stripe, y en el plan anual dos meses sin costo.</p>
+
+  <div class="price-grid">
+    <!-- BÁSICO -->
+    <article class="plan reveal">
+      <h3>Básico</h3>
+      <div class="price">$5,500 <small>/ mes</small></div>
+      <p class="desc">Para talleres chicos, MRO y venta de herramientas e insumos.</p>
+      <ul>
+        <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>Hasta 5 usuarios</li>
+        <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>Inventario en tiempo real</li>
+        <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>Cotizaciones y compras</li>
+        <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>Adjuntar planos y dibujos (2D/3D) a cada trabajo</li>
+        <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>Soporte por correo</li>
+      </ul>
+      <a href="#" class="btn btn--secondary" data-cta="probar" data-plan="basico">Probar gratis</a>
+    </article>
+
+    <!-- PROFESIONAL -->
+    <article class="plan plan--pro reveal d1">
+      <span class="ribbon">El más elegido</span>
+      <h3>Profesional</h3>
+      <div>
+        <span class="price-strike" id="priceStrike" hidden>$12,000</span>
+        <div class="price">$8,500 <small>/ mes</small></div>
+        <span class="price-off" id="priceOff" hidden>−29% por lanzamiento</span>
+        <span class="price-launch" id="priceLaunch">Precio de lanzamiento</span>
+      </div>
+      <!-- SWAP-COUNTDOWN + ANCLA: el tachado $12,000, el −29% y el countdown SOLO
+           se muestran si PROMO_ANCHOR_REAL=true (abajo en el <script>), es decir si
+           el $12,000 fue un precio REAL vigente. Si nunca se cobró, quedan ocultos
+           (evita publicidad engañosa / riesgo PROFECO). Confirmar con Julio. -->
+      <p class="countdown" id="countdown" role="status" hidden>Calculando oferta…</p>
+      <p class="desc">El más completo. Para talleres medianos y grandes.</p>
+      <ul>
+        <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>Hasta 25 usuarios</li>
+        <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>Proyectos ilimitados</li>
+        <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>Producción, control de calidad (ISO 9001) y despacho</li>
+        <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>Gestión de proyectos y portal del cliente</li>
+        <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>Facturación CFDI</li>
+        <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>Soporte prioritario</li>
+      </ul>
+      <a href="#" class="btn btn--primary" data-cta="probar" data-plan="profesional">Empezar con el plan completo</a>
+    </article>
+
+    <!-- ENTERPRISE -->
+    <article class="plan reveal d2">
+      <h3>Enterprise</h3>
+      <div class="price">A cotizar</div>
+      <p class="desc">Operaciones grandes, integraciones a la medida y base de datos dedicada.</p>
+      <ul>
+        <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>Usuarios ilimitados</li>
+        <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>Todos los módulos</li>
+        <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>SSO, SLA y gerente de cuenta</li>
+      </ul>
+      <a href="#agenda" class="btn btn--secondary" data-cta="agendar" data-plan="enterprise">Hablar con ventas</a>
+    </article>
+  </div>
+  <p class="micro reveal" style="margin-top:1.5rem">Sin tarjeta para empezar. Si te sirve, activas tu plan en dos clics. Al terminar la prueba, tus datos se conservan. Ya con plan activo, cancelas cuando quieras, mes a mes, sin permanencia ni penalización.</p>
+</section>
+
+<!-- ============ 9.5 · ONBOARDING FÁCIL ============ -->
+<section class="section wrap" aria-labelledby="onb-h" style="background:var(--cream-deep)">
+  <p class="kicker roof-kicker reveal">Pensabas que iba a ser un lío</p>
+  <h2 id="onb-h" class="sec-title reveal">Creías que iba a ser un lío. Y fue al revés.</h2>
+  <p class="lead reveal">El miedo no es el precio. Es "y si mi gente no le entiende", "y si me tardo un mes en arrancar". Aquí no pasa. Nosotros te montamos el sistema y tú ves resultado el mismo día.</p>
+  <div class="onb-grid">
+    <div class="onb-item reveal"><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><div><b>Nosotros migramos tu información.</b><span class="muted small">Nos pasas tu Excel o tu lista y lo dejamos cargado. Tú no capturas de cero.</span></div></div>
+    <div class="onb-item reveal d1"><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><div><b>Tienes valor desde el día uno.</b><span class="muted small">No esperas semanas. El primer día ya sacas una cotización con tu marca.</span></div></div>
+    <div class="onb-item reveal d2"><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><div><b>A tu personal no le cuesta.</b><span class="muted small">El de piso solo ve lo que le toca: su orden, su avance. Simple, hecho para que lo use cualquiera.</span></div></div>
+    <div class="onb-item reveal d3"><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><div><b>Sin instalar nada.</b><span class="muted small">Entras desde el navegador o el celular. Si sabes usar WhatsApp, sabes usar esto.</span></div></div>
+  </div>
+</section>
+
+<!-- ============ 9.6 · REASEGURAMIENTO ============ -->
+<section class="section wrap" aria-labelledby="reas-h">
+  <p class="kicker roof-kicker reveal">Estás tomando la decisión correcta</p>
+  <h2 id="reas-h" class="sec-title reveal">Sin amarres. El riesgo lo ponemos nosotros.</h2>
+  <p class="lead reveal">Probar Kanri no te compromete a nada. Si te sirve, sigues. Si no, te vas y te llevas tus datos.</p>
+  <div class="reassure">
+    <div class="card reveal"><svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="1"/><path d="M8 11V7a4 4 0 0 1 7.5-2"/></svg><b>Cancelas cuando quieras.</b><span class="muted small">Mes a mes, sin permanencia y sin penalización. Pagas el mes que usas y, si te vas, te vas sin amarres.</span></div>
+    <div class="card reveal d1"><svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/><line x1="6" y1="15" x2="10" y2="15"/></svg><b>Prueba sin tarjeta.</b><span class="muted small">20 días operando de verdad, sin poner un peso ni dejar tarjeta.</span></div>
+    <div class="card reveal d2"><svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg><b>Tus datos se conservan.</b><span class="muted small">Si dejas de pagar, no se borra nada. Tu información te espera.</span></div>
+  </div>
+</section>
+
+<!-- ============ 9.7 · FAQ ============ -->
+<section class="section wrap" aria-labelledby="faq-h" style="background:var(--cream-deep)">
+  <p class="kicker roof-kicker reveal">Objeciones honestas</p>
+  <h2 id="faq-h" class="sec-title reveal">Lo que todos preguntan</h2>
+  <div class="faq reveal">
+    <details open>
+      <summary>¿Ya uso Excel, para qué cambio? <span class="sign" aria-hidden="true">+</span></summary>
+      <p class="ans">Kanri hace lo de Excel pero en tiempo real, compartido y sin errores de dedo. Y con tu marca frente al cliente, cosa que Excel nunca te va a dar. Tu inventario lo subes desde tu propio Excel para arrancar.</p>
+    </details>
+    <details>
+      <summary>Se me hace caro. <span class="sign" aria-hidden="true">+</span></summary>
+      <p class="ans">Cuesta menos que un empleado administrativo, y te evita perder plata por cotizar mal, sobreinventario y compras sin control. Ponlo en números: un solo trabajo cotizado a pérdida de $15,000 se come casi dos meses del plan Profesional. Y pruebas 20 días gratis, sin tarjeta, antes de pagar un peso.</p>
+    </details>
+    <details>
+      <summary>No tengo tiempo de aprender otro sistema. <span class="sign" aria-hidden="true">+</span></summary>
+      <p class="ans">Se configura solo según tu giro. En los 20 días de prueba ya estás operando, sin instalar nada. Entras desde el navegador o el celular, y nosotros te enseñamos y te acompañamos en el arranque.</p>
+    </details>
+    <details>
+      <summary>¿Mis datos están seguros? <span class="sign" aria-hidden="true">+</span></summary>
+      <p class="ans">Cada empresa solo ve lo suyo, con aislamiento total: nadie sabe de nadie. Tu información viaja y se guarda cifrada, con respaldos automáticos en infraestructura de nube de nivel empresarial. Tus datos fiscales, listos para México.</p>
+    </details>
+    <details>
+      <summary>Mi sector no es exactamente manufactura. <span class="sign" aria-hidden="true">+</span></summary>
+      <p class="ans">Kanri se configura a muchos giros distintos desde el registro, y Enterprise se hace a la medida. Se acomoda a ti, no al revés.</p>
+    </details>
+    <details>
+      <summary>¿Y si al final no me convence? <span class="sign" aria-hidden="true">+</span></summary>
+      <p class="ans">No pagas nada para probar y no dejas tarjeta. Si no activas plan, se guarda tu información y ya. Y si ya estás pagando y decides que no es para ti, cancelas cuando quieras, sin permanencia ni penalización, y tus datos se conservan. Cero amarres.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ============ 10 · PRUEBA / ORIGEN ============
+     DOS estados. Por defecto se muestra el estado HONESTO (origen real en
+     piso de manufactura, SIN números inventados). Cuando exista el caso
+     Cd. Juárez con métricas y cita REALES, poner data-cases-ready="true" en
+     <section>, llenar los valores reales dentro de #casesReadyState y quitar
+     los brackets. NUNCA publicar con placeholders [X] visibles. -->
+<section class="section wrap" id="cases-section" data-cases-ready="false" aria-labelledby="test-h">
+  <p class="kicker roof-kicker reveal">De dónde viene Kanri</p>
+
+  <!-- ESTADO A · casos reales listos (oculto por defecto) -->
+  <div id="casesReadyState" hidden>
+    <h2 class="sec-title reveal">Talleres que ya dejaron el cuaderno.</h2>
+    <!-- SWAP-CASO-JUAREZ: llenar métricas y cita REALES tras el rodaje. NO inventar números. -->
+    <article class="case-anchor reveal">
+      <p class="kicker">Caso ancla · Cd. Juárez</p>
+      <div class="case-metrics">
+        <div class="metric"><div class="num">—</div><div class="lbl">Tiempo de cotización (antes → con Kanri)</div></div>
+        <div class="metric"><div class="num">—</div><div class="lbl">Tasa de cierre de cotizaciones</div></div>
+      </div>
+      <p class="case-quote">"—"</p>
+      <p class="muted small">Nombre · Puesto · Taller, Cd. Juárez</p>
+    </article>
+  </div>
+
+  <!-- ESTADO B · honesto mientras no hay caso cerrado (visible por defecto) -->
+  <div id="casesOriginState">
+    <h2 id="test-h" class="sec-title reveal">Nacido en el piso, no en una oficina.</h2>
+    <p class="lead reveal">Kanri no salió de una junta de software. Se construyó operando un taller de manufactura real en Cd. Juárez: las mismas cotizaciones, el mismo piso, la misma quincena y el mismo SAT que vives tú. Por eso encaja con cómo trabaja un taller de verdad, no con cómo cree una startup que trabajan.</p>
+    <div class="reassure" style="margin-top:2rem">
+      <div class="card reveal"><svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6"/></svg><b>Probado en operación real.</b><span class="muted small">Cada módulo se afinó resolviendo problemas reales de un taller que factura, produce y cobra todos los días.</span></div>
+      <div class="card reveal d1"><svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg><b>Gente de manufactura detrás.</b><span class="muted small">No es un CRM genérico adaptado a la fuerza. Lo hace quien conoce el piso, la merma y el margen.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 11 · AGENDA TU DEMO ============ -->
+<section class="section wrap" id="agenda" aria-labelledby="agenda-h">
+  <p class="kicker roof-kicker reveal">La otra puerta</p>
+  <h2 id="agenda-h" class="sec-title reveal">¿Prefieres que te asesoremos? Agenda una llamada.</h2>
+  <p class="lead reveal">Agenda una llamada con nosotros. Valoramos cómo trabajas hoy, identificamos lo que más te urge y te proponemos el plan que te encaja, configurado a tu giro para tu prueba de 20 días. Sin compromiso.</p>
+
+  <!-- SWAP-CALENDARIO: cuando exista el embed real de Cal.com / Calendly,
+       poner el link en CTA.agendar (arriba en el <script>). El JS lo pega
+       automáticamente aquí (#calEmbedSlot) y oculta la tarjeta-CTA de abajo.
+       Ej Cal.com: <div style="min-height:340px" data-cal-link="ronin/demo"></div> + su script. -->
+  <div id="calEmbedSlot"></div>
+  <div class="cal-embed reveal" id="calCard" aria-label="Agendar una demo de 20 minutos">
+    <svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="1"/><path d="M3 9h18M8 2v4M16 2v4"/><path d="M8 14h3M13 14h3M8 17h3"/></svg>
+    <p class="h3">Llamada de 20 minutos</p>
+    <p class="note">Con Sebastián o Julio. Valoramos cómo trabaja tu taller y te proponemos el plan que te encaja, listo para tu prueba.</p>
+    <a href="#" class="btn btn--primary" data-cta="agendar" data-plan="demo">Agendar mi llamada</a>
+    <a href="#" class="agenda-wa" id="calWhatsApp" hidden>o escríbenos por WhatsApp</a>
+  </div>
+</section>
+
+<!-- ============ 12 · CTA FINAL ============ -->
+<section class="section cta-final" aria-labelledby="ctaf-h">
+  <div class="wrap">
+    <h2 id="ctaf-h" class="reveal">Tu taller entero, bajo un solo techo.</h2>
+    <p class="lead reveal">Empieza hoy con 20 días gratis. Sin tarjeta, sin instalar nada. Registras, eliges tu giro y ya estás cotizando.</p>
+    <div class="cta-row reveal">
+      <a href="#precios" class="btn btn--primary" data-cta="probar" data-plan="final">Probar 20 días gratis</a>
+      <a href="#agenda" class="btn btn--secondary" data-cta="agendar" data-plan="final" style="border-color:var(--cream);color:var(--cream)">Agenda una llamada</a>
+    </div>
+    <p class="micro reveal" style="color:var(--on-ink-soft);margin-top:1.25rem">¿Dudas? <a id="ctaWrite" href="#agenda" data-cta="agendar" data-plan="final" style="color:var(--cream);border-bottom:2px solid var(--red);padding-bottom:1px">Escríbenos</a> y te mostramos Kanri con tu propio giro en una demo.</p>
+    <span class="brand reveal">kanri <span class="jp" aria-hidden="true">管理</span></span>
+    <p class="micro reveal" style="color:var(--on-ink-soft);margin-top:1rem">Un producto de <a href="https://www.roninstudio.com.mx" target="_blank" rel="noopener" style="color:var(--red);font-weight:700;border-bottom:1px solid var(--red)">Ronin Studio</a> · construido operando un taller de manufactura real en Cd. Juárez.</p>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="wrap">
+    <span class="brand">kanri <span class="jp" aria-hidden="true">管理</span></span>
+    <p class="micro">ERP + CRM para talleres · Un producto de Ronin Studio · Hecho en México para México.</p>
+  </div>
+</footer>
+
+<!-- ============ WHATSAPP FLOTANTE (se muestra solo si CTA.whatsapp está configurado) ============ -->
+<a class="wa-float" id="waFloat" href="#" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp" hidden>
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-2.8.8.8-2.7-.2-.3A8 8 0 1 1 12 20zm4.4-6c-.2-.1-1.4-.7-1.6-.8s-.4-.1-.5.1l-.7.9c-.1.2-.3.2-.5.1a6.5 6.5 0 0 1-3.2-2.8c-.2-.4.2-.4.6-1.2.1-.2 0-.3 0-.5l-.8-1.8c-.2-.5-.4-.4-.5-.4h-.5a1 1 0 0 0-.7.3c-.3.3-.9.9-.9 2.1s.9 2.4 1 2.6c.1.2 1.8 2.9 4.5 4 .6.3 1.1.4 1.5.5.6.2 1.2.2 1.6.1.5-.1 1.4-.6 1.6-1.1.2-.6.2-1 .1-1.1z"/></svg>
+</a>
+
+<!-- ============ STICKY CTA MÓVIL ============ -->
+<div class="sticky-cta" id="stickyCta" aria-hidden="true">
+  <a href="#precios" class="btn btn--primary" data-cta="probar" data-plan="sticky">Probar 20 días gratis</a>
+  <a href="#agenda" class="agenda-link" data-cta="agendar" data-plan="sticky">Agendar</a>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ====================================================================
+     CONFIG — DESTINOS REALES DE LOS CTA  (editar aquí, un solo lugar)
+     --------------------------------------------------------------------
+     Cablea cada botón de dinero a su URL real. Mientras no exista el
+     flujo de alta/checkout o el calendario, deja el string vacío ('')
+     y el botón hará scroll suave a #precios / #agenda (fallback seguro,
+     NUNCA salta al top como hacía href="#").
+     ==================================================================== */
+  var CTA = {
+    // Alta / trial / Stripe Checkout. Se le agrega ?plan= automáticamente.
+    // Ej: 'https://app.kanri.mx/registro'  ó  'https://buy.stripe.com/xxxxx'
+    probar:  '',
+    // Link de Cal.com / Calendly para agendar demo.
+    // Ej: 'https://cal.com/ronin/demo'
+    agendar: '',
+    // WhatsApp real de contacto (concierge GTM). Solo dígitos con lada país.
+    // Ej: '5216561234567'
+    whatsapp:'5216565736505',
+    // Correo de contacto para el "Escríbenos".
+    email:   'proyect@roninstudio.com'
+  };
+
+  /* ---------- CABLEAR CTAs A DESTINOS REALES ---------- */
+  document.querySelectorAll('[data-cta]').forEach(function(el){
+    var action = el.getAttribute('data-cta');   // 'probar' | 'agendar'
+    var plan   = el.getAttribute('data-plan') || '';
+    var dest   = CTA[action];
+    if(dest){
+      // hay URL real: enviar fuera de la landing, con el plan como query param
+      var url = dest;
+      if(action === 'probar' && plan){
+        url += (dest.indexOf('?') === -1 ? '?' : '&') + 'plan=' + encodeURIComponent(plan);
+      }
+      el.setAttribute('href', url);
+      // abrir alta/checkout/calendario en pestaña nueva, sin perder la landing
+      el.setAttribute('target','_blank');
+      el.setAttribute('rel','noopener');
+    }else{
+      // sin URL real todavía: fallback = anclar a la sección relevante (scroll suave),
+      // jamás href="#" (que salta al top). El enlace queda utilizable en producción.
+      var currentHref = el.getAttribute('href') || '';
+      if(currentHref === '#' || currentHref === ''){
+        el.setAttribute('href', action === 'agendar' ? '#agenda' : '#precios');
+      }
+    }
+  });
+
+  /* ---------- WHATSAPP FLOTANTE + CONTACTO HUMANO ---------- */
+  var waHref = CTA.whatsapp
+    ? 'https://wa.me/' + CTA.whatsapp.replace(/\D/g,'') +
+      '?text=' + encodeURIComponent('Hola, me interesa Kanri para mi taller.')
+    : '';
+  var waFloat = document.getElementById('waFloat');
+  if(waFloat && waHref){
+    waFloat.setAttribute('href', waHref);
+    waFloat.hidden = false;
+    waFloat.classList.add('show');
+  }
+  // enlace de WhatsApp dentro de la tarjeta de agenda
+  var calWa = document.getElementById('calWhatsApp');
+  if(calWa && waHref){ calWa.setAttribute('href', waHref); calWa.hidden = false; }
+
+  // "Escríbenos" del CTA final → WhatsApp si existe, si no correo, si no #agenda
+  var ctaWrite = document.getElementById('ctaWrite');
+  if(ctaWrite){
+    if(waHref){ ctaWrite.setAttribute('href', waHref); ctaWrite.setAttribute('target','_blank'); ctaWrite.setAttribute('rel','noopener'); }
+    else if(CTA.email){ ctaWrite.setAttribute('href','mailto:'+CTA.email+'?subject='+encodeURIComponent('Quiero ver Kanri')); }
+    else{ ctaWrite.setAttribute('href','#agenda'); }
+  }
+
+  /* ---------- CALENDARIO: embed real vs. tarjeta-CTA ---------- */
+  // Si CTA.agendar es un link de Cal.com/Calendly, la tarjeta-CTA ya lleva
+  // el usuario ahí (vía wiring). Para EMBED inline, pegar el markup del
+  // proveedor en #calEmbedSlot y ocultar #calCard poniendo su innerHTML.
+  // (Se deja el slot listo; el embed real lo agrega Julio con su script.)
+
+  /* ---------- DEMO: video real vs. estado honesto "en vivo" ---------- */
+  var demoSection = document.getElementById('demo-section');
+  if(demoSection){
+    var videoReady = demoSection.getAttribute('data-video-ready') === 'true';
+    var vState = document.getElementById('demoVideoState');
+    var lState = document.getElementById('demoLiveState');
+    if(videoReady && vState && lState){
+      vState.hidden = false;
+      lState.hidden = true;
+    } // si no está listo, se queda el estado honesto (default) y NUNCA un placeholder de video
+  }
+
+  /* ---------- CASOS: reales vs. origen honesto ---------- */
+  var casesSection = document.getElementById('cases-section');
+  if(casesSection){
+    var casesReady = casesSection.getAttribute('data-cases-ready') === 'true';
+    var cReady  = document.getElementById('casesReadyState');
+    var cOrigin = document.getElementById('casesOriginState');
+    if(casesReady && cReady && cOrigin){
+      cReady.hidden = false;
+      cOrigin.hidden = true;
+    } // si no hay caso cerrado, se queda el origen honesto (default), sin números inventados
+  }
+
+  /* ---------- SCROLL REVEAL ---------- */
+  var reveals = document.querySelectorAll('.reveal');
+  if(reduce || !('IntersectionObserver' in window)){
+    reveals.forEach(function(el){el.classList.add('in');});
+  }else{
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, {rootMargin:'0px 0px -12% 0px', threshold:0.05});
+    reveals.forEach(function(el){io.observe(el);});
+  }
+
+  /* ---------- DRAW LÍNEA-TECHO DEL FLUJO ---------- */
+  var flow = document.getElementById('flow');
+  if(flow && !reduce && 'IntersectionObserver' in window){
+    var fio = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          var isDesktop = window.matchMedia('(min-width:920px)').matches;
+          var hl = flow.querySelector('.flow-line-h');
+          if(hl) hl.classList.add('drawn');
+          // en desktop las .flow-vline están display:none → no las animamos (evita
+          // el flash al cruzar el breakpoint). Solo se dibujan en el layout vertical móvil.
+          if(!isDesktop){
+            var vs = flow.querySelectorAll('.flow-vline');
+            vs.forEach(function(v,i){ setTimeout(function(){ v.classList.add('drawn'); }, i*120); });
+          }
+          fio.disconnect();
+        }
+      });
+    }, {threshold:0.35});
+    fio.observe(flow);
+  }else if(flow){
+    flow.querySelectorAll('.flow-line-h,.flow-vline').forEach(function(v){v.classList.add('drawn');});
+  }
+
+  /* ---------- ANCLA DE PRECIO + CONTADOR (honesto) ---------- */
+  // PROMO_ANCHOR_REAL: pon true SOLO si el $12,000 fue un precio REAL vigente
+  // que de verdad se cobró. Si el precio siempre fue $8,500, déjalo en false:
+  // se oculta el tachado, el −29% y el countdown, y se muestra solo
+  // "Precio de lanzamiento". Anclar un precio que nunca existió es publicidad
+  // engañosa (riesgo PROFECO). Confirmar con Julio antes de ponerlo en true.
+  var PROMO_ANCHOR_REAL = false;
+  // SWAP-COUNTDOWN: fecha objetivo real de la promo Pro $8,500. Confirmar con Julio.
+  // Formato: 'YYYY-MM-DDTHH:mm:ss' hora local. Si ya venció, el contador se OCULTA (nunca 00:00:00).
+  var PROMO_DEADLINE = '2026-08-31T23:59:59';
+
+  var priceStrike = document.getElementById('priceStrike');
+  var priceOff    = document.getElementById('priceOff');
+  var priceLaunch = document.getElementById('priceLaunch');
+  var cd = document.getElementById('countdown');
+
+  if(PROMO_ANCHOR_REAL){
+    if(priceStrike) priceStrike.hidden = false;
+    if(priceOff)    priceOff.hidden = false;
+    if(priceLaunch) priceLaunch.hidden = true;   // el −29% ya comunica el descuento
+    if(cd)          cd.hidden = false;
+  }
+  // si NO es real: strike/off/countdown quedan ocultos (default), solo "Precio de lanzamiento"
+
+  if(cd && PROMO_ANCHOR_REAL){
+    var target = new Date(PROMO_DEADLINE).getTime();
+    function tick(){
+      var now = Date.now();
+      var diff = target - now;
+      if(isNaN(target) || diff <= 0){
+        cd.setAttribute('hidden','');           // vencido → se oculta, se mantiene el precio promo
+        clearInterval(timer);
+        return;
+      }
+      var days = Math.floor(diff/86400000);
+      var hrs  = Math.floor((diff%86400000)/3600000);
+      if(days > 1){
+        cd.textContent = 'La oferta de lanzamiento vence en ' + days + ' días';
+      }else if(days === 1){
+        cd.textContent = 'La oferta de lanzamiento vence mañana (' + hrs + ' h)';
+      }else{
+        var mins = Math.floor((diff%3600000)/60000);
+        cd.textContent = 'La oferta de lanzamiento vence en ' + hrs + ' h ' + mins + ' min';
+      }
+    }
+    tick();
+    var timer = setInterval(tick, 60000);
+  }
+
+  /* ---------- STICKY CTA MÓVIL ---------- */
+  var sticky = document.getElementById('stickyCta');
+  var hero = document.querySelector('.hero');
+  var precios = document.getElementById('precios');
+  var agenda = document.getElementById('agenda');
+  if(sticky && hero){
+    function updateSticky(){
+      if(window.innerWidth >= 720){ sticky.classList.remove('show'); return; }
+      var pastHero = (hero.getBoundingClientRect().bottom < 0);
+      // ocultar cuando el usuario está sobre precios o calendario (CTA nativo grande ahí)
+      var overNative = false;
+      [precios, agenda].forEach(function(sec){
+        if(!sec) return;
+        var r = sec.getBoundingClientRect();
+        if(r.top < window.innerHeight*0.6 && r.bottom > window.innerHeight*0.15) overNative = true;
+      });
+      if(pastHero && !overNative){ sticky.classList.add('show'); sticky.setAttribute('aria-hidden','false'); }
+      else{ sticky.classList.remove('show'); sticky.setAttribute('aria-hidden','true'); }
+    }
+    var ticking=false;
+    window.addEventListener('scroll', function(){
+      if(!ticking){ window.requestAnimationFrame(function(){updateSticky();ticking=false;}); ticking=true; }
+    }, {passive:true});
+    window.addEventListener('resize', updateSticky);
+    updateSticky();
+  }
+
+  /* ---------- ANALÍTICA DE CTA (doble camino) ---------- */
+  // Gancho listo para GA/Plausible/etc. Distingue 'probar' vs 'agendar'.
+  document.querySelectorAll('[data-cta]').forEach(function(el){
+    el.addEventListener('click', function(){
+      var evt = { action: el.getAttribute('data-cta'), plan: el.getAttribute('data-plan') };
+      // SWAP-ANALYTICS: enchufar aquí gtag/plausible. Ej: window.plausible && plausible('cta', {props:evt});
+      if(window.dataLayer){ window.dataLayer.push({event:'cta_click', cta_action:evt.action, cta_plan:evt.plan}); }
+    });
+  });
+})();
+</script>
+</body>
+</html>
