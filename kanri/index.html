@@ -4,173 +4,372 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Kanri 管理 — De la cotización al cobro, todo tu taller bajo un solo techo</title>
-<meta name="description" content="ERP + CRM para tu taller, hecho en México. Cotizas, produces, controlas calidad, despachas, facturas CFDI y cobras en un solo lugar, con tu marca. Prueba 20 días sin tarjeta.">
+<meta name="description" content="ERP + CRM para tu negocio, hecho en México. Cotizas, produces, controlas calidad, despachas, facturas CFDI y cobras en un solo lugar, con tu marca. Prueba 20 días sin tarjeta.">
+<meta name="theme-color" content="#0E0C09">
+
+<!-- ============ FAVICON (balón datum · motivo ownable, sin assets externos) ============ -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230E0C09'/%3E%3Ccircle cx='16' cy='16' r='9' fill='none' stroke='%23E23A1E' stroke-width='2.4'/%3E%3Ctext x='16' y='20.5' font-family='monospace' font-size='9' font-weight='700' fill='%23E23A1E' text-anchor='middle'%3E01%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230E0C09'/%3E%3Ccircle cx='16' cy='16' r='9' fill='none' stroke='%23E23A1E' stroke-width='2.4'/%3E%3Ctext x='16' y='20.5' font-family='monospace' font-size='9' font-weight='700' fill='%23E23A1E' text-anchor='middle'%3E01%3C/text%3E%3C/svg%3E">
+
+<!-- ============ OPEN GRAPH / TWITTER (preview al compartir en WhatsApp) ============
+     NOTA: WhatsApp y varios crawlers NO renderizan og:image en data: URI; exigen
+     una URL http(s) absoluta. Al publicar en dominio real, subir esta misma tarjeta
+     como /og.png y cambiar el content= de og:image y twitter:image a esa URL absoluta
+     (ej: https://kanri.mx/og.png). El data: URI de abajo es el fallback self-contained. -->
+<meta name="twitter:image" content="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='630' viewBox='0 0 1200 630'%3E%3Crect width='1200' height='630' fill='%230E0C09'/%3E%3Crect width='1200' height='6' fill='%23E23A1E'/%3E%3Ctext x='86' y='330' font-family='Arial Black,sans-serif' font-size='120' font-weight='900' fill='%23F1E8D6'%3EKANRI 管理%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Kanri 管理">
+<meta property="og:title" content="Kanri 管理 — De la cotización al cobro, todo tu taller bajo un solo techo">
+<meta property="og:description" content="ERP + CRM hecho en México. Cotizas, produces, controlas calidad, facturas CFDI 4.0 y cobras en un solo lugar, con tu marca. 20 días sin tarjeta.">
+<meta property="og:locale" content="es_MX">
+<meta property="og:image" content="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='630' viewBox='0 0 1200 630'%3E%3Crect width='1200' height='630' fill='%230E0C09'/%3E%3Crect width='1200' height='6' fill='%23E23A1E'/%3E%3Cdefs%3E%3ClinearGradient id='b' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%238A6425'/%3E%3Cstop offset='.5' stop-color='%23E7C079'/%3E%3Cstop offset='1' stop-color='%238A6425'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ctext x='90' y='150' font-family='monospace' font-size='26' letter-spacing='6' fill='%23E23A1E'%3EERP + CRM · HECHO EN MEXICO%3C/text%3E%3Ctext x='86' y='300' font-family='Arial Black,sans-serif' font-size='120' font-weight='900' fill='%23F1E8D6'%3EKANRI%3C/text%3E%3Ctext x='690' y='300' font-family='sans-serif' font-size='120' font-weight='900' fill='url(%23b)'%3E管理%3C/text%3E%3Ctext x='90' y='400' font-family='sans-serif' font-size='40' font-weight='700' fill='%23B7AD9A'%3EDe la cotizacion al cobro, todo tu taller%3C/text%3E%3Ctext x='90' y='452' font-family='sans-serif' font-size='40' font-weight='700' fill='%23B7AD9A'%3Ebajo un solo techo.%3C/text%3E%3Ccircle cx='1050' cy='150' r='46' fill='none' stroke='%23E23A1E' stroke-width='5'/%3E%3Ctext x='1050' y='166' font-family='monospace' font-size='40' font-weight='700' fill='%23E23A1E' text-anchor='middle'%3E01%3C/text%3E%3Ctext x='90' y='560' font-family='monospace' font-size='24' letter-spacing='3' fill='%236B5F50'%3E17 MODULOS · CFDI 4.0 · 20 DIAS SIN TARJETA%3C/text%3E%3C/svg%3E">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Kanri 管理 — ERP + CRM hecho en México">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Kanri 管理 — Todo tu taller bajo un solo techo">
+<meta name="twitter:description" content="ERP + CRM hecho en México. De la cotización al cobro, con tu marca. 20 días sin tarjeta.">
 
 <!-- ============ FUENTES (Google Fonts, display=swap) ============ -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=Familjen+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Noto+Sans+JP:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@500;600;700;800;900&family=Familjen+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Noto+Sans+JP:wght@500;700;900&display=swap" rel="stylesheet">
 
 <style>
 /* ==================================================================
-   KANRI — LANDING · Sistema visual editorial-industrial
-   Cream + Negro + Rojo · motivo línea-roja "el techo"
+   KANRI — LANDING · "FORJADO EN ACERO"
+   Sistema visual LUXURY-INDUSTRIAL / RONIN
+   Cream editorial + acero negro profundo + rojo laca + bronce foil
+   Motivos: línea-techo · datum ISO · grano · malla de acero · chispa
    ================================================================== */
 
 :root{
-  /* --- BASE (heredado del gateway) --- */
-  --cream:#F0E7D4; --cream-deep:#E9DEC7; --cream-line:#D9CDB2;
-  --ink:#14110D; --ink-panel:#191510; --ink-soft:#4A433A; --ink-muted:#6A5F52;
-  /* --- ACENTO --- */
-  --red:#E63A20; --red-deep:#C22E17; --red-wash:#F6DACF;
-  /* --- sobre negro --- */
-  --on-ink:#F0E7D4; --on-ink-soft:#B8AF9E; --on-ink-line:#342E26;
+  /* --- BASE cream (el "papel" de lujo) --- */
+  --cream:#F1E8D6; --cream-deep:#E7DCC5; --cream-line:#D6C9AC; --cream-hi:#FBF5E9;
+  /* --- ACERO / negro profundo --- */
+  --ink:#0E0C09; --ink-panel:#14110C; --ink-panel-2:#1B1710;
+  --ink-soft:#463F35; --ink-muted:#6B5F50;
+  /* --- ROJO LACA (acento primario) --- */
+  --red:#E23A1E; --red-deep:#BB2C12; --red-wash:#F6D9CD; --red-glow:rgba(226,58,30,.42);
+  /* --- BRONCE / LATÓN (acento de lujo metálico) --- */
+  --bronze:#B98A3E; --bronze-hi:#E7C079; --bronze-deep:#8A6425; --bronze-wash:#EDE0C2;
+  /* --- sobre acero --- */
+  --on-ink:#F1E8D6; --on-ink-soft:#B7AD9A; --on-ink-line:#332C22; --on-ink-line-2:#26201A;
   --ok:#2F7D5B;
   /* --- fuentes --- */
-  --font-display:'Archivo','Arial Black',sans-serif;
+  --font-display:'Anton','Archivo','Arial Black',sans-serif;   /* condensada, forjada */
+  --font-heavy:'Archivo','Arial Black',sans-serif;             /* pesos intermedios */
   --font-body:'Familjen Grotesk',system-ui,sans-serif;
   --font-mono:'Space Mono','Courier New',monospace;
   --font-jp:'Noto Sans JP',sans-serif;
   /* --- escala tipográfica --- */
-  --t-display:clamp(2.6rem,7vw,5.5rem);
-  --t-h2:clamp(1.9rem,4.5vw,3.25rem);
-  --t-h3:clamp(1.35rem,2.5vw,1.875rem);
-  --t-lead:clamp(1.1rem,1.6vw,1.375rem);
+  --t-display:clamp(2.9rem,8vw,6.5rem);
+  --t-h2:clamp(2rem,4.8vw,3.6rem);
+  --t-h3:clamp(1.35rem,2.5vw,1.95rem);
+  --t-lead:clamp(1.1rem,1.6vw,1.4rem);
   --t-body:1.0625rem;
   --t-small:0.9375rem;
   --t-micro:0.8125rem;
   --t-kicker:0.75rem;
-  --t-price:clamp(2.4rem,4vw,3.5rem);
+  --t-price:clamp(2.6rem,4.4vw,3.9rem);
   /* --- layout --- */
   --maxw:1200px; --maxw-wide:1360px;
   --gutter:clamp(1.25rem,4vw,2.5rem); --col-gap:1.5rem;
   --s-1:.5rem; --s-2:.75rem; --s-3:1rem; --s-4:1.5rem;
   --s-5:2rem; --s-6:3rem; --s-7:4rem; --s-8:6rem;
-  --section-y:clamp(4rem,9vw,8rem);
+  --section-y:clamp(4.5rem,9.5vw,8.5rem);
+  /* --- gradientes/atmósfera reutilizables --- */
+  --steel-sheen:linear-gradient(135deg,#1C1811 0%,#0E0C09 42%,#171208 100%);
+  --bronze-foil:linear-gradient(100deg,var(--bronze-deep) 0%,var(--bronze-hi) 38%,var(--bronze) 55%,var(--bronze-hi) 74%,var(--bronze-deep) 100%);
+  --ease-out:cubic-bezier(.16,1,.3,1);
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 body{
   background:var(--cream); color:var(--ink);
-  font-family:var(--font-body); font-size:var(--t-body); line-height:1.6;
-  -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  font-family:var(--font-body); font-size:var(--t-body); line-height:1.62;
+  -webkit-font-smoothing:antialiased; overflow-x:hidden; position:relative;
 }
 img{max-width:100%;display:block}
 a{color:inherit;text-decoration:none}
-::selection{background:var(--red);color:var(--cream)}
+::selection{background:var(--red);color:var(--cream-hi)}
+
+/* ============ ATMÓSFERA GLOBAL (grano + malla cálida sobre el cream) ============ */
+body::before{ /* grano de película, fijo, sutil */
+  content:"";position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.05;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+body::after{ /* halos cálidos muy tenues para dar profundidad al papel */
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(60vw 50vw at 84% -8%, rgba(226,58,30,.05), transparent 60%),
+    radial-gradient(52vw 46vw at 6% 12%, rgba(185,138,62,.07), transparent 62%);
+}
+.site-header,main,.site-footer,.sticky-cta,.wa-float{position:relative;z-index:2}
 
 /* ---------- utilidades de layout ---------- */
 .wrap{max-width:var(--maxw);margin:0 auto;padding-inline:var(--gutter)}
 .wrap-wide{max-width:var(--maxw-wide);margin:0 auto;padding-inline:var(--gutter)}
-.section{padding-block:var(--section-y)}
+.section{padding-block:var(--section-y);position:relative}
 .section--roofed{border-top:3px solid var(--red)}
-/* --- seccion en naranja-rojo (full-bleed) para dar fluidez y cortar la sobriedad --- */
-.section--red{background:var(--red);color:#FFF4EE;width:100vw;margin-inline:calc(50% - 50vw)}
-.section--red > .wrap{max-width:var(--maxw);margin:0 auto;padding-inline:var(--gutter)}
+/* --- seccion en rojo laca (full-bleed) con textura de acero rojo --- */
+.section--red{
+  color:#FFF4EE;width:100vw;margin-inline:calc(50% - 50vw);position:relative;overflow:hidden;
+  background:
+    radial-gradient(120% 90% at 50% -10%, #F04A2A 0%, var(--red) 40%, var(--red-deep) 100%);
+}
+.section--red::before{ /* barrido diagonal metálico */
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background:linear-gradient(115deg,transparent 0%,rgba(255,255,255,.10) 44%,rgba(255,255,255,.16) 50%,rgba(255,255,255,.10) 56%,transparent 100%);
+}
+.section--red::after{ /* grano sobre el rojo */
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.10;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.section--red > .wrap{max-width:var(--maxw);margin:0 auto;padding-inline:var(--gutter);position:relative;z-index:1}
 .section--red .kicker{color:#FFFFFF}
 .section--red .kicker::after{background:#FFFFFF}
 .section--red .sec-title,.section--red .flow-step b{color:#FFFFFF}
 .section--red .flow-step .step-k{color:#FFFFFF;opacity:1;font-size:.8rem;letter-spacing:.14em}
 .section--red .lead,.section--red .muted,.section--red .small,.section--red .flow-close{color:#FFF4EE}
-.section--red .flow-dot,.section--red .flow-vline,.section--red .flow-line-h{background:#FFFFFF}
+.section--red .flow-dot{background:var(--bronze-hi);box-shadow:0 0 0 4px rgba(231,192,121,.22)}
+.section--red .flow-vline,.section--red .flow-line-h{background:linear-gradient(90deg,var(--bronze-hi),rgba(255,255,255,.85))}
 .section--red .hl{background:rgba(255,255,255,.92);color:var(--red-deep)}
 
 /* ---------- kicker + roof-line (firma) ---------- */
 .kicker{
   font-family:var(--font-mono); font-weight:700; font-size:var(--t-kicker);
-  text-transform:uppercase; letter-spacing:.18em; color:var(--red-deep);
+  text-transform:uppercase; letter-spacing:.2em; color:var(--red-deep);
+  display:inline-flex;align-items:center;gap:.55rem;
+}
+.kicker::before{ /* datum ISO en miniatura: círculo numerado del plano */
+  content:"";width:9px;height:9px;border-radius:50%;border:1.5px solid var(--red);
+  box-shadow:0 0 0 2.5px var(--cream),0 0 0 3.5px rgba(226,58,30,.25);flex:0 0 auto;
 }
 .roof-kicker::after{
-  content:"";display:block;width:48px;height:3px;background:var(--red);margin-top:var(--s-2);
+  content:"";display:block;width:56px;height:3px;margin-top:var(--s-2);
+  background:linear-gradient(90deg,var(--red),var(--bronze));
 }
 /* sobre negro el rojo puro sí pasa AA; sobre cream usamos red-deep */
 .on-ink .kicker{color:var(--red)}
+.on-ink .kicker::before{box-shadow:0 0 0 2.5px var(--ink-panel),0 0 0 3.5px rgba(226,58,30,.3)}
 
 /* ---------- tipografía ---------- */
-.display{font-family:var(--font-display);font-weight:900;line-height:.95;letter-spacing:-.02em}
+.display{font-family:var(--font-display);font-weight:400;line-height:.92;letter-spacing:.004em;text-transform:uppercase}
 h1.display{font-size:var(--t-display)}
 h2.sec-title{
-  font-family:var(--font-display);font-weight:800;font-size:var(--t-h2);
-  line-height:1.0;letter-spacing:-.015em;margin-block:var(--s-3) var(--s-4);max-width:20ch;
+  font-family:var(--font-display);font-weight:400;font-size:var(--t-h2);text-transform:uppercase;
+  line-height:.98;letter-spacing:.006em;margin-block:var(--s-3) var(--s-4);max-width:20ch;
 }
-.h3{font-family:var(--font-display);font-weight:700;font-size:var(--t-h3);line-height:1.1}
-.lead{font-size:var(--t-lead);line-height:1.5;color:var(--ink-soft);font-weight:500;max-width:60ch}
+.h3{font-family:var(--font-heavy);font-weight:800;font-size:var(--t-h3);line-height:1.1;letter-spacing:-.01em}
+.lead{font-size:var(--t-lead);line-height:1.52;color:var(--ink-soft);font-weight:500;max-width:60ch}
 .small{font-size:var(--t-small)}
 .micro{font-size:var(--t-micro);color:var(--ink-muted)}
 .muted{color:var(--ink-soft)}
 .hl{background:var(--red-wash);padding:.05em .28em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
 .txt-red{color:var(--red-deep)}
+/* texto con acabado bronce foil (para acentos de lujo puntuales) */
+.txt-foil{
+  background:var(--bronze-foil);-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:var(--bronze-deep);
+}
 
-/* ---------- botones ---------- */
+/* ---------- botones (magnéticos, con barrido metálico) ---------- */
 .btn{
   font-family:var(--font-body);font-weight:700;font-size:1.0625rem;
-  padding:1rem 1.75rem;border-radius:0;cursor:pointer;border:2px solid var(--ink);
+  padding:1.05rem 1.85rem;border-radius:0;cursor:pointer;border:2px solid var(--ink);
   display:inline-flex;align-items:center;gap:.625rem;justify-content:center;
-  transition:transform .18s ease,background .18s ease,box-shadow .18s ease,color .18s ease;
-  letter-spacing:-.005em;line-height:1.15;text-align:center;
+  transition:transform .3s var(--ease-out),background .22s ease,box-shadow .3s var(--ease-out),color .22s ease,border-color .22s ease;
+  letter-spacing:-.005em;line-height:1.15;text-align:center;position:relative;overflow:hidden;
+  will-change:transform;
 }
+.btn::after{ /* barrido de luz al hover (brushed metal) */
+  content:"";position:absolute;top:0;left:-120%;width:60%;height:100%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.28),transparent);
+  transform:skewX(-18deg);transition:left .55s var(--ease-out);pointer-events:none;
+}
+.btn:hover::after{left:150%}
 .btn:focus-visible{outline:3px solid var(--red);outline-offset:3px}
-.btn--primary{background:var(--ink);color:var(--cream)}
-.btn--primary:hover{transform:translateY(-2px);box-shadow:4px 4px 0 var(--red)}
+.btn--primary{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+.btn--primary:hover{transform:translateY(-3px);box-shadow:6px 7px 0 var(--red),0 12px 30px -10px rgba(226,58,30,.5)}
 .btn--secondary{background:transparent;color:var(--ink)}
-.btn--secondary:hover{background:var(--ink);color:var(--cream)}
+.btn--secondary:hover{background:var(--ink);color:var(--cream);transform:translateY(-3px);box-shadow:6px 7px 0 var(--bronze)}
 .on-ink .btn--primary{background:var(--cream);color:var(--ink);border-color:var(--cream)}
-.on-ink .btn--primary:hover{box-shadow:4px 4px 0 var(--red)}
+.on-ink .btn--primary:hover{box-shadow:6px 7px 0 var(--red),0 12px 30px -10px rgba(226,58,30,.55)}
+.btn--wa,.on-ink .btn--wa{background:#25D366;color:#06331F;border-color:#25D366}
+.btn--wa:hover{transform:translateY(-3px);box-shadow:6px 7px 0 #075E54,0 12px 30px -10px rgba(37,211,102,.55)}
 .on-ink .btn--secondary{color:var(--on-ink);border-color:var(--on-ink)}
-.on-ink .btn--secondary:hover{background:var(--cream);color:var(--ink)}
+.on-ink .btn--secondary:hover{background:var(--cream);color:var(--ink);box-shadow:6px 7px 0 var(--bronze)}
 .cta-row{display:flex;flex-wrap:wrap;gap:var(--s-3);margin-top:var(--s-5)}
 
-/* ---------- cards ---------- */
+/* ---------- cards (papel de lujo con filo de acero + shimmer) ---------- */
 .card{
-  background:var(--cream);border:1.5px solid var(--ink);border-radius:0;padding:var(--s-5);
-  transition:transform .2s ease,box-shadow .2s ease;
+  background:linear-gradient(158deg,var(--cream-hi),var(--cream) 55%,var(--cream-deep));
+  border:1.5px solid var(--ink);border-radius:0;padding:var(--s-5);position:relative;overflow:hidden;
+  transition:transform .32s var(--ease-out),box-shadow .32s var(--ease-out),border-color .25s ease;
 }
-.card:hover{transform:translateY(-3px);box-shadow:5px 5px 0 var(--ink)}
-.on-ink .card{background:var(--ink-panel);border-color:var(--on-ink-line);color:var(--on-ink)}
+.card::before{ /* filo bronce que se enciende al hover */
+  content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--bronze-foil);transform:scaleY(0);transform-origin:top;
+  transition:transform .38s var(--ease-out);
+}
+.card:hover{transform:translateY(-5px);box-shadow:7px 8px 0 var(--ink),0 20px 40px -22px rgba(14,12,9,.6);border-color:var(--ink)}
+.card:hover::before{transform:scaleY(1)}
+.on-ink .card{background:linear-gradient(158deg,var(--ink-panel-2),var(--ink-panel) 60%);border-color:var(--on-ink-line);color:var(--on-ink)}
+.on-ink .card:hover{box-shadow:7px 8px 0 #000,0 20px 44px -20px rgba(0,0,0,.8)}
 
-/* ---------- header ---------- */
+/* ---------- header (acero esmerilado, blur) ---------- */
 .site-header{
-  position:sticky;top:0;z-index:60;background:var(--cream);
-  border-bottom:1px solid var(--cream-line);
+  position:sticky;top:0;z-index:60;
+  background:linear-gradient(to bottom,rgba(241,232,214,.94),rgba(241,232,214,.82));
+  backdrop-filter:saturate(150%) blur(12px);-webkit-backdrop-filter:saturate(150%) blur(12px);
+  border-bottom:1px solid var(--cream-line);transition:box-shadow .3s ease,border-color .3s ease;
 }
-.site-header .wrap{display:flex;align-items:center;justify-content:space-between;padding-block:var(--s-3)}
-.brand{display:flex;align-items:baseline;gap:.4rem;font-family:var(--font-display);font-weight:900;font-size:1.5rem;letter-spacing:-.03em}
-.brand .jp{font-family:var(--font-jp);font-weight:700;font-size:1.05rem;color:var(--red)}
+.site-header.scrolled{box-shadow:0 10px 30px -18px rgba(14,12,9,.5);border-bottom-color:var(--bronze)}
+.site-header::after{ /* hilo rojo-bronce inferior, la "línea techo" */
+  content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;
+  background:linear-gradient(90deg,var(--red) 0%,var(--red) 22%,transparent 22%);opacity:.9;
+}
+.site-header .wrap{display:flex;align-items:center;justify-content:space-between;padding-block:var(--s-3);position:relative;z-index:1}
+.brand{display:flex;align-items:baseline;gap:.4rem;font-family:var(--font-display);font-weight:400;font-size:1.7rem;letter-spacing:.02em;text-transform:uppercase}
+.brand .jp{font-family:var(--font-jp);font-weight:900;font-size:1.05rem;color:var(--red);text-transform:none}
 .header-cta{display:none}
-@media(min-width:720px){.header-cta{display:inline-flex;padding:.65rem 1.15rem;font-size:.95rem}}
+@media(min-width:720px){.header-cta{display:inline-flex;padding:.7rem 1.2rem;font-size:.95rem}}
 
-/* ======================= SVG helpers (íconos trazo) ======================= */
-.ic{width:32px;height:32px;stroke:var(--ink);stroke-width:1.75;fill:none;stroke-linecap:round;stroke-linejoin:round;display:block}
+/* ======================= SVG helpers (íconos trazo industrial) ======================= */
+/* trazo más grueso + junta a inglete (miter) = lenguaje técnico de plano, no line-icon stock */
+.ic{width:32px;height:32px;stroke:var(--ink);stroke-width:2;fill:none;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;display:block}
 .ic--red{stroke:var(--red)}
+/* íconos de los 5 pilares: caja de plano con cotas + datum (lenguaje propio) */
+.ic-tech{width:44px;height:44px;stroke-width:1.6;stroke:var(--ink);fill:none;stroke-linecap:square;stroke-linejoin:miter;display:block}
+.ic-tech .cota{stroke:var(--red);stroke-width:1.4}
+.ic-tech .datum{fill:var(--red);stroke:none}
+.ic-tech .datum-ring{stroke:var(--red);stroke-width:1.6;fill:none}
+.pain-card:hover .ic-tech,.pain-card:hover .ic-tech .cota,.pain-card:hover .ic-tech .datum-ring{stroke:var(--bronze-deep);transition:stroke .3s ease}
+.pain-card:hover .ic-tech .datum{fill:var(--bronze-deep);transition:fill .3s ease}
+.ic-tech .cota,.ic-tech .datum-ring,.ic-tech{transition:stroke .3s ease}
 .on-ink .ic{stroke:var(--on-ink)}
+/* al hover de card, el ícono rojo vira a bronce brillante */
+.card:hover .ic--red{stroke:var(--bronze-deep)}
+.on-ink .card:hover .ic--red{stroke:var(--bronze-hi)}
+.card .ic--red,.card:hover .ic--red{transition:stroke .3s ease}
 
 /* ======================= HERO ======================= */
-.hero{padding-block:clamp(3rem,7vw,6rem) var(--section-y)}
+.hero{
+  padding-block:clamp(3.5rem,8vw,7rem) var(--section-y);position:relative;overflow:hidden;
+}
+.hero::before{ /* malla de acero + blueprint grid como atmósfera del hero */
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.5;
+  background-image:
+    linear-gradient(var(--cream-line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--cream-line) 1px,transparent 1px);
+  background-size:44px 44px;
+  -webkit-mask-image:radial-gradient(120% 80% at 78% 30%,#000 0%,transparent 62%);
+          mask-image:radial-gradient(120% 80% at 78% 30%,#000 0%,transparent 62%);
+}
+.hero > .hero-grid{position:relative;z-index:1}
 .hero-grid{display:grid;gap:var(--s-6);align-items:center}
 @media(min-width:920px){.hero-grid{grid-template-columns:7fr 5fr;gap:var(--s-7)}}
-.hero h1{margin-block:var(--s-4) var(--s-4);max-width:16ch}
+/* H1: usa la escala display forjada, capada para el ancho de la columna 7fr */
+.hero h1{margin-block:var(--s-4) var(--s-4);max-width:15ch;font-size:clamp(2.5rem,5.6vw,4.7rem);line-height:.96;letter-spacing:-.005em}
+/* palabra clave del H1 en foil bronce (se aplica vía <em> inyectado por JS, con fallback) */
+.hero h1 em{font-style:normal;background:var(--bronze-foil);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .hero .lead{margin-bottom:var(--s-2)}
 .trust-line{
   font-family:var(--font-mono);font-size:var(--t-micro);color:var(--ink-muted);
   margin-top:var(--s-4);display:flex;flex-wrap:wrap;gap:.4rem .9rem;letter-spacing:.02em;
 }
-.trust-line span{white-space:nowrap}
+.trust-line span{white-space:nowrap;display:inline-flex;align-items:center;gap:.5rem}
+.trust-line span::before{content:"";width:5px;height:5px;background:var(--bronze);transform:rotate(45deg)}
+.trust-line span[aria-hidden]::before{display:none}
 .hero-micro{margin-top:var(--s-4)}
-/* gráfico K + calibrador */
-.hero-art{position:relative;aspect-ratio:1/1;max-width:420px;margin-inline:auto;width:100%}
-.hero-art svg{width:100%;height:100%}
+.trust-line span::after{display:none}
+/* datum-balón antes de cada prueba dura (motivo ownable) */
+.trust-line span{position:relative;padding-left:1.05rem}
+.trust-line span::before{content:"";position:absolute;left:0;top:50%;transform:translateY(-50%) rotate(0deg);width:8px;height:8px;border-radius:50%;border:1.5px solid var(--bronze);background:transparent}
+
+/* ---------- ARTE DEL HERO · mockup de producto (cotización con marca) ---------- */
+.hero-art{position:relative;width:100%;max-width:480px;margin-inline:auto;perspective:1400px}
+.hero-mock{
+  position:relative;background:var(--steel-sheen);border:2px solid var(--ink);
+  box-shadow:12px 14px 0 rgba(14,12,9,.22),0 34px 60px -30px rgba(14,12,9,.7);
+  transform:rotateY(-8deg) rotateX(2.5deg);transform-origin:center;
+  transition:transform .5s var(--ease-out);will-change:transform;
+}
+@media(min-width:920px){.hero-mock:hover{transform:rotateY(-3deg) rotateX(1deg) translateY(-4px)}}
+.mock-bar{display:flex;align-items:center;gap:.4rem;padding:.55rem .8rem;border-bottom:1px solid var(--on-ink-line);background:var(--ink-panel-2)}
+.mock-dot{width:9px;height:9px;border-radius:50%;background:var(--ink-soft);flex:0 0 auto}
+.mock-dot:first-child{background:var(--red)}
+.mock-dot:nth-child(2){background:var(--bronze)}
+.mock-url{margin-left:.5rem;font-family:var(--font-mono);font-size:.66rem;letter-spacing:.03em;color:var(--on-ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mock-screen{position:relative;padding:clamp(.9rem,2.6vw,1.4rem);background:linear-gradient(160deg,var(--cream-hi),var(--cream) 60%,var(--cream-deep))}
+.mock-quote{color:var(--ink)}
+.mq-head{display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem;border-bottom:2px solid var(--ink);padding-bottom:.55rem;margin-bottom:.6rem}
+.mq-brand{font-family:var(--font-display);font-weight:400;font-size:clamp(.95rem,2.6vw,1.15rem);letter-spacing:.005em;text-transform:uppercase;line-height:1}
+.mq-brand small{display:block;font-family:var(--font-mono);font-weight:400;font-size:.58rem;letter-spacing:.04em;color:var(--red-deep);text-transform:none;margin-top:.28rem}
+.mq-datum{flex:0 0 auto;width:1.9rem;height:1.9rem;border:2px solid var(--red);border-radius:50%;color:var(--red);font-family:var(--font-mono);font-weight:700;font-size:.72rem;display:flex;align-items:center;justify-content:center}
+.mq-rows{display:flex;flex-direction:column}
+.mq-row,.mq-total{display:flex;justify-content:space-between;gap:1rem;font-size:.78rem;padding:.3rem 0;border-bottom:1px solid var(--cream-line)}
+.mq-row span{color:var(--ink-soft)}
+.mq-row b,.mq-total b{font-family:var(--font-mono);font-weight:700}
+.mq-total{border-bottom:none;border-top:1.5px solid var(--ink);margin-top:.15rem;padding-top:.45rem;font-size:.9rem}
+.mq-total span{font-family:var(--font-heavy);font-weight:800}
+.mq-margin{display:flex;align-items:center;gap:.5rem;margin-top:.7rem;padding-top:.6rem;border-top:1px dashed var(--cream-line)}
+.mq-margin-lbl{font-family:var(--font-mono);font-size:.58rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-muted);white-space:nowrap}
+.mq-margin-bar{flex:1;height:7px;background:var(--cream-deep);border:1px solid var(--cream-line);position:relative;overflow:hidden}
+.mq-margin-bar i{position:absolute;left:0;top:0;bottom:0;display:block;background:linear-gradient(90deg,var(--red),var(--bronze));transform-origin:left}
+.js .mq-margin-bar i{transform:scaleX(0);animation:mqFill 1.1s var(--ease-out) .9s forwards}
+@keyframes mqFill{to{transform:scaleX(1)}}
+.mq-margin-val{font-family:var(--font-mono);font-weight:700;font-size:.8rem;color:var(--red-deep)}
+/* calibrador que recorre midiendo (loop vivo) */
+.mock-caliper{width:100%;height:26px;margin-top:.5rem;display:block}
+.mock-caliper .cal-rail{stroke:var(--ink-muted);stroke-width:1.5}
+.mock-caliper .cal-tick{stroke:var(--ink);stroke-width:2}
+.mock-caliper .cal-jaw-line{stroke:var(--red);stroke-width:2}
+.mock-caliper .cal-jaw-dot{fill:var(--red)}
+.js .mock-caliper .cal-jaw{animation:calSlide 4.6s var(--ease-out) infinite}
+@keyframes calSlide{0%,8%{transform:translateX(8px)}46%,54%{transform:translateX(96px)}92%,100%{transform:translateX(8px)}}
+.mock-chip{
+  position:absolute;right:-.6rem;bottom:-.9rem;background:var(--ink);color:var(--bronze-hi);
+  font-family:var(--font-mono);font-weight:700;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;
+  padding:.45rem .7rem;border:1.5px solid var(--bronze);box-shadow:3px 3px 0 var(--red);
+}
+@media(max-width:919px){.hero-art{max-width:400px;margin-top:var(--s-2)}.hero-mock{transform:none}}
+@media(prefers-reduced-motion:reduce){
+  .hero-mock{transform:none}
+  .js .mq-margin-bar i{animation:none;transform:scaleX(1)}
+  .js .mock-caliper .cal-jaw{animation:none;transform:translateX(52px)}
+}
 
 /* ======================= DOLOR ======================= */
 .pain-grid{display:grid;gap:var(--s-4);margin-top:var(--s-6)}
 @media(min-width:640px){.pain-grid{grid-template-columns:1fr 1fr}}
 @media(min-width:640px){.pain-grid .pain-card:nth-child(5):last-child{grid-column:1 / -1}}
 .pain-card .ic{margin-bottom:var(--s-3)}
-.pain-card b{display:block;font-family:var(--font-display);font-weight:700;font-size:1.15rem;margin-bottom:.35rem}
+.pain-card b{display:block;font-family:var(--font-heavy);font-weight:800;font-size:1.18rem;margin-bottom:.35rem;letter-spacing:-.01em}
 .pain-close{
-  margin-top:var(--s-6);font-family:var(--font-display);font-weight:700;
-  font-size:clamp(1.25rem,2.2vw,1.7rem);line-height:1.3;max-width:60ch;
+  margin-top:var(--s-6);font-family:var(--font-heavy);font-weight:800;
+  font-size:clamp(1.3rem,2.3vw,1.8rem);line-height:1.28;max-width:60ch;letter-spacing:-.015em;
 }
+/* --- 5 PILARES: tarjetas de acero sobre cream (diferenciadas de los beneficios) --- */
+.pilares-sec .pain-card{
+  background:var(--steel-sheen);border:1.5px solid var(--ink);color:var(--on-ink);overflow:hidden;position:relative;
+}
+.pilares-sec .pain-card::after{ /* grano tenue sobre el acero de cada pilar */
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.05;mix-blend-mode:screen;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.pilares-sec .pain-card > *{position:relative;z-index:1}
+.pilares-sec .pain-card b{color:var(--on-ink)}
+.pilares-sec .pain-card .muted{color:var(--on-ink-soft)}
+.pilares-sec .pain-card:hover{box-shadow:7px 8px 0 #000,0 22px 44px -20px rgba(0,0,0,.8)}
+.pilares-sec .ic-tech{stroke:var(--bronze-hi)}
+.pilares-sec .ic-tech .cota,.pilares-sec .ic-tech .datum-ring{stroke:var(--red)}
+.pilares-sec .ic-tech .datum{fill:var(--red)}
+.pilares-sec .pain-card:hover .ic-tech{stroke:var(--bronze-hi)}
+.pilares-sec .pain-card:hover .ic-tech .cota,.pilares-sec .pain-card:hover .ic-tech .datum-ring{stroke:var(--bronze-hi)}
+.pilares-sec .pain-card:hover .ic-tech .datum{fill:var(--bronze-hi)}
 
 /* ======================= FLUJO / TECHO ======================= */
 .flow{margin-top:var(--s-7)}
@@ -178,15 +377,15 @@ h2.sec-title{
 .flow-line-h{display:none}
 .flow-node{display:flex;gap:var(--s-4);align-items:flex-start;position:relative;padding-bottom:var(--s-5)}
 .flow-rail{display:flex;flex-direction:column;align-items:center;flex:0 0 auto}
-.flow-dot{width:20px;height:20px;background:var(--red);transform:rotate(45deg);flex:0 0 auto;margin-top:4px}
-.flow-vline{width:3px;flex:1;background:var(--red);transform-origin:top;margin-top:6px}
+.flow-dot{width:20px;height:20px;background:var(--red);transform:rotate(45deg);flex:0 0 auto;margin-top:4px;box-shadow:0 0 0 5px rgba(226,58,30,.14)}
+.flow-vline{width:3px;flex:1;background:linear-gradient(var(--red),var(--bronze));transform-origin:top;margin-top:6px}
 .flow-node:last-child .flow-vline{display:none}
 .flow-step .step-k{font-family:var(--font-mono);font-weight:700;font-size:var(--t-kicker);letter-spacing:.16em;color:var(--red-deep);text-transform:uppercase}
-.flow-step b{display:block;font-family:var(--font-display);font-weight:700;font-size:1.2rem;margin:.2rem 0 .3rem}
+.flow-step b{display:block;font-family:var(--font-heavy);font-weight:800;font-size:1.22rem;margin:.2rem 0 .3rem;letter-spacing:-.01em}
 .flow-close{margin-top:var(--s-5);font-weight:500;color:var(--ink-soft);font-size:var(--t-lead)}
 @media(min-width:920px){
   .flow-track{flex-direction:row;justify-content:space-between;gap:var(--s-3)}
-  .flow-line-h{display:block;position:absolute;top:10px;left:6%;right:6%;height:3px;background:var(--red);transform-origin:left;z-index:0}
+  .flow-line-h{display:block;position:absolute;top:10px;left:6%;right:6%;height:3px;background:linear-gradient(90deg,var(--red),var(--bronze),var(--red));transform-origin:left;z-index:0}
   .flow-node{flex-direction:column;align-items:flex-start;flex:1;padding-bottom:0;gap:var(--s-3);z-index:1}
   .flow-rail{flex-direction:row}
   .flow-dot{margin-top:0}
@@ -216,17 +415,65 @@ h2.sec-title{
 
 /* ======================= MÓDULOS ======================= */
 .benefit-grid{display:grid;gap:var(--s-4);margin-top:var(--s-6)}
+.edu-wrap{max-width:72ch;margin-top:var(--s-5)}
+.edu-lead{font-family:var(--font-heavy);font-weight:500;font-size:clamp(1.1rem,2.1vw,1.45rem);line-height:1.5;letter-spacing:-.005em;color:var(--ink)}
+.edu-punch{font-family:var(--font-display);font-weight:400;text-transform:uppercase;font-size:clamp(1.6rem,4.4vw,2.7rem);line-height:1.02;letter-spacing:.004em;margin-top:var(--s-4);color:var(--ink)}
+.edu-foil{background:var(--bronze-foil);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.edu-note{margin-top:var(--s-5);padding-top:var(--s-4);border-top:1px solid var(--cream-line);font-size:.98rem;line-height:1.6;color:var(--ink-muted);max-width:64ch}
+.edu-sig{font-family:var(--font-mono);font-weight:700;font-size:.82em;letter-spacing:.05em;color:var(--red-deep)}
 @media(min-width:640px){.benefit-grid{grid-template-columns:1fr 1fr}}
 .benefit .ic{margin-bottom:var(--s-3)}
-.benefit b{display:block;font-family:var(--font-display);font-weight:700;font-size:1.1rem;margin-bottom:.3rem}
+.benefit b{display:block;font-family:var(--font-heavy);font-weight:800;font-size:1.12rem;margin-bottom:.3rem;letter-spacing:-.01em}
+
+/* ======================= ASPIRACIÓN · "OPERA TU TALLER COMO LOS GRANDES" =======================
+   Tratamiento limpio y respirado (cream + acentos rojos puntuales), sin rojo full-bleed. */
+.aspira{position:relative}
+.aspira .sec-title{max-width:24ch}
+.aspira-intro{max-width:70ch;margin-top:var(--s-4);color:var(--ink-soft);font-size:var(--t-lead);line-height:1.55}
+.aspira-grid{display:grid;gap:var(--s-4);margin-top:var(--s-7)}
+@media(min-width:820px){.aspira-grid{grid-template-columns:1fr 1fr}}
+/* tarjeta editorial limpia: papel cream + filo bronce al hover + micro-título mono */
+.aspira-card{
+  background:linear-gradient(158deg,var(--cream-hi),var(--cream) 60%,var(--cream-deep));
+  border:1.5px solid var(--cream-line);border-radius:0;padding:var(--s-5);position:relative;overflow:hidden;
+  transition:transform .32s var(--ease-out),box-shadow .32s var(--ease-out),border-color .25s ease;
+}
+.aspira-card::before{ /* filo rojo laca que se enciende al hover (acento puntual) */
+  content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--red);
+  transform:scaleY(0);transform-origin:top;transition:transform .38s var(--ease-out);
+}
+.aspira-card:hover{transform:translateY(-5px);box-shadow:7px 8px 0 var(--ink),0 20px 40px -22px rgba(14,12,9,.55);border-color:var(--ink)}
+.aspira-card:hover::before{transform:scaleY(1)}
+/* datum ISO discreto arriba a la derecha (motivo ownable, sin balón pesado) */
+.aspira-card .ac-datum{
+  position:absolute;top:var(--s-4);right:var(--s-4);font-family:var(--font-mono);font-weight:700;
+  font-size:var(--t-micro);color:var(--red);opacity:.55;letter-spacing:.04em;transition:opacity .3s ease;
+}
+.aspira-card:hover .ac-datum{opacity:1}
+.aspira-card .ac-micro{
+  display:block;font-family:var(--font-mono);font-weight:700;font-size:var(--t-micro);
+  text-transform:uppercase;letter-spacing:.12em;color:var(--red-deep);margin-bottom:var(--s-2);
+}
+.aspira-card b{
+  display:block;font-family:var(--font-heavy);font-weight:800;font-size:1.22rem;
+  margin-bottom:.5rem;letter-spacing:-.014em;line-height:1.16;max-width:22ch;
+}
+.aspira-card .muted{color:var(--ink-soft)}
+/* remate aspiracional + CTA, centrado y aireado */
+.aspira-remate{
+  text-align:center;max-width:62ch;margin:var(--s-7) auto 0;font-family:var(--font-heavy);
+  font-weight:800;font-size:clamp(1.25rem,2.2vw,1.72rem);line-height:1.32;letter-spacing:-.012em;color:var(--ink);
+}
+.aspira-cta{display:flex;justify-content:center;margin-top:var(--s-5)}
 
 /* ======================= GIROS ======================= */
 .giros{display:flex;flex-wrap:wrap;gap:var(--s-2);margin-top:var(--s-5)}
 .chip{
-  border:1.5px solid var(--red-deep);padding:.6rem 1rem;font-weight:600;font-size:var(--t-small);
-  background:var(--red);color:#FFF4EE;transition:background .12s,color .12s,box-shadow .12s,border-color .12s;
+  border:1.5px solid var(--red-deep);padding:.62rem 1.05rem;font-weight:600;font-size:var(--t-small);
+  background:linear-gradient(135deg,#EE482C,var(--red-deep));color:#FFF4EE;
+  transition:transform .25s var(--ease-out),background .18s,color .18s,box-shadow .25s var(--ease-out),border-color .18s;
 }
-.chip:hover,.chip:focus-visible{background:var(--ink);color:var(--cream);border-color:var(--ink);box-shadow:3px 3px 0 var(--red)}
+.chip:hover,.chip:focus-visible{background:var(--ink);color:var(--cream);border-color:var(--ink);box-shadow:4px 4px 0 var(--bronze);transform:translateY(-2px)}
 .hero-grid--solo{grid-template-columns:1fr!important;max-width:900px}
 .site-nav{display:flex;gap:1.6rem;align-items:center}
 .site-nav a{color:var(--ink);text-decoration:none;font-weight:600;font-size:.9rem;border-bottom:2px solid transparent;padding-bottom:2px;transition:border-color .12s}
@@ -236,17 +483,38 @@ h2.sec-title{
 .chip--focus::before{content:"";position:absolute;inset:-4px -4px auto auto;width:0}
 .chip--focus{box-shadow:3px 3px 0 var(--red)}
 
+/* --- lista de módulos restantes (nombre + descripción corta) --- */
+.modlist{display:grid;gap:0;margin-top:var(--s-4);border-top:1px solid var(--cream-line)}
+@media(min-width:620px){.modlist{grid-template-columns:1fr 1fr;column-gap:var(--s-5)}}
+@media(min-width:980px){.modlist{grid-template-columns:1fr 1fr 1fr;column-gap:var(--s-5)}}
+.modlist-item{display:flex;gap:.6rem;align-items:flex-start;padding:.7rem 0;border-bottom:1px solid var(--cream-line)}
+.modlist-item .dot{flex:0 0 auto;width:8px;height:8px;background:var(--bronze);transform:rotate(45deg);margin-top:.5rem;transition:background .2s ease,transform .2s ease}
+.modlist-item:hover .dot{background:var(--red);transform:rotate(45deg) scale(1.25)}
+.modlist-item b{font-family:var(--font-heavy);font-weight:800;font-size:1.02rem;line-height:1.25;display:block;letter-spacing:-.01em}
+.modlist-item span{display:block;font-size:var(--t-micro);color:var(--ink-soft);line-height:1.4;margin-top:.1rem}
+
 /* ======================= BONUS (3 columnas) ======================= */
 .bonus-grid{display:grid;gap:var(--s-4);margin-top:var(--s-6)}
 @media(min-width:820px){.bonus-grid{grid-template-columns:repeat(3,1fr)}}
 .bonus-col .ic{margin-bottom:var(--s-3)}
-.bonus-col h3{font-family:var(--font-display);font-weight:800;font-size:1.25rem;margin-bottom:var(--s-3)}
+.bonus-col h3{font-family:var(--font-display);font-weight:400;font-size:1.5rem;margin-bottom:var(--s-3);text-transform:uppercase;letter-spacing:.01em}
 .bonus-col ul{list-style:none;display:flex;flex-direction:column;gap:var(--s-3)}
 .bonus-col li{display:flex;gap:.6rem;font-size:var(--t-small);line-height:1.45}
 .check{flex:0 0 auto;width:20px;height:20px;stroke:var(--red);stroke-width:2.4;fill:none;margin-top:2px}
 
-/* ======================= WHITE-LABEL (panel negro) ======================= */
-.panel-ink{background:var(--ink-panel);color:var(--on-ink);border-top:3px solid var(--red)}
+/* ======================= WHITE-LABEL (panel de acero) ======================= */
+.panel-ink{background:var(--steel-sheen);color:var(--on-ink);border-top:3px solid var(--red);position:relative;overflow:hidden}
+.panel-ink::before{ /* halo bronce + blueprint tenue */
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.6;
+  background:
+    radial-gradient(60vw 50vw at 88% 8%, rgba(185,138,62,.14), transparent 60%),
+    radial-gradient(50vw 40vw at 4% 96%, rgba(226,58,30,.12), transparent 62%);
+}
+.panel-ink::after{ /* grano sobre el acero */
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.06;mix-blend-mode:screen;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.panel-ink > *{position:relative;z-index:1}
 .panel-ink .lead{color:var(--on-ink-soft)}
 .wl-grid{display:grid;gap:var(--s-6);align-items:center;margin-top:var(--s-6)}
 @media(min-width:900px){.wl-grid{grid-template-columns:1fr 1fr}}
@@ -256,37 +524,90 @@ h2.sec-title{
 /* mock PDFs */
 .pdf-compare{display:grid;gap:var(--s-4);grid-template-columns:1fr;align-items:start}
 @media(min-width:520px){.pdf-compare{grid-template-columns:1.15fr .85fr}}
-.pdf{background:var(--cream);color:var(--ink);padding:var(--s-4);border:1px solid var(--cream-line);font-size:.72rem;line-height:1.4}
-.pdf-brand{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--ink);padding-bottom:.5rem;margin-bottom:.6rem}
-.pdf-logo{font-family:var(--font-display);font-weight:900;font-size:.95rem;letter-spacing:-.02em}
-.pdf-logo small{display:block;font-family:var(--font-body);font-weight:500;font-size:.6rem;letter-spacing:.05em;color:var(--ink-soft)}
-.pdf-tag{font-family:var(--font-mono);font-size:.6rem;color:var(--red-deep)}
+.pdf{background:#FCFAF4;color:var(--ink);padding:var(--s-5) var(--s-4);border:1px solid var(--cream-line);font-size:.74rem;line-height:1.45;position:relative;
+  box-shadow:0 2px 0 rgba(14,12,9,.06),0 18px 34px -20px rgba(14,12,9,.55);}
+.pdf::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--red-deep)}
+.pdf-brand{display:flex;align-items:flex-start;justify-content:space-between;gap:.8rem;border-bottom:2px solid var(--ink);padding-bottom:.6rem;margin-bottom:.7rem}
+.pdf-logo{font-family:var(--font-display);font-weight:400;font-size:1.15rem;letter-spacing:.005em;text-transform:uppercase;line-height:1}
+.pdf-logo small{display:block;font-family:var(--font-mono);font-weight:400;font-size:.58rem;letter-spacing:.03em;color:var(--ink-soft);text-transform:none;margin-top:.32rem}
+.pdf-tag{font-family:var(--font-mono);font-weight:700;font-size:.62rem;color:var(--red-deep);text-align:right;white-space:nowrap}
+.pdf-tag small{display:block;font-weight:400;font-size:.56rem;color:var(--ink-muted);margin-top:.18rem}
 .pdf table{width:100%;border-collapse:collapse;margin:.5rem 0}
-.pdf td{padding:.22rem 0;border-bottom:1px solid var(--cream-line)}
-.pdf td:last-child{text-align:right;font-family:var(--font-mono)}
-.pdf-foot{margin-top:.6rem;font-size:.62rem;color:var(--ink-soft);border-top:1px solid var(--cream-line);padding-top:.4rem}
-.pdf--off{opacity:.42;position:relative;filter:grayscale(1)}
+.pdf td{padding:.28rem 0;border-bottom:1px solid var(--cream-line)}
+.pdf td:last-child{text-align:right;font-family:var(--font-mono);font-weight:700}
+.pdf tr:last-child td{border-bottom:none;border-top:1.5px solid var(--ink);padding-top:.4rem}
+.pdf-foot{margin-top:.7rem;font-size:.62rem;color:var(--ink-soft);border-top:1px solid var(--cream-line);padding-top:.5rem;display:flex;align-items:center;justify-content:space-between;gap:.6rem}
+.pdf-seal{flex:0 0 auto;display:flex;align-items:center;gap:.5rem}
+.pdf-qr{width:34px;height:34px;flex:0 0 auto;background:#fff;border:1px solid var(--ink);padding:2px}
+.pdf-qr svg{width:100%;height:100%;display:block}
+.pdf-powered{font-family:var(--font-mono);font-size:.55rem;letter-spacing:.04em;color:var(--ink-muted)}
+.pdf-powered b{color:var(--red-deep);font-weight:700}
+.pdf--off{opacity:.5;position:relative;filter:grayscale(1)}
+.pdf--off::before{background:var(--ink-muted)}
 .pdf--off::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom right,transparent 48%,var(--red) 49%,var(--red) 51%,transparent 52%);opacity:.55}
 .pdf--off .pdf-logo{color:var(--ink-muted)}
-.pdf-caption{font-family:var(--font-mono);font-size:.62rem;text-transform:uppercase;letter-spacing:.12em;margin-top:.5rem;color:var(--on-ink-soft)}
+.pdf-caption{font-family:var(--font-mono);font-size:.62rem;text-transform:uppercase;letter-spacing:.12em;margin-top:.6rem;color:var(--on-ink-soft)}
+.pdf-caption b{color:var(--bronze-hi);font-weight:700}
+
+/* ======================= BANDA DE ACERO (stat band) ======================= */
+.statband{
+  background:var(--steel-sheen);color:var(--on-ink);border-top:3px solid var(--red);border-bottom:3px solid var(--red);
+  width:100vw;margin-inline:calc(50% - 50vw);position:relative;overflow:hidden;
+  padding-block:clamp(3rem,6vw,4.5rem);
+}
+.statband::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.7;
+  background:radial-gradient(50vw 40vw at 90% 4%,rgba(185,138,62,.14),transparent 60%),radial-gradient(46vw 38vw at 6% 98%,rgba(226,58,30,.12),transparent 62%)}
+.statband::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.05;mix-blend-mode:screen;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.statband > .wrap{position:relative;z-index:1;max-width:var(--maxw);margin:0 auto;padding-inline:var(--gutter)}
+.stat-grid{display:grid;gap:var(--s-4);margin-top:var(--s-5);grid-template-columns:1fr 1fr}
+@media(min-width:820px){.stat-grid{grid-template-columns:repeat(4,1fr)}}
+.stat{border-left:2px solid var(--on-ink-line);padding-left:var(--s-4)}
+.stat-num{display:block;font-family:var(--font-display);font-weight:400;font-size:clamp(2.8rem,6vw,4.2rem);line-height:.9;
+  background:var(--bronze-foil);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:var(--bronze-hi)}
+.stat-lbl{display:block;font-size:var(--t-small);color:var(--on-ink-soft);margin-top:.5rem;max-width:22ch;line-height:1.4}
+
+/* ======================= 管理 · EL NOMBRE ======================= */
+.kanji-sec{padding-block:clamp(4.5rem,10vw,9rem)}
+.kanji-grid{display:grid;gap:var(--s-6);align-items:center}
+@media(min-width:900px){.kanji-grid{grid-template-columns:minmax(0,.85fr) 1.15fr;gap:var(--s-8)}}
+.kanji-mark{
+  font-family:var(--font-jp);font-weight:900;
+  font-size:clamp(6.5rem,23vw,16rem);line-height:.86;text-align:center;
+  letter-spacing:-.02em;user-select:none;position:relative;
+  background:var(--bronze-foil);-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:var(--bronze);
+  filter:drop-shadow(0 6px 30px rgba(185,138,62,.28));
+}
+.kanji-mark::after{ content:none; } /* datum decorativo removido (pedido founder) */
+@keyframes datumPulse{0%,100%{box-shadow:0 0 0 0 rgba(226,58,30,.4)}50%{box-shadow:0 0 0 8px rgba(226,58,30,0)}}
+@media(min-width:900px){.kanji-mark{text-align:left}.kanji-mark::after{right:auto;left:62%}}
 
 /* ======================= PRECIOS ======================= */
-.price-grid{display:grid;gap:var(--s-4);margin-top:var(--s-6);align-items:start}
+/* los 3 planes tienen IDÉNTICO tamaño (alto/ancho/padding). El Profesional
+   se distingue SOLO por color/borde/badge, nunca por dimensiones. */
+.price-grid{display:grid;gap:var(--s-4);margin-top:var(--s-6);align-items:stretch}
 @media(min-width:900px){.price-grid{grid-template-columns:repeat(3,1fr);gap:var(--s-3)}}
-.plan{background:var(--cream);border:1.5px solid var(--ink);padding:var(--s-5);display:flex;flex-direction:column;gap:var(--s-3)}
-.plan h3{font-family:var(--font-mono);font-weight:700;font-size:.9rem;letter-spacing:.14em;text-transform:uppercase}
-.plan .price{font-family:var(--font-mono);font-weight:700;font-size:var(--t-price);line-height:1;letter-spacing:-.02em}
+.plan{background:linear-gradient(160deg,var(--cream-hi),var(--cream) 55%,var(--cream-deep));border:1.5px solid var(--ink);padding:calc(var(--s-5) + 1.4rem) var(--s-5) var(--s-5);display:flex;flex-direction:column;gap:var(--s-3);position:relative;height:100%;transition:transform .32s var(--ease-out),box-shadow .32s var(--ease-out)}
+.plan:hover{transform:translateY(-5px);box-shadow:7px 8px 0 var(--ink),0 22px 44px -24px rgba(14,12,9,.6)}
+.plan h3{font-family:var(--font-mono);font-weight:700;font-size:.9rem;letter-spacing:.14em;text-transform:uppercase;color:var(--red-deep)}
+.plan .price{font-family:var(--font-display);font-weight:400;font-size:var(--t-price);line-height:1;letter-spacing:.01em}
 .plan .price small{font-family:var(--font-body);font-weight:500;font-size:1rem;color:var(--ink-soft)}
 .plan .desc{font-size:var(--t-small);color:var(--ink-soft)}
 .plan ul{list-style:none;display:flex;flex-direction:column;gap:.5rem;font-size:var(--t-small)}
 .plan ul li{display:flex;gap:.5rem;align-items:flex-start}
 .plan .btn{margin-top:auto;width:100%}
-.plan--pro{border:2.5px solid var(--red);position:relative;padding-top:calc(var(--s-5) + 1.4rem)}
-@media(min-width:900px){.plan--pro{transform:translateY(-12px)}}
+/* destacado por color/borde, MISMO tamaño que los demás (sin translate ni padding extra) */
+.plan--pro{border:2.5px solid var(--red);box-shadow:0 0 0 1px var(--bronze) inset,8px 9px 0 rgba(226,58,30,.14)}
+.plan--pro::before{ /* aura de lujo detrás del plan elegido */
+  content:"";position:absolute;inset:-1px;pointer-events:none;
+  background:radial-gradient(80% 40% at 50% 0%,rgba(226,58,30,.10),transparent 70%);
+}
 .plan--pro .ribbon{
-  position:absolute;top:0;left:0;right:0;background:var(--red-deep);color:#FFFFFF;
+  position:absolute;top:0;left:0;right:0;background:var(--ink);color:var(--bronze-hi);
   font-family:var(--font-mono);font-weight:700;font-size:var(--t-kicker);letter-spacing:.18em;
-  text-transform:uppercase;padding:.5rem;text-align:center;
+  text-transform:uppercase;padding:.55rem;text-align:center;
+  border-bottom:2px solid var(--red);
 }
 .price-strike{font-family:var(--font-mono);text-decoration:line-through;color:var(--ink-muted);font-size:1.1rem}
 .price-off{font-family:var(--font-mono);font-weight:700;color:#A82813;font-size:.95rem;margin-left:.4rem}
@@ -302,19 +623,22 @@ h2.sec-title{
 .onb-grid{display:grid;gap:var(--s-4);margin-top:var(--s-6)}
 @media(min-width:640px){.onb-grid{grid-template-columns:1fr 1fr}}
 .onb-item{display:flex;gap:.8rem;align-items:flex-start}
-.onb-item b{font-family:var(--font-display);font-weight:700;display:block;margin-bottom:.2rem}
+.onb-item b{font-family:var(--font-heavy);font-weight:800;letter-spacing:-.01em;display:block;margin-bottom:.2rem}
 .reassure{display:grid;gap:var(--s-4);margin-top:var(--s-6)}
 @media(min-width:820px){.reassure{grid-template-columns:repeat(3,1fr)}}
 .reassure .card .ic{margin-bottom:var(--s-3)}
-.reassure b{font-family:var(--font-display);font-weight:700;display:block;margin-bottom:.3rem}
+.reassure b{font-family:var(--font-heavy);font-weight:800;letter-spacing:-.01em;display:block;margin-bottom:.3rem}
 
 /* ======================= FAQ ======================= */
 .faq{margin-top:var(--s-6);border-top:1px solid var(--ink)}
 .faq details{border-bottom:1px solid var(--ink)}
 .faq summary{
   list-style:none;cursor:pointer;padding:var(--s-4) 0;display:flex;justify-content:space-between;
-  align-items:center;gap:var(--s-3);font-family:var(--font-display);font-weight:700;font-size:1.1rem;
+  align-items:center;gap:var(--s-3);font-family:var(--font-heavy);font-weight:800;font-size:1.14rem;
+  letter-spacing:-.01em;transition:color .2s ease,padding-left .28s var(--ease-out);
 }
+.faq summary:hover{color:var(--red-deep);padding-left:.5rem}
+.faq details[open] summary{color:var(--red-deep)}
 .faq summary::-webkit-details-marker{display:none}
 .faq summary .sign{font-family:var(--font-mono);font-size:1.5rem;color:var(--red);flex:0 0 auto;transition:transform .2s ease}
 .faq details[open] summary .sign{transform:rotate(45deg)}
@@ -333,16 +657,40 @@ h2.sec-title{
 
 /* ======================= CALENDARIO ======================= */
 .cal-embed{
-  margin-top:var(--s-6);border:2px dashed var(--ink);background:var(--cream-deep);
-  min-height:340px;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;padding:var(--s-6);gap:var(--s-3);
+  margin-top:var(--s-6);border:2px solid var(--ink);background:var(--steel-sheen);color:var(--on-ink);
+  position:relative;overflow:hidden;
+  display:grid;gap:var(--s-5);align-items:center;padding:clamp(1.5rem,4vw,2.6rem);
+  box-shadow:8px 9px 0 rgba(14,12,9,.16),0 22px 44px -26px rgba(14,12,9,.6);
+  grid-template-columns:1fr;max-width:640px;margin-left:auto;margin-right:auto;
 }
-.cal-embed .ic{width:44px;height:44px}
-.cal-embed .note{font-family:var(--font-mono);font-size:var(--t-small);color:var(--ink-muted)}
+.cal-avail-solo{display:inline-flex;align-items:center;gap:.45rem;margin-top:.9rem;font-family:var(--font-mono);font-size:.68rem;letter-spacing:.05em;color:var(--on-ink-soft);text-transform:uppercase}
+.cal-avail-solo::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px rgba(47,125,91,.25)}
+.cal-embed::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.7;
+  background:radial-gradient(50vw 40vw at 92% 6%,rgba(185,138,62,.16),transparent 60%),radial-gradient(40vw 34vw at 4% 96%,rgba(226,58,30,.12),transparent 62%)}
+.cal-embed > *{position:relative;z-index:1}
+.cal-embed .ic{width:40px;height:40px;stroke:var(--bronze-hi)}
+.cal-embed .h3{color:var(--on-ink);margin-top:.6rem}
+.cal-embed .note{font-size:var(--t-small);color:var(--on-ink-soft);margin:.6rem 0 var(--s-4)}
+.cal-embed .cal-cta-col{display:flex;flex-direction:column;align-items:flex-start;gap:.4rem}
+.cal-embed .btn{width:100%}
+/* tarjeta de los fundadores (sin foto real: avatares con iniciales, filo bronce) */
+.cal-hosts{border:1.5px solid var(--on-ink-line);background:var(--ink-panel);padding:var(--s-4)}
+.cal-hosts .who{display:flex;align-items:center;gap:.7rem;padding:.5rem 0}
+.cal-hosts .who + .who{border-top:1px solid var(--on-ink-line-2)}
+.cal-avatar{flex:0 0 auto;width:42px;height:42px;border-radius:50%;border:2px solid var(--bronze);
+  background:var(--steel-sheen);color:var(--bronze-hi);display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-display);font-weight:400;font-size:1.05rem;letter-spacing:.02em}
+.cal-hosts .nm{font-family:var(--font-heavy);font-weight:800;font-size:.98rem;line-height:1.1;color:var(--on-ink)}
+.cal-hosts .rl{font-family:var(--font-mono);font-size:.66rem;letter-spacing:.05em;color:var(--on-ink-soft);text-transform:uppercase}
+.cal-hosts .avail{display:flex;align-items:center;gap:.45rem;margin-top:.7rem;font-family:var(--font-mono);font-size:.68rem;letter-spacing:.05em;color:var(--on-ink-soft);text-transform:uppercase}
+.cal-hosts .avail::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px rgba(47,125,91,.25)}
 
 /* ======================= CTA FINAL ======================= */
-.cta-final{background:var(--ink-panel);color:var(--on-ink);text-align:center;border-top:3px solid var(--red)}
-.cta-final h2{font-family:var(--font-display);font-weight:900;font-size:var(--t-display);line-height:1;letter-spacing:-.02em;max-width:16ch;margin:0 auto var(--s-4);color:var(--on-ink)}
+.cta-final{background:var(--steel-sheen);color:var(--on-ink);text-align:center;border-top:3px solid var(--red);position:relative;overflow:hidden}
+.cta-final::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(60vw 44vw at 50% -6%,rgba(226,58,30,.16),transparent 62%),radial-gradient(50vw 40vw at 50% 110%,rgba(185,138,62,.12),transparent 60%)}
+.cta-final > .wrap{position:relative;z-index:1}
+.cta-final h2{font-family:var(--font-display);font-weight:400;font-size:var(--t-display);line-height:.95;letter-spacing:.006em;text-transform:uppercase;max-width:16ch;margin:0 auto var(--s-4);color:var(--on-ink)}
 .cta-final .lead{margin-inline:auto;color:var(--on-ink-soft)}
 .cta-final .cta-row{justify-content:center}
 .cta-final .brand{justify-content:center;margin-top:var(--s-7);color:var(--on-ink)}
@@ -386,11 +734,24 @@ h2.sec-title{
 
 /* ======================= SCROLL REVEAL ======================= */
 .reveal{opacity:1;transform:none}
-.js .reveal{opacity:0;transform:translateY(24px);transition:opacity .5s cubic-bezier(.16,1,.3,1),transform .5s cubic-bezier(.16,1,.3,1)}
-.js .reveal.in{opacity:1;transform:none}
+.js .reveal{opacity:0;transform:translateY(30px);transition:opacity .62s var(--ease-out),transform .62s var(--ease-out),filter .62s var(--ease-out);filter:blur(4px)}
+.js .reveal.in{opacity:1;transform:none;filter:none}
 .js .reveal.d1{transition-delay:.08s}
 .js .reveal.d2{transition-delay:.16s}
 .js .reveal.d3{transition-delay:.24s}
+
+/* ======================= HERO PAGE-LOAD (orquestado) ======================= */
+.js .hero .kicker.roof-kicker,.js .hero h1,.js .hero .hero-grid .lead,
+.js .hero .cta-row,.js .hero .hero-micro,.js .hero .trust-line{
+  opacity:0;transform:translateY(28px);filter:blur(5px);
+  animation:heroIn .9s var(--ease-out) forwards;
+}
+.js .hero h1{animation-delay:.12s}
+.js .hero .hero-grid .lead{animation-delay:.28s}
+.js .hero .cta-row{animation-delay:.42s}
+.js .hero .hero-micro{animation-delay:.54s}
+.js .hero .trust-line{animation-delay:.62s}
+@keyframes heroIn{to{opacity:1;transform:none;filter:none}}
 
 /* draw de línea (JS agrega .drawn) */
 .js .flow-line-h,.js .flow-vline{transform:scaleX(0)}
@@ -400,8 +761,11 @@ h2.sec-title{
 
 @media(prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
-  .js .reveal{opacity:1;transform:none}
+  .js .reveal{opacity:1;transform:none;filter:none}
   .js .flow-line-h,.js .flow-vline{transform:none}
+  .js .hero .kicker.roof-kicker,.js .hero h1,.js .hero .hero-grid .lead,
+  .js .hero .cta-row,.js .hero .hero-micro,.js .hero .trust-line{opacity:1;transform:none;filter:none}
+  .btn::after,.section--red::before{display:none}
 }
 </style>
 </head>
@@ -423,23 +787,117 @@ h2.sec-title{
 
 <main id="top">
 
+
 <!-- ============ 1 · HERO ============ -->
 <section class="hero wrap" aria-labelledby="hero-h1">
-  <div class="hero-grid hero-grid--solo">
-    <div>
-      <p class="kicker roof-kicker reveal">ERP + CRM para tu taller · Hecho en México</p>
-      <h1 id="hero-h1" class="display reveal d1" style="margin-top:1.25rem;font-size:clamp(2rem,4.6vw,3.7rem);line-height:1.06;letter-spacing:-.015em">De la cotización al cobro, todo lo que hace tu taller, sin salir de un sistema.</h1>
-      <p class="lead reveal d2">Cotizas, produces, controlas calidad, embarcas y cobras en un solo lugar. Con tu logo y tus datos frente al cliente, nunca los nuestros.</p>
+  <div class="hero-grid">
+    <div class="hero-copy">
+      <p class="kicker roof-kicker reveal">ERP + CRM para tu taller · Hecho en México para México</p>
+      <h1 id="hero-h1" class="display reveal d1">De la cotización al cobro, todo lo que hace tu negocio, sin salir de un sistema.</h1>
+      <p class="lead reveal d2">Cotiza en minutos con tu marca, ve tu piso en tiempo real y sabe cuánto te deja cada trabajo. Todo tu negocio corre sobre un solo dato, desde el navegador o el celular.</p>
       <div class="cta-row reveal d2">
         <a href="#precios" class="btn btn--primary" data-cta="probar" data-plan="hero">Probar 20 días gratis</a>
         <a href="#agenda" class="btn btn--secondary" data-cta="agendar" data-plan="hero">Agenda una llamada</a>
       </div>
       <p class="micro hero-micro reveal d3">Sin instalar nada. Registras, eliges tu giro y ya estás operando.</p>
       <p class="trust-line reveal d3">
-        <span>Hecho en México para México</span><span aria-hidden="true">·</span>
+        <span>Conexión con el SAT</span>
+        <span>17 módulos conectados</span>
+        <span>Cifrado de extremo a extremo</span>
+        <span>Sin instalar nada</span>
         <span>Prueba 20 días sin tarjeta</span>
       </p>
     </div>
+
+    <!-- ARTE DEL HERO · mockup de producto (cotización con marca) en marco de acero -->
+    <div class="hero-art reveal d2" aria-hidden="true">
+      <div class="hero-mock">
+        <div class="mock-bar">
+          <span class="mock-dot"></span><span class="mock-dot"></span><span class="mock-dot"></span>
+          <span class="mock-url">app.tutaller.mx · cotización</span>
+        </div>
+        <div class="mock-screen">
+          <div class="mock-quote">
+            <div class="mq-head">
+              <div class="mq-brand">(Nombre de tu empresa)<small>Cotización 0182 · tu marca</small></div>
+              <span class="mq-datum">01</span>
+            </div>
+            <div class="mq-rows">
+              <div class="mq-row"><span>Maquinado de brida 6"</span><b>$ 8,400</b></div>
+              <div class="mq-row"><span>Tratamiento térmico</span><b>$ 2,150</b></div>
+              <div class="mq-row"><span>Inspección dimensional</span><b>$ 900</b></div>
+            </div>
+            <div class="mq-total"><span>Total + IVA</span><b>$ 13,282</b></div>
+            <div class="mq-margin">
+              <span class="mq-margin-lbl">Margen del trabajo</span>
+              <span class="mq-margin-bar"><i style="width:41%"></i></span>
+              <span class="mq-margin-val">41%</span>
+            </div>
+          </div>
+          <!-- calibrador que "mide" el margen (microanimación viva) -->
+          <svg class="mock-caliper" viewBox="0 0 240 40" aria-hidden="true">
+            <line x1="8" y1="20" x2="232" y2="20" class="cal-rail"/>
+            <line x1="8" y1="12" x2="8" y2="28" class="cal-tick"/>
+            <line x1="232" y1="12" x2="232" y2="28" class="cal-tick"/>
+            <g class="cal-jaw">
+              <line x1="0" y1="8" x2="0" y2="32" class="cal-jaw-line"/>
+              <circle cx="0" cy="20" r="4" class="cal-jaw-dot"/>
+            </g>
+          </svg>
+        </div>
+        <span class="mock-chip">PDF con tu marca</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 1.2 · ASPIRACIÓN · OPERA TU TALLER COMO LOS GRANDES (deseo / siguiente nivel) ============ -->
+<section class="section wrap aspira" aria-labelledby="aspira-h">
+  <p class="kicker roof-kicker reveal">El taller que quieres dirigir</p>
+  <h2 id="aspira-h" class="sec-title reveal">Opera tu taller como los grandes</h2>
+  <p class="aspira-intro reveal">Hay un taller que ya tienes en la cabeza. Uno donde abres una pantalla en la mañana y sabes exactamente cómo va todo: qué se está fabricando, qué falta comprar, qué te deben y cuánto llevas ganado del mes. Cotizas en minutos, con tu marca, y ganas el trabajo antes que el de al lado. Ese control, el mismo que corre por dentro de las grandes corporaciones, ya está a tu alcance y en tu idioma. Así se ve un día cualquiera cuando tu taller corre sobre un solo dato.</p>
+
+  <div class="aspira-grid">
+    <article class="aspira-card reveal">
+      <span class="ac-datum" aria-hidden="true">01</span>
+      <span class="ac-micro">El negocio corre solo sobre un solo dato</span>
+      <b>Creces sin quemarte</b>
+      <span class="muted">El inventario se cuida solo y te avisa cuándo resurtir. Tu cliente ve el avance de su pieza con un link y dejan de sonarte las llamadas de "¿cómo va lo mío?". El operador mueve una pieza en el piso y el estado se refleja en calidad, en el portal del cliente y en tu tablero, sin recapturar nada. Tú diriges el taller. El sistema hace la talacha de tenerlo todo junto y al día.</span>
+    </article>
+    <article class="aspira-card reveal d1">
+      <span class="ac-datum" aria-hidden="true">02</span>
+      <span class="ac-micro">Ves tu taller sin ir a preguntar</span>
+      <b>El piso completo en un tablero</b>
+      <span class="muted">Abres el tablero y ahí está el piso: qué máquina está cargada, qué orden de trabajo va en tiempo y qué entrega viene en camino, con su semáforo. Ya no caminas a preguntar ni esperas a que alguien te avise. La calidad y el ISO 9001 corren dentro del mismo sistema, así que una pieza rechazada abre su alerta sola y la atiendes antes de que se vuelva un retrabajo caro.</span>
+    </article>
+    <article class="aspira-card reveal d2">
+      <span class="ac-datum" aria-hidden="true">03</span>
+      <span class="ac-micro">Sabes lo que te deja cada trabajo</span>
+      <b>El margen a la vista, siempre</b>
+      <span class="muted">Cada cotización te muestra tu margen mientras todavía puedes decidir. Subes el precio, ajustas la barra de acero, cambias el maquinado, y el número se mueve contigo en tiempo real. Aceptas los trabajos que dejan y dejas pasar los que no. El dinero, tus ventas y tus costos viven en un área que solo tú y tus administradores ven.</span>
+    </article>
+    <article class="aspira-card reveal d3">
+      <span class="ac-datum" aria-hidden="true">04</span>
+      <span class="ac-micro">El sistema recuerda, tú decides</span>
+      <b>Sacar el taller de tu cabeza</b>
+      <span class="muted">Hoy cargas el taller entero en la cabeza: cada pendiente, qué material falta, qué le prometiste a cada cliente y quién te debe. Con Kanri todo eso vive en un solo lugar que suma solo, avisa solo y no se te olvida. Dejas de despertarte a media noche pensando qué se te pasó. Tu cabeza queda libre para lo único que nadie puede hacer por ti: dirigir el taller y decidir a dónde llevarlo.</span>
+    </article>
+  </div>
+
+  <p class="aspira-remate reveal">Este es el taller que ya eres capaz de dirigir. El mismo control ordenado que tienen las grandes corporaciones, con la cara y el nombre de tu marca al frente. De la cotización al cobro, bajo un solo techo.</p>
+  <div class="aspira-cta reveal">
+    <a href="#agenda" class="btn btn--primary" data-cta="agendar" data-plan="aspira">Míralo funcionando</a>
+  </div>
+</section>
+
+<!-- ============ 1.5 · ¿QUÉ ES UN SISTEMA DE GESTIÓN? (educativa) ============ -->
+<section class="section wrap" aria-labelledby="edu-h">
+  <p class="kicker roof-kicker reveal">Primero, lo básico</p>
+  <h2 id="edu-h" class="sec-title reveal">En una frase: qué es Kanri y qué hace.</h2>
+  <div class="edu-wrap">
+    <p class="edu-lead reveal">Un sistema de gestión es un solo lugar donde vive toda la información de tu negocio: lo que cotizas, lo que compras, lo que hay en el almacén, lo que se está fabricando, lo que ya entregaste y lo que te deben. Esa información hoy ya existe en tu taller. Lo que no existe es un lugar donde esté junta y al día.</p>
+    <p class="edu-punch reveal d1">Eso es Kanri: <span class="edu-foil">tu negocio completo en una pantalla.</span></p>
+    <p class="edu-note reveal d2">La industria del software le pone siglas: <span class="edu-sig">CRM</span> a la parte de clientes, <span class="edu-sig">ERP</span> a la administración del negocio y <span class="edu-sig">MES</span> al control del piso.<br>Kanri junta las tres sobre el mismo dato; el nombre es lo de menos.</p>
   </div>
 </section>
 
@@ -447,73 +905,39 @@ h2.sec-title{
 <section class="section section--red" aria-labelledby="techo-h">
   <div class="wrap">
   <p class="kicker roof-kicker reveal">El sistema completo</p>
-  <h2 id="techo-h" class="sec-title reveal">Todo tu taller, bajo un solo techo</h2>
-  <p class="lead reveal">Todo lo que hoy corres en Excel, el WhatsApp y el cuaderno, en un solo lugar y con la marca de tu taller. Esto es lo que se conecta:</p>
+  <h2 id="techo-h" class="sec-title reveal">Así recorre un trabajo tu negocio, de la cotización al cobro</h2>
+  <p class="lead reveal">Todo lo que hoy corres en Excel, el WhatsApp y el cuaderno, en un solo lugar. Cada paso alimenta al siguiente sin volver a capturar nada. Nosotros te damos las funciones; tu criterio las alinea con tu operación:</p>
 
   <div class="flow" id="flow">
     <div class="flow-track">
-      <div class="flow-line-h" aria-hidden="true"></div>
       <div class="flow-node reveal">
         <div class="flow-rail"><span class="flow-dot"></span><span class="flow-vline" aria-hidden="true"></span></div>
-        <div class="flow-step"><span class="step-k">Cotizas</span><b>Precio con margen a la vista</b><span class="muted small">Jalas precios de tu inventario, ves tu margen y mandas un PDF profesional con tu marca. Un clic y la cotización aprobada se vuelve proyecto.</span></div>
+        <div class="flow-step"><span class="step-k">1 · Cotizas</span><b>Cotizas en minutos y sale con tu marca</b><span class="muted small">Armas la cotización con tus materiales y tu maquinado ya cargados, y el precio se calcula en el momento. El PDF sale con tu logo, tus datos y tu RFC, listo para que el cliente diga que sí. Cuando aprueba, esa misma cotización se vuelve proyecto y descuenta tu inventario en un clic.</span></div>
       </div>
       <div class="flow-node reveal d1">
         <div class="flow-rail"><span class="flow-dot"></span><span class="flow-vline" aria-hidden="true"></span></div>
-        <div class="flow-step"><span class="step-k">Produces</span><b>El piso, a la vista</b><span class="muted small">El proyecto entra al piso: órdenes de trabajo, máquinas, etapas y avance, todo a la vista.</span></div>
+        <div class="flow-step"><span class="step-k">2 · Compras</span><b>El material llega solo a tu almacén</b><span class="muted small">De la lista de materiales del proyecto a la orden de compra. Al recibir la mercancía, tu inventario sube solo. Y cada proveedor tiene su historial: cuánto le compras y qué tan puntual te entrega.</span></div>
       </div>
       <div class="flow-node reveal d2">
         <div class="flow-rail"><span class="flow-dot"></span><span class="flow-vline" aria-hidden="true"></span></div>
-        <div class="flow-step"><span class="step-k">Calidad</span><b>Control de calidad adentro</b><span class="muted small">Inspecciones, piezas rechazadas y medidas, con herramientas para tu control ISO 9001 dentro del sistema, no en un Excel aparte.</span></div>
+        <div class="flow-step"><span class="step-k">3 · Produces</span><b>El piso, a la vista</b><span class="muted small">Órdenes de trabajo por máquina y por etapa, con avance en tiempo real. Cada operador ve solo sus piezas y reporta desde su pantalla, sin que tengas que cruzar el taller a preguntar.</span></div>
       </div>
       <div class="flow-node reveal d3">
         <div class="flow-rail"><span class="flow-dot"></span><span class="flow-vline" aria-hidden="true"></span></div>
-        <div class="flow-step"><span class="step-k">Despachas</span><b>Envíos y etiquetas</b><span class="muted small">Preparas el envío y las etiquetas desde el mismo lugar donde nació la cotización.</span></div>
+        <div class="flow-step"><span class="step-k">4 · Calidad</span><b>Cada pieza, inspeccionada y con evidencia</b><span class="muted small">Bandejas de inspección pieza por pieza. Si algo se rechaza, el sistema abre la no conformidad y avisa al equipo en el momento. Con control de calibración de instrumentos alineado a ISO 9001.</span></div>
       </div>
       <div class="flow-node reveal d3">
         <div class="flow-rail"><span class="flow-dot"></span><span class="flow-vline" aria-hidden="true"></span></div>
-        <div class="flow-step"><span class="step-k">Cobras</span><b>Timbras tu CFDI</b><span class="muted small">Timbras tu factura CFDI dentro de Kanri y el PDF sale con tus datos fiscales y bancarios listos. El cliente te paga sin vueltas.</span></div>
+        <div class="flow-step"><span class="step-k">5 · Entregas</span><b>Etiquetas con QR y cliente informado</b><span class="muted small">Preparas cajas, packing list y etiquetas. Tu cliente escanea el QR y ve el avance de su pedido con tu marca, sin llamarte.</span></div>
+      </div>
+      <div class="flow-node reveal d3">
+        <div class="flow-rail"><span class="flow-dot"></span><span class="flow-vline" aria-hidden="true"></span></div>
+        <div class="flow-step"><span class="step-k">6 · Cobras</span><b>Factura, cobro y utilidad, cerrados</b><span class="muted small">Timbras tu CFDI, registras anticipos y abonos, y el sistema te dice cuánto te dejó el proyecto de verdad, porque el ingreso cuenta cuando entra el dinero, no cuando facturas.</span></div>
       </div>
     </div>
   </div>
   </div>
 </section>
-
-<!-- ============ 3 · CINCO MÓDULOS CLAVE ============ -->
-<section class="section wrap" id="modulos" aria-labelledby="dolor-h">
-  <p class="kicker roof-kicker reveal">El corazón del sistema</p>
-  <h2 id="dolor-h" class="sec-title reveal">Cinco módulos que trabajan como uno solo.</h2>
-  <p class="lead reveal">No es que te falte orden. Es que tienes cinco lugares donde vive tu taller y ninguno se habla con el otro. Lo que te falta es un solo lugar donde la cotización, el piso y el material ya estén conectados, para que veas el trabajo mientras pasa y no cuando ya no hay vuelta. Sin cinco programas. Sin un contador de planta. Sin volverte a quemar.</p>
-  <!-- SWAP-MODULOS: copy interino (solo capacidades confirmadas). Reemplazar cada
-       <span> con la descripción + funciones OFICIALES de Julio cuando lleguen. -->
-  <div class="pain-grid">
-    <article class="card pain-card reveal">
-      <svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>
-      <b>Inventario</b>
-      <span class="muted small">Sabes en tiempo real qué tienes, qué te falta y cuándo pedirlo. Mínimos y máximos con alertas, existencias que se mueven solas y carga de tu catálogo por Excel. Se acabó parar una máquina porque el material que la libreta juraba tener no estaba.</span>
-    </article>
-    <article class="card pain-card reveal d1">
-      <svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/><path d="M2 3h3l2.4 12.4a1 1 0 0 0 1 .8h9.2a1 1 0 0 0 1-.8L21 7H6"/></svg>
-      <b>Compras</b>
-      <span class="muted small">Pides con orden de compra formal y, al recibir la mercancía, tu inventario se actualiza solo. Sin doble captura y sin compras de urgencia más caras de lo necesario, porque ves venir el faltante antes de que te frene.</span>
-    </article>
-    <article class="card pain-card reveal d2">
-      <svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a1 1 0 0 1 1-1h5l2 2h8a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/></svg>
-      <b>Proyectos</b>
-      <span class="muted small">La cotización aprobada se vuelve proyecto con un clic, sin recapturar nada. Un solo expediente con lo comercial, la producción y la entrega, y su avance por etapas a la vista de todo tu equipo.</span>
-    </article>
-    <article class="card pain-card reveal d3">
-      <svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="8" width="18" height="11" rx="1"/><path d="M7 8V5h10v3M7 13h2M15 13h2"/><path d="M12 12v3"/></svg>
-      <b>Producción</b>
-      <span class="muted small">Ves el piso completo desde tu escritorio: qué se fabrica, en qué máquina y qué tan avanzado va. Órdenes de trabajo por máquina y etapa, con el avance en tiempo real. Dejas de cruzar el taller a preguntar cómo va cada pieza.</span>
-    </article>
-    <article class="card pain-card reveal d1">
-      <svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 4v5c0 5-3 7-7 9-4-2-7-4-7-9V7z"/><path d="M9 12l2 2 4-4"/></svg>
-      <b>Calidad</b>
-      <span class="muted small">Registras cada inspección y cada pieza para respaldar tu calidad ante quien la exija. Medidas, piezas rechazadas y control alineado a ISO 9001, anclado a cada proyecto con trazabilidad de principio a fin.</span>
-    </article>
-  </div>
-</section>
-
 
 <!-- ============ 4 · VE KANRI FUNCIONANDO (DEMO) ============
      La sección tiene DOS estados. Por defecto muestra el estado HONESTO
@@ -522,12 +946,12 @@ h2.sec-title{
      real dentro de #demoVideoSlot; el JS mostrará el reproductor y ocultará
      el copy de "demo en vivo". NUNCA dejar un placeholder de video visible. -->
 <section class="section wrap" id="demo-section" data-video-ready="false" aria-labelledby="demo-h" style="display:none" data-vsl-off="true">
-  <p class="kicker roof-kicker reveal">No es promesa, es producto</p>
+  <p class="kicker roof-kicker reveal">Producto en operación</p>
 
   <!-- ESTADO A · video real listo (oculto por defecto) -->
   <div id="demoVideoState" hidden>
-    <h2 class="sec-title reveal">No te lo contamos. Míralo funcionando.</h2>
-    <p class="lead reveal">Aquí no hay maquetas ni humo. Esta es la pantalla real de Kanri: cotizas, sale el PDF con tu marca, entra al piso y ves tu costo y tu margen.</p>
+    <h2 class="sec-title reveal">Míralo funcionando.</h2>
+    <p class="lead reveal">Esta es la pantalla real de Kanri: cotizas, el PDF sale con tu marca, el proyecto entra al piso y ves tu costo y tu margen en el momento.</p>
     <div class="demo-frame reveal" style="padding:0">
       <span class="demo-badge">Demo real</span>
       <!-- SWAP-VIDEO: pegar aquí el <video controls playsinline preload="none" poster="..."> real -->
@@ -538,7 +962,7 @@ h2.sec-title{
   <!-- ESTADO B · honesto mientras no hay video (visible por defecto) -->
   <div id="demoLiveState">
     <h2 id="demo-h" class="sec-title reveal">¿Quieres verlo funcionando? Te lo mostramos en vivo.</h2>
-    <p class="lead reveal">Nada de maquetas ni humo: agenda 20 minutos y te enseñamos la pantalla real de Kanri con tu propio giro. Cotizas, sale el PDF con tu marca, entra al piso y ves tu costo y tu margen, en tiempo real y respondiendo tus dudas.</p>
+    <p class="lead reveal">Agenda 20 minutos y te enseñamos la pantalla real de Kanri configurada a tu giro: cotizas, sale el PDF con tu marca, entra al piso y ves tu costo y tu margen, respondiendo tus dudas en vivo.</p>
     <div class="cta-row reveal">
       <a href="#agenda" class="btn btn--primary" data-cta="agendar" data-plan="demo">Agenda una llamada</a>
       <a href="#precios" class="btn btn--secondary" data-cta="probar" data-plan="demo">O pruébalo tú mismo, 20 días gratis</a>
@@ -549,7 +973,7 @@ h2.sec-title{
 <!-- ============ 5 · MÓDULOS COMO BENEFICIOS ============ -->
 <section class="section wrap" aria-labelledby="mod-h">
   <p class="kicker roof-kicker reveal">Lo que resuelve</p>
-  <h2 id="mod-h" class="sec-title reveal">No es un programa más. Es tu taller entero,&nbsp;ordenado.</h2>
+  <h2 id="mod-h" class="sec-title reveal">Tu taller entero,&nbsp;ordenado.</h2>
   <p class="lead reveal">Cada parte de Kanri resuelve algo que hoy te quita tiempo o te cuesta dinero:</p>
   <div class="benefit-grid">
     <article class="card benefit reveal"><svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l3 3v15H6z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg><b>Cotiza en minutos, no en días.</b><span class="muted small">Precios de tu inventario, tu margen a la vista y un PDF listo para enviar.</span></article>
@@ -560,57 +984,100 @@ h2.sec-title{
     <article class="card benefit reveal d1"><svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 4v5c0 5-3 7-7 9-4-2-7-4-7-9V7z"/><path d="M9 12l2 2 4-4"/></svg><b>Menos piezas rechazadas.</b><span class="muted small">Tu control de calidad, con herramientas para ISO 9001, dentro del sistema y no en una hoja suelta.</span></article>
     <article class="card benefit reveal d2"><svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M8 8h8M8 12h8M8 16h5"/><circle cx="18" cy="19" r="3" fill="none"/></svg><b>Tu cliente se atiende solo.</b><span class="muted small">Un link seguro y ve el avance de su pieza. Se acaban las llamadas de "¿cómo va?".</span></article>
     <article class="card benefit reveal d3"><svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M7 15l3-4 3 2 4-6"/></svg><b>Un tablero que dice cómo va el negocio hoy.</b><span class="muted small">Ventas, carga de máquinas y próximas entregas de un vistazo.</span></article>
+    <article class="card benefit reveal"><svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><b>Sabes quién te debe y desde cuándo.</b><span class="muted small">Anticipos, abonos y saldos con semáforo. Lo vencido se ve en rojo, para cobrar a tiempo y cuidar tu flujo.</span></article>
+    <article class="card benefit reveal d1"><svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/><path d="M13 9l3-3 3 3"/></svg><b>Sabes cuánto te dejó cada proyecto.</b><span class="muted small">Venta menos compras menos gastos, proyecto por proyecto y cliente por cliente. Los de bajo margen se marcan solos. Y estas cifras solo las ven los administradores.</span></article>
+  </div>
+
+  <!-- ---- Y ADEMÁS, LA GESTIÓN (fusionado desde la antigua sección Bonus) ---- -->
+  <div class="reveal d2" style="margin-top:var(--s-7);border-top:1px solid var(--ink);padding-top:var(--s-6)">
+    <p class="kicker roof-kicker reveal">Y además, la gestión</p>
+    <h3 class="sec-title reveal" style="font-size:var(--t-h3);margin-block:var(--s-3) var(--s-3)">Y además te resuelve la gestión</h3>
+    <p class="lead reveal">No solo cotizas y produces. Kanri también te controla la asistencia, te saca la nómina y te timbra tus facturas. La quincena de tu gente y el SAT, resueltos desde el mismo sistema.</p>
+    <div class="bonus-grid">
+      <article class="card bonus-col reveal">
+        <svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        <h3>Checador</h3>
+        <ul>
+          <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>Entradas y salidas, horario esperado y cumplimiento (a tiempo, retardo, falta).</span></li>
+          <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>Horas trabajadas y horas pagadas ajustables.</span></li>
+        </ul>
+      </article>
+      <article class="card bonus-col reveal d1">
+        <svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M8 8h8M8 12h6"/><path d="M15 16h2M8 16h3"/></svg>
+        <h3>Nómina</h3>
+        <ul>
+          <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>Percepciones, deducciones y neto por periodo (mensual, quincenal, semanal).</span></li>
+          <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>Recibo imprimible por colaborador y CSV listo para dispersión bancaria.</span></li>
+          <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>El sueldo de cada colaborador alimenta la nómina, y la nómina se refleja sola como egreso en tus finanzas.</span></li>
+        </ul>
+      </article>
+      <article class="card bonus-col reveal d2">
+        <svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l3 3v15H6z"/><circle cx="12" cy="13" r="3"/><path d="M12 10v6M10.5 13h3"/></svg>
+        <h3>Facturación CFDI</h3>
+        <ul>
+          <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>CFDI 4.0 real, timbrado con tus propios sellos (CSD) del SAT. Descargas PDF y XML al momento.</span></li>
+          <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>Tus datos fiscales de México ya configurados, del cobro directo a tu factura.</span></li>
+          <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>Disponible en el plan Profesional, con timbrado CFDI 4.0 con costo por timbre vía PAC.</span></li>
+        </ul>
+      </article>
+    </div>
+    <p class="micro reveal" style="margin-top:var(--s-5);max-width:70ch">Tú decides qué prendes. El módulo de finanzas internas es opcional: hay quien prefiere no meter sus números al sistema, por privacidad y seguridad, y lo respetamos. Puedes apagar los módulos que no quieras y quedarte solo con lo que te sirve.</p>
   </div>
 </section>
 
-<!-- ============ 6 · HECHO PARA TU GIRO ============ -->
-<section class="section wrap" aria-labelledby="giro-h">
-  <p class="kicker roof-kicker reveal">Se acomoda a ti</p>
-  <h2 id="giro-h" class="sec-title reveal">Hecho para talleres. Flexible para tu giro.</h2>
-  <p class="lead reveal">Kanri nació en el piso de manufactura, donde el control tiene que ser serio. Pero desde el registro se configura a tu giro: cambian los módulos y hasta el vocabulario. No es un CRM genérico que te queda grande o chico. Es el tuyo.</p>
-  <div class="giros reveal" role="list" aria-label="Giros soportados">
-    <span class="chip" role="listitem">Manufactura CNC</span>
-    <span class="chip" role="listitem">Maquinados convencionales</span>
-    <span class="chip" role="listitem">MRO</span>
-    <span class="chip" role="listitem">Venta de herramientas e insumos</span>
-    <span class="chip" role="listitem">Publicidad y marketing</span>
-    <span class="chip" role="listitem">Diseño e ingeniería</span>
-    <span class="chip" role="listitem">Consultoría</span>
-    <span class="chip" role="listitem">Capacitación y cursos</span>
+<!-- ============ 3 · CINCO MÓDULOS CLAVE ============ -->
+<section class="section wrap pilares-sec" id="modulos" aria-labelledby="dolor-h">
+  <p class="kicker roof-kicker reveal">El corazón del sistema</p>
+  <h2 id="dolor-h" class="sec-title reveal">Diecisiete módulos conectados. Empieza por estos cinco.</h2>
+  <p class="lead reveal">Los beneficios de arriba se apoyan en 17 módulos que trabajan sobre el mismo dato. Estos cinco pilares son la columna vertebral: los que más tiempo y dinero le devuelven a un taller. Aquí, cómo funciona cada uno por dentro.</p>
+  <div class="pain-grid">
+    <article class="card pain-card reveal">
+      <!-- Compras: caja de material + cota + datum de recepción -->
+      <svg class="ic-tech" viewBox="0 0 44 44" aria-hidden="true"><path d="M10 16l12-6 12 6-12 6z"/><path d="M10 16v14l12 6 12-6V16"/><path d="M22 22v14"/><path class="cota" d="M4 10v24M2 10h4M2 34h4"/><circle class="datum-ring" cx="34" cy="12" r="4"/><circle class="datum" cx="34" cy="12" r="1.4"/></svg>
+      <b>1 · Control de compras</b>
+      <span class="muted small">Cotizas y gestionas compras en el mismo lugar. Del material que pide el proyecto a la requisición, de la requisición a la orden de compra, y de la orden al almacén: al recibir, tu inventario sube solo. Cada proveedor tiene ranking por gasto y puntualidad de entrega, para que compres con historial y no de memoria.</span>
+    </article>
+    <article class="card pain-card reveal d1">
+      <!-- Producción: husillo/máquina en planta con avance -->
+      <svg class="ic-tech" viewBox="0 0 44 44" aria-hidden="true"><rect x="8" y="18" width="28" height="16"/><path d="M14 18v-5h16v5"/><path d="M22 8v5"/><circle cx="22" cy="26" r="3.4"/><path class="cota" d="M8 40h28M8 38v4M36 38v4"/><circle class="datum" cx="22" cy="26" r="1.2"/></svg>
+      <b>2 · Gestión de producción</b>
+      <span class="muted small">El piso en tiempo real: qué máquina está operando, en preparación o en mantenimiento, qué orden lleva cada una y cuánto le falta. Tiempo real contra tiempo estimado por etapa, y un portal donde cada operador ve solo sus piezas y reporta avance o incidencias al momento.</span>
+    </article>
+    <article class="card pain-card reveal d2">
+      <!-- Calidad: pieza inspeccionada con datum aprobado + cota -->
+      <svg class="ic-tech" viewBox="0 0 44 44" aria-hidden="true"><path d="M22 6l13 5v8c0 9-6 13-13 16-7-3-13-7-13-16v-8z"/><path d="M16 22l4 4 8-9"/><path class="cota" d="M39 11v16M37 11h4M37 27h4"/><circle class="datum-ring" cx="22" cy="6" r="3.4"/><circle class="datum" cx="22" cy="6" r="1.1"/></svg>
+      <b>3 · Calidad ISO 9001</b>
+      <span class="muted small">Inspección por bandejas, pieza por pieza y con evidencia. Una pieza rechazada abre la no conformidad y avisa al equipo en automático, con causa raíz y plan de acción. Y el sistema te recuerda las calibraciones de tus instrumentos 30 días antes de que venzan: auditorías sin sorpresas.</span>
+    </article>
+    <article class="card pain-card reveal d3">
+      <!-- Inventario: estante con niveles + cota de existencias -->
+      <svg class="ic-tech" viewBox="0 0 44 44" aria-hidden="true"><rect x="9" y="9" width="26" height="26"/><path d="M9 18h26M9 26.5h26"/><path d="M13 13h7M13 22h10M13 30h5"/><path class="cota" d="M5 9v26M3 9h4M3 35h4"/><circle class="datum" cx="30" cy="30" r="2"/></svg>
+      <b>4 · Inventario</b>
+      <span class="muted small">Existencias en tiempo real con mínimos y máximos, valor del inventario, tiempo de entrega de cada material y estatus de resurtido. Te avisa cuándo pedir antes de que un faltante te pare una máquina. Tu catálogo se carga desde tu propio Excel con una plantilla.</span>
+    </article>
+    <article class="card pain-card reveal d1">
+      <!-- Atención al cliente: portal con QR de seguimiento + datum -->
+      <svg class="ic-tech" viewBox="0 0 44 44" aria-hidden="true"><rect x="12" y="7" width="20" height="30" rx="2"/><path d="M12 12h20M12 32h20"/><rect x="17" y="17" width="4" height="4"/><rect x="23" y="17" width="4" height="4"/><rect x="17" y="23" width="4" height="4"/><path d="M23 23h4M27 27h1M23 27v1"/><path class="cota" d="M8 7v30M6 7h4M6 37h4"/><circle class="datum" cx="22" cy="34.5" r="1.2"/></svg>
+      <b>5 · Atención al cliente</b>
+      <span class="muted small">Tu cliente escanea un QR y sigue el avance de su pedido en tiempo real y sin pedirte nada. Pipeline de clientes y prospectos, reportes de avance programados, y cobranza con saldos y vencimientos para dar seguimiento profesional a cada pago.</span>
+    </article>
   </div>
-  <p class="micro reveal" style="margin-top:1.25rem">Eliges tu giro al registrarte y la plataforma se acomoda a tus necesidades.</p>
-</section>
-
-<!-- ============ 7 · NÓMINA + CHECADOR + FACTURACIÓN ============ -->
-<section class="section wrap" aria-labelledby="bonus-h">
-  <p class="kicker roof-kicker reveal">Y además, lo que no esperabas</p>
-  <h2 id="bonus-h" class="sec-title reveal">Y además te resuelve la gestión</h2>
-  <p class="lead reveal">No solo cotizas y produces. Kanri también te controla la asistencia, te saca la nómina y te timbra tus facturas. Un ERP de taller que además te quita de encima la quincena y el SAT. Nadie espera eso, y por eso vale.</p>
-  <div class="bonus-grid">
-    <article class="card bonus-col reveal">
-      <svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-      <h3>Checador</h3>
-      <ul>
-        <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>Entradas y salidas, horario esperado y cumplimiento (a tiempo, retardo, falta).</span></li>
-        <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>Horas trabajadas y horas pagadas ajustables.</span></li>
-      </ul>
-    </article>
-    <article class="card bonus-col reveal d1">
-      <svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M8 8h8M8 12h6"/><path d="M15 16h2M8 16h3"/></svg>
-      <h3>Nómina</h3>
-      <ul>
-        <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>Percepciones, deducciones y neto por periodo (mensual, quincenal, semanal).</span></li>
-        <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>Recibo imprimible por colaborador y CSV listo para dispersión bancaria.</span></li>
-      </ul>
-    </article>
-    <article class="card bonus-col reveal d2">
-      <svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l3 3v15H6z"/><circle cx="12" cy="13" r="3"/><path d="M12 10v6M10.5 13h3"/></svg>
-      <h3>Facturación CFDI</h3>
-      <ul>
-        <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>Timbras tus facturas dentro de Kanri, sin brincar a otro programa.</span></li>
-        <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>Tus datos fiscales listos para México, del cobro directo a tu factura.</span></li>
-      </ul>
-    </article>
+  <div class="reveal d2" style="margin-top:var(--s-6);border-top:1px solid var(--ink);padding-top:var(--s-5)">
+    <p class="micro" style="text-transform:uppercase;letter-spacing:.14em;font-family:var(--font-mono);font-weight:700;color:var(--red-deep);margin-bottom:.6rem">Y 11 módulos más, ya conectados</p>
+    <div class="modlist" role="list" aria-label="Módulos adicionales incluidos">
+      <div class="modlist-item" role="listitem"><span class="dot" aria-hidden="true"></span><div><b>Clientes (CRM)</b><span>Pipeline por etapa y ranking de clientes por ventas.</span></div></div>
+      <div class="modlist-item" role="listitem"><span class="dot" aria-hidden="true"></span><div><b>Cotizaciones</b><span>Costeo con margen a la vista y PDF con tu marca.</span></div></div>
+      <div class="modlist-item" role="listitem"><span class="dot" aria-hidden="true"></span><div><b>Proyectos con Gantt</b><span>Plan maestro, ruta crítica y avance por etapa.</span></div></div>
+      <div class="modlist-item" role="listitem"><span class="dot" aria-hidden="true"></span><div><b>Diseño 2D y 3D</b><span>Planos y modelos CAD ligados a cada pieza.</span></div></div>
+      <div class="modlist-item" role="listitem"><span class="dot" aria-hidden="true"></span><div><b>Embarques</b><span>Packing list, cajas y etiquetas con QR de rastreo.</span></div></div>
+      <div class="modlist-item" role="listitem"><span class="dot" aria-hidden="true"></span><div><b>Reportes al cliente (PMO)</b><span>Reportes de avance programados y enviados al cliente.</span></div></div>
+      <div class="modlist-item" role="listitem"><span class="dot" aria-hidden="true"></span><div><b>Coordinación de técnicos</b><span>Órdenes asignadas por técnico con avance y tiempos.</span></div></div>
+      <div class="modlist-item" role="listitem"><span class="dot" aria-hidden="true"></span><div><b>Personal y nómina</b><span>Asistencia, sueldos y nómina que pasa a finanzas.</span></div></div>
+      <div class="modlist-item" role="listitem"><span class="dot" aria-hidden="true"></span><div><b>Chat interno</b><span>Mensajería por canales con avisos automáticos del sistema.</span></div></div>
+      <div class="modlist-item" role="listitem"><span class="dot" aria-hidden="true"></span><div><b>Facturación CFDI 4.0</b><span>Timbrado del SAT con tus sellos, PDF y XML.</span></div></div>
+      <div class="modlist-item" role="listitem"><span class="dot" aria-hidden="true"></span><div><b>Finanzas y rentabilidad</b><span>Utilidad por proyecto y por cliente, solo para administradores.</span></div></div>
+    </div>
+    <p class="micro reveal" style="margin-top:1.25rem">Los módulos disponibles dependen de tu plan.</p>
   </div>
 </section>
 
@@ -621,37 +1088,45 @@ h2.sec-title{
     <h2 id="wl-h" class="sec-title reveal display" style="color:var(--on-ink)">Tus clientes verán TU empresa.</h2>
     <div class="wl-grid">
       <div>
-        <p class="lead reveal">Subes tu logo, tu nombre comercial, tus colores y tus datos. Desde ahí, toda la app y cada cotización en PDF salen con tu identidad. Tu cliente ve la marca de tu taller, siempre. Kanri es el motor por debajo, invisible.</p>
+        <p class="lead reveal">Subes tu logo, tu nombre comercial, tus colores y tus datos. Desde ahí, toda la app, cada cotización en PDF, el portal de tu cliente y los correos salen con tu identidad. La cara siempre es la tuya: tu cliente ve tu marca. Kanri firma discreto al pie, como el motor que va por debajo.</p>
+        <p class="wl-pride reveal d2">Tu imagen a la altura de tu trabajo, desde la primera cotización.</p>
+      </div>
+      <div>
         <ul class="wl-checks reveal d1">
           <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>Cotizaciones PDF con tu logo, tu RFC y tus datos bancarios.</span></li>
+          <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>El portal donde tu cliente sigue su pedido, con tu marca.</span></li>
           <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>La app completa con tus colores y tu nombre.</span></li>
-          <li><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><span>Tu cliente nunca ve "Kanri". Te ves grande frente a él.</span></li>
         </ul>
-        <p class="wl-pride reveal d2">Te ves como la empresa que quieres ser, desde la primera cotización.</p>
       </div>
-      <div class="reveal d1">
+      <div class="reveal d1" hidden>
         <!-- SWAP-WHITELABEL: mock ilustrativo de cotización. Datos de "Talleres del Norte" son FICTICIOS de demostración. -->
         <div class="pdf-compare">
           <div>
             <div class="pdf" aria-label="Cotización de ejemplo con la marca del taller">
               <div class="pdf-brand">
-                <div class="pdf-logo">Talleres del Norte<small>S.A. de C.V. · RFC TNO120534XY9</small></div>
-                <span class="pdf-tag">COTIZACIÓN 0182</span>
+                <div class="pdf-logo">Talleres del Norte<small>S.A. de C.V. · RFC TNO120534XY9 · Cd. Juárez, Chih.</small></div>
+                <span class="pdf-tag">COTIZACIÓN 0182<small>05 jul 2026 · Vig. 15 días</small></span>
               </div>
               <table>
                 <tr><td>Maquinado de brida 6"</td><td>$ 8,400</td></tr>
                 <tr><td>Tratamiento térmico</td><td>$ 2,150</td></tr>
                 <tr><td>Inspección dimensional</td><td>$ 900</td></tr>
-                <tr><td><b>Total + IVA</b></td><td><b>$ 13,282</b></td></tr>
+                <tr><td><b>Total + IVA (16%)</b></td><td><b>$ 13,282</b></td></tr>
               </table>
-              <div class="pdf-foot">Pago a: BBVA 0123 4567 89 · CLABE 012 000 00123456789 0 · Talleres del Norte, S.A. de C.V.</div>
+              <div class="pdf-foot">
+                <div class="pdf-seal">
+                  <span class="pdf-qr" aria-hidden="true"><svg viewBox="0 0 29 29" shape-rendering="crispEdges"><path fill="#0E0C09" d="M0 0h7v7H0zM8 0h1v1H8zM10 0h2v1h-2zM13 0h1v3h-1zM15 0h1v1h-1zM17 0h1v2h-1zM22 0h7v7h-7zM1 1h5v5H1zM9 1h1v2H9zM11 1h1v1h-1zM15 1h1v1h-1zM19 1h2v1h-2zM23 1h5v5h-5zM2 2h3v3H2zM11 2h2v1h-2zM16 2h1v1h-1zM18 2h1v2h-1zM20 2h1v1h-1zM24 2h3v3h-3zM10 3h1v1h-1zM14 3h1v1h-1zM16 3h1v2h-1zM9 4h2v1H9zM12 4h1v2h-1zM15 4h1v1h-1zM20 4h1v2h-1zM8 5h1v1H8zM10 5h1v1h-1zM14 5h1v1h-1zM17 5h2v1h-2zM9 6h1v1H9zM11 6h2v1h-2zM15 6h1v1h-1zM19 6h1v1h-1zM21 6h1v1h-1zM0 8h1v1H0zM2 8h1v3H2zM4 8h1v1H4zM6 8h3v1H6zM11 8h1v1h-1zM13 8h3v1h-3zM17 8h1v1h-1zM19 8h1v2h-1zM21 8h1v1h-1zM24 8h1v1h-1zM26 8h3v1h-3zM0 9h1v2H0zM5 9h1v2H5zM8 9h1v1H8zM10 9h1v2h-1zM14 9h1v1h-1zM22 9h1v3h-1zM25 9h1v1h-1zM27 9h1v1h-1zM4 10h1v1H4zM7 10h1v2H7zM9 10h1v1H9zM12 10h2v1h-2zM16 10h2v1h-2zM20 10h1v1h-1zM24 10h2v1h-2zM28 10h1v3h-1zM1 11h3v1H1zM6 11h1v1H6zM11 11h1v2h-1zM13 11h1v1h-1zM15 11h1v3h-1zM18 11h1v1h-1zM23 11h1v1h-1zM26 11h1v2h-1zM3 12h1v2H3zM5 12h1v1H5zM8 12h2v1H8zM14 12h1v1h-1zM17 12h1v2h-1zM20 12h2v1h-2zM24 12h1v1h-1zM0 13h1v3H0zM6 13h1v3H6zM9 13h1v1H9zM12 13h1v1h-1zM19 13h1v2h-1zM22 13h2v1h-2zM25 13h1v1h-1zM27 13h2v1h-2zM2 14h1v1H2zM4 14h1v2H4zM8 14h1v1H8zM11 14h1v1h-1zM13 14h1v2h-1zM16 14h1v1h-1zM21 14h1v2h-1zM24 14h1v1h-1zM1 15h1v1H1zM9 15h2v1H9zM12 15h1v1h-1zM18 15h1v3h-1zM23 15h1v1h-1zM26 15h2v1h-2zM8 16h1v2H8zM10 16h1v1h-1zM14 16h1v1h-1zM16 16h2v1h-2zM20 16h1v2h-1zM22 16h1v1h-1zM25 16h1v2h-1zM28 16h1v1h-1zM0 17h5v1H0zM6 17h1v1H6zM11 17h2v1h-2zM15 17h1v1h-1zM17 17h1v1h-1zM19 17h1v1h-1zM23 17h2v1h-2zM27 17h1v2h-1zM8 18h1v1H8zM10 18h3v1h-3zM14 18h1v2h-1zM16 18h1v1h-1zM21 18h1v1h-1zM24 18h1v1h-1zM26 18h1v1h-1zM0 19h1v1H0zM2 19h3v1H2zM6 19h3v1H6zM12 19h1v1h-1zM15 19h2v1h-2zM19 19h2v1h-2zM22 19h1v3h-1zM25 19h1v1h-1zM8 20h1v1H8zM10 20h1v2h-1zM13 20h1v1h-1zM17 20h1v1h-1zM20 20h1v1h-1zM24 20h1v2h-1zM26 20h3v1h-3zM16 21h1v1h-1zM18 21h1v1h-1zM21 21h1v1h-1zM27 21h1v1h-1zM0 22h7v7H0zM9 22h1v2H9zM12 22h2v1h-2zM15 22h1v3h-1zM17 22h1v1h-1zM19 22h1v1h-1zM26 22h1v1h-1zM28 22h1v1h-1zM1 23h5v5H1zM11 23h1v1h-1zM13 23h1v1h-1zM18 23h1v2h-1zM20 23h2v1h-2zM23 23h1v1h-1zM25 23h1v3h-1zM27 23h2v1h-2zM2 24h3v3H2zM8 24h1v1H8zM10 24h1v1h-1zM12 24h1v1h-1zM14 24h1v1h-1zM16 24h1v1h-1zM21 24h1v1h-1zM23 24h1v2h-1zM11 25h1v1h-1zM13 25h1v2h-1zM17 25h1v1h-1zM19 25h2v1h-2zM27 25h1v1h-1zM8 26h1v2H8zM10 26h1v1h-1zM12 26h1v1h-1zM16 26h3v1h-3zM20 26h1v2h-1zM22 26h1v1h-1zM26 26h2v1h-2zM11 27h1v1h-1zM14 27h2v1h-2zM17 27h1v1h-1zM19 27h1v1h-1zM24 27h1v1h-1zM28 27h1v1h-1zM10 28h1v1h-1zM13 28h1v1h-1zM16 28h1v1h-1zM18 28h1v1h-1zM22 28h1v1h-1zM26 28h1v1h-1z"/></svg></span>
+                  <span>Pago a: BBVA 0123&nbsp;4567&nbsp;89<br>CLABE 012 000 00123456789 0</span>
+                </div>
+                <span class="pdf-powered">Talleres del Norte<br><b>powered by Kanri</b></span>
+              </div>
             </div>
-            <p class="pdf-caption">Con tu marca</p>
+            <p class="pdf-caption">Con <b>tu</b> marca</p>
           </div>
           <div>
             <div class="pdf pdf--off" aria-label="La misma cotización sin marca, mostrada tachada para contraste">
               <div class="pdf-brand">
-                <div class="pdf-logo">Sistema genérico<small>proveedor externo</small></div>
+                <div class="pdf-logo">Sistema genérico<small>proveedor externo · sin tus datos</small></div>
                 <span class="pdf-tag">DOC 0182</span>
               </div>
               <table>
@@ -659,7 +1134,7 @@ h2.sec-title{
                 <tr><td>Servicio 2</td><td>$ 2,150</td></tr>
                 <tr><td>Total</td><td>$ 13,282</td></tr>
               </table>
-              <div class="pdf-foot">Powered by otra plataforma</div>
+              <div class="pdf-foot"><span class="pdf-powered">Powered by otra plataforma</span></div>
             </div>
             <p class="pdf-caption">Sin marca</p>
           </div>
@@ -669,11 +1144,121 @@ h2.sec-title{
   </div>
 </section>
 
+<!-- ============ 6 · HECHO PARA TU GIRO ============ -->
+<section class="section wrap" aria-labelledby="giro-h">
+  <p class="kicker roof-kicker reveal">Se acomoda a ti</p>
+  <h2 id="giro-h" class="sec-title reveal">Hecho para talleres. Flexible para tu giro.</h2>
+  <p class="lead reveal">Kanri se construyó dentro de un taller de manufactura real en Cd. Juárez, donde aprendimos algo que aplica a cualquier negocio: el que crece es el que tiene su operación auditada y bajo control, no el que decide de memoria. Esa disciplina es el motor de Kanri, y desde el registro se configura a tu giro: cambian los módulos y hasta el vocabulario. No es un sistema genérico que te queda grande o chico. Es el tuyo.</p>
+  <div class="giros reveal" role="list" aria-label="Giros soportados">
+    <span class="chip" role="listitem">Manufactura CNC</span>
+    <span class="chip" role="listitem">Maquinados convencionales</span>
+    <span class="chip" role="listitem">MRO</span>
+    <span class="chip" role="listitem">Venta de herramientas e insumos</span>
+    <span class="chip" role="listitem">Diseño e ingeniería</span>
+  </div>
+  <p class="micro reveal" style="margin-top:1.25rem">Eliges tu giro al registrarte y la plataforma se acomoda a tus necesidades.</p>
+  <div class="cta-row reveal d1" style="margin-top:var(--s-5)">
+    <a href="#agenda" class="btn btn--primary" data-cta="agendar" data-plan="giros">Agenda una llamada</a>
+  </div>
+</section>
+
+<!-- ============ 9.9 · 管理 KANRI · EL NOMBRE ============ -->
+<section class="section panel-ink on-ink kanji-sec" aria-labelledby="kanji-h">
+  <div class="wrap">
+    <div class="kanji-grid">
+      <div class="kanji-mark reveal" aria-hidden="true">管理</div>
+      <div>
+        <p class="kicker roof-kicker reveal">El nombre</p>
+        <h2 id="kanji-h" class="sec-title reveal" style="color:var(--on-ink)">管理 se lee <span class="txt-red">kanri</span>. Significa gestión.</h2>
+        <p class="lead reveal d1">En la cultura industrial japonesa, kanri es la palabra para la administración disciplinada de los procesos. Está en hinshitsu kanri, el control de calidad. En seisan kanri, la gestión de la producción. Y en el hoshin kanri con el que Toyota alinea a toda su organización hacia un mismo objetivo.</p>
+        <p class="lead reveal d2" style="margin-top:var(--s-3)">Le pusimos así al sistema porque esa es la promesa: el control total y ordenado de tu negocio.</p>
+        <p class="muted small reveal d2" style="margin-top:var(--s-4);max-width:60ch;color:var(--on-ink-soft)">El logotipo también viene de la planta, no del software: es el balón datum, el círculo numerado de inspección que aparece en los planos ISO 9001. El punto que ya fue medido y aprobado. Eso queremos para cada dato de tu taller.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 10 · PRUEBA / ORIGEN ============
+     DOS estados. Por defecto se muestra el estado HONESTO (origen real en
+     piso de manufactura, SIN números inventados). Cuando exista el caso
+     Cd. Juárez con métricas y cita REALES, poner data-cases-ready="true" en
+     <section>, llenar los valores reales dentro de #casesReadyState y quitar
+     los brackets. NUNCA publicar con placeholders [X] visibles. -->
+<section class="section wrap" id="cases-section" data-cases-ready="false" aria-labelledby="test-h">
+  <p class="kicker roof-kicker reveal">De dónde viene Kanri</p>
+
+  <!-- ESTADO A · casos reales listos (oculto por defecto) -->
+  <div id="casesReadyState" hidden>
+    <h2 class="sec-title reveal">Talleres que ya dejaron el cuaderno.</h2>
+    <!-- SWAP-CASO-JUAREZ: llenar métricas y cita REALES tras el rodaje. NO inventar números. -->
+    <article class="case-anchor reveal">
+      <p class="kicker">Caso ancla · Cd. Juárez</p>
+      <div class="case-metrics">
+        <div class="metric"><div class="num">—</div><div class="lbl">Tiempo de cotización (antes → con Kanri)</div></div>
+        <div class="metric"><div class="num">—</div><div class="lbl">Tasa de cierre de cotizaciones</div></div>
+      </div>
+      <p class="case-quote">"—"</p>
+      <p class="muted small">Nombre · Puesto · Taller, Cd. Juárez</p>
+    </article>
+  </div>
+
+  <!-- ESTADO B · honesto mientras no hay caso cerrado (visible por defecto) -->
+  <div id="casesOriginState">
+    <h2 id="test-h" class="sec-title reveal">Construido dentro de un taller que produce todos los días.</h2>
+    <div class="edu-wrap">
+      <p class="edu-lead reveal">Kanri se construyó y se probó dentro de la operación de un taller de manufactura real en Cd. Juárez, con las mismas cotizaciones, el mismo piso, la misma quincena y el mismo SAT que vives tú. Cada módulo se validó resolviendo problemas reales de un taller que factura, produce y cobra todos los días.</p>
+      <p class="edu-punch reveal d1">Hoy es un <span class="edu-foil">sistema terminado</span>, listo desde el primer día.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 9.4 · BANDA DE ACERO (rompe el ritmo cream · datos duros, no inventados) ============ -->
+<section class="section statband on-ink" aria-label="Kanri en números">
+  <div class="wrap">
+    <p class="kicker roof-kicker reveal">La medida del sistema</p>
+    <div class="stat-grid">
+      <div class="stat reveal"><span class="stat-num" aria-hidden="true">17</span><span class="stat-lbl">Módulos conectados en uno</span></div>
+      <div class="stat reveal d1"><span class="stat-num" aria-hidden="true">0</span><span class="stat-lbl">Doble captura</span></div>
+      <div class="stat reveal d2"><span class="stat-num" aria-hidden="true">20</span><span class="stat-lbl">Días de prueba, sin tarjeta</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 9.5 · ONBOARDING FÁCIL ============ -->
+<section class="section wrap" aria-labelledby="onb-h" style="background:var(--cream-deep)">
+  <p class="kicker roof-kicker reveal">Arrancar es lo fácil</p>
+  <h2 id="onb-h" class="sec-title reveal">Operando en minutos, acompañado desde el día uno.</h2>
+  <p class="lead reveal">Registrarte toma 4 pasos: eliges tu giro, das de alta tu empresa, escoges tu plan y el sistema se configura solo, con los módulos y las palabras de tu negocio. Desde ahí, así se siente el arranque:</p>
+  <div class="onb-grid">
+    <div class="onb-item reveal"><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><div><b>Tu información entra desde tu propio Excel.</b><span class="muted small">Plantillas listas para cargar tu inventario, tus listas de materiales y tus componentes de cotización. Y si prefieres, te acompañamos a dejarlo cargado.</span></div></div>
+    <div class="onb-item reveal d1"><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><div><b>Valor el mismo día.</b><span class="muted small">No esperas semanas de implementación. El primer día ya sacas una cotización con tu marca.</span></div></div>
+    <div class="onb-item reveal d2"><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><div><b>A tu gente no le cuesta.</b><span class="muted small">Cada quien ve solo lo que le toca: el operador, sus piezas y su avance; compras, sus órdenes. Y hay modo de práctica para capacitar sin miedo a descomponer nada.</span></div></div>
+    <div class="onb-item reveal d3"><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><div><b>Sin instalar nada.</b><span class="muted small">100% web, desde el navegador o el celular. Si sabes usar WhatsApp, sabes usar esto.</span></div></div>
+  </div>
+  <div class="cta-row reveal d1" style="margin-top:var(--s-6)">
+    <a href="#agenda" class="btn btn--primary" data-cta="agendar" data-plan="onboarding">Agenda una llamada</a>
+  </div>
+</section>
+
+<!-- ============ 9.6 · REASEGURAMIENTO ============ -->
+<section class="section wrap" aria-labelledby="reas-h">
+  <p class="kicker roof-kicker reveal">Estás tomando la decisión correcta</p>
+  <h2 id="reas-h" class="sec-title reveal">El riesgo lo ponemos nosotros.</h2>
+  <p class="lead reveal">Probar Kanri no te compromete a nada. Si te sirve, sigues. Si no, te vas y te llevas tus datos.</p>
+  <div class="reassure">
+    <div class="card reveal"><svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="1"/><path d="M8 11V7a4 4 0 0 1 7.5-2"/></svg><b>Cancelas cuando quieras.</b><span class="muted small">Mes a mes, sin penalización. Pagas el mes que usas y, si te vas, te vas sin amarres.</span></div>
+    <div class="card reveal d1"><svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/><line x1="6" y1="15" x2="10" y2="15"/></svg><b>Prueba sin tarjeta.</b><span class="muted small">20 días operando de verdad, sin poner un peso ni dejar tarjeta.</span></div>
+    <div class="card reveal d2"><svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg><b>Tus datos se conservan.</b><span class="muted small">Si dejas de pagar, no se borra nada. Tu información te espera.</span></div>
+    <div class="card reveal"><svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="1"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/><circle cx="12" cy="16" r="1.3"/></svg><b>Solo los administradores ven el dinero.</b><span class="muted small">Ventas, márgenes, costos, saldos y nómina viven en un área que solo tú y quien tú decidas pueden ver. Tu equipo opera el sistema completo sin ver un solo monto.</span></div>
+    <div class="card reveal d1"><svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M3 9h18"/><circle cx="8" cy="14.5" r="1.4"/><path d="M12 14.5h5"/></svg><b>Tus datos, aislados y cifrados.</b><span class="muted small">Cada empresa ve únicamente lo suyo, con aislamiento a nivel de base de datos. Las llaves sensibles se guardan cifradas del lado del servidor y nunca se muestran.</span></div>
+  </div>
+</section>
+
 <!-- ============ 9 · PRECIOS + PRUEBA 20 DÍAS ============ -->
 <section class="section wrap" id="precios" aria-labelledby="precios-h">
   <p class="kicker roof-kicker reveal">Precios claros</p>
-  <h2 id="precios-h" class="sec-title reveal">Precio de fundador, sin permanencia.</h2>
-  <p class="lead reveal">Sin tarjeta para empezar. Si te sirve, activas tu plan; ya con plan activo, mes a mes, sin permanencia ni penalización. Precios en pesos más IVA, pago con Stripe, y en el plan anual dos meses sin costo.</p>
+  <h2 id="precios-h" class="sec-title reveal">Precio de fundador. Mientras arrancamos juntos.</h2>
+  <p class="lead reveal">Sin tarjeta para empezar. Si te sirve, activas tu plan; ya con plan activo, mes a mes, cancelas cuando quieras. Precios en pesos más IVA, pago con Stripe, y en el plan anual dos meses sin costo. El plan Profesional está en <strong>$8,500 al mes durante los próximos 20 días</strong>; después sube a su precio normal de $12,000 al mes.</p>
 
   <div class="price-grid">
     <!-- BÁSICO -->
@@ -699,7 +1284,7 @@ h2.sec-title{
         <span class="price-strike" id="priceStrike" hidden>$12,000</span>
         <div class="price">$8,500 <small>/ mes</small></div>
         <span class="price-off" id="priceOff" hidden>−29% por lanzamiento</span>
-        <span class="price-launch" id="priceLaunch">Precio de lanzamiento</span>
+        <span class="price-launch" id="priceLaunch" style="text-transform:none;letter-spacing:.01em;line-height:1.35">Precio de lanzamiento por 20 días. Después sube a $12,000 / mes.</span>
       </div>
       <!-- SWAP-COUNTDOWN + ANCLA: el tachado $12,000, el −29% y el countdown SOLO
            se muestran si PROMO_ANCHOR_REAL=true (abajo en el <script>), es decir si
@@ -731,31 +1316,29 @@ h2.sec-title{
       <a href="#agenda" class="btn btn--secondary" data-cta="agendar" data-plan="enterprise">Hablar con ventas</a>
     </article>
   </div>
-  <p class="micro reveal" style="margin-top:1.5rem">Sin tarjeta para empezar. Si te sirve, activas tu plan en dos clics. Al terminar la prueba, tus datos se conservan. Ya con plan activo, cancelas cuando quieras, mes a mes, sin permanencia ni penalización.</p>
+  <p class="micro reveal" style="margin-top:1.5rem">Sin tarjeta para empezar. Si te sirve, activas tu plan en dos clics. Al terminar la prueba, tus datos se conservan. Ya con plan activo, cancelas cuando quieras, mes a mes, sin penalización.</p>
 </section>
 
-<!-- ============ 9.5 · ONBOARDING FÁCIL ============ -->
-<section class="section wrap" aria-labelledby="onb-h" style="background:var(--cream-deep)">
-  <p class="kicker roof-kicker reveal">Pensabas que iba a ser un lío</p>
-  <h2 id="onb-h" class="sec-title reveal">Creías que iba a ser un lío. Y fue al revés.</h2>
-  <p class="lead reveal">El miedo no es el precio. Es "y si mi gente no le entiende", "y si me tardo un mes en arrancar". Aquí no pasa. Nosotros te montamos el sistema y tú ves resultado el mismo día.</p>
-  <div class="onb-grid">
-    <div class="onb-item reveal"><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><div><b>Nosotros migramos tu información.</b><span class="muted small">Nos pasas tu Excel o tu lista y lo dejamos cargado. Tú no capturas de cero.</span></div></div>
-    <div class="onb-item reveal d1"><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><div><b>Tienes valor desde el día uno.</b><span class="muted small">No esperas semanas. El primer día ya sacas una cotización con tu marca.</span></div></div>
-    <div class="onb-item reveal d2"><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><div><b>A tu personal no le cuesta.</b><span class="muted small">El de piso solo ve lo que le toca: su orden, su avance. Simple, hecho para que lo use cualquiera.</span></div></div>
-    <div class="onb-item reveal d3"><svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg><div><b>Sin instalar nada.</b><span class="muted small">Entras desde el navegador o el celular. Si sabes usar WhatsApp, sabes usar esto.</span></div></div>
-  </div>
-</section>
+<!-- ============ 11 · AGENDA TU DEMO ============ -->
+<section class="section wrap" id="agenda" aria-labelledby="agenda-h">
+  <p class="kicker roof-kicker reveal">La otra puerta</p>
+  <h2 id="agenda-h" class="sec-title reveal">¿Prefieres que te asesoremos? Agenda una llamada.</h2>
+  <p class="lead reveal">Agenda una llamada con nosotros. Analizamos, identificamos y te proponemos el plan que va contigo, te entregamos el sistema configurado a ti, listo para tu prueba de 20 días. Sin compromiso.</p>
 
-<!-- ============ 9.6 · REASEGURAMIENTO ============ -->
-<section class="section wrap" aria-labelledby="reas-h">
-  <p class="kicker roof-kicker reveal">Estás tomando la decisión correcta</p>
-  <h2 id="reas-h" class="sec-title reveal">Sin amarres. El riesgo lo ponemos nosotros.</h2>
-  <p class="lead reveal">Probar Kanri no te compromete a nada. Si te sirve, sigues. Si no, te vas y te llevas tus datos.</p>
-  <div class="reassure">
-    <div class="card reveal"><svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="1"/><path d="M8 11V7a4 4 0 0 1 7.5-2"/></svg><b>Cancelas cuando quieras.</b><span class="muted small">Mes a mes, sin permanencia y sin penalización. Pagas el mes que usas y, si te vas, te vas sin amarres.</span></div>
-    <div class="card reveal d1"><svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/><line x1="6" y1="15" x2="10" y2="15"/></svg><b>Prueba sin tarjeta.</b><span class="muted small">20 días operando de verdad, sin poner un peso ni dejar tarjeta.</span></div>
-    <div class="card reveal d2"><svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg><b>Tus datos se conservan.</b><span class="muted small">Si dejas de pagar, no se borra nada. Tu información te espera.</span></div>
+  <!-- SWAP-CALENDARIO: cuando exista el embed real de Cal.com / Calendly,
+       poner el link en CTA.agendar (arriba en el <script>). El JS lo pega
+       automáticamente aquí (#calEmbedSlot) y oculta la tarjeta-CTA de abajo.
+       Ej Cal.com: <div style="min-height:340px" data-cal-link="ronin/demo"></div> + su script. -->
+  <div id="calEmbedSlot"></div>
+  <div class="cal-embed on-ink reveal" id="calCard" aria-label="Agendar una demo de 20 minutos">
+    <div class="cal-cta-col">
+      <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="1"/><path d="M3 9h18M8 2v4M16 2v4"/><path d="M8 14h3M13 14h3M8 17h3"/></svg>
+      <p class="h3" style="color:var(--on-ink)">Llamada de 20 minutos</p>
+      <p class="note">Valoramos en vivo cómo trabaja tu taller y te proponemos el plan que te encaja, con el sistema ya configurado a tu giro y listo para tu prueba de 20 días.</p>
+      <a href="#" class="btn btn--primary" data-cta="agendar" data-plan="demo">Agendar mi llamada</a>
+      <a href="#" class="btn btn--wa" id="calWhatsApp" hidden data-cta="whatsapp" data-plan="agenda">Escríbenos por WhatsApp</a>
+      <span class="cal-avail-solo">Agenda abierta esta semana</span>
+    </div>
   </div>
 </section>
 
@@ -765,84 +1348,45 @@ h2.sec-title{
   <h2 id="faq-h" class="sec-title reveal">Lo que todos preguntan</h2>
   <div class="faq reveal">
     <details open>
-      <summary>¿Ya uso Excel, para qué cambio? <span class="sign" aria-hidden="true">+</span></summary>
-      <p class="ans">Kanri hace lo de Excel pero en tiempo real, compartido y sin errores de dedo. Y con tu marca frente al cliente, cosa que Excel nunca te va a dar. Tu inventario lo subes desde tu propio Excel para arrancar.</p>
+      <summary>¿Necesito instalar algo? <span class="sign" aria-hidden="true">+</span></summary>
+      <p class="ans">No. Kanri es 100% web: entras desde el navegador o el celular. Registras, eliges tu giro y ya estás operando.</p>
+    </details>
+    <details>
+      <summary>¿Puedo probarlo sin tarjeta? <span class="sign" aria-hidden="true">+</span></summary>
+      <p class="ans">Sí. Son 20 días de prueba completos, sin tarjeta y sin compromiso. Si no activas plan, tu información se conserva.</p>
+    </details>
+    <details>
+      <summary>¿Mis clientes verán "Kanri"? <span class="sign" aria-hidden="true">+</span></summary>
+      <p class="ans">Verán tu marca. Cotizaciones, portal de seguimiento, correos y etiquetas salen con tu logo y tus datos; Kanri firma discreto al pie, como el motor que va por debajo.</p>
+    </details>
+    <details>
+      <summary>¿Quién ve el dinero de mi negocio? <span class="sign" aria-hidden="true">+</span></summary>
+      <p class="ans">Solo los administradores. Ventas, márgenes, costos, saldos y nómina son confidenciales; el resto de tu equipo opera el sistema sin ver un solo monto.</p>
+    </details>
+    <details>
+      <summary>¿Puedo migrar mis datos actuales? <span class="sign" aria-hidden="true">+</span></summary>
+      <p class="ans">Sí. Hay plantillas de importación en Excel y CSV para tu inventario, tus listas de materiales y tus componentes de cotización. Y te acompañamos en la carga inicial.</p>
+    </details>
+    <details>
+      <summary>Ya uso Excel, ¿para qué cambio? <span class="sign" aria-hidden="true">+</span></summary>
+      <p class="ans">Kanri hace lo de Excel pero en tiempo real, compartido con tu equipo y sin errores de captura. Tu Excel no descuenta el inventario cuando apruebas una cotización, no te avisa cuándo resurtir y no le manda a tu cliente un PDF con tu marca. Además, tu inventario actual se sube desde tu propio Excel para arrancar.</p>
     </details>
     <details>
       <summary>Se me hace caro. <span class="sign" aria-hidden="true">+</span></summary>
-      <p class="ans">Cuesta menos que un empleado administrativo, y te evita perder plata por cotizar mal, sobreinventario y compras sin control. Ponlo en números: un solo trabajo cotizado a pérdida de $15,000 se come casi dos meses del plan Profesional. Y pruebas 20 días gratis, sin tarjeta, antes de pagar un peso.</p>
+      <p class="ans">Ponlo junto a lo que ya te cuesta operar sin números: un solo trabajo cotizado a pérdida se come meses del sistema, y cuesta una fracción de un administrativo dedicado a capturar. Lo pruebas 20 días gratis antes de pagar un peso, así que el riesgo de comprobarlo es cero.</p>
     </details>
     <details>
-      <summary>No tengo tiempo de aprender otro sistema. <span class="sign" aria-hidden="true">+</span></summary>
-      <p class="ans">Se configura solo según tu giro. En los 20 días de prueba ya estás operando, sin instalar nada. Entras desde el navegador o el celular, y nosotros te enseñamos y te acompañamos en el arranque.</p>
+      <summary>¿Emite facturas del SAT? <span class="sign" aria-hidden="true">+</span></summary>
+      <p class="ans">Sí. CFDI 4.0 real, timbrado con tus propios sellos (CSD), con PDF y XML al momento. Disponible en el plan Profesional, con costo por timbre vía PAC.</p>
     </details>
     <details>
-      <summary>¿Mis datos están seguros? <span class="sign" aria-hidden="true">+</span></summary>
-      <p class="ans">Cada empresa solo ve lo suyo, con aislamiento total: nadie sabe de nadie. Tu información viaja y se guarda cifrada, con respaldos automáticos en infraestructura de nube de nivel empresarial. Tus datos fiscales, listos para México.</p>
+      <summary>¿Mis datos están seguros y aislados de otras empresas? <span class="sign" aria-hidden="true">+</span></summary>
+      <p class="ans">Sí. Cada empresa ve únicamente lo suyo, con aislamiento a nivel de base de datos. Las llaves sensibles se guardan cifradas del lado del servidor, con respaldos automáticos.</p>
     </details>
     <details>
-      <summary>Mi sector no es exactamente manufactura. <span class="sign" aria-hidden="true">+</span></summary>
-      <p class="ans">Kanri se configura a muchos giros distintos desde el registro, y Enterprise se hace a la medida. Se acomoda a ti, no al revés.</p>
+      <summary>¿Sirve para mi giro? ¿Y si al final no me convence? <span class="sign" aria-hidden="true">+</span></summary>
+      <p class="ans">Hay 5 giros preconfigurados y el sistema adapta módulos y vocabulario desde el registro; Enterprise se hace a la medida. Y si no te convence, no hay amarres: pagas mes a mes, cancelas cuando quieras y tus datos se conservan.</p>
     </details>
-    <details>
-      <summary>¿Y si al final no me convence? <span class="sign" aria-hidden="true">+</span></summary>
-      <p class="ans">No pagas nada para probar y no dejas tarjeta. Si no activas plan, se guarda tu información y ya. Y si ya estás pagando y decides que no es para ti, cancelas cuando quieras, sin permanencia ni penalización, y tus datos se conservan. Cero amarres.</p>
-    </details>
-  </div>
-</section>
-
-<!-- ============ 10 · PRUEBA / ORIGEN ============
-     DOS estados. Por defecto se muestra el estado HONESTO (origen real en
-     piso de manufactura, SIN números inventados). Cuando exista el caso
-     Cd. Juárez con métricas y cita REALES, poner data-cases-ready="true" en
-     <section>, llenar los valores reales dentro de #casesReadyState y quitar
-     los brackets. NUNCA publicar con placeholders [X] visibles. -->
-<section class="section wrap" id="cases-section" data-cases-ready="false" aria-labelledby="test-h">
-  <p class="kicker roof-kicker reveal">De dónde viene Kanri</p>
-
-  <!-- ESTADO A · casos reales listos (oculto por defecto) -->
-  <div id="casesReadyState" hidden>
-    <h2 class="sec-title reveal">Talleres que ya dejaron el cuaderno.</h2>
-    <!-- SWAP-CASO-JUAREZ: llenar métricas y cita REALES tras el rodaje. NO inventar números. -->
-    <article class="case-anchor reveal">
-      <p class="kicker">Caso ancla · Cd. Juárez</p>
-      <div class="case-metrics">
-        <div class="metric"><div class="num">—</div><div class="lbl">Tiempo de cotización (antes → con Kanri)</div></div>
-        <div class="metric"><div class="num">—</div><div class="lbl">Tasa de cierre de cotizaciones</div></div>
-      </div>
-      <p class="case-quote">"—"</p>
-      <p class="muted small">Nombre · Puesto · Taller, Cd. Juárez</p>
-    </article>
-  </div>
-
-  <!-- ESTADO B · honesto mientras no hay caso cerrado (visible por defecto) -->
-  <div id="casesOriginState">
-    <h2 id="test-h" class="sec-title reveal">Nacido en el piso, no en una oficina.</h2>
-    <p class="lead reveal">Kanri no salió de una junta de software. Se construyó operando un taller de manufactura real en Cd. Juárez: las mismas cotizaciones, el mismo piso, la misma quincena y el mismo SAT que vives tú. Por eso encaja con cómo trabaja un taller de verdad, no con cómo cree una startup que trabajan.</p>
-    <div class="reassure" style="margin-top:2rem">
-      <div class="card reveal"><svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6"/></svg><b>Probado en operación real.</b><span class="muted small">Cada módulo se afinó resolviendo problemas reales de un taller que factura, produce y cobra todos los días.</span></div>
-      <div class="card reveal d1"><svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg><b>Gente de manufactura detrás.</b><span class="muted small">No es un CRM genérico adaptado a la fuerza. Lo hace quien conoce el piso, la merma y el margen.</span></div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ 11 · AGENDA TU DEMO ============ -->
-<section class="section wrap" id="agenda" aria-labelledby="agenda-h">
-  <p class="kicker roof-kicker reveal">La otra puerta</p>
-  <h2 id="agenda-h" class="sec-title reveal">¿Prefieres que te asesoremos? Agenda una llamada.</h2>
-  <p class="lead reveal">Agenda una llamada con nosotros. Valoramos cómo trabajas hoy, identificamos lo que más te urge y te proponemos el plan que te encaja, configurado a tu giro para tu prueba de 20 días. Sin compromiso.</p>
-
-  <!-- SWAP-CALENDARIO: cuando exista el embed real de Cal.com / Calendly,
-       poner el link en CTA.agendar (arriba en el <script>). El JS lo pega
-       automáticamente aquí (#calEmbedSlot) y oculta la tarjeta-CTA de abajo.
-       Ej Cal.com: <div style="min-height:340px" data-cal-link="ronin/demo"></div> + su script. -->
-  <div id="calEmbedSlot"></div>
-  <div class="cal-embed reveal" id="calCard" aria-label="Agendar una demo de 20 minutos">
-    <svg class="ic ic--red" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="1"/><path d="M3 9h18M8 2v4M16 2v4"/><path d="M8 14h3M13 14h3M8 17h3"/></svg>
-    <p class="h3">Llamada de 20 minutos</p>
-    <p class="note">Con Sebastián o Julio. Valoramos cómo trabaja tu taller y te proponemos el plan que te encaja, listo para tu prueba.</p>
-    <a href="#" class="btn btn--primary" data-cta="agendar" data-plan="demo">Agendar mi llamada</a>
-    <a href="#" class="agenda-wa" id="calWhatsApp" hidden>o escríbenos por WhatsApp</a>
   </div>
 </section>
 
@@ -857,7 +1401,7 @@ h2.sec-title{
     </div>
     <p class="micro reveal" style="color:var(--on-ink-soft);margin-top:1.25rem">¿Dudas? <a id="ctaWrite" href="#agenda" data-cta="agendar" data-plan="final" style="color:var(--cream);border-bottom:2px solid var(--red);padding-bottom:1px">Escríbenos</a> y te mostramos Kanri con tu propio giro en una demo.</p>
     <span class="brand reveal">kanri <span class="jp" aria-hidden="true">管理</span></span>
-    <p class="micro reveal" style="color:var(--on-ink-soft);margin-top:1rem">Un producto de <a href="https://www.roninstudio.com.mx" target="_blank" rel="noopener" style="color:var(--red);font-weight:700;border-bottom:1px solid var(--red)">Ronin Studio</a> · construido operando un taller de manufactura real en Cd. Juárez.</p>
+    <p class="micro reveal" style="color:var(--on-ink-soft);margin-top:1rem">Un producto de <a href="https://www.roninstudio.com.mx" target="_blank" rel="noopener" style="color:var(--red);font-weight:700;border-bottom:1px solid var(--red)">Ronin Studio</a> · construido dentro de la operación de un taller de manufactura real en Cd. Juárez.</p>
   </div>
 </section>
 
@@ -867,7 +1411,7 @@ h2.sec-title{
 <footer class="site-footer">
   <div class="wrap">
     <span class="brand">kanri <span class="jp" aria-hidden="true">管理</span></span>
-    <p class="micro">ERP + CRM para talleres · Un producto de Ronin Studio · Hecho en México para México.</p>
+    <p class="micro">ERP + CRM para tu negocio · Un producto de Ronin Studio · Hecho en México para México.</p>
   </div>
 </footer>
 
@@ -1109,6 +1653,55 @@ h2.sec-title{
       if(window.dataLayer){ window.dataLayer.push({event:'cta_click', cta_action:evt.action, cta_plan:evt.plan}); }
     });
   });
+
+  /* ---------- HEADER: sombra al hacer scroll ---------- */
+  var header = document.querySelector('.site-header');
+  if(header){
+    var onScrollHeader = function(){ header.classList.toggle('scrolled', window.scrollY > 8); };
+    window.addEventListener('scroll', onScrollHeader, {passive:true});
+    onScrollHeader();
+  }
+
+  /* ---------- H1 HERO: acabado foil bronce en la promesa ---------- */
+  // Envuelve "un solo techo" del titular en <em> (foil) SIN innerHTML: se opera
+  // solo sobre nodos de texto propios (contenido estático, cero input externo).
+  (function foilHero(){
+    var heroH1 = document.getElementById('hero-h1');
+    if(!heroH1 || heroH1.querySelector('em')) return;
+    var kw = 'un sistema';
+    var walker = document.createTreeWalker(heroH1, NodeFilter.SHOW_TEXT, null);
+    var node, target = null, idx = -1;
+    while((node = walker.nextNode())){
+      idx = node.nodeValue.toLowerCase().indexOf(kw);
+      if(idx !== -1){ target = node; break; }
+    }
+    if(!target) return;
+    var mid = target.splitText(idx);
+    mid.splitText(kw.length);                 // mid = exactamente la palabra clave
+    var em = document.createElement('em');
+    em.textContent = mid.nodeValue;           // textContent: sin riesgo de inyección
+    mid.parentNode.replaceChild(em, mid);
+  })();
+
+  /* ---------- BOTONES MAGNÉTICOS (solo puntero fino, sin reduce-motion) ---------- */
+  if(!reduce && window.matchMedia('(pointer:fine)').matches){
+    document.querySelectorAll('.btn').forEach(function(btn){
+      var raf = null;
+      btn.addEventListener('mousemove', function(e){
+        var r = btn.getBoundingClientRect();
+        var mx = (e.clientX - r.left - r.width/2) / (r.width/2);
+        var my = (e.clientY - r.top - r.height/2) / (r.height/2);
+        if(raf) cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(function(){
+          btn.style.transform = 'translate(' + (mx*6).toFixed(1) + 'px,' + (my*5 - 2).toFixed(1) + 'px)';
+        });
+      });
+      btn.addEventListener('mouseleave', function(){
+        if(raf) cancelAnimationFrame(raf);
+        btn.style.transform = '';
+      });
+    });
+  }
 })();
 </script>
 </body>
