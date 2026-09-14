@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ServiRest · Ve a dónde se va el dinero de tu restaurante</title>
+<meta name="description" content="Pagas 3 o 4 herramientas sueltas que no se hablan entre sí. ServiRest junta tu caja, tu inventario, tu food cost y tus reservas en una sola app. Ver la fuga es la mitad del camino. Prueba 14 días, sin tarjeta.">
+<meta name="theme-color" content="#1A1E2E">
+<link rel="canonical" href="https://servirest.mx/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_MX">
+<meta property="og:site_name" content="ServiRest">
+<meta property="og:title" content="ServiRest · Ve a dónde se va el dinero de tu restaurante">
+<meta property="og:description" content="Junta la caja, el inventario, el food cost y las reservas en una sola app. Ver la fuga es la mitad del camino. Desde $550 MXN al mes. Prueba 14 días sin tarjeta.">
+<meta property="og:url" content="https://servirest.mx/">
+<meta property="og:image" content="https://servirest.mx/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="ServiRest. Tu restaurante, viéndose claro.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ServiRest · Ve a dónde se va el dinero de tu restaurante">
+<meta name="twitter:description" content="Junta la caja, el inventario, el food cost y las reservas en una sola app. Desde $550 MXN al mes. Prueba 14 días sin tarjeta.">
+<meta name="twitter:image" content="https://servirest.mx/og-image.png">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231A1E2E'/%3E%3Ccircle cx='32' cy='32' r='26' stroke='%23FAF8F4' stroke-width='3.5' fill='none'/%3E%3Cpath d='M32 32c0-5 6.5-5.5 6.5 0 0 7-13 7.5-13 0 0-9.5 17-10 17 0 0 12-21 12.5-21 0' stroke='%23C9A24A' stroke-width='2.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   SERVIREST · "Sobremesa Lúcida" · v2 (ángulo de datos)
+   Midnight Tinto · Terracota (fuga/acción) · Mostaza (control) · Blanco Hueso
+   ============================================================ */
+:root{
+  --midnight:#1A1E2E;
+  --midnight-deep:#141724;
+  --midnight-soft:#232841;
+  --terracota:#C4633F;
+  --terracota-bright:#D8754E;
+  --terracota-deep:#A94F2E;
+  --mostaza:#C9A24A;
+  --mostaza-soft:#D9BC7A;
+  --mostaza-ink:#8A6D1F;      /* mostaza legible sobre crema (texto control on-cream) */
+  --hueso:#FAF8F4;
+  --hueso-warm:#F3EEE4;
+  --carbon:#2A2826;
+  --carbon-soft:#5A5450;
+  --kraft:#E4D3B4;
+  --kraft-deep:#D9C49E;
+  --whatsapp:#25D366;
+  --font-display:"Fraunces",Georgia,serif;
+  --font-body:"Inter",-apple-system,sans-serif;
+  --font-mono:"JetBrains Mono",monospace;
+  --ease-out:cubic-bezier(0.22,1,0.36,1);
+  --shadow-card:0 2px 8px rgba(26,30,46,.08),0 16px 48px rgba(26,30,46,.12);
+  --shadow-deep:0 4px 16px rgba(10,12,22,.35),0 24px 64px rgba(10,12,22,.45);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+section[id],header[id]{scroll-margin-top:76px}
+body{
+  font-family:var(--font-body);
+  background:var(--midnight);
+  color:var(--hueso);
+  line-height:1.65;
+  font-size:16px;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+img,svg{max-width:100%;display:block}
+a{color:inherit}
+::selection{background:var(--terracota);color:var(--hueso)}
+
+/* ---------- grain + atmósfera ---------- */
+.grain{position:relative;isolation:isolate}
+.grain::after{
+  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  opacity:.05;mix-blend-mode:overlay;
+}
+.grain>*{position:relative;z-index:2}
+
+/* ---------- tipografía base ---------- */
+h1,h2,h3{font-family:var(--font-display);font-weight:380;line-height:1.12;letter-spacing:-0.01em}
+h1{font-size:clamp(2rem,4.2vw,3.4rem);font-variation-settings:"opsz" 100}
+h2{font-size:clamp(1.9rem,3.6vw,3rem);font-variation-settings:"opsz" 72}
+h3{font-size:clamp(1.35rem,2.2vw,1.8rem);font-variation-settings:"opsz" 40}
+em,.it{font-style:italic;font-variation-settings:"opsz" 100}
+h1 em,h2 em,h3 em{color:var(--mostaza-soft);font-weight:560}
+.on-cream h2 em,.on-cream h3 em{color:var(--terracota)}
+p{max-width:62ch}
+
+.eyebrow{
+  font-family:var(--font-mono);font-size:.72rem;font-weight:500;
+  text-transform:uppercase;letter-spacing:.22em;
+  color:var(--mostaza);display:inline-flex;align-items:center;gap:.9rem;
+}
+.eyebrow::before{content:"";width:2.4rem;height:1px;background:var(--terracota)}
+.on-cream .eyebrow{color:var(--terracota-deep)}
+.on-cream .eyebrow::before{background:var(--mostaza)}
+
+.wrap{max-width:1180px;margin:0 auto;padding:0 clamp(1.25rem,5vw,3.5rem)}
+
+/* ---------- botones ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.6rem;
+  font-family:var(--font-body);font-weight:700;font-size:1.17rem;
+  padding:1rem 2.1rem;border-radius:6px;border:1px solid transparent;
+  text-decoration:none;cursor:pointer;white-space:nowrap;
+  transition:transform .35s var(--ease-out),box-shadow .35s var(--ease-out),background .25s ease,border-color .25s ease;
+}
+.btn .arr{display:inline-block;transition:transform .35s var(--ease-out)}
+.btn:hover .arr{transform:translateX(5px)}
+.btn:focus-visible{outline:3px solid var(--mostaza);outline-offset:3px}
+.btn-primary{background:var(--terracota);color:var(--hueso);box-shadow:0 8px 24px rgba(196,99,63,.32)}
+.btn-primary:hover{background:var(--terracota-bright);transform:translateY(-3px);box-shadow:0 14px 36px rgba(196,99,63,.42)}
+.btn-ghost{background:transparent;color:var(--hueso);border-color:rgba(250,248,244,.35)}
+.btn-ghost:hover{border-color:var(--mostaza);color:var(--mostaza-soft);transform:translateY(-3px)}
+.on-cream .btn-ghost{color:var(--carbon);border-color:rgba(42,40,38,.3)}
+.on-cream .btn-ghost:hover{border-color:var(--terracota);color:var(--terracota-deep)}
+.btn-wa{background:var(--whatsapp);color:#0b2b18;box-shadow:0 8px 24px rgba(37,211,102,.28)}
+.btn-wa:hover{transform:translateY(-3px);box-shadow:0 14px 36px rgba(37,211,102,.38)}
+.btn-sm{font-size:.95rem;padding:.6rem 1.3rem}
+.microcopy{font-size:.84rem;color:rgba(250,248,244,.78);margin-top:.55rem;font-family:var(--font-body)}
+.on-cream .microcopy{color:var(--carbon-soft)}
+
+/* ---------- nav ---------- */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:rgba(20,23,36,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(250,248,244,.08);
+  transform:translateY(-100%);animation:navIn .8s var(--ease-out) .2s forwards;
+}
+@keyframes navIn{to{transform:translateY(0)}}
+.nav-inner{max-width:1180px;margin:0 auto;padding:.8rem clamp(1.25rem,5vw,3.5rem);display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.wordmark{display:flex;align-items:center;gap:.65rem;text-decoration:none}
+.wordmark svg{width:34px;height:34px}
+.wordmark span{font-family:var(--font-display);font-size:1.3rem;font-weight:600;letter-spacing:-.01em;color:var(--hueso)}
+.wordmark span i{font-style:italic;color:var(--terracota-bright)}
+.nav-links{display:flex;gap:1.6rem;align-items:center}
+.nav-links a.link{font-size:.88rem;font-weight:500;color:rgba(250,248,244,.7);text-decoration:none;transition:color .2s}
+.nav-links a.link:hover{color:var(--mostaza-soft)}
+@media(max-width:760px){.nav-links{gap:1rem}.nav-links a.link:not(.keep){display:none}}
+
+/* ---------- hero ---------- */
+.hero{
+  min-height:100svh;display:flex;align-items:center;
+  padding:clamp(7rem,12vh,9rem) 0 clamp(3rem,7vh,5rem);
+  background:
+    radial-gradient(58% 48% at 82% 8%,rgba(201,162,74,.14),transparent 65%),
+    radial-gradient(65% 55% at 8% 96%,rgba(196,99,63,.22),transparent 62%),
+    linear-gradient(178deg,var(--midnight-deep) 0%,var(--midnight) 42%,#20253B 100%);
+}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(2.5rem,5vw,5rem);align-items:center}
+@media(max-width:960px){.hero-grid{grid-template-columns:1fr}}
+.hero h1{margin:1.4rem 0 1.5rem}
+.hero-sub{font-size:1.08rem;color:rgba(250,248,244,.74);max-width:56ch}
+.hero-ctas{display:flex;gap:1.1rem 1.4rem;flex-wrap:wrap;margin-top:2.2rem;align-items:flex-start}
+.cta-stack{display:flex;flex-direction:column}
+.trust-line{
+  margin-top:2.8rem;font-family:var(--font-display);font-style:italic;
+  font-size:1.15rem;color:var(--mostaza-soft);text-decoration:none;
+  display:flex;align-items:center;gap:1rem;transition:color .3s,gap .3s;
+}
+.trust-line::before{content:"";width:2.2rem;height:1px;background:rgba(201,162,74,.5);flex:none;transition:width .3s}
+.trust-line:hover{color:var(--mostaza)}
+.trust-line:hover::before{width:3rem}
+
+/* reveals de carga del hero */
+.hload{opacity:0;transform:translateY(26px);animation:hIn 1s var(--ease-out) forwards}
+@keyframes hIn{to{opacity:1;transform:translateY(0)}}
+.d1{animation-delay:.15s}.d2{animation-delay:.3s}.d3{animation-delay:.45s}.d4{animation-delay:.6s}.d5{animation-delay:.78s}.d6{animation-delay:.95s}
+
+/* ---------- secciones genéricas ---------- */
+section{padding:clamp(4.5rem,10vh,7.5rem) 0}
+.on-cream{background:linear-gradient(178deg,var(--hueso) 0%,var(--hueso-warm) 100%);color:var(--carbon)}
+.on-cream.cream-b{background:linear-gradient(178deg,var(--hueso-warm) 0%,#EEE7D9 100%)}
+.on-cream p{color:var(--carbon-soft)}
+.on-cream h2,.on-cream h3{color:var(--carbon)}
+.sec-head{max-width:760px;margin-bottom:clamp(2.5rem,5vh,4rem)}
+.sec-head h2{margin:1.2rem 0 1rem}
+
+/* reveals por scroll */
+.reveal{opacity:0;transform:translateY(34px);transition:opacity .9s var(--ease-out),transform .9s var(--ease-out)}
+.reveal.in{opacity:1;transform:translateY(0)}
+.reveal.dl1{transition-delay:.1s}.reveal.dl2{transition-delay:.22s}.reveal.dl3{transition-delay:.34s}.reveal.dl4{transition-delay:.46s}
+
+/* banda CTA intermedia */
+.banda{
+  margin-top:clamp(3.5rem,8vh,6rem);
+  background:linear-gradient(135deg,var(--terracota-deep) 0%,var(--terracota) 55%,#CE7247 100%);
+  border-radius:12px;padding:clamp(2rem,4vw,3.2rem) clamp(1.6rem,4vw,3.5rem);
+  display:flex;align-items:center;justify-content:space-between;gap:1.8rem;flex-wrap:wrap;
+  box-shadow:0 20px 60px rgba(196,99,63,.35);
+  position:relative;overflow:hidden;
+}
+.banda::before{
+  content:"";position:absolute;top:-40%;right:-6%;width:300px;height:300px;border-radius:50%;
+  background:radial-gradient(circle,rgba(201,162,74,.35),transparent 70%);
+}
+.banda p{
+  font-family:var(--font-display);font-style:italic;font-size:clamp(1.3rem,2.4vw,1.85rem);
+  color:var(--hueso);max-width:26ch;line-height:1.3;position:relative;
+}
+.banda .btn{background:var(--midnight);color:var(--hueso);position:relative}
+.banda .btn:hover{background:var(--midnight-deep);transform:translateY(-3px)}
+
+/* ---------- sección AI (CONSERVADA del v1) ---------- */
+.sec-ai{
+  background:
+    radial-gradient(55% 45% at 92% 4%,rgba(196,99,63,.16),transparent 62%),
+    radial-gradient(50% 42% at 4% 92%,rgba(201,162,74,.1),transparent 60%),
+    linear-gradient(180deg,var(--midnight-deep),var(--midnight) 50%,var(--midnight-deep));
+}
+.sec-ai p{color:rgba(250,248,244,.72)}
+.ai-intro{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(2.5rem,5vw,5rem);align-items:center;margin-bottom:clamp(3rem,6vh,5rem)}
+@media(max-width:960px){.ai-intro{grid-template-columns:1fr}}
+.call-card{
+  background:linear-gradient(160deg,var(--midnight-soft),#1B2032);
+  border:1px solid rgba(201,162,74,.2);border-radius:12px;
+  padding:1.7rem;box-shadow:var(--shadow-deep);max-width:430px;
+}
+.call-head{display:flex;align-items:center;gap:1rem;padding-bottom:1.1rem;border-bottom:1px solid rgba(250,248,244,.08);margin-bottom:1.2rem}
+.wave{display:flex;align-items:center;gap:3px;height:30px}
+.wave i{width:4px;border-radius:2px;background:var(--terracota-bright);animation:wv 1.15s ease-in-out infinite}
+.wave i:nth-child(1){height:10px;animation-delay:0s}
+.wave i:nth-child(2){height:22px;animation-delay:.14s;background:var(--mostaza)}
+.wave i:nth-child(3){height:28px;animation-delay:.28s}
+.wave i:nth-child(4){height:16px;animation-delay:.42s;background:var(--mostaza)}
+.wave i:nth-child(5){height:24px;animation-delay:.56s}
+.wave i:nth-child(6){height:12px;animation-delay:.7s;background:var(--mostaza)}
+@keyframes wv{0%,100%{transform:scaleY(.45)}50%{transform:scaleY(1)}}
+.call-meta .c-t{font-weight:600;font-size:.92rem;color:var(--hueso)}
+.call-meta .c-s{font-family:var(--font-mono);font-size:.68rem;color:rgba(250,248,244,.5);letter-spacing:.08em}
+.msg{max-width:88%;padding:.7rem 1rem;border-radius:10px;font-size:.86rem;line-height:1.5;margin-bottom:.7rem}
+.msg.cli{background:rgba(250,248,244,.07);color:rgba(250,248,244,.85);border:1px solid rgba(250,248,244,.06)}
+.msg.ai{background:rgba(196,99,63,.16);border:1px solid rgba(196,99,63,.3);color:var(--hueso);margin-left:auto}
+.msg .who{display:block;font-family:var(--font-mono);font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;margin-bottom:.3rem;color:var(--mostaza)}
+.call-result{
+  margin-top:1rem;padding:.8rem 1rem;border-radius:8px;
+  background:rgba(37,211,102,.08);border:1px solid rgba(37,211,102,.25);
+  font-family:var(--font-mono);font-size:.72rem;color:#8FE3B0;letter-spacing:.04em;
+}
+/* puente al panel (nuevo, subordina el asistente al tablero) */
+.panel-bridge{
+  display:inline-flex;align-items:center;gap:.55rem;margin-top:1rem;
+  font-family:var(--font-mono);font-size:.72rem;letter-spacing:.05em;
+  color:var(--mostaza);text-decoration:none;transition:transform .3s,color .3s;
+}
+.panel-bridge .b-arr{transition:transform .3s var(--ease-out)}
+.panel-bridge:hover{color:var(--mostaza-soft)}
+.panel-bridge:hover .b-arr{transform:translateY(3px)}
+
+.ai-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-bottom:clamp(2.5rem,5vh,4rem)}
+@media(max-width:900px){.ai-cols{grid-template-columns:1fr}}
+.ai-col{
+  background:rgba(250,248,244,.03);border:1px solid rgba(250,248,244,.09);
+  border-radius:10px;padding:1.9rem 1.7rem;
+  transition:transform .4s var(--ease-out),border-color .3s ease,background .3s ease;
+}
+.ai-col:hover{transform:translateY(-6px);border-color:rgba(201,162,74,.4);background:rgba(250,248,244,.05)}
+.ai-col h3{font-size:1.25rem;margin:.9rem 0 .7rem;color:var(--hueso)}
+.ai-col p{font-size:.94rem}
+.ai-ico{width:44px;height:44px;color:var(--mostaza)}
+.ai-extra{display:grid;grid-template-columns:1.1fr .9fr;gap:1.5rem;margin-bottom:2.5rem}
+@media(max-width:900px){.ai-extra{grid-template-columns:1fr}}
+.ai-block{border-radius:10px;padding:2rem 1.9rem}
+.ai-block.destacado{background:linear-gradient(150deg,rgba(201,162,74,.14),rgba(201,162,74,.05));border:1px solid rgba(201,162,74,.35)}
+.ai-block.honesto{background:rgba(250,248,244,.03);border:1px dashed rgba(250,248,244,.25)}
+.ai-block h3{font-size:1.25rem;margin-bottom:.7rem;color:var(--hueso)}
+.ai-block p{font-size:.95rem}
+.ai-block .tag{font-family:var(--font-mono);font-size:.64rem;letter-spacing:.2em;text-transform:uppercase;color:var(--mostaza);display:block;margin-bottom:1rem}
+.ai-precio{
+  display:flex;align-items:center;gap:1.8rem;flex-wrap:wrap;
+  border-top:1px solid rgba(250,248,244,.1);border-bottom:1px solid rgba(250,248,244,.1);
+  padding:1.6rem 0;margin-bottom:2.5rem;
+}
+.ai-precio .num{font-family:var(--font-mono);font-weight:700;font-size:clamp(1.6rem,3vw,2.2rem);color:var(--mostaza-soft);white-space:nowrap}
+.ai-precio .num small{font-size:.85rem;font-weight:400;color:rgba(250,248,244,.55)}
+.ai-precio p{font-size:.92rem;max-width:46ch;margin:0}
+.golpe-dark{
+  font-family:var(--font-display);font-style:italic;
+  font-size:clamp(1.5rem,3vw,2.2rem);line-height:1.3;color:var(--mostaza-soft);max-width:30ch;
+}
+
+/* ---------- pricing (CONSERVADO del v1) ---------- */
+.pricing-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.8rem;margin-top:1rem;align-items:stretch}
+@media(max-width:860px){.pricing-grid{grid-template-columns:1fr}}
+.plan{
+  border-radius:12px;padding:clamp(1.9rem,3.5vw,2.7rem);display:flex;flex-direction:column;
+  transition:transform .45s var(--ease-out),box-shadow .45s var(--ease-out);
+}
+.plan:hover{transform:translateY(-7px)}
+.plan-basic{background:#FFFDF9;border:1px solid rgba(42,40,38,.14);box-shadow:var(--shadow-card)}
+.plan-premium{
+  background:linear-gradient(168deg,var(--midnight) 0%,#222741 100%);
+  color:var(--hueso);position:relative;box-shadow:var(--shadow-deep);
+  border:1px solid rgba(201,162,74,.45);
+}
+.plan-premium::before{
+  content:"El sistema entero";position:absolute;top:-13px;left:2rem;
+  font-family:var(--font-mono);font-size:.63rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  background:var(--mostaza);color:var(--midnight-deep);padding:.35rem .8rem;border-radius:3px;
+}
+.plan .p-name{font-family:var(--font-mono);font-size:.72rem;font-weight:700;letter-spacing:.24em;text-transform:uppercase;margin-bottom:1.2rem}
+.plan-basic .p-name{color:var(--terracota-deep)}
+.plan-premium .p-name{color:var(--mostaza)}
+.plan .precio{font-family:var(--font-mono);font-weight:700;font-size:clamp(2.3rem,4vw,3rem);line-height:1;letter-spacing:-.02em}
+.plan .precio small{font-size:.9rem;font-weight:400;letter-spacing:0}
+.plan-basic .precio{color:var(--carbon)}
+.plan-basic .precio small{color:var(--carbon-soft)}
+.plan-premium .precio{color:var(--hueso)}
+.plan-premium .precio small{color:rgba(250,248,244,.55)}
+.plan .p-desc{margin:.9rem 0 1.4rem;font-size:.97rem}
+.plan-basic .p-desc{color:var(--carbon-soft)}
+.plan-premium .p-desc{color:rgba(250,248,244,.72)}
+.plan ul{list-style:none;display:flex;flex-direction:column;gap:.7rem;margin-bottom:2rem;flex:1}
+.plan li{display:flex;gap:.75rem;font-size:.92rem;align-items:flex-start}
+.plan-basic li{color:var(--carbon-soft)}
+.plan-premium li{color:rgba(250,248,244,.78)}
+.plan li svg{flex:none;width:17px;height:17px;margin-top:.2em}
+.plan-basic li svg{color:var(--terracota)}
+.plan-premium li svg{color:var(--mostaza)}
+.plan .btn{width:100%}
+.plan-basic .btn{background:var(--carbon);color:var(--hueso)}
+.plan-basic .btn:hover{background:var(--midnight);transform:translateY(-3px)}
+.enterprise{
+  margin-top:1.8rem;display:flex;align-items:center;justify-content:space-between;gap:1.2rem 2rem;flex-wrap:wrap;
+  border:1px dashed rgba(201,162,74,.4);border-radius:14px;padding:1.5rem clamp(1.4rem,3vw,2.2rem);
+  background:rgba(201,162,74,.05);
+}
+.enterprise .ent-name{
+  font-family:var(--font-mono);font-size:.72rem;font-weight:700;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--mostaza);display:block;margin-bottom:.5rem;
+}
+.enterprise p{font-size:1rem;color:rgba(250,248,244,.82);margin:0;max-width:56ch;line-height:1.5}
+.enterprise .btn{flex-shrink:0}
+.precio-asistente{
+  margin-top:1.8rem;font-family:var(--font-mono);font-size:.82rem;letter-spacing:.04em;
+  color:rgba(250,248,244,.72);border-left:2px solid rgba(201,162,74,.4);padding-left:1rem;
+}
+.precio-asistente b{color:var(--mostaza-soft);font-weight:700}
+.garantia{
+  margin-top:2.4rem;font-family:var(--font-mono);font-size:.78rem;letter-spacing:.06em;
+  color:rgba(250,248,244,.75);display:flex;gap:.6rem 2rem;flex-wrap:wrap;
+}
+.garantia span{display:inline-flex;align-items:center;gap:.5rem}
+.garantia svg{width:15px;height:15px;color:var(--mostaza)}
+
+/* ---------- CTA final ---------- */
+.sec-final{
+  background:
+    radial-gradient(60% 50% at 50% 115%,rgba(196,99,63,.28),transparent 70%),
+    radial-gradient(45% 40% at 88% 0%,rgba(201,162,74,.12),transparent 65%),
+    linear-gradient(180deg,var(--midnight),var(--midnight-deep));
+  padding-bottom:clamp(5rem,10vh,8rem);
+}
+.final-card{
+  max-width:860px;margin:0 auto;text-align:center;
+  background:linear-gradient(170deg,rgba(250,248,244,.05),rgba(250,248,244,.02));
+  border:1px solid rgba(201,162,74,.3);border-radius:16px;
+  padding:clamp(2.8rem,6vw,4.5rem) clamp(1.6rem,5vw,4rem);
+  box-shadow:var(--shadow-deep);
+}
+.final-card .seal-final{width:66px;height:66px;margin:0 auto 1.6rem}
+.final-card h2{margin-bottom:1.1rem}
+.final-card>p{margin:0 auto;font-size:1.05rem;color:rgba(250,248,244,.72);max-width:54ch}
+.final-ctas{display:flex;gap:1.1rem;justify-content:center;flex-wrap:wrap;margin-top:2.4rem}
+.final-note{margin-top:1.6rem;font-family:var(--font-mono);font-size:.76rem;letter-spacing:.08em;color:rgba(250,248,244,.75)}
+
+/* ---------- footer ---------- */
+footer{background:var(--midnight-deep);border-top:1px solid rgba(250,248,244,.07);padding:3.2rem 0 2.4rem}
+.foot-inner{display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;flex-wrap:wrap}
+.foot-brand .tagline{font-family:var(--font-display);font-style:italic;font-size:1.2rem;color:var(--mostaza-soft);margin-top:1rem}
+.foot-meta{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.1em;color:rgba(250,248,244,.72);text-align:right;line-height:2}
+@media(max-width:640px){.foot-meta{text-align:left}}
+
+/* ---------- sticky CTA ---------- */
+.sticky-cta{
+  position:fixed;bottom:0;left:0;right:0;z-index:90;
+  background:rgba(20,23,36,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-top:1px solid rgba(201,162,74,.25);
+  padding:.75rem clamp(1rem,4vw,3rem);
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  transform:translateY(110%);visibility:hidden;
+  transition:transform .5s var(--ease-out),visibility 0s linear .5s;
+}
+.sticky-cta.show{transform:translateY(0);visibility:visible;transition:transform .5s var(--ease-out)}
+.sticky-cta .s-txt{font-family:var(--font-display);font-style:italic;font-size:1.02rem;color:var(--hueso)}
+@media(max-width:640px){.sticky-cta .s-txt{display:none}.sticky-cta{justify-content:center}}
+
+/* ============================================================
+   V2 · COMPONENTES DEL ÁNGULO DE DATOS
+   ============================================================ */
+
+/* --- panel-firma reutilizable (hero, pilar 1, cierre) --- */
+.panel{
+  background:linear-gradient(165deg,var(--midnight-soft),#1D2236);
+  border:1px solid rgba(201,162,74,.22);border-radius:12px;
+  padding:1.5rem 1.65rem;box-shadow:var(--shadow-deep);
+  transition:transform .4s var(--ease-out),border-color .3s ease;
+}
+.panel:hover{transform:translateY(-3px);border-color:rgba(201,162,74,.4)}
+.panel .ph{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid rgba(250,248,244,.1);padding-bottom:.8rem;margin-bottom:1rem}
+.panel .ph-title{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--mostaza)}
+.panel .ph-live{font-family:var(--font-mono);font-size:.65rem;color:rgba(250,248,244,.5);display:flex;align-items:center;gap:.4rem}
+.panel .ph-live::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--whatsapp);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.panel .prow{display:flex;justify-content:space-between;align-items:baseline;padding:.55rem 0;gap:1rem}
+.panel .prow+.prow{border-top:1px dashed rgba(250,248,244,.08)}
+.panel .plabel{font-size:.82rem;color:rgba(250,248,244,.6)}
+.panel .pval{font-family:var(--font-mono);font-weight:700;font-size:1.15rem;color:var(--hueso);white-space:nowrap}
+.panel .pval.ctrl{color:var(--mostaza-soft)}
+.panel .pval.leak{color:var(--terracota-bright)}
+.panel .pval small{font-family:var(--font-mono);font-size:.6rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:rgba(250,248,244,.6)}
+.panel .pval.strike{text-decoration:line-through;text-decoration-color:rgba(216,117,78,.7);opacity:.7;color:rgba(250,248,244,.5)}
+.panel .pfoot{margin-top:1rem;padding-top:.9rem;border-top:1px solid rgba(250,248,244,.1);font-family:var(--font-mono);font-size:.68rem;color:var(--mostaza);letter-spacing:.1em;display:flex;align-items:center;gap:.5rem}
+.panel .pfoot::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--whatsapp);animation:pulse 2s infinite}
+.leak-beat{animation:leakBeat 2.2s ease-in-out infinite}
+@keyframes leakBeat{0%,100%{text-shadow:0 0 0 rgba(216,117,78,0)}50%{text-shadow:0 0 14px rgba(216,117,78,.55)}}
+
+/* --- hero: ensamblaje de piezas sueltas -> panel --- */
+.assembly{display:flex;flex-direction:column;gap:1rem;max-width:400px;margin-left:auto}
+@media(max-width:960px){.assembly{margin:0}}
+.chips-loose{display:flex;flex-wrap:wrap;gap:.55rem}
+.chip-loose{
+  font-family:var(--font-mono);font-size:.72rem;letter-spacing:.02em;
+  background:rgba(250,248,244,.04);border:1px solid rgba(250,248,244,.12);
+  color:rgba(250,248,244,.6);padding:.5rem .8rem;border-radius:5px;
+  display:inline-flex;gap:.45rem;align-items:center;
+  opacity:0;transform:translateY(-10px) rotate(-1deg);
+  animation:chipIn .55s var(--ease-out) forwards;
+}
+.chip-loose b{color:var(--terracota-bright);font-weight:500}
+.chip-loose.c1{animation-delay:.2s}
+.chip-loose.c2{animation-delay:.32s;transform:translateY(-10px) rotate(1.6deg)}
+.chip-loose.c3{animation-delay:.44s}
+.chip-loose.c4{animation-delay:.56s;transform:translateY(-10px) rotate(-1.4deg)}
+@keyframes chipIn{to{opacity:1;transform:translateY(0) rotate(0)}}
+.chips-arrow{
+  font-family:var(--font-mono);font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--mostaza);display:flex;align-items:center;gap:.7rem;
+  opacity:0;animation:chipIn .55s var(--ease-out) .72s forwards;
+}
+.chips-arrow::before,.chips-arrow::after{content:"";height:1px;flex:1;background:linear-gradient(90deg,transparent,rgba(201,162,74,.45),transparent)}
+
+/* --- pilares (la prueba) --- */
+.pilar-hero{display:grid;grid-template-columns:1fr .92fr;gap:clamp(2rem,4vw,4rem);align-items:center;margin-top:1rem}
+@media(max-width:900px){.pilar-hero{grid-template-columns:1fr}}
+.pilar-hero h3{font-size:clamp(1.5rem,2.7vw,2.05rem);margin-bottom:1rem}
+.pilar-hero p{font-size:1.02rem}
+.pilar-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.3rem;margin-top:clamp(2.2rem,4vh,3.2rem)}
+@media(max-width:900px){.pilar-grid{grid-template-columns:1fr}}
+.pilar-card{
+  background:#FFFDF9;border:1px solid rgba(42,40,38,.12);border-radius:12px;
+  padding:clamp(1.7rem,2.5vw,2.2rem);display:flex;flex-direction:column;
+  transition:transform .45s var(--ease-out),box-shadow .45s var(--ease-out),border-color .3s;
+}
+.pilar-card:hover{transform:translateY(-6px);border-color:rgba(201,162,74,.45);box-shadow:var(--shadow-card)}
+.pilar-card h3{font-size:1.28rem;margin-bottom:.7rem}
+.pilar-card p{font-size:.95rem;flex:1}
+.tag-flow{
+  margin-top:1.3rem;font-family:var(--font-mono);font-size:.68rem;letter-spacing:.06em;
+  display:inline-flex;gap:.6rem;align-items:center;flex-wrap:wrap;line-height:1.5;
+  background:rgba(42,40,38,.045);border:1px solid rgba(42,40,38,.1);
+  padding:.55rem .85rem;border-radius:5px;align-self:flex-start;
+}
+.tag-flow .leak{color:var(--terracota-deep);font-weight:500}
+.tag-flow .ctrl{color:var(--mostaza-ink);font-weight:700}
+.tag-flow .fl{color:var(--carbon-soft)}
+.pilar-cierre{
+  margin-top:clamp(2.5rem,5vh,3.5rem);text-align:center;
+  font-family:var(--font-display);font-style:italic;font-size:clamp(1.3rem,2.5vw,1.9rem);
+  color:var(--terracota-deep);line-height:1.35;max-width:30ch;margin-left:auto;margin-right:auto;
+}
+
+/* --- recorrido / momentos (reusado por onboarding) --- */
+.momentos{display:flex;flex-direction:column;gap:clamp(2.4rem,5vh,3.6rem);margin-top:1rem}
+.momento{
+  display:grid;grid-template-columns:200px 1fr;gap:clamp(1.5rem,4vw,3.5rem);
+  padding-top:2.4rem;border-top:1px solid rgba(42,40,38,.14);
+}
+@media(max-width:760px){.momento{grid-template-columns:1fr;gap:1rem}}
+.m-when{display:flex;flex-direction:column;gap:.6rem}
+.m-num{font-family:var(--font-display);font-style:italic;font-size:2.6rem;color:var(--mostaza-ink);line-height:1}
+.m-chip{
+  font-family:var(--font-mono);font-size:.7rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--terracota-deep);background:rgba(196,99,63,.09);border:1px solid rgba(196,99,63,.25);
+  padding:.35rem .7rem;border-radius:3px;align-self:flex-start;
+}
+.momento h3{margin-bottom:.7rem;max-width:26ch}
+.momento p{font-size:1.02rem}
+
+/* --- onboarding: puertas de entrada + zona de arrastre --- */
+.onb-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:1.3rem;margin-top:clamp(2.4rem,5vh,3.4rem)}
+@media(max-width:760px){.onb-tiles{grid-template-columns:1fr}}
+.onb-tile{
+  background:#FFFDF9;border:1px solid rgba(42,40,38,.12);border-radius:10px;
+  padding:1.7rem 1.75rem;display:flex;flex-direction:column;
+  transition:transform .4s var(--ease-out),box-shadow .4s var(--ease-out),border-color .3s;
+}
+.onb-tile:hover{transform:translateY(-4px);border-color:rgba(201,162,74,.45);box-shadow:0 6px 16px rgba(26,30,46,.08),0 20px 44px rgba(196,99,63,.12)}
+.onb-tile .o-ico{width:42px;height:42px;color:var(--terracota-deep)}
+.onb-tile .o-ico .wave{height:42px;align-items:center}
+.onb-tile .o-ico .wave i{background:var(--terracota-deep)}
+.onb-tile .o-ico .wave i:nth-child(2n){background:var(--mostaza-ink)}
+.onb-tile h3{font-size:1.18rem;margin:.9rem 0 .5rem;color:var(--carbon)}
+.onb-tile p{font-size:.93rem;color:var(--carbon-soft);flex:1;margin-bottom:1rem}
+.onb-tile .o-tag{font-family:var(--font-mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--terracota-deep)}
+.drag-mock{
+  margin-top:1.4rem;border:2px dashed var(--kraft-deep);border-radius:14px;
+  background:var(--hueso-warm);padding:clamp(2rem,4vw,3rem);text-align:center;
+  transition:border-color .3s,background .3s;
+}
+.drag-mock:hover{border-color:var(--mostaza);background:#F6F1E6}
+.drag-mock .dm-ico{width:54px;height:54px;color:var(--terracota-deep);margin:0 auto 1rem;transition:transform .3s}
+.drag-mock:hover .dm-ico{transform:translateY(-5px)}
+.drag-mock .dm-t{font-family:var(--font-display);font-size:clamp(1.15rem,2vw,1.4rem);color:var(--carbon);font-weight:500}
+.drag-mock .dm-s{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.12em;color:var(--carbon-soft);margin-top:.6rem;text-transform:uppercase}
+
+/* --- el sistema por dentro: vistas por rol --- */
+.rol-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.3rem;margin-top:1rem}
+@media(max-width:900px){.rol-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.rol-grid{grid-template-columns:1fr}}
+.rol-card{background:rgba(250,248,244,.03);border:1px solid rgba(250,248,244,.09);border-radius:10px;padding:1.8rem 1.7rem;transition:transform .4s var(--ease-out),border-color .3s ease,background .3s ease}
+.rol-card:hover{transform:translateY(-5px);border-color:rgba(201,162,74,.4);background:rgba(250,248,244,.05)}
+.rol-ico{width:40px;height:40px;color:var(--mostaza);margin-bottom:1rem}
+.rol-quien{font-family:var(--font-mono);font-size:.64rem;letter-spacing:.2em;text-transform:uppercase;color:var(--terracota-bright);display:block;margin-bottom:.45rem}
+.rol-card h3{font-size:1.18rem;color:var(--hueso);margin-bottom:.55rem}
+.rol-card p{font-size:.92rem;color:rgba(250,248,244,.72)}
+
+/* ---------- mobile chico ---------- */
+@media(max-width:480px){
+  .btn{white-space:normal;text-align:center;font-size:1.05rem;padding:.95rem 1.4rem;width:100%}
+  .btn-sm{width:auto;font-size:.92rem;padding:.6rem 1.2rem;white-space:nowrap}
+  .cta-stack,.hero-ctas,.final-ctas .btn,.banda .btn{width:100%}
+  .assembly{max-width:100%}
+}
+
+/* ---------- reduced motion ---------- */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-delay:0ms!important;transition-duration:.01ms!important}
+  html{scroll-behavior:auto}
+  .hload,.nav,.chip-loose,.chips-arrow,.panel{opacity:1;transform:none;animation:none}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+<!-- ══ Meta Pixel · TODO-ABSU: reemplazar PIXEL_ID por el ID real del pixel de ServiRest (2 lugares) ══ -->
+<script>
+window.SR_PIXEL_ID = "PIXEL_ID"; // <-- ABSU: pega aqui el ID del pixel (solo numeros)
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,'script','https://connect.facebook.net/en_US/fbevents.js');
+if (window.SR_PIXEL_ID !== "PIXEL_ID") { fbq('init', window.SR_PIXEL_ID); fbq('track', 'PageView'); }
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=PIXEL_ID&ev=PageView&noscript=1"/></noscript>
+<!-- ══ /Meta Pixel ══ -->
+</head>
+<body>
+
+<!-- ══════════════════ NAV ══════════════════ -->
+<nav class="nav" aria-label="Principal">
+  <div class="nav-inner">
+    <a class="wordmark" href="#top" aria-label="ServiRest, inicio">
+      <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <circle cx="32" cy="32" r="28" stroke="#FAF8F4" stroke-width="4"/>
+        <path d="M32 32c0-5 6.5-5.5 6.5 0 0 7-13 7.5-13 0 0-9.5 17-10 17 0 0 12-21 12.5-21 0" stroke="#C9A24A" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+      <span>Servi<i>Rest</i></span>
+    </a>
+    <div class="nav-links">
+      <a class="link" href="#prueba">El sistema</a>
+      <a class="link" href="#asistente">Asistente</a>
+      <a class="link" href="#puesta-en-marcha">Puesta en marcha</a>
+      <a class="link keep" href="#precios">Precios</a>
+      <!-- TODO-JULIO: URL real del registro/trial (se llena sola desde SR_LINKS, abajo) -->
+      <a class="btn btn-primary btn-sm" href="#cta" data-link="trial" data-todo="JULIO">Prueba gratis</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════════ SECCIÓN 1 · HERO ══════════════════ -->
+<header class="hero grain" id="top">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow hload d1">Empieza por ver tus números</span>
+      <h1 class="hload d2">Ve <em>a dónde se va el dinero</em> de tu restaurante. Ahí empieza la solución.</h1>
+      <p class="hero-sub hload d3">Ahora mismo pagas 3 o 4 herramientas sueltas que no se hablan entre sí: la caja por un lado, el Excel por otro, las reservas en WhatsApp y las cuentas en un cuaderno. ServiRest junta todo eso en una sola App. Y cuando ves la fuga, ya llevas la mitad del camino.</p>
+      <div class="hero-ctas hload d4">
+        <div class="cta-stack">
+          <!-- TODO-JULIO: URL real del registro/trial (se llena sola desde SR_LINKS, abajo) -->
+          <a class="btn btn-primary" href="#cta" data-link="trial" data-todo="JULIO">Prueba ServiRest 14 días, sin tarjeta <span class="arr" aria-hidden="true">&rarr;</span></a>
+          <span class="microcopy">En dos semanas ves tus números juntos por primera vez.</span>
+        </div>
+        <div class="cta-stack">
+          <!-- TODO-JULIO: link de WhatsApp para el recorrido (se llena solo desde SR_LINKS, abajo) -->
+          <a class="btn btn-ghost" href="#cta" data-link="whatsapp" data-todo="JULIO">Agenda un recorrido con tu caso</a>
+          <span class="microcopy">20 minutos leyendo tu negocio contigo, no un pitch de venta.</span>
+        </div>
+      </div>
+      <a class="trust-line hload d5" href="#prueba">Mira dónde se va tu dinero &darr;</a>
+    </div>
+
+    <!-- Visual: piezas sueltas que se ensamblan en un solo panel
+         TODO-JULIO: screenshot real del dashboard para reemplazar este mock. Cifras = UI ilustrativa. -->
+    <div class="hero-visual" aria-hidden="true">
+      <div class="assembly">
+        <div class="chips-loose">
+          <span class="chip-loose c1">Caja <b>+$40 /mes</b></span>
+          <span class="chip-loose c2">Excel <b>+$0</b></span>
+          <span class="chip-loose c3">WhatsApp <b>+$25 /mes</b></span>
+          <span class="chip-loose c4">Cuaderno <b>+4 hrs</b></span>
+        </div>
+        <div class="chips-arrow">Todo en un lugar</div>
+        <div class="panel hload d6">
+          <div class="ph">
+            <span class="ph-title">Tu restaurante, hoy</span>
+            <span class="ph-live">en vivo</span>
+          </div>
+          <div class="prow"><span class="plabel">Ventas de hoy</span><span class="pval ctrl" data-count="48730" data-prefix="$">$0</span></div>
+          <div class="prow"><span class="plabel">Food cost del turno</span><span class="pval ctrl">28.4% <small>en rango</small></span></div>
+          <div class="prow"><span class="plabel">Fuga detectada</span><span class="pval leak leak-beat" data-count="1240" data-prefix="$">$0</span></div>
+          <div class="pfoot">En vivo</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ══════════════════ SECCIÓN 2 · LA PRUEBA / 4 PILARES ══════════════════ -->
+<section class="on-cream grain" id="prueba">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">La prueba, no la promesa</span>
+      <h2>Todo lo que decides a ciegas hoy, mañana lo decides <em>viéndolo.</em></h2>
+      <p>Cuatro cosas cambian cuando tus números viven en un solo lugar. Ninguna es magia. Cada una la puedes comprobar con tu propio negocio.</p>
+    </div>
+
+    <!-- Pilar 1: ancho completo con el panel oscuro embebido -->
+    <div class="pilar-hero reveal">
+      <div>
+        <h3>Deja de pagar por pedazos sueltos.</h3>
+        <p>Suma lo que hoy pagas: la caja, el Excel que alguien mantiene, la app de reservas, el add-on de más. Los dueños de 1 a 3 sucursales terminan pagando entre 100 y 300 dólares al mes por software que ni siquiera se habla entre sí. ServiRest hace ese mismo trabajo, junto, desde $550 al mes.</p>
+        <span class="tag-flow"><span class="leak">HOY: $100&ndash;300 USD SUELTOS</span> <span class="fl">&rarr;</span> <span class="ctrl">SERVIREST: $550 MXN JUNTO</span></span>
+      </div>
+      <div class="panel" aria-hidden="true">
+        <div class="ph">
+          <span class="ph-title">Lo que pagas hoy, suelto</span>
+          <span class="ph-live">en vivo</span>
+        </div>
+        <div class="prow"><span class="plabel">Caja</span><span class="pval leak">$40 USD<small> /mes</small></span></div>
+        <div class="prow"><span class="plabel">Excel + quien lo llena</span><span class="pval leak">+4 hrs</span></div>
+        <div class="prow"><span class="plabel">App de reservas</span><span class="pval leak">$25 USD<small> /mes</small></span></div>
+        <div class="prow"><span class="plabel">Add-on de más</span><span class="pval leak">$18 USD<small> /mes</small></span></div>
+        <div class="prow" style="margin-top:.4rem"><span class="plabel" style="color:var(--mostaza-soft)">Todo junto en ServiRest</span><span class="pval ctrl">$550 MXN<small> /mes</small></span></div>
+        <div class="pfoot">Un solo lugar</div>
+      </div>
+    </div>
+
+    <!-- Pilares 2, 3, 4 -->
+    <div class="pilar-grid">
+      <article class="pilar-card reveal">
+        <h3>La fuga tiene nombre.</h3>
+        <p>El costo real por platillo y la merma dejan de ser una corazonada de fin de mes. Los ves plato por plato, turno por turno. Ahí aparece el robo hormiga, el plato que creías estrella y no deja margen, la merma que se comía tu utilidad. Cuando lo ves con ese detalle, recortar la fuga deja de ser suerte y pasa a ser una decisión tuya.</p>
+        <span class="tag-flow"><span class="ctrl">TU FOOD COST REAL, PLATO POR PLATO</span> <span class="fl">turno por turno</span></span>
+      </article>
+      <article class="pilar-card reveal dl1">
+        <h3>Lo que se perdía en WhatsApp, ahora queda anotado.</h3>
+        <p>El asistente contesta el teléfono y el WhatsApp cuando tu equipo está en la línea de fuego, toma la reserva y la deja en tu tablero. Una mesa que no se perdió es dinero que ya estaba en la puerta.</p>
+        <span class="tag-flow"><span class="ctrl">NINGUNA RESERVA SE PIERDE</span> <span class="fl">queda en tu tablero</span></span>
+      </article>
+      <article class="pilar-card reveal dl2">
+        <h3>Aliados del rubro, no proveedores carísimos.</h3>
+        <p>Toast te cobra entre 99 y 165 dólares al mes por sucursal, más el setup. Soft Restaurante te pide más de 5,000 dólares solo para instalarte algo que se siente del 2008. ServiRest arranca en $550 y $850 al mes, con 14 días de prueba sin tarjeta y sin amarre. Si no te sirve, te vas.</p>
+        <span class="tag-flow"><span class="ctrl">$550 / $850 MXN</span> <span class="fl">&middot; 14 días &middot; sin amarre</span></span>
+      </article>
+    </div>
+
+    <p class="pilar-cierre reveal">Ver la fuga es la mitad del trabajo. La otra mitad la hacemos contigo.</p>
+  </div>
+</section>
+
+<!-- ══════════════════ SECCIÓN 3 · EL SISTEMA POR DENTRO (vistas/roles) ══════════════════ -->
+<section class="sec-ai grain" id="sistema">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">El sistema por dentro</span>
+      <h2>Un sistema, <em>una vista para cada quien.</em></h2>
+      <p>Cada persona de tu equipo entra a lo suyo y a nada más. El mesero toma la orden, la cocina y la barra la preparan, la caja cobra, y las cuentas del negocio las ves solo tú. Todo conectado, cada quien en su lugar.</p>
+    </div>
+    <!-- Vistas reales (informe de funciones auditado de Julio, jul 2026) -->
+    <div class="rol-grid">
+      <article class="rol-card reveal">
+        <svg class="rol-ico" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+          <rect x="13" y="4" width="18" height="36" rx="3"/><path d="M20 34h4" stroke-linecap="round"/>
+        </svg>
+        <span class="rol-quien">Mesero</span>
+        <h3>Toma la orden desde su teléfono.</h3>
+        <p>Arma la cuenta en el punto de venta (variantes, notas como "sin cebolla") y la manda a la cocina desde una sola pantalla. Ve todas sus mesas a la vez, con aviso de cuál se está tardando.</p>
+      </article>
+      <article class="rol-card reveal dl1">
+        <svg class="rol-ico" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+          <rect x="5" y="8" width="34" height="23" rx="2"/><path d="M16 39h12M22 31v8" stroke-linecap="round"/><path d="M12 15h13M12 21h9" stroke-linecap="round"/>
+        </svg>
+        <span class="rol-quien">Cocina</span>
+        <h3>Ve las comandas en pantalla.</h3>
+        <p>Cada orden entra con un cronómetro semáforo (verde, mostaza, rojo) y alarma. Legible a dos metros, con botón de "listo". Se acabaron los rollos de papel que se traspapelan.</p>
+      </article>
+      <article class="rol-card reveal dl2">
+        <svg class="rol-ico" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+          <path d="M9 8h26L22 25 9 8Z" stroke-linejoin="round"/><path d="M22 25v11M15 36h14" stroke-linecap="round"/>
+        </svg>
+        <span class="rol-quien">Bar</span>
+        <h3>La barra ve solo lo suyo.</h3>
+        <p>Una comanda con bebidas dispara el ticket del bar en automático, con su propio cronómetro (más rápido que cocina). La mesa cierra cuando la cocina y la barra terminan.</p>
+      </article>
+      <article class="rol-card reveal">
+        <svg class="rol-ico" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+          <path d="M11 6h22v34l-3.5-2.5L26 40l-4-2.5L18 40l-3.5-2.5L11 40z" stroke-linejoin="round"/><path d="M16 15h12M16 22h12" stroke-linecap="round"/>
+        </svg>
+        <span class="rol-quien">Caja</span>
+        <h3>Cierra el corte en minutos, no en horas.</h3>
+        <p>Cobra, divide la cuenta, calcula la propina y factura, todo en un lugar. El corte de caja que antes tomaba unos 45 minutos, con ServiRest se cierra en 20 o menos.</p>
+      </article>
+      <article class="rol-card reveal dl1">
+        <svg class="rol-ico" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+          <rect x="6" y="6" width="13" height="13" rx="2"/><rect x="25" y="6" width="13" height="13" rx="2"/><rect x="6" y="25" width="13" height="13" rx="2"/><rect x="25" y="25" width="13" height="13" rx="2"/>
+        </svg>
+        <span class="rol-quien">Hostess</span>
+        <h3>Acomoda sin perder una mesa.</h3>
+        <p>Mueve las mesas en un plano que arrastras con el dedo, jala al cliente de la lista de espera a su mesa, y maneja las reservas del día. Sabe qué está libre y qué viene, sin preguntar.</p>
+      </article>
+      <article class="rol-card reveal dl2">
+        <svg class="rol-ico" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+          <rect x="5" y="7" width="34" height="26" rx="2"/><path d="M11 27v-5M18 27v-10M25 27v-7M31 27v-12" stroke-linecap="round"/><path d="M16 39h12" stroke-linecap="round"/>
+        </svg>
+        <span class="rol-quien">Dueño / Administrador</span>
+        <h3>Tu negocio entero, en una pantalla.</h3>
+        <p>El dueño y el administrador comparten la misma vista: ventas del día, food cost, los platillos que ganan y los que sobran, más el menú, el inventario y el personal. Todo en un lugar, y las cuentas finas solo las ve quien tú decidas.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ SECCIÓN 4 · ASISTENTE (conservado, reencuadrado) ══════════════════ -->
+<section class="sec-ai grain" id="asistente">
+  <div class="wrap">
+    <div class="ai-intro">
+      <div>
+        <span class="eyebrow reveal">Parte del mismo sistema</span>
+        <h2 class="reveal dl1" style="margin:1.2rem 0 1.1rem">Contesta el teléfono y el WhatsApp. <em>Y todo lo que contesta cae en el mismo tablero.</em></h2>
+        <p class="reveal dl2">Tu asistente atiende dudas del menú, toma reservas y anota pedidos para llevar, de día y de madrugada. No es un robot aparte: es una parte más del sistema que ya viste arriba. Cada reserva que toma queda anotada donde tú la ves.</p>
+        <!-- TODO-JULIO: confirmar que el AI Assistant está funcional hoy, o marcar "disponible próximamente" -->
+      </div>
+
+      <!-- TODO-JULIO: audio demo real de 20-30s del asistente para embeber aquí -->
+      <div class="call-card reveal dl2" aria-label="Ejemplo de llamada atendida por el asistente">
+        <div class="call-head">
+          <div class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="call-meta">
+            <div class="c-t">Llamada entrante &middot; sábado 21:04</div>
+            <div class="c-s">ASISTENTE SERVIREST &middot; ATENDIENDO</div>
+          </div>
+        </div>
+        <div class="msg cli"><span class="who">Cliente</span>"Buenas, ¿tienen mesa para cuatro el sábado a las nueve?"</div>
+        <div class="msg ai"><span class="who">Asistente</span>"Claro que sí. Te aparto una mesa para cuatro el sábado a las 9. ¿A nombre de quién?"</div>
+        <div class="msg cli"><span class="who">Cliente</span>"A nombre de Torres."</div>
+        <div class="msg ai"><span class="who">Asistente</span>"Listo, Torres. Mesa para cuatro, sábado 9 de la noche. Te llega la confirmación al WhatsApp."</div>
+        <div class="call-result">RESERVA CONFIRMADA &middot; MESA 4 PERS &middot; SÁB 21:00</div>
+        <a class="panel-bridge" href="#prueba"><span class="b-arr" aria-hidden="true">&rarr;</span> Se anotó en tu tablero de reservas.</a>
+      </div>
+    </div>
+
+    <div class="ai-cols">
+      <div class="ai-col reveal">
+        <svg class="ai-ico" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M15 6H9a3 3 0 0 0-3 3c0 16 13 29 29 29a3 3 0 0 0 3-3v-6a2 2 0 0 0-1.6-2l-6-1.4a2 2 0 0 0-2 .6l-2 2.4A24 24 0 0 1 13 18l2.4-2a2 2 0 0 0 .6-2L12.6 8A2 2 0 0 0 15 6Z"/>
+        </svg>
+        <h3>Nadie amarrado al teléfono.</h3>
+        <p>El asistente contesta las llamadas y los mensajes por ti. No necesitas a alguien dedicado a levantar el teléfono: ese tiempo y ese sueldo se van a donde de verdad suman, a atender a tu gente.</p>
+      </div>
+      <div class="ai-col reveal dl1">
+        <svg class="ai-ico" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+          <rect x="6" y="8" width="32" height="30" rx="3"/>
+          <path d="M6 16h32M14 4v8M30 4v8" stroke-linecap="round"/>
+          <path d="M15 26l5 5 9-9" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h3>No pierde la reserva.</h3>
+        <p>Lo que antes se perdía entre mensajes de WhatsApp ahora queda anotado. Toma fecha, hora, personas y nombre, y lo deja en tu tablero. Una mesa que no se perdió es dinero que ya estaba en la puerta.</p>
+      </div>
+      <div class="ai-col reveal dl2">
+        <svg class="ai-ico" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M7 20v4M14 14v16M21 8v28M28 13v18M35 18v8"/>
+        </svg>
+        <h3>Una voz que suena de verdad.</h3>
+        <p>Natural, cálida y con el tono correcto. Tu cliente pregunta, reserva y cuelga tranquilo, como si hubiera hablado con cualquiera de tu equipo.</p>
+      </div>
+    </div>
+
+    <div class="ai-extra">
+      <div class="ai-block destacado reveal">
+        <span class="tag">Sale del mismo sistema</span>
+        <h3>Ya conoce tu menú, tus precios y tus reglas.</h3>
+        <p>No hay que entrenarlo aparte. La información sale del mismo sistema donde vive tu restaurante: lo que cargas una vez, el asistente ya lo sabe contestar, con tus platos y tus precios reales.</p>
+      </div>
+      <div class="ai-block honesto reveal dl1">
+        <span class="tag">Con franqueza</span>
+        <h3>Y cuando algo se complica, te lo pasa a ti.</h3>
+        <p>Si el cliente pide algo fuera de lo común o quiere hablar con una persona, el asistente no inventa: te avisa y te deja la nota. Honestos con lo que hace y con lo que no.</p>
+      </div>
+    </div>
+
+    <div class="ai-precio reveal">
+      <span class="num">$4 <small>MXN / min usado</small></span>
+      <p>Sin renta mensual. Pagas solo lo que contesta, sin mínimos y sin plazos que te amarren.</p>
+    </div>
+
+    <p class="golpe-dark reveal">Ninguna llamada de tu restaurante vuelve a quedarse sin respuesta.</p>
+  </div>
+</section>
+
+<!-- ══════════════════ SECCIÓN 5 · PUESTA EN MARCHA (onboarding, nueva) ══════════════════ -->
+<section class="on-cream cream-b grain" id="puesta-en-marcha">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">La puesta en marcha</span>
+      <h2>Tu sistema empieza con lo que <em>ya tienes en las manos.</em></h2>
+      <p>No arrancas de cero ni te sientas a configurar nada raro. Un asistente te lleva de la mano en unos pocos pasos: subes tu menú (hasta por CSV en bloque), tus Excel de inventario y una foto por cada platillo, y en el mismo flujo se prueban la impresora y el cajón. En cuanto tu información está adentro, empiezas a ver dónde se va tu dinero. Ahí empieza la solución.</p>
+    </div>
+
+    <!-- Bloque A: 3 pasos guiados -->
+    <div class="momentos">
+      <article class="momento reveal">
+        <div class="m-when">
+          <span class="m-num">01</span>
+          <span class="m-chip">Tú &middot; una vez</span>
+        </div>
+        <div>
+          <h3>Nos das lo que ya tienes.</h3>
+          <p>Tu menú, tus Excel de inventario, una foto por cada platillo. Lo que ya usas todos los días, tal como lo tienes. Nada de rehacer nada.</p>
+        </div>
+      </article>
+      <article class="momento reveal">
+        <div class="m-when">
+          <span class="m-num">02</span>
+          <span class="m-chip">Nosotros &middot; contigo</span>
+        </div>
+        <div>
+          <h3>Lo dejamos listo, sin que pares tu operación.</h3>
+          <p>Nosotros lo cargamos y lo dejamos andando contigo. Tu cocina y tu caja no paran mientras tanto. La puesta en marcha corre por nuestra cuenta.</p>
+        </div>
+      </article>
+      <article class="momento reveal">
+        <div class="m-when">
+          <span class="m-num">03</span>
+          <span class="m-chip">Tu sistema &middot; ya</span>
+        </div>
+        <div>
+          <h3>Abres el tablero y ves tus números juntos por primera vez.</h3>
+          <p>Entras al mismo tablero que viste arriba y, por primera vez, tus números están juntos y a la vista. Ese primer día viendo claro es donde empieza todo.</p>
+        </div>
+      </article>
+    </div>
+
+    <!-- Bloque B: 3 puertas de entrada -->
+    <div class="onb-tiles">
+      <article class="onb-tile reveal">
+        <svg class="o-ico" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+          <rect x="7" y="5" width="30" height="34" rx="3"/>
+          <path d="M14 14h16M14 21h16M14 28h10" stroke-linecap="round"/>
+        </svg>
+        <h3>Carga tu menú.</h3>
+        <p>Como lo tengas, nosotros lo ordenamos, o lo importas completo por CSV en bloque. Lo mismo da un PDF viejo que una foto del pizarrón.</p>
+        <span class="o-tag">CSV en bloque &middot; PDF &middot; foto</span>
+      </article>
+      <article class="onb-tile reveal dl1">
+        <svg class="o-ico" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+          <rect x="6" y="6" width="32" height="32" rx="3"/>
+          <path d="M6 17h32M17 6v32" stroke-linecap="round"/>
+          <path d="M23 24l3 3 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h3>Sube tus Excel de inventario.</h3>
+        <p>Los mismos que ya llevas, sin rehacerlos. Los leemos nosotros y quedan dentro del sistema.</p>
+        <span class="o-tag">.xlsx &middot; .csv</span>
+      </article>
+      <article class="onb-tile reveal dl2">
+        <svg class="o-ico" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+          <rect x="5" y="9" width="34" height="26" rx="3"/>
+          <circle cx="22" cy="22" r="7"/>
+          <path d="M15 9l3-4h8l3 4" stroke-linejoin="round"/>
+        </svg>
+        <h3>Una foto por platillo.</h3>
+        <p>Cada platillo lleva su propia foto, subida como imagen o por URL, para que tu carta se vea tan apetitosa como tu comida.</p>
+        <span class="o-tag">jpg &middot; png &middot; por platillo</span>
+      </article>
+    </div>
+
+    <!-- Banda de cierre -->
+    <div class="banda reveal">
+      <p>Tu información adentro es tu primer día viendo claro.</p>
+      <!-- TODO-JULIO: URL real del registro/trial (se llena sola desde SR_LINKS, abajo) -->
+      <a class="btn" href="#cta" data-link="trial" data-todo="JULIO">Empieza tu prueba de 14 días <span class="arr" aria-hidden="true">&rarr;</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ SECCIÓN 6 · PRECIOS ══════════════════ -->
+<section class="sec-ai grain" id="precios">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Planes</span>
+      <h2>Un precio de socio, <em>sin letra chica.</em></h2>
+      <p>El mismo trabajo que hoy pagas en pedazos, junto y desde $550 al mes. 14 días de prueba sin tarjeta. Sin amarre: si no te sirve, te vas.</p>
+    </div>
+
+    <div class="pricing-grid">
+      <article class="plan plan-basic reveal">
+        <span class="p-name">Esencial</span>
+        <div class="precio">$550 <small>MXN / mes</small></div>
+        <p class="p-desc">Para un restaurante que quiere ver sus números juntos por primera vez.</p>
+        <!-- TODO-JULIO: lista exacta y definitiva de módulos del plan Esencial -->
+        <ul data-todo="JULIO">
+          <li><svg viewBox="0 0 17 17" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2.5 9l4 4 8-8.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Tu tablero de ventas y food cost</li>
+          <li><svg viewBox="0 0 17 17" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2.5 9l4 4 8-8.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Inventario y merma a la vista</li>
+          <li><svg viewBox="0 0 17 17" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2.5 9l4 4 8-8.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Reservas en un solo lugar</li>
+          <li><svg viewBox="0 0 17 17" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2.5 9l4 4 8-8.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Puesta en marcha contigo</li>
+        </ul>
+        <!-- TODO-JULIO: URL real del registro/trial (se llena sola desde SR_LINKS, abajo) -->
+        <a class="btn" href="#cta" data-link="trial" data-todo="JULIO">Empieza gratis <span class="arr" aria-hidden="true">&rarr;</span></a>
+      </article>
+
+      <article class="plan plan-premium reveal dl1">
+        <span class="p-name">Completo</span>
+        <div class="precio">$850 <small>MXN / mes</small></div>
+        <p class="p-desc">Para quien ya quiere el sistema entero trabajando por él.</p>
+        <!-- TODO-JULIO: lista exacta y definitiva de módulos del plan Completo -->
+        <ul data-todo="JULIO">
+          <li><svg viewBox="0 0 17 17" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2.5 9l4 4 8-8.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Todo lo del plan Esencial</li>
+          <li><svg viewBox="0 0 17 17" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2.5 9l4 4 8-8.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Reportes por turno y por platillo</li>
+          <li><svg viewBox="0 0 17 17" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2.5 9l4 4 8-8.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Más capacidad de operación</li>
+          <li><svg viewBox="0 0 17 17" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2.5 9l4 4 8-8.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Prioridad en la puesta en marcha</li>
+        </ul>
+        <!-- TODO-JULIO: URL real del registro/trial (se llena sola desde SR_LINKS, abajo) -->
+        <a class="btn btn-primary" href="#cta" data-link="trial" data-todo="JULIO">Empieza gratis <span class="arr" aria-hidden="true">&rarr;</span></a>
+      </article>
+    </div>
+
+    <div class="enterprise reveal">
+      <div>
+        <span class="ent-name">Enterprise</span>
+        <p>¿Cadena o franquicia con varias sucursales? Armamos una cotización a la medida de tu operación, con todo bajo un mismo tablero.</p>
+      </div>
+      <a class="btn btn-ghost" href="#cta">Hablemos <span class="arr" aria-hidden="true">&rarr;</span></a>
+    </div>
+
+    <p class="precio-asistente reveal">El asistente que contesta se cobra aparte: <b>$4 MXN por minuto usado</b>. Sin renta.</p>
+
+    <div class="garantia reveal">
+      <span><svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 8l3.5 3.5L13 4" stroke-linecap="round" stroke-linejoin="round"/></svg>14 DÍAS SIN TARJETA</span>
+      <span><svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 8l3.5 3.5L13 4" stroke-linecap="round" stroke-linejoin="round"/></svg>PUESTA EN MARCHA CONTIGO</span>
+      <span><svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 8l3.5 3.5L13 4" stroke-linecap="round" stroke-linejoin="round"/></svg>SIN AMARRE, CANCELAS CUANDO QUIERAS</span>
+    </div>
+
+    <!-- TODO-JULIO: precio USD para USA Hispano. Mientras, camino sin inventar precio. -->
+  </div>
+</section>
+
+<!-- ══════════════════ SECCIÓN 7 · CIERRE ══════════════════ -->
+<section class="sec-final grain" id="cta">
+  <div class="wrap">
+    <div class="final-card reveal">
+      <svg class="seal-final" id="sealFinal" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <circle cx="32" cy="32" r="29" stroke="#C9A24A" stroke-width="2.5"/>
+        <circle cx="32" cy="32" r="21" stroke="#C4633F" stroke-width="1.6" opacity=".55"/>
+        <path class="seal-path" d="M32 32c0-5 6.5-5.5 6.5 0 0 7-13 7.5-13 0 0-9.5 17-10 17 0 0 12-21 12.5-21 0" stroke="#FAF8F4" stroke-width="2.4" stroke-linecap="round"/>
+      </svg>
+      <h2>Ya sabes que el dinero se está yendo. <em>Ver por dónde</em> es el primer paso para detenerlo.</h2>
+      <p>Prueba ServiRest 14 días, sin tarjeta. En dos semanas ves tus números juntos por primera vez, y decides con eso en la mano.</p>
+      <div class="final-ctas">
+        <!-- TODO-JULIO: URL real del registro/trial (se llena sola desde SR_LINKS, abajo) -->
+        <a class="btn btn-primary" href="#precios" data-link="trial" data-todo="JULIO">Prueba ServiRest 14 días, sin tarjeta <span class="arr" aria-hidden="true">&rarr;</span></a>
+        <!-- TODO-JULIO: link de WhatsApp real para el recorrido (se llena solo desde SR_LINKS, abajo) -->
+        <a class="btn btn-wa" href="#precios" data-link="whatsapp" data-todo="JULIO">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.1-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.5.5c-.2.2-.3.4-.1.7.2.3.9 1.5 2 2.4 1.4 1.2 2.5 1.6 2.9 1.7.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2.1 1c.3.2.5.3.6.4.1.2.1.7-.1 1.3Z"/></svg>
+          Agenda un recorrido con tu caso
+        </a>
+      </div>
+      <p class="final-note">SIN TARJETA &middot; PUESTA EN MARCHA CONTIGO &middot; CANCELAS CUANDO QUIERAS</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ══════════════════ FOOTER ══════════════════ -->
+<footer>
+  <div class="wrap foot-inner">
+    <div class="foot-brand">
+      <a class="wordmark" href="#top" aria-label="ServiRest, volver arriba">
+        <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+          <circle cx="32" cy="32" r="29" stroke="#C9A24A" stroke-width="2.5"/>
+          <circle cx="32" cy="32" r="21" stroke="#C4633F" stroke-width="1.6" opacity=".55"/>
+          <path d="M32 32c0-5 6.5-5.5 6.5 0 0 7-13 7.5-13 0 0-9.5 17-10 17 0 0 12-21 12.5-21 0" stroke="#FAF8F4" stroke-width="2.4" stroke-linecap="round"/>
+        </svg>
+        <span>Servi<i>Rest</i></span>
+      </a>
+      <p class="tagline">Tu restaurante, viéndose claro.</p>
+    </div>
+    <div class="foot-meta">
+      HECHO PARA RESTAURANTES DE 1 A 3 SUCURSALES<br>
+      MÉXICO &middot; USA HISPANO<br>
+      &copy; 2026 SERVIREST
+    </div>
+  </div>
+</footer>
+
+<!-- ══════════════════ STICKY CTA ══════════════════ -->
+<div class="sticky-cta" id="stickyCta" aria-hidden="true">
+  <span class="s-txt">Ve a dónde se va el dinero de tu restaurante.</span>
+  <!-- TODO-JULIO: URL real del registro/trial (se llena sola desde SR_LINKS, abajo) -->
+  <a class="btn btn-primary btn-sm" href="#cta" data-link="trial" data-todo="JULIO">Prueba 14 días, sin tarjeta <span class="arr" aria-hidden="true">&rarr;</span></a>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ============================================================
+     TODO-JULIO: pega aquí los DOS links reales y TODOS los botones
+     de la página quedan vivos (nav, hero, banda, pricing, CTA final
+     y sticky). No hay que tocar nada más.
+       trial    → URL del registro / prueba de 14 días
+       whatsapp → link wa.me para agendar el recorrido
+     ============================================================ */
+  var SR_LINKS = {
+    trial: "",
+    whatsapp: "https://wa.me/5216565736505?text=Quiero%20un%20recorrido%20de%20ServiRest"
+  };
+
+  document.querySelectorAll("[data-link]").forEach(function(a){
+    var url = SR_LINKS[a.getAttribute("data-link")];
+    if (url) {
+      a.setAttribute("href", url);
+      if (url.indexOf("http") === 0) { a.setAttribute("target", "_blank"); a.setAttribute("rel", "noopener"); }
+      a.removeAttribute("data-todo");
+    }
+  });
+  if (!SR_LINKS.trial || !SR_LINKS.whatsapp) {
+    console.warn("[ServiRest] SR_LINKS incompleto: la landing NO puede convertir hasta llenar trial + whatsapp (TODO-JULIO).");
+  }
+
+  /* ---- Meta Pixel: eventos en los CTA (requiere SR_PIXEL_ID real en <head>) ---- */
+  function srTrack(ev){ if (window.fbq && window.SR_PIXEL_ID && window.SR_PIXEL_ID !== "PIXEL_ID") window.fbq('track', ev); }
+  document.querySelectorAll('[data-link="trial"]').forEach(function(a){ a.addEventListener('click', function(){ srTrack('InitiateCheckout'); }); });
+  document.querySelectorAll('[data-link="whatsapp"]').forEach(function(a){ a.addEventListener('click', function(){ srTrack('Lead'); }); });
+
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---- scroll reveals ---- */
+  var reveals = document.querySelectorAll(".reveal");
+  if (reduced || !("IntersectionObserver" in window)) {
+    reveals.forEach(function(el){ el.classList.add("in"); });
+  } else {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -6% 0px" });
+    reveals.forEach(function(el){ io.observe(el); });
+  }
+
+  /* ---- count-up de números (panel del hero) ---- */
+  function fmt(n, prefix, suffix){
+    var s = Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return (prefix || "") + s + (suffix || "");
+  }
+  function countUp(el){
+    var target = parseFloat(el.getAttribute("data-count"));
+    var prefix = el.getAttribute("data-prefix") || "";
+    var suffix = el.getAttribute("data-suffix") || "";
+    if (reduced) { el.textContent = fmt(target, prefix, suffix); return; }
+    var dur = 1400, start = null;
+    function step(ts){
+      if (!start) start = ts;
+      var p = Math.min((ts - start) / dur, 1);
+      var eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = fmt(target * eased, prefix, suffix);
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  var counters = document.querySelectorAll("[data-count]");
+  if (reduced || !("IntersectionObserver" in window)) {
+    counters.forEach(countUp);
+  } else {
+    var ioC = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) { countUp(e.target); ioC.unobserve(e.target); }
+      });
+    }, { threshold: 0.4 });
+    counters.forEach(function(el){ ioC.observe(el); });
+  }
+
+  /* ---- sticky CTA: aparece tras el hero, se esconde en el CTA final ---- */
+  var sticky = document.getElementById("stickyCta");
+  var hero = document.querySelector(".hero");
+  var finalSec = document.getElementById("cta");
+  function onScroll(){
+    var pastHero = window.scrollY > (hero ? hero.offsetHeight * 0.85 : 700);
+    var nearFinal = finalSec && finalSec.getBoundingClientRect().top < window.innerHeight * 0.75;
+    var show = pastHero && !nearFinal;
+    sticky.classList.toggle("show", show);
+    sticky.setAttribute("aria-hidden", show ? "false" : "true");
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  /* ---- sello final: la espiral se dibuja al entrar en vista ---- */
+  var sealPath = document.querySelector("#sealFinal .seal-path");
+  if (sealPath && !reduced && "IntersectionObserver" in window) {
+    var len = sealPath.getTotalLength();
+    sealPath.style.strokeDasharray = len;
+    sealPath.style.strokeDashoffset = len;
+    var ioS = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) {
+          sealPath.style.transition = "stroke-dashoffset 1.8s cubic-bezier(0.22,1,0.36,1)";
+          sealPath.style.strokeDashoffset = "0";
+          ioS.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    ioS.observe(document.getElementById("sealFinal"));
+  }
+})();
+</script>
+</body>
+</html>
