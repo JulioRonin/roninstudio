@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Workflows con IA para ventas y operaciones | Ronin Studio</title>
-<meta name="description" content="Ronin Studio diseña e implementa workflows con IA para ventas, operaciones y atención al cliente. Agenda un diagnóstico de tu proceso.">
+<title>Workflows y agentes de IA para tu operación | Ronin Studio</title>
+<meta name="description" content="Ronin Studio diseña e implementa workflows y agentes de IA para ventas, operaciones y atención al cliente. Agenda un diagnóstico de tu proceso.">
 <link rel="canonical" href="https://www.roninstudio.com.mx/">
 <meta name="theme-color" content="#0C0F14">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Ronin Studio">
 <meta property="og:locale" content="es_MX">
 <meta property="og:title" content="Tu operación, convertida en workflows con IA | Ronin Studio">
-<meta property="og:description" content="Consultoría que mapea cómo trabaja tu equipo, diseña el flujo correcto y lo automatiza con IA.">
+<meta property="og:description" content="Consultoría que mapea cómo trabaja tu equipo, diseña el flujo correcto y lo automatiza con agentes de IA.">
 <meta property="og:url" content="https://www.roninstudio.com.mx/">
 <meta property="og:image" content="https://www.roninstudio.com.mx/assets/og-ronin.jpg">
 <meta property="og:image:width" content="1200">
@@ -191,6 +191,31 @@
   .chip{font-size:12px;font-weight:600;color:var(--paper-ink);background:#E4E9EF;border-radius:9999px;padding:5px 11px}
   .chip.muted{font-weight:500;color:var(--paper-mist);background:transparent;border:1px dashed var(--paper-border)}
 
+  /* ============ 04 AGENTES (light) ============ */
+  .agrid{margin-top:56px;display:grid;grid-template-columns:1fr;gap:18px}
+  @media (min-width:900px){ .agrid{grid-template-columns:repeat(2,1fr)} }
+  .agent{background:var(--paper-panel);border:1px solid var(--paper-border);border-radius:22px;padding:30px 28px;
+    display:flex;flex-direction:column;gap:14px}
+  @media (min-width:720px){ .agent{padding:36px 34px} }
+  .agent h3{font-size:clamp(22px,2.4vw,28px);line-height:1.05;color:var(--paper-ink)}
+  .adesc{margin:0;font-size:14.5px;line-height:1.6;color:var(--paper-mist)}
+  .chat{margin-top:4px;background:#0C0F14;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:10px}
+  .chatlab{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+  .msg{margin:0;max-width:88%;font-size:13.5px;line-height:1.5;border-radius:14px;padding:10px 13px}
+  .msg.me{align-self:flex-end;background:#1B2430;color:var(--ink);border-bottom-right-radius:4px}
+  .msg.bot{align-self:flex-start;background:rgba(34,211,238,.1);color:var(--ink);border:1px solid rgba(34,211,238,.28);border-bottom-left-radius:4px}
+  .ameta{margin:6px 0 0;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;border-top:1px solid var(--paper-border);padding-top:16px}
+  .ameta div{min-width:0}
+  .ameta dt{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--paper-mist)}
+  .ameta dd{margin:4px 0 0;font-size:13px;font-weight:600;color:var(--paper-ink);overflow-wrap:anywhere}
+  @media (max-width:480px){ .ameta{grid-template-columns:1fr 1fr} }
+  .aprinciples{margin-top:48px;display:grid;grid-template-columns:1fr;gap:24px}
+  @media (min-width:820px){ .aprinciples{grid-template-columns:repeat(3,1fr);gap:32px} }
+  .aprinciples div{border-top:2px solid var(--accent2);padding-top:16px}
+  .aprinciples h4{margin:0;font-size:15px;font-weight:700;color:var(--paper-ink)}
+  .aprinciples p{margin:8px 0 0;font-size:13.5px;line-height:1.55;color:var(--paper-mist)}
+  .stackrow{margin-top:40px;display:flex;flex-wrap:wrap;align-items:center;gap:12px 16px}
+
   /* ============ 03 MÉTODO ============ */
   .method-grid{margin-top:64px;position:relative}
   .spine{position:absolute;left:18px;top:6px;bottom:6px;width:1px;background:var(--border)}
@@ -271,10 +296,10 @@
     <div class="navrow">
       <a class="brand" href="#hero"><span class="glyph">R</span><b>Ronin Studio</b></a>
       <nav class="links">
-        <a href="#metodo" data-i18n="navMethod">Método</a>
-        <a href="#workflows" data-i18n="navWorkflows">Workflows</a>
-        <a href="#portafolio" data-i18n="navPort">Portafolio</a>
         <a href="#workflows" data-i18n="navCasos">Casos</a>
+        <a href="#metodo" data-i18n="navMethod">Método</a>
+        <a href="#agentes" data-i18n="navAgents">Agentes</a>
+        <a href="#portafolio" data-i18n="navPort">Portafolio</a>
       </nav>
       <div class="navright">
         <button class="langbtn" id="langToggle" type="button">EN</button>
@@ -285,13 +310,13 @@
 
   <div class="heroinner side">
     <div class="microrow">
-      <span data-i18n="microLeft">Consultoría · Workflows · IA</span>
+      <span data-i18n="microLeft">Consultoría · Workflows · Agentes de IA</span>
       <span data-i18n="microRight">Método Ronin: Mapear → Diseñar → Construir → Evolucionar</span>
     </div>
     <div class="herobottom">
       <h1 data-i18n="heroH1">Tu operación,<br>convertida en<br>workflows con IA.</h1>
       <div class="heroright">
-        <p class="sub" data-i18n="heroSub">Consultoría que mapea cómo trabaja tu equipo, diseña el flujo correcto y lo automatiza con IA. Con un método probado en dos años de operación real.</p>
+        <p class="sub" data-i18n="heroSub">Consultoría que mapea cómo trabaja tu equipo, diseña el flujo correcto y lo automatiza con agentes de IA. Con un método probado en dos años de operación real.</p>
         <div class="ctarow">
           <a class="cta-solid" href="#contacto" data-i18n="ctaPrimary">Agendar diagnóstico</a>
           <a class="cta-text" href="#metodo" data-i18n="ctaSecondary">Ver cómo trabaja Ronin</a>
@@ -305,7 +330,7 @@
 <div class="credstrip">
   <div class="credinner side">
     <p class="credline" data-i18n="credLine">Diseñamos sobre las herramientas que tu equipo ya utiliza.</p>
-    <div class="catrow"><span>CRM</span><span data-i18n="catOps">Operaciones</span><span data-i18n="catMsg">Mensajería</span><span data-i18n="catDocs">Documentos</span><span data-i18n="catRep">Reportes</span></div>
+    <div class="catrow"><span>CRM</span><span data-i18n="catOps">Operaciones</span><span data-i18n="catMsg">Mensajería</span><span data-i18n="catDocs">Documentos</span><span data-i18n="catRep">Reportes</span><span data-i18n="catBill">Facturación</span></div>
   </div>
 </div>
 
@@ -354,7 +379,7 @@
           <p class="desc" data-i18n="wf1desc">Solicitudes, documentos, responsables y aprobaciones conectados, para que la operación no dependa de mensajes sueltos.</p>
           <div class="evidence">
             <span class="elab" data-i18n="evLab">Evidencia</span>
-            <div class="chips"><span class="chip">Orka Oleo Group</span><span class="chip">Kanri · IMC Design</span><span class="chip">Servirest</span></div>
+            <div class="chips"><span class="chip">Orka Oleo Group</span><span class="chip">Kanri · IMC Design</span><span class="chip">Mono Atelier</span><span class="chip">Servirest</span></div>
           </div>
         </div>
         <div class="wfcard proven">
@@ -363,7 +388,7 @@
           <p class="desc" data-i18n="wf2desc">Oportunidades capturadas, calificadas y con seguimiento, sin depender de que alguien actualice el CRM después de cada llamada.</p>
           <div class="evidence">
             <span class="elab" data-i18n="evLab">Evidencia</span>
-            <div class="chips"><span class="chip" data-i18n="ev2">Pipeline de ventas · Orka</span></div>
+            <div class="chips"><span class="chip" data-i18n="ev2">Pipeline de ventas · Orka</span><span class="chip" data-i18n="ev2b">Cotización y seguimiento · Mono Atelier</span></div>
           </div>
         </div>
         <div class="wfcard">
@@ -429,15 +454,76 @@
     </div>
   </section>
 
-  <!-- ============ 04 PORTAFOLIO ============ -->
+  <!-- ============ 04 AGENTES ============ -->
+  <section class="chapter light" id="agentes">
+    <div class="wrap side">
+      <div class="sectionhead">
+        <span class="eyebrow" data-i18n="aEyebrow">04 — Agentes de IA</span>
+        <h2 data-i18n="aH2">Agentes que trabajan dentro de tu operación.</h2>
+        <p data-i18n="aIntro">Un agente no es un chatbot suelto. Es una pieza del workflow: lee tus datos, hace tareas con tus herramientas y deja que una persona apruebe lo importante. Estos dos ya están funcionando.</p>
+      </div>
+
+      <div class="agrid">
+        <article class="agent">
+          <span class="ftag"><i></i><span data-i18n="ag1tag">En operación · Mono Atelier</span></span>
+          <h3 data-i18n="ag1title">Agente de cotización y finanzas</h3>
+          <p class="adesc" data-i18n="ag1desc">Desde Discord, arma cotizaciones más rápido y genera el estado de resultados y el balance de cada cliente con los datos del ERP.</p>
+          <div class="chat" aria-label="Ejemplo de conversación">
+            <span class="chatlab" data-i18n="exLab">Ejemplo</span>
+            <p class="msg me" data-i18n="ag1q">Cotiza un clóset de 2.4 m en melamina blanca para el cliente Ramírez.</p>
+            <p class="msg bot" data-i18n="ag1a">Listo: materiales, mano de obra e instalación desglosados. ¿La mando a revisión antes de enviarla?</p>
+          </div>
+          <dl class="ameta">
+            <div><dt data-i18n="mCanal">Canal</dt><dd>Discord</dd></div>
+            <div><dt data-i18n="mData">Conectado a</dt><dd data-i18n="ag1data">ERP de Mono Atelier</dd></div>
+            <div><dt data-i18n="mMotor">Motor</dt><dd>Hermes · Nous Research</dd></div>
+          </dl>
+        </article>
+
+        <article class="agent">
+          <span class="ftag"><i></i><span data-i18n="ag2tag">En producción · Lana</span></span>
+          <h3 data-i18n="ag2title">Asistente financiero personal</h3>
+          <p class="adesc" data-i18n="ag2desc">Analiza los ingresos, gastos fijos y flujo de efectivo de cada usuario, y responde qué puede pagar y cómo organizar su dinero.</p>
+          <div class="chat" aria-label="Ejemplo de conversación">
+            <span class="chatlab" data-i18n="exLab">Ejemplo</span>
+            <p class="msg me" data-i18n="ag2q">¿Me alcanza para una laptop de $18,000 este mes?</p>
+            <p class="msg bot" data-i18n="ag2a">Con tus ingresos y gastos fijos de este mes te quedarían $4,200 libres. Te conviene esperar a la siguiente quincena.</p>
+          </div>
+          <dl class="ameta">
+            <div><dt data-i18n="mCanal">Canal</dt><dd data-i18n="ag2chan">App web</dd></div>
+            <div><dt data-i18n="mData">Conectado a</dt><dd data-i18n="ag2data">Ingresos y gastos del usuario</dd></div>
+            <div><dt data-i18n="mMotor">Motor</dt><dd>Claude · API de Anthropic</dd></div>
+          </dl>
+        </article>
+      </div>
+
+      <div class="aprinciples">
+        <div><h4 data-i18n="pr1t">Conectado a tus datos reales</h4><p data-i18n="pr1d">Lee tu ERP, tu CRM o tu base de datos, no una copia suelta.</p></div>
+        <div><h4 data-i18n="pr2t">En el canal que ya usas</h4><p data-i18n="pr2d">Discord, la web o la herramienta donde tu equipo ya trabaja.</p></div>
+        <div><h4 data-i18n="pr3t">Una persona aprueba lo importante</h4><p data-i18n="pr3d">El agente prepara; tu equipo decide antes de enviar, cobrar o facturar.</p></div>
+      </div>
+
+      <div class="stackrow">
+        <span class="elab" data-i18n="stackLab">Construimos con</span>
+        <div class="chips"><span class="chip">Claude</span><span class="chip">Supabase</span><span class="chip">Stripe</span><span class="chip">Vercel</span><span class="chip" data-i18n="stackFact">Facturapi · CFDI</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 05 PORTAFOLIO ============ -->
   <section class="chapter dark" id="portafolio">
     <div class="wrap side">
       <div class="sectionhead">
-        <span class="eyebrow" data-i18n="pEyebrow">04 — Portafolio</span>
+        <span class="eyebrow" data-i18n="pEyebrow">05 — Portafolio</span>
         <h2 data-i18n="pH2">Software que ya construimos y está en uso.</h2>
         <p data-i18n="pIntro">El mismo método, llevado a producto. Plataformas propias para sectores distintos, cada una nacida de un problema operativo real.</p>
       </div>
       <div class="pgrid">
+        <div class="pitem">
+          <div class="prow"><span class="pname">Mono Atelier</span><span class="pstatus live"><i></i><span data-i18n="stYear">1 año en operación</span></span></div>
+          <span class="psector" data-i18n="mSec">Diseño y fabricación de muebles</span>
+          <p class="pdesc" data-i18n="mDesc">Proyecto propio. ERP con cotización, seguimiento a clientes, facturación y timbrado CFDI ante el SAT, más un agente de cotización.</p>
+        </div>
         <a class="pitem" href="/kanri">
           <div class="prow"><span class="pname">Kanri</span><span class="pstatus live"><i></i><span data-i18n="stProd">En producción</span></span></div>
           <span class="psector" data-i18n="kSec">Manufactura · talleres CNC</span>
@@ -472,6 +558,16 @@
           <span class="psector" data-i18n="dSec">Gimnasios</span>
           <p class="pdesc" data-i18n="dDesc">Membresías, clases, accesos y pagos bajo un mismo techo.</p>
         </div>
+        <div class="pitem">
+          <div class="prow"><span class="pname">Lana</span><span class="pstatus live"><i></i><span data-i18n="stDaily">En uso diario</span></span></div>
+          <span class="psector" data-i18n="lSec">Finanzas personales</span>
+          <p class="pdesc" data-i18n="lDesc">Gastos por categoría, flujo de efectivo, gastos fijos y un asistente de IA que responde qué puedes pagar.</p>
+        </div>
+        <div class="pitem">
+          <div class="prow"><span class="pname">Dogma</span><span class="pstatus"><i></i><span data-i18n="stIndigo">Hecha para Indigo</span></span></div>
+          <span class="psector" data-i18n="dgSec">Moda y confección</span>
+          <p class="pdesc" data-i18n="dgDesc">Arreglos y prendas a la medida: pedidos, avance de cada proyecto y pagos en línea.</p>
+        </div>
       </div>
     </div>
   </section>
@@ -496,11 +592,12 @@
   <div class="wrap side footgrid">
     <div class="footbrand">
       <a class="brand" href="#hero"><span class="glyph">R</span><b>Ronin Studio</b></a>
-      <p data-i18n="footTag">Workflows con IA para operaciones que quieren avanzar mejor.</p>
+      <p data-i18n="footTag">Workflows y agentes de IA para operaciones que quieren avanzar mejor.</p>
     </div>
     <nav class="footcol" aria-label="Secciones">
+      <a href="#workflows" data-i18n="navCasos">Casos</a>
       <a href="#metodo" data-i18n="navMethod">Método</a>
-      <a href="#workflows" data-i18n="navWorkflows">Workflows</a>
+      <a href="#agentes" data-i18n="navAgents">Agentes</a>
       <a href="#portafolio" data-i18n="navPort">Portafolio</a>
       <a href="#contacto" data-i18n="ctaShort">Agendar diagnóstico</a>
     </nav>
@@ -518,10 +615,31 @@
 (function(){
   var dict = {
     es: {
-      navMethod:"Método", navWorkflows:"Workflows", navPort:"Portafolio", navCasos:"Casos", ctaShort:"Agendar diagnóstico",
-      microLeft:"Consultoría · Workflows · IA", microRight:"Método Ronin: Mapear → Diseñar → Construir → Evolucionar",
+      navMethod:"Método", navWorkflows:"Workflows", navPort:"Portafolio", navCasos:"Casos", navAgents:"Agentes", ctaShort:"Agendar diagnóstico", catBill:"Facturación",
+      ev2b:"Cotización y seguimiento · Mono Atelier",
+      aEyebrow:"04 — Agentes de IA", aH2:"Agentes que trabajan dentro de tu operación.",
+      aIntro:"Un agente no es un chatbot suelto. Es una pieza del workflow: lee tus datos, hace tareas con tus herramientas y deja que una persona apruebe lo importante. Estos dos ya están funcionando.",
+      ag1tag:"En operación · Mono Atelier", ag1title:"Agente de cotización y finanzas",
+      ag1desc:"Desde Discord, arma cotizaciones más rápido y genera el estado de resultados y el balance de cada cliente con los datos del ERP.",
+      exLab:"Ejemplo", ag1q:"Cotiza un clóset de 2.4 m en melamina blanca para el cliente Ramírez.",
+      ag1a:"Listo: materiales, mano de obra e instalación desglosados. ¿La mando a revisión antes de enviarla?",
+      mCanal:"Canal", mData:"Conectado a", mMotor:"Motor", ag1data:"ERP de Mono Atelier",
+      ag2tag:"En producción · Lana", ag2title:"Asistente financiero personal",
+      ag2desc:"Analiza los ingresos, gastos fijos y flujo de efectivo de cada usuario, y responde qué puede pagar y cómo organizar su dinero.",
+      ag2q:"¿Me alcanza para una laptop de $18,000 este mes?",
+      ag2a:"Con tus ingresos y gastos fijos de este mes te quedarían $4,200 libres. Te conviene esperar a la siguiente quincena.",
+      ag2chan:"App web", ag2data:"Ingresos y gastos del usuario",
+      pr1t:"Conectado a tus datos reales", pr1d:"Lee tu ERP, tu CRM o tu base de datos, no una copia suelta.",
+      pr2t:"En el canal que ya usas", pr2d:"Discord, la web o la herramienta donde tu equipo ya trabaja.",
+      pr3t:"Una persona aprueba lo importante", pr3d:"El agente prepara; tu equipo decide antes de enviar, cobrar o facturar.",
+      stackLab:"Construimos con", stackFact:"Facturapi · CFDI",
+      stYear:"1 año en operación", mSec:"Diseño y fabricación de muebles",
+      mDesc:"Proyecto propio. ERP con cotización, seguimiento a clientes, facturación y timbrado CFDI ante el SAT, más un agente de cotización.",
+      stDaily:"En uso diario", lSec:"Finanzas personales", lDesc:"Gastos por categoría, flujo de efectivo, gastos fijos y un asistente de IA que responde qué puedes pagar.",
+      stIndigo:"Hecha para Indigo", dgSec:"Moda y confección", dgDesc:"Arreglos y prendas a la medida: pedidos, avance de cada proyecto y pagos en línea.",
+      microLeft:"Consultoría · Workflows · Agentes de IA", microRight:"Método Ronin: Mapear → Diseñar → Construir → Evolucionar",
       heroH1:"Tu operación,<br>convertida en<br>workflows con IA.",
-      heroSub:"Consultoría que mapea cómo trabaja tu equipo, diseña el flujo correcto y lo automatiza con IA. Con un método probado en dos años de operación real.",
+      heroSub:"Consultoría que mapea cómo trabaja tu equipo, diseña el flujo correcto y lo automatiza con agentes de IA. Con un método probado en dos años de operación real.",
       ctaPrimary:"Agendar diagnóstico", ctaSecondary:"Ver cómo trabaja Ronin", heroMicro:"30 min · sin compromiso · un proceso concreto",
       credLine:"Diseñamos sobre las herramientas que tu equipo ya utiliza.",
       catOps:"Operaciones", catMsg:"Mensajería", catDocs:"Documentos", catRep:"Reportes",
@@ -557,7 +675,7 @@
       s3a:"Implementación de alcance cerrado", s3e:"Workflow en producción",
       s4t:"Evolucionar", s4p:"Medimos resultados, ajustamos reglas y mantenemos el workflow útil conforme cambia el negocio.",
       s4a:"Acompañamiento mensual", s4e:"Reporte y mejoras continuas",
-      pEyebrow:"04 — Portafolio", pH2:"Software que ya construimos y está en uso.",
+      pEyebrow:"05 — Portafolio", pH2:"Software que ya construimos y está en uso.",
       pIntro:"El mismo método, llevado a producto. Plataformas propias para sectores distintos, cada una nacida de un problema operativo real.",
       stProd:"En producción", stLive:"Cliente 1 en vivo", stTrial:"Prueba gratis", stNew:"Nuevo", stSoon:"Próximamente", pSee:"Ver plataforma →",
       kSec:"Manufactura · talleres CNC", kDesc:"ERP a la medida para IMC Design, hoy ofrecido como SaaS a otros talleres y maquilas.",
@@ -568,13 +686,34 @@
       dSec:"Gimnasios", dDesc:"Membresías, clases, accesos y pagos bajo un mismo techo.",
       cEyebrow:"Siguiente paso", cH2:"Dime dónde se atora el trabajo.",
       cSub:"30 minutos · Sin compromiso · Enfoque en un proceso concreto.", copyBtn:"Copiar", copied:"¡Copiado!",
-      cBtn:"Escribir para agendar", footTag:"Workflows con IA para operaciones que quieren avanzar mejor.", footLine:"Diseñado para hacer avanzar el trabajo."
+      cBtn:"Escribir para agendar", footTag:"Workflows y agentes de IA para operaciones que quieren avanzar mejor.", footLine:"Diseñado para hacer avanzar el trabajo."
     },
     en: {
-      navMethod:"Method", navWorkflows:"Workflows", navPort:"Portfolio", navCasos:"Cases", ctaShort:"Book a diagnostic",
-      microLeft:"Consulting · Workflows · AI", microRight:"Ronin Method: Map → Design → Build → Evolve",
+      navMethod:"Method", navWorkflows:"Workflows", navPort:"Portfolio", navCasos:"Cases", navAgents:"Agents", ctaShort:"Book a diagnostic", catBill:"Invoicing",
+      ev2b:"Quoting and follow-up · Mono Atelier",
+      aEyebrow:"04 — AI agents", aH2:"Agents that work inside your operation.",
+      aIntro:"An agent isn't a loose chatbot. It's part of the workflow: it reads your data, does tasks with your tools and lets a person approve what matters. These two are already running.",
+      ag1tag:"Running · Mono Atelier", ag1title:"Quoting and finance agent",
+      ag1desc:"From Discord, it builds quotes faster and generates the income statement and balance for each client using ERP data.",
+      exLab:"Example", ag1q:"Quote a 2.4 m closet in white melamine for the Ramírez client.",
+      ag1a:"Done: materials, labor and installation broken down. Should I send it for review before it goes out?",
+      mCanal:"Channel", mData:"Connected to", mMotor:"Engine", ag1data:"Mono Atelier ERP",
+      ag2tag:"In production · Lana", ag2title:"Personal finance assistant",
+      ag2desc:"It analyzes each user's income, fixed expenses and cash flow, and answers what they can afford and how to organize their money.",
+      ag2q:"Can I afford an $18,000 laptop this month?",
+      ag2a:"With this month's income and fixed expenses you'd have $4,200 left. Better to wait for your next paycheck.",
+      ag2chan:"Web app", ag2data:"The user's income and expenses",
+      pr1t:"Connected to your real data", pr1d:"It reads your ERP, CRM or database, not a loose copy.",
+      pr2t:"In the channel you already use", pr2d:"Discord, the web or wherever your team already works.",
+      pr3t:"A person approves what matters", pr3d:"The agent prepares; your team decides before anything is sent, charged or invoiced.",
+      stackLab:"We build with", stackFact:"Facturapi · CFDI",
+      stYear:"1 year running", mSec:"Furniture design and fabrication",
+      mDesc:"Our own company. ERP with quoting, client follow-up, invoicing and CFDI stamping with Mexico's SAT, plus a quoting agent.",
+      stDaily:"In daily use", lSec:"Personal finance", lDesc:"Expenses by category, cash flow, fixed expenses and an AI assistant that tells you what you can afford.",
+      stIndigo:"Built for Indigo", dgSec:"Fashion and tailoring", dgDesc:"Alterations and made-to-measure garments: orders, progress on each project and online payments.",
+      microLeft:"Consulting · Workflows · AI agents", microRight:"Ronin Method: Map → Design → Build → Evolve",
       heroH1:"Your operation,<br>turned into<br>AI workflows.",
-      heroSub:"Consulting that maps how your team works, designs the right flow and automates it with AI. With a method proven over two years of real operation.",
+      heroSub:"Consulting that maps how your team works, designs the right flow and automates it with AI agents. With a method proven over two years of real operation.",
       ctaPrimary:"Book a diagnostic", ctaSecondary:"See how Ronin works", heroMicro:"30 min · no commitment · one concrete process",
       credLine:"We build on the tools your team already uses.",
       catOps:"Operations", catMsg:"Messaging", catDocs:"Documents", catRep:"Reports",
@@ -610,7 +749,7 @@
       s3a:"Fixed-scope implementation", s3e:"Workflow in production",
       s4t:"Evolve", s4p:"We measure results, adjust rules and keep the workflow useful as the business changes.",
       s4a:"Monthly support", s4e:"Report and continuous improvements",
-      pEyebrow:"04 — Portfolio", pH2:"Software we've already built and that's in use.",
+      pEyebrow:"05 — Portfolio", pH2:"Software we've already built and that's in use.",
       pIntro:"The same method, turned into product. Our own platforms for different sectors, each born from a real operational problem.",
       stProd:"In production", stLive:"Client 1 live", stTrial:"Free trial", stNew:"New", stSoon:"Coming soon", pSee:"See platform →",
       kSec:"Manufacturing · CNC shops", kDesc:"Custom ERP for IMC Design, now offered as SaaS to other shops and maquilas.",
@@ -621,7 +760,7 @@
       dSec:"Gyms", dDesc:"Memberships, classes, access control and payments under one roof.",
       cEyebrow:"Next step", cH2:"Tell me where the work gets stuck.",
       cSub:"30 minutes · No commitment · Focused on one concrete process.", copyBtn:"Copy", copied:"Copied!",
-      cBtn:"Email us to book", footTag:"AI workflows for operations that want to move better.", footLine:"Designed to move work forward."
+      cBtn:"Email us to book", footTag:"AI workflows and agents for operations that want to move better.", footLine:"Designed to move work forward."
     }
   };
 
