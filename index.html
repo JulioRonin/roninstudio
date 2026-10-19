@@ -264,11 +264,40 @@
   a.pitem:hover .parrow{opacity:1}
 
   /* contacto */
-  .copyline{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);
-    border-radius:9999px;padding:6px 8px 6px 16px;font-family:var(--mono);font-size:13px;
-    color:var(--ink);background:rgba(255,255,255,.02)}
-  .copyline button{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;
-    color:#0C0F14;background:var(--accent);border:none;border-radius:9999px;padding:7px 12px;cursor:pointer}
+  .contact-grid{display:grid;grid-template-columns:1fr;gap:40px;align-items:start}
+  @media (min-width:960px){ .contact-grid{grid-template-columns:1fr 1.05fr;gap:64px} }
+  .contact-intro h2{margin-top:18px;font-size:clamp(28px,3.6vw,44px);line-height:1.02;max-width:16ch}
+  .contact-intro p{margin:18px 0 0;max-width:44ch;font-size:15px;line-height:1.6;color:var(--mist)}
+  .wa-btn{margin-top:26px;display:inline-flex;align-items:center;gap:10px;border-radius:9999px;
+    background:#25D366;color:#06120B;font-weight:600;font-size:14.5px;padding:13px 22px;text-decoration:none}
+  .wa-btn:hover{background:#2EE472}
+  .contact-intro p.contact-alt{margin-top:16px;font-size:13.5px;color:var(--faint)}
+  .contact-alt a{color:var(--mist)}
+  .lead-form{background:var(--panel);border:1px solid var(--border);border-radius:20px;padding:26px;
+    display:flex;flex-direction:column;gap:16px}
+  @media (min-width:720px){ .lead-form{padding:34px} }
+  .field-row{display:grid;grid-template-columns:1fr;gap:16px}
+  @media (min-width:560px){ .field-row{grid-template-columns:1fr 1fr} }
+  .field{display:flex;flex-direction:column;gap:7px;min-width:0}
+  .field label{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--mist)}
+  .field label em{font-style:normal;text-transform:none;letter-spacing:0;color:var(--faint)}
+  .field input,.field select,.field textarea{width:100%;font:inherit;font-size:15px;color:var(--ink);
+    background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:11px 13px;
+    transition:border-color .2s}
+  .field textarea{resize:vertical;min-height:84px}
+  .field select{appearance:none;-webkit-appearance:none;padding-right:36px;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%238593A2' stroke-width='1.6'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 14px center}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--accent);
+    box-shadow:0 0 0 3px rgba(34,211,238,.15)}
+  .field.invalid input,.field.invalid select{border-color:#F87171}
+  .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+  .form-submit{align-self:flex-start;font-family:var(--sans);font-size:14.5px;border:none;cursor:pointer}
+  .form-submit[disabled]{opacity:.6;cursor:wait}
+  .form-status{margin:0;min-height:1.2em;font-size:13.5px;line-height:1.5;color:var(--mist)}
+  .form-status.ok{color:var(--safe)}
+  .form-status.err{color:#F87171}
+  .form-status a{color:inherit}
   .site-foot{background:var(--bg);border-top:1px solid var(--border);padding-block:56px 28px}
   .footgrid{display:grid;grid-template-columns:1fr;gap:32px}
   @media (min-width:760px){ .footgrid{grid-template-columns:1.4fr 1fr 1fr} }
@@ -573,17 +602,59 @@
   </section>
 
   <!-- ============ CONTACTO ============ -->
-  <section class="chapter deep" id="contacto" style="padding-block:72px;">
-    <div class="wrap side" style="text-align:center;">
-      <span class="eyebrow" data-i18n="cEyebrow">Siguiente paso</span>
-      <h2 style="margin:18px auto 0;max-width:22ch;font-size:clamp(26px,3.8vw,40px);line-height:1.02;" data-i18n="cH2">Diagnosticamos tu flujo de trabajo. Lo rediseñamos. Lo automatizamos con IA.</h2>
-      <p style="margin:16px auto 0;max-width:46ch;color:var(--mist);font-size:14.5px;" data-i18n="cSub">30 minutos · Sin compromiso · Enfoque en un proceso concreto.</p>
-      <div style="margin-top:26px;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px;">
-        <a class="cta-solid" href="mailto:project@roninstudio.com.mx?subject=Diagn%C3%B3stico%20Ronin%20Studio" data-i18n="cBtn">Escribir para agendar</a>
-        <span class="copyline">project@roninstudio.com.mx
-          <button type="button" id="copyEmail" data-i18n="copyBtn">Copiar</button>
-        </span>
+  <section class="chapter deep" id="contacto">
+    <div class="wrap side contact-grid">
+      <div class="contact-intro">
+        <span class="eyebrow" data-i18n="cEyebrow">Siguiente paso</span>
+        <h2 data-i18n="cH2">Diagnosticamos tu flujo de trabajo. Lo rediseñamos. Lo automatizamos con IA.</h2>
+        <p data-i18n="cLead">Déjanos tus datos y te contactamos en menos de 24 horas hábiles para agendar un diagnóstico de 30 minutos, enfocado en un proceso concreto.</p>
+        <a class="wa-btn" href="https://wa.me/5216565736505?text=Hola%20Ronin%20Studio%2C%20quiero%20agendar%20un%20diagn%C3%B3stico%20de%20mi%20flujo%20de%20trabajo." target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg>
+          <span data-i18n="waBtn">Escríbenos por WhatsApp</span>
+        </a>
+        <p class="contact-alt"><span data-i18n="cOr">O escríbenos a</span> <a href="mailto:project@roninstudio.com.mx">project@roninstudio.com.mx</a></p>
       </div>
+
+      <form class="lead-form" id="leadForm" novalidate>
+        <div class="field-row">
+          <div class="field">
+            <label for="lf-name" data-i18n="fName">Nombre</label>
+            <input id="lf-name" name="nombre" type="text" autocomplete="name" required maxlength="80">
+          </div>
+          <div class="field">
+            <label for="lf-company" data-i18n="fCompany">Empresa</label>
+            <input id="lf-company" name="empresa" type="text" autocomplete="organization" required maxlength="100">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="lf-email" data-i18n="fEmail">Correo</label>
+            <input id="lf-email" name="email" type="email" autocomplete="email" required maxlength="120">
+          </div>
+          <div class="field">
+            <label for="lf-phone"><span data-i18n="fPhone">WhatsApp o teléfono</span> <em data-i18n="fOpt">(opcional)</em></label>
+            <input id="lf-phone" name="telefono" type="tel" autocomplete="tel" inputmode="tel" maxlength="25">
+          </div>
+        </div>
+        <div class="field">
+          <label for="lf-area" data-i18n="fArea">¿Qué flujo quieres mejorar?</label>
+          <select id="lf-area" name="area" required>
+            <option value="" data-i18n="fAreaPick">Elige una opción</option>
+            <option value="Operaciones" data-i18n="fA1">Operaciones</option>
+            <option value="Ventas y CRM" data-i18n="fA2">Ventas y CRM</option>
+            <option value="Atención al cliente" data-i18n="fA3">Atención al cliente</option>
+            <option value="Finanzas y facturación" data-i18n="fA4">Finanzas y facturación</option>
+            <option value="Otro" data-i18n="fA5">Otro</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="lf-msg"><span data-i18n="fMsg">Cuéntanos brevemente cómo funciona hoy</span> <em data-i18n="fOpt">(opcional)</em></label>
+          <textarea id="lf-msg" name="mensaje" rows="3" maxlength="800"></textarea>
+        </div>
+        <input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button class="cta-solid form-submit" type="submit" id="lf-submit" data-i18n="fSend">Solicitar diagnóstico</button>
+        <p class="form-status" id="lf-status" role="status" aria-live="polite"></p>
+      </form>
     </div>
   </section>
 </main>
@@ -685,8 +756,16 @@
       aSec:"Transporte de personal", aDesc:"Auditoría del servicio de transporte en tres vías: personal, maquiladora y transportista.",
       dSec:"Gimnasios", dDesc:"Membresías, clases, accesos y pagos bajo un mismo techo.",
       cEyebrow:"Siguiente paso", cH2:"Diagnosticamos tu flujo de trabajo. Lo rediseñamos. Lo automatizamos con IA.",
-      cSub:"30 minutos · Sin compromiso · Enfoque en un proceso concreto.", copyBtn:"Copiar", copied:"¡Copiado!",
-      cBtn:"Escribir para agendar", footTag:"Workflows y agentes de IA para operaciones que quieren avanzar mejor.", footLine:"Diseñado para hacer avanzar el trabajo."
+      cLead:"Déjanos tus datos y te contactamos en menos de 24 horas hábiles para agendar un diagnóstico de 30 minutos, enfocado en un proceso concreto.",
+      waBtn:"Escríbenos por WhatsApp", cOr:"O escríbenos a",
+      fName:"Nombre", fCompany:"Empresa", fEmail:"Correo", fPhone:"WhatsApp o teléfono", fOpt:"(opcional)",
+      fArea:"¿Qué flujo quieres mejorar?", fAreaPick:"Elige una opción", fA1:"Operaciones", fA2:"Ventas y CRM",
+      fA3:"Atención al cliente", fA4:"Finanzas y facturación", fA5:"Otro",
+      fMsg:"Cuéntanos brevemente cómo funciona hoy", fSend:"Solicitar diagnóstico", fSending:"Enviando…",
+      fOk:"Listo, recibimos tus datos. Te contactamos en menos de 24 horas hábiles.",
+      fMissing:"Completa nombre, empresa, un correo válido y el flujo que quieres mejorar.",
+      fErr:"No pudimos enviar el formulario. Escríbenos por WhatsApp o a project@roninstudio.com.mx.",
+      footTag:"Workflows y agentes de IA para operaciones que quieren avanzar mejor.", footLine:"Diseñado para hacer avanzar el trabajo."
     },
     en: {
       navMethod:"Method", navWorkflows:"Workflows", navPort:"Portfolio", navCasos:"Cases", navAgents:"Agents", ctaShort:"Book a diagnostic", catBill:"Invoicing",
@@ -759,8 +838,16 @@
       aSec:"Staff transportation", aDesc:"Three-way audit of the transport service: staff, maquiladora and carrier.",
       dSec:"Gyms", dDesc:"Memberships, classes, access control and payments under one roof.",
       cEyebrow:"Next step", cH2:"We diagnose your workflow. We redesign it. We automate it with AI.",
-      cSub:"30 minutes · No commitment · Focused on one concrete process.", copyBtn:"Copy", copied:"Copied!",
-      cBtn:"Email us to book", footTag:"AI workflows and agents for operations that want to move better.", footLine:"Designed to move work forward."
+      cLead:"Leave your details and we'll reach out within 24 business hours to book a 30-minute diagnostic focused on one concrete process.",
+      waBtn:"Message us on WhatsApp", cOr:"Or email us at",
+      fName:"Name", fCompany:"Company", fEmail:"Email", fPhone:"WhatsApp or phone", fOpt:"(optional)",
+      fArea:"Which workflow do you want to improve?", fAreaPick:"Choose one", fA1:"Operations", fA2:"Sales & CRM",
+      fA3:"Customer service", fA4:"Finance & invoicing", fA5:"Other",
+      fMsg:"Briefly tell us how it works today", fSend:"Request a diagnostic", fSending:"Sending…",
+      fOk:"Done, we got your details. We'll reach out within 24 business hours.",
+      fMissing:"Please fill in name, company, a valid email and the workflow you want to improve.",
+      fErr:"We couldn't send the form. Message us on WhatsApp or at project@roninstudio.com.mx.",
+      footTag:"AI workflows and agents for operations that want to move better.", footLine:"Designed to move work forward."
     }
   };
 
@@ -806,16 +893,38 @@
     stages.forEach(function(s){ s.classList.add('active'); });
   }
 
-  var copyBtn = document.getElementById('copyEmail');
-  copyBtn.addEventListener('click', function(){
-    var email = 'project@roninstudio.com.mx', d = dict[state.lang];
-    function done(){ copyBtn.textContent = d.copied; setTimeout(function(){ copyBtn.textContent = d.copyBtn; }, 1600); }
-    function fallback(){ var r=document.createRange(), sel=window.getSelection();
-      r.selectNodeContents(copyBtn.parentNode.firstChild); sel.removeAllRanges(); sel.addRange(r); }
-    try{
-      if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(email).then(done).catch(fallback); }
-      else fallback();
-    }catch(e){ fallback(); }
+  var form = document.getElementById('leadForm'), statusEl = document.getElementById('lf-status'),
+      submitBtn = document.getElementById('lf-submit');
+  function setStatus(msg, cls){ statusEl.textContent = msg; statusEl.className = 'form-status' + (cls ? ' ' + cls : ''); }
+  form.addEventListener('submit', function(ev){
+    ev.preventDefault();
+    var d = dict[state.lang], ok = true;
+    ['lf-name','lf-company','lf-email','lf-area'].forEach(function(id){
+      var el = document.getElementById(id), valid = el.checkValidity() && el.value.trim() !== '';
+      el.parentNode.classList.toggle('invalid', !valid); if(!valid) ok = false;
+    });
+    if(!ok){ setStatus(d.fMissing, 'err'); return; }
+    if(form._honey.value){ setStatus(d.fOk, 'ok'); form.reset(); return; }
+    var data = {
+      nombre: form.nombre.value.trim(), empresa: form.empresa.value.trim(), email: form.email.value.trim(),
+      telefono: form.telefono.value.trim(), area: form.area.value, mensaje: form.mensaje.value.trim(),
+      idioma: state.lang, _subject: 'Nuevo diagnóstico · ' + form.empresa.value.trim(),
+      _template: 'table', _captcha: 'false'
+    };
+    submitBtn.disabled = true; submitBtn.textContent = d.fSending; setStatus('', '');
+    fetch('https://formsubmit.co/ajax/project@roninstudio.com.mx', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(data)
+    }).then(function(r){ return r.json().then(function(j){ return { ok: r.ok, j: j }; }); })
+      .then(function(res){
+        if(res.ok && (res.j.success === true || res.j.success === 'true')){ setStatus(d.fOk, 'ok'); form.reset(); }
+        else throw new Error('send');
+      })
+      .catch(function(){ setStatus(d.fErr, 'err'); })
+      .then(function(){ submitBtn.disabled = false; submitBtn.textContent = dict[state.lang].fSend; });
+  });
+  form.addEventListener('input', function(ev){
+    var f = ev.target.closest('.field'); if(f) f.classList.remove('invalid');
   });
 })();
 </script>
