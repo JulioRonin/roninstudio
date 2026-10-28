@@ -57,6 +57,7 @@ button{display:inline-flex;align-items:center;gap:10px;min-height:54px;padding:0
 button[disabled]{opacity:.6;cursor:wait}
 .msg{min-height:1.5em;font-size:15px}
 .msg.ok{color:var(--safe)} .msg.err{color:var(--err)}
+.wa-btn{display:none;align-items:center;min-height:50px;padding:0 24px;border-radius:999px;border:1px solid var(--safe);color:var(--safe);font-family:var(--mono);font-weight:600;font-size:13px;letter-spacing:.06em;text-transform:uppercase;text-decoration:none}
 .note{font-size:13px;color:var(--faint)}
 .done{display:none;padding:40px 0}
 .done h2{font-family:var(--disp);font-weight:400;font-size:40px;text-transform:uppercase;line-height:1}
@@ -196,6 +197,7 @@ button[disabled]{opacity:.6;cursor:wait}
     <div class="actions">
       <button type="submit" id="send">Enviar respuestas</button>
       <p class="msg" id="msg" role="status" aria-live="polite"></p>
+      <a class="wa-btn" id="wa-fallback" href="https://wa.me/5216565736505" target="_blank" rel="noopener">Enviar respuestas por WhatsApp</a>
       <p class="note">Sus respuestas llegan solo a Ronin Studio. ¿Prefieren platicarlo? Escríbannos por <a href="https://wa.me/5216565736505?text=Hola%2C%20soy%20de%20P%C3%ADa%20Constanza%20y%20tengo%20dudas%20sobre%20la%20tienda%20en%20l%C3%ADnea" target="_blank" rel="noopener">WhatsApp</a>.</p>
     </div>
   </form>
@@ -263,8 +265,16 @@ button[disabled]{opacity:.6;cursor:wait}
         window.scrollTo({ top: 0, behavior: 'smooth' });
       })
       .catch(function () {
+        var labels = { nombre: 'Nombre', whatsapp: 'WhatsApp', email: 'Correo', redes: 'Redes', categorias: 'Productos',
+          productos: 'Cantidad', precio: 'Precio típico', logo: 'Logo', fotos: 'Fotos', personalizacion: 'Personalización',
+          apartado: 'Apartado', entrega: 'Entrega', bodega_ep: 'Bodega en El Paso', empresa_us: 'Empresa/banco EE. UU.',
+          rfc: 'RFC', fecha: 'Fecha', comentarios: 'Comentarios' };
+        var text = 'Hola, les mando el brief de Pía Constanza:\n' + fields.map(function (n) { return labels[n] + ': ' + data[n]; }).join('\n');
+        var wa = document.getElementById('wa-fallback');
+        wa.href = 'https://wa.me/5216565736505?text=' + encodeURIComponent(text);
+        wa.style.display = 'inline-flex';
         msg.className = 'msg err';
-        msg.textContent = 'No pudimos enviar el formulario. Inténtelo de nuevo o escríbannos por WhatsApp.';
+        msg.textContent = 'No pudimos enviar el formulario. Sus respuestas no se perdieron: envíenlas por WhatsApp con el botón de abajo.';
       })
       .then(function () { btn.disabled = false; btn.textContent = 'Enviar respuestas'; });
   });
