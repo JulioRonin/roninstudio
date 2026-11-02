@@ -9,3 +9,5 @@
 next-env.d.ts
 .vercel
 *.tsbuildinfo
+/research_notes
+/reports
