@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diagnóstico exprés de operación | Ronin Studio</title>
+<meta name="description" content="En 5 minutos, descubre dónde se le va el tiempo y el dinero a tu negocio. 12 preguntas, resultado al instante. Gratis.">
+<link rel="canonical" href="https://www.roninstudio.com.mx/diagnostico/">
+<meta property="og:title" content="Diagnóstico exprés de operación | Ronin Studio">
+<meta property="og:description" content="12 preguntas, 5 minutos, resultado al instante. Dónde se atora tu operación y qué hacer primero.">
+<meta property="og:image" content="https://www.roninstudio.com.mx/assets/og-ronin.jpg">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='3' y='3' width='58' height='58' rx='14' fill='%230C0F14' stroke='%2322D3EE' stroke-width='4'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='monospace' font-weight='700' font-size='30' fill='%2322D3EE'%3ER%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/assets/sector.css">
+</head>
+<body>
+<header class="nav">
+  <div class="navrow">
+    <a class="brand" href="/"><span class="glyph">R</span><b>Ronin Studio</b></a>
+    <div class="navright">
+      <a class="navlink" href="/#metodo">Cómo trabajamos</a>
+      <a class="navlink cta" href="https://wa.me/5216565736505?text=Hola%20Ronin%20Studio%2C%20tengo%20una%20duda%20sobre%20el%20diagn%C3%B3stico%20expr%C3%A9s." target="_blank" rel="noopener">WhatsApp</a>
+    </div>
+  </div>
+</header>
+
+<main class="side">
+  <div class="quiz">
+    <section class="hero" style="padding-bottom:0">
+      <span class="eyebrow">Diagnóstico exprés de operación</span>
+      <h1 id="title">¿Dónde se le va el tiempo y el dinero a tu negocio?</h1>
+      <p class="lead" id="intro">12 preguntas, 5 minutos. Al terminar ves los tres puntos donde se atora tu operación y qué conviene arreglar primero. Sin tecnicismos.</p>
+      <div class="progress" id="progress" hidden><i id="bar"></i></div>
+    </section>
+
+    <section class="qstep" id="step"></section>
+
+    <section class="result" id="result" hidden></section>
+
+    <p class="microcopy" style="margin-top:40px">Tus respuestas llegan solo a Ronin Studio. No se comparten ni se venden.</p>
+  </div>
+</main>
+
+<footer class="side"><div class="wrap foot">
+  <span>© 2026 Ronin Studio · Cd. Juárez, MX · El Paso, TX</span>
+  <span><a href="/">roninstudio.com.mx</a> · <a href="mailto:project@roninstudio.com.mx">project@roninstudio.com.mx</a></span>
+</div></footer>
+
+<script>
+(function () {
+  var SECTORS = {
+    escuelas:    { name: 'Escuela privada',       ref: 'tu colegio',     piece: { t: 'Checklist: cobranza y reinscripción sin Excel', d: 'Los 8 puntos que revisamos antes de automatizar la cobranza de un colegio.', href: '/escuelas/#checklist' } },
+    restaurantes:{ name: 'Restaurante con sucursales', ref: 'tus sucursales', piece: { t: 'Auditoría de cocina de 15 minutos', d: 'Versión corta de la auditoría de 170 puntos que corre en una cadena de seis sucursales.', href: '/restaurantes/#auditoria' } },
+    clinicas:    { name: 'Clínica o laboratorio', ref: 'tu clínica',     piece: { t: 'Expedientes digitales seguros y legales', d: 'Una hoja con lo que pide la ley de datos personales y cómo lo cumplimos.', href: '/expedientes/' } },
+    gimnasios:   { name: 'Gimnasio',              ref: 'tu gimnasio',    piece: { t: 'Cómo cobra la puerta', d: 'Si la membresía no está pagada, la puerta no abre y recepción recibe la liga de pago. Te lo mostramos en la llamada.', href: '/#agentes' } },
+    notarias:    { name: 'Notaría o despacho',    ref: 'tu notaría',     piece: { t: 'Cada escritura con su estado a la vista', d: 'Cómo se ve un tablero de trámites con avisos automáticos al cliente. Te lo mostramos en la llamada.', href: '/#workflows' } },
+    manufactura: { name: 'Taller o planta',       ref: 'tu taller',      piece: { t: 'Kanri: de la cotización al cobro', d: 'La plataforma que hoy gestiona de punta a punta un taller de Juárez.', href: '/kanri/' } }
+  };
+
+  // Cada opción: [texto, puntos, hallazgo]. Los puntos altos señalan el problema.
+  var COMMON = [
+    { q: '¿Dónde vive hoy la información de tu operación?', o: [
+      ['En un sistema que todo el equipo usa', 0],
+      ['En varias apps que no se hablan entre sí', 1, 'La información está repartida en herramientas que no se conectan: cada cambio se captura dos veces.'],
+      ['En Excel y grupos de WhatsApp', 2, 'Tu operación vive en Excel y WhatsApp. No hay una sola versión de la verdad.'],
+      ['En la cabeza de una o dos personas', 3, 'La operación depende de la memoria de una o dos personas. Si faltan, se detiene.'] ] },
+    { q: 'Si la persona clave falta un día, ¿qué pasa?', o: [
+      ['Nada, el proceso sigue', 0],
+      ['Se atrasa, pero sale', 1],
+      ['Se detiene una parte', 2, 'Hay pasos que solo una persona sabe hacer. El flujo se frena cuando no está.'],
+      ['Se detiene casi todo', 3, 'Tu negocio tiene un punto único de falla: una persona.'] ] },
+    { q: '¿Cuántas horas a la semana se van en capturar lo mismo en dos lugares o armar reportes a mano?', h: [1, 4, 8, 14], o: [
+      ['Menos de 2', 0],
+      ['De 3 a 5', 1],
+      ['De 6 a 10', 2, 'Tu equipo dedica unas 8 horas a la semana a captura doble y reportes manuales.'],
+      ['Más de 10', 3, 'Tu equipo dedica más de 10 horas a la semana a captura doble y reportes manuales.'] ] },
+    { q: '¿Cómo te enteras de que algo salió mal?', o: [
+      ['El sistema avisa', 0],
+      ['En el reporte del día', 1],
+      ['Alguien me lo dice', 2, 'Te enteras de los problemas por boca de alguien, no por el sistema. Llegan tarde y filtrados.'],
+      ['Cuando el cliente reclama', 3, 'Los problemas llegan cuando el cliente ya reclamó. No hay alertas antes.'] ] },
+    { q: '¿Cuánto tardas en saber cómo va el mes: ventas, cobros, gastos?', o: [
+      ['Lo veo al momento', 0],
+      ['Un día', 1],
+      ['Una semana o más', 2, 'Tardas una semana en saber cómo va el mes. Decides con datos viejos.'],
+      ['No lo sé con certeza', 3, 'No tienes la cifra del mes con certeza. Cada decisión es a ciegas.'] ] },
+    { q: '¿Cómo se comunican con clientes, familias o pacientes?', o: [
+      ['Desde el sistema, con acuse de lectura', 0],
+      ['Por correo', 1],
+      ['Por el WhatsApp personal del equipo', 2, 'Los clientes hablan con el WhatsApp personal del equipo. La relación se va con la persona.'],
+      ['Por llamadas, una por una', 3, 'Cada aviso es una llamada. No escala y no deja registro.'] ] },
+    { q: '¿Qué parte del cobro es manual?', o: [
+      ['Nada, es automático', 0],
+      ['Solo los recordatorios', 1],
+      ['Registrar pagos y recordar', 2, 'Registrar pagos y perseguir a quien debe es trabajo manual cada semana.'],
+      ['Todo: registrar, recordar y conciliar', 3, 'Todo el cobro es manual, de registrar a conciliar. Ahí se pierden dinero y horas.'] ] },
+    { q: '¿Han probado automatizar algo o usar IA?', o: [
+      ['Sí, y funciona', 0],
+      ['Lo pensamos, pero no sabemos por dónde', 1],
+      ['Sí, y se abandonó', 2, 'Ya probaron automatizar y se abandonó. Pasa cuando se automatiza antes de ordenar el flujo.'],
+      ['No, no confiamos todavía', 2, 'No han automatizado por desconfianza. Es razonable: primero el flujo, después la IA.'] ] }
+  ];
+
+  var SECTOR_Q = {
+    escuelas: [
+      { q: '¿Cómo cobran las colegiaturas?', o: [['En línea, desde una plataforma', 0], ['Transferencia y lo registramos a mano', 1], ['En caja y en Excel', 2, 'Las colegiaturas se registran a mano: cada pago es una captura y un posible error.'], ['Como se pueda; a veces no sabemos quién debe', 3, 'No sabes con certeza quién debe colegiatura. La cartera vencida crece sin que la veas.']] },
+      { q: '¿Qué porcentaje de familias se atrasa cada mes?', o: [['Menos de 5 %', 0], ['De 5 a 15 %', 1], ['De 15 a 30 %', 2, 'Entre 15 y 30 % de las familias se atrasa. La cobranza manual no alcanza.'], ['Más de 30 %, o no lo sé', 3, 'Más de 30 % de atraso, o no lo sabes. Es el primer flujo que hay que arreglar.']] },
+      { q: '¿Cómo mandan circulares y avisos a los papás?', o: [['Plataforma con acuse de lectura', 0], ['Correo', 1], ['Grupos de WhatsApp', 2, 'Los avisos van por grupos de WhatsApp: no sabes quién leyó y se pierden en el ruido.'], ['Papel en la mochila', 3, 'Los avisos viajan en papel. Muchos no llegan y no hay forma de saberlo.']] },
+      { q: '¿Dónde está el expediente de cada alumno?', o: [['En un sistema con acceso por rol', 0], ['Carpetas en la nube', 1], ['Excel y carpetas físicas', 2, 'Los expedientes viven en Excel y archiveros. Buscar un documento es una tarea.'], ['Depende de quién lo inscribió', 3, 'El expediente de cada alumno depende de quién lo inscribió. No hay un lugar único.']] }
+    ],
+    restaurantes: [
+      { q: '¿Cómo sabes que todas las sucursales operan con el mismo estándar?', o: [['Checklists digitales con foto, por turno', 0], ['Checklists en papel', 1], ['Visitas del dueño o del gerente', 2, 'El estándar depende de que alguien vaya a la sucursal. Cuando no va, nadie lo verifica.'], ['Confío en el encargado', 3, 'No hay verificación del estándar por sucursal. Te enteras con una queja o una inspección.']] },
+      { q: '¿Cómo se hace la auditoría de cocina e inocuidad?', o: [['Digital, con foto y plan de acción', 0], ['En papel, y se archiva', 1], ['Cuando viene la inspección', 2, 'La auditoría de cocina se hace cuando viene la inspección. Lo que se corrige no queda registrado.'], ['No se hace', 3, 'No hay auditoría de cocina. Una inspección sorpresa es un riesgo real.']] },
+      { q: '¿Cómo controlan inventario y merma?', o: [['Conteos en sistema, por estación', 0], ['Conteo semanal en Excel', 1], ['El chef lo lleva de memoria', 2, 'El inventario vive en la memoria del chef. La merma no se ve hasta el corte.'], ['No lo controlamos', 3, 'Sin control de inventario, el food cost es una estimación.']] },
+      { q: '¿Cómo manejan reservaciones y pedidos por teléfono?', o: [['Sistema o app', 0], ['Libreta en recepción', 1], ['WhatsApp del gerente', 2, 'Las reservas viven en el WhatsApp del gerente. Se pierden llamadas y no hay registro.'], ['En hora pico se pierden llamadas', 3, 'En hora pico se pierden llamadas, y cada llamada perdida es una mesa vacía.']] }
+    ],
+    clinicas: [
+      { q: '¿Dónde está el expediente de cada paciente?', o: [['Sistema digital con acceso por rol', 0], ['Archivos digitales sueltos: PDF, carpetas', 1], ['Papel, en archivero', 2, 'El expediente vive en papel. Buscarlo cuesta tiempo y cumplir la ley de datos personales es difícil.'], ['Mitad papel, mitad digital', 3, 'El expediente está partido entre papel y digital. No hay una versión completa en ningún lado.']] },
+      { q: '¿Qué porcentaje de citas no llega?', o: [['Menos de 5 %', 0], ['De 5 a 15 %', 1], ['De 15 a 30 %', 2, 'Entre 15 y 30 % de las citas no llega. Cada una es un espacio pagado sin ingreso.'], ['Más de 30 %, o no lo mido', 3, 'No mides las citas perdidas o pasan de 30 %. Es dinero que ya no se recupera.']] },
+      { q: '¿Cómo confirman las citas?', o: [['Recordatorio automático con confirmación', 0], ['Mensaje manual el día anterior', 1], ['Llamada, una por una', 2, 'Confirmar citas es una llamada por paciente: horas de recepción cada semana.'], ['No se confirman', 3, 'Las citas no se confirman. Las ausencias son inevitables.']] },
+      { q: '¿Cómo manejan el consentimiento y el aviso de privacidad?', o: [['Firmado digitalmente, guardado con el expediente', 0], ['Firmado en papel y archivado', 1], ['Se les da a leer, no se guarda', 2, 'El consentimiento se da a leer pero no se guarda. Ante una queja, no hay prueba.'], ['No tenemos aviso de privacidad', 3, 'No hay aviso de privacidad. Con datos de salud es la primera obligación legal.']] }
+    ],
+    gimnasios: [
+      { q: '¿Cómo cobran las membresías?', o: [['Cargo recurrente automático', 0], ['El socio paga en recepción cada mes', 1], ['Transferencia y lo registramos a mano', 2, 'Cada pago es una captura manual y una persecución al socio que no pagó.'], ['Como se pueda', 3, 'No hay un método de cobro. La morosidad es invisible hasta el corte.']] },
+      { q: '¿Qué pasa cuando llega un socio que no ha pagado?', o: [['La puerta no abre y recibe la liga de pago', 0], ['Recepción le avisa', 1], ['Entra, y le cobramos después', 2, 'Los socios sin pagar entran igual. El cobro se vuelve una negociación.'], ['No sabemos quién debe', 3, 'No sabes quién debe en el momento en que entra. Cada visita sin pago es ingreso perdido.']] },
+      { q: '¿Qué porcentaje de socios no renueva cada mes?', o: [['Menos de 3 %', 0], ['De 3 a 6 %', 1], ['Más de 6 %', 2, 'Más de 6 % de los socios se va cada mes. Sin alertas tempranas no hay cómo retenerlos.'], ['No lo sé', 3, 'No sabes cuántos socios pierdes al mes. Es el número que más dinero mueve en un gym.']] },
+      { q: '¿Cómo manejan el aforo en hora pico?', o: [['Lo medimos y lo mostramos a los socios', 0], ['Lo vemos en el momento', 1], ['Se llena y se quejan', 2, 'En hora pico el gym se llena y los socios se quejan. Es un problema de horario, no de espacio.'], ['No lo medimos', 3, 'No mides el aforo. No sabes cuánta capacidad pierdes en hora pico ni cuánta sobra en la tarde.']] }
+    ],
+    notarias: [
+      { q: '¿Cómo se da seguimiento a cada trámite o escritura?', o: [['Sistema con estado por expediente', 0], ['Excel compartido', 1], ['Carpeta física y memoria del abogado', 2, 'El estado de cada trámite vive en la memoria de quien lo lleva. Nadie más puede contestar por él.'], ['Se le pregunta a quien lo lleva', 3, 'Para saber cómo va un trámite hay que preguntar. El cliente también.']] },
+      { q: '¿Cuántas llamadas al día reciben de clientes preguntando por su trámite?', o: [['Casi ninguna, los avisamos nosotros', 0], ['Unas 5', 1], ['De 5 a 15', 2, 'De 5 a 15 llamadas diarias son clientes que no tienen cómo ver su estatus.'], ['Más de 15', 3, 'Más de 15 llamadas al día preguntando por trámites: horas de recepción que un aviso automático resuelve.']] },
+      { q: '¿Cómo reciben los documentos del cliente?', o: [['Portal digital con lista de requisitos', 0], ['Por correo', 1], ['Por WhatsApp, uno por uno', 2, 'Los documentos llegan por WhatsApp uno por uno. Armar el expediente es una cacería.'], ['En persona, en papel', 3, 'Los documentos llegan en papel y en persona. Cada visita es una vuelta que el cliente no quiere dar.']] },
+      { q: '¿Cómo saben qué le falta a cada expediente?', o: [['El sistema marca los requisitos', 0], ['Checklist en papel', 1], ['Lo revisa el abogado cuando le toca', 2, 'Los faltantes se descubren cuando el abogado revisa. El trámite se atrasa días.'], ['Se descubre en la firma', 3, 'Los faltantes aparecen en la firma. Es la peor hora para enterarse.']] }
+    ],
+    manufactura: [
+      { q: '¿Cuánto tarda una cotización?', o: [['Minutos, desde el sistema', 0], ['El mismo día', 1], ['De 2 a 3 días', 2, 'Cotizar tarda días. Algunos clientes ya compraron en otro lado.'], ['Una semana o más', 3, 'Una cotización tarda una semana. Es la venta que se pierde sin saberlo.']] },
+      { q: '¿Cómo se captura la producción en piso?', o: [['Terminal o tableta por estación', 0], ['Hoja de papel que se captura después', 1], ['El supervisor lo anota', 2, 'La producción se anota a mano y se captura después. El dato llega tarde y con errores.'], ['No se captura', 3, 'No hay captura en piso. No sabes cuánto produces por turno ni por qué se frena.']] },
+      { q: '¿Cómo controlan el inventario de materia prima?', o: [['Sistema con mínimos y alertas', 0], ['Conteo periódico en Excel', 1], ['Lo ve el almacenista', 2, 'El inventario depende del almacenista. Los faltantes se descubren cuando paran una orden.'], ['Se compra cuando falta', 3, 'Compras cuando ya faltó. Cada paro por material es un día de producción.']] },
+      { q: '¿Cómo se arman los reportes para dirección o para el cliente?', o: [['Salen del sistema', 0], ['Se arman en Excel cada semana', 1], ['Se arman a mano cuando los piden', 2, 'Los reportes se arman a mano cuando los piden: horas de alguien cada vez.'], ['No hay reportes', 3, 'No hay reportes. La dirección decide sin datos.']] }
+    ]
+  };
+
+  var state = { sector: null, i: 0, answers: [], contact: null };
+  var $ = function (id) { return document.getElementById(id); };
+  var step = $('step'), result = $('result'), bar = $('bar'), progress = $('progress');
+
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function questions() { return state.sector ? COMMON.concat(SECTOR_Q[state.sector]) : []; }
+  function save() { try { localStorage.setItem('ronin-dx', JSON.stringify({ sector: state.sector, i: state.i, answers: state.answers })); } catch (e) {} }
+  function load() { try { var s = JSON.parse(localStorage.getItem('ronin-dx') || 'null'); if (s && s.sector && SECTORS[s.sector]) { state.sector = s.sector; state.i = Math.min(Number(s.i) || 0, 12); state.answers = s.answers || []; } } catch (e) {} }
+
+  function renderSector() {
+    progress.hidden = true;
+    var h = '<p class="qnum">Primero</p><p class="qtext">¿Qué tipo de negocio tienes?</p><div class="sectors">';
+    Object.keys(SECTORS).forEach(function (k) {
+      h += '<button class="opt" type="button" data-sector="' + k + '"><span>' + esc(SECTORS[k].name) + '</span></button>';
+    });
+    h += '</div>';
+    step.innerHTML = h;
+    step.querySelectorAll('[data-sector]').forEach(function (b) {
+      b.addEventListener('click', function () { state.sector = b.getAttribute('data-sector'); state.i = 0; state.answers = []; save(); renderQ(); });
+    });
+  }
+
+  function renderQ() {
+    var qs = questions(); var q = qs[state.i];
+    progress.hidden = false; bar.style.width = Math.round((state.i / (qs.length + 1)) * 100) + '%';
+    var h = '<p class="qnum">Pregunta ' + (state.i + 1) + ' de ' + qs.length + (state.i >= COMMON.length ? ' · ' + esc(SECTORS[state.sector].name) : '') + '</p>';
+    h += '<p class="qtext">' + esc(q.q) + '</p><div class="opts">';
+    q.o.forEach(function (o, j) {
+      var on = state.answers[state.i] === j ? ' on' : '';
+      h += '<button class="opt' + on + '" type="button" data-j="' + j + '"><span class="k">' + String.fromCharCode(65 + j) + '</span><span>' + esc(o[0]) + '</span></button>';
+    });
+    h += '</div><div class="qnav"><button class="back" type="button" id="back">← Atrás</button></div>';
+    step.innerHTML = h;
+    step.querySelectorAll('[data-j]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        state.answers[state.i] = Number(b.getAttribute('data-j'));
+        state.i += 1; save();
+        if (state.i >= qs.length) renderGate(); else renderQ();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    });
+    $('back').addEventListener('click', function () { if (state.i === 0) { state.sector = null; renderSector(); } else { state.i -= 1; renderQ(); } });
+  }
+
+  function renderGate() {
+    bar.style.width = '94%';
+    step.innerHTML =
+      '<p class="qnum">Último paso</p><p class="qtext">¿A dónde te mandamos el resultado?</p>' +
+      '<p class="lead" style="font-size:15px;margin-top:10px">Lo ves aquí mismo al instante y te llega por WhatsApp y correo para que lo compartas con tu socio o tu administrador.</p>' +
+      '<form id="gate" class="gate" novalidate>' +
+      '<input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">' +
+      '<div class="field"><label for="g-nombre">Nombre</label><input id="g-nombre" name="nombre" type="text" autocomplete="name" required></div>' +
+      '<div class="field"><label for="g-negocio">Nombre del negocio</label><input id="g-negocio" name="negocio" type="text" autocomplete="organization" required></div>' +
+      '<div class="field"><label for="g-wa">WhatsApp</label><input id="g-wa" name="whatsapp" type="tel" inputmode="tel" autocomplete="tel" required></div>' +
+      '<div class="field"><label for="g-email">Correo</label><input id="g-email" name="email" type="email" autocomplete="email" required></div>' +
+      '<div class="wide"><button class="cta-solid" type="submit" id="g-send">Ver mi resultado →</button><p class="status" id="g-status"></p></div>' +
+      '</form><div class="qnav"><button class="back" type="button" id="back">← Atrás</button></div>';
+    $('back').addEventListener('click', function () { state.i -= 1; renderQ(); });
+    $('gate').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var f = e.currentTarget, v = function (n) { return (f.elements[n].value || '').trim(); };
+      if (v('_honey')) return;
+      var missing = false;
+      ['nombre', 'negocio', 'whatsapp', 'email'].forEach(function (n) {
+        var bad = !v(n) || (n === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v(n)));
+        f.elements[n].parentNode.classList.toggle('invalid', bad); if (bad) missing = true;
+      });
+      if (missing) { $('g-status').className = 'status err'; $('g-status').textContent = 'Completa los cuatro campos con un correo válido.'; return; }
+      state.contact = { nombre: v('nombre'), negocio: v('negocio'), whatsapp: v('whatsapp'), email: v('email') };
+      $('g-send').disabled = true; $('g-send').textContent = 'Calculando…';
+      var r = compute(); send(r); renderResult(r);
+    });
+  }
+
+  function compute() {
+    var qs = questions(), total = 0, max = 0, found = [], hours = 0;
+    qs.forEach(function (q, i) {
+      var j = state.answers[i]; var o = q.o[j] || q.o[0];
+      total += o[1]; max += Math.max.apply(null, q.o.map(function (x) { return x[1]; }));
+      if (o[2]) found.push({ s: o[1] + (i >= COMMON.length ? 0.5 : 0), t: o[2] });
+      if (q.h) hours = q.h[j] || 0;
+    });
+    found.sort(function (a, b) { return b.s - a.s; });
+    var pct = total / max;
+    var level = pct < 0.35 ? 1 : pct < 0.65 ? 2 : 3;
+    return { total: total, max: max, pct: pct, level: level, findings: found.slice(0, 3), hours: hours };
+  }
+
+  var LEVELS = {
+    1: { t: 'Base sólida', d: 'Tu operación ya tiene estructura. Lo que sigue es quitar las capturas dobles que quedan y meter IA donde el flujo ya corre.' },
+    2: { t: 'Operación a medias', d: 'Hay partes que funcionan y partes que dependen de una persona o de un Excel. Conviene ordenar un flujo a la vez, empezando por el que más dinero toca.' },
+    3: { t: 'Operación en riesgo', d: 'Tu negocio funciona gracias a la memoria y el esfuerzo de pocas personas. Automatizar ahora amplificaría el desorden: primero hay que mapear y rediseñar el flujo.' }
+  };
+
+  function renderResult(r) {
+    var sec = SECTORS[state.sector], L = LEVELS[r.level], c = state.contact;
+    bar.style.width = '100%';
+    $('title').textContent = c.negocio + ': ' + L.t.toLowerCase() + '.';
+    $('intro').textContent = L.d;
+    step.hidden = true; result.hidden = false;
+    var h = '<span class="level l' + r.level + '"><i></i>' + esc(L.t) + ' · ' + r.total + ' de ' + r.max + ' puntos</span>';
+    if (r.findings.length) {
+      h += '<h2 style="margin-top:28px;font-size:clamp(24px,3.4vw,36px)">Dónde se atora ' + esc(sec.ref) + '</h2><ol class="findings">';
+      r.findings.forEach(function (f, i) { h += '<li><b>0' + (i + 1) + '</b><p>' + esc(f.t) + '</p></li>'; });
+      h += '</ol>';
+    } else {
+      h += '<p class="lead">No encontramos puntos críticos en tus respuestas. Aun así, si quieres automatizar algo, la llamada de 15 minutos sirve para decidir por dónde.</p>';
+    }
+    if (r.hours >= 4) h += '<div class="hours">Con tus respuestas, tu equipo dedica unas <strong>' + r.hours + ' horas a la semana</strong> a captura doble y reportes manuales: alrededor de <strong>' + (r.hours * 48) + ' horas al año</strong> que un flujo bien diseñado devuelve.</div>';
+    var wa = 'https://wa.me/5216565736505?text=' + encodeURIComponent('Hola Julio, hice el diagnóstico exprés para ' + c.negocio + ' (' + sec.name.toLowerCase() + '). Resultado: ' + L.t + ', ' + r.total + ' de ' + r.max + ' puntos. Quiero la llamada de 15 minutos.');
+    h += '<div class="next">' +
+      '<div class="card"><em>01 · Para leer ahora</em><h3>' + esc(sec.piece.t) + '</h3><p>' + esc(sec.piece.d) + '</p><a class="cta-text" href="' + sec.piece.href + '">Verla →</a></div>' +
+      '<div class="card"><em>02 · 15 minutos</em><h3>Llamada con Julio</h3><p>Revisamos tu resultado y decidimos si vale la pena un diagnóstico completo. Sin asesoría gratis disfrazada de venta, sin presión.</p><a class="wa-btn" href="' + wa + '" target="_blank" rel="noopener">Agendar por WhatsApp</a></div>' +
+      '<div class="card"><em>03 · Si tiene sentido</em><h3>Diagnóstico completo</h3><p>Visitamos tu negocio, mapeamos el flujo actual y entregamos por escrito un plan priorizado con presupuesto cerrado. Es un servicio pagado que se acredita al proyecto si lo contratas en 30 días.</p><a class="cta-text" href="/#metodo">Cómo trabajamos →</a></div>' +
+      '</div>' +
+      '<p class="status" id="r-status" style="margin-top:28px"></p>' +
+      '<p class="microcopy"><button class="back" type="button" id="again" style="padding:0">Volver a empezar</button></p>';
+    result.innerHTML = h;
+    $('again').addEventListener('click', function () { try { localStorage.removeItem('ronin-dx'); } catch (e) {} location.href = location.pathname; });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function send(r) {
+    var qs = questions(), sec = SECTORS[state.sector], c = state.contact, L = LEVELS[r.level];
+    var answers = qs.map(function (q, i) { return (i + 1) + '. ' + q.q + ' → ' + (q.o[state.answers[i]] || q.o[0])[0]; }).join('\n');
+    var payload = {
+      _subject: 'Diagnóstico exprés · ' + sec.name + ' · ' + c.negocio, _template: 'table', _captcha: 'false',
+      nombre: c.nombre, negocio: c.negocio, sector: sec.name, whatsapp: c.whatsapp, email: c.email,
+      resultado: L.t + ' (' + r.total + '/' + r.max + ')',
+      hallazgos: r.findings.map(function (f) { return f.t; }).join(' | ') || '—',
+      horas_semana: r.hours || 0,
+      respuestas: answers
+    };
+    fetch('https://formsubmit.co/ajax/project@roninstudio.com.mx', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(payload) })
+      .then(function (x) { return x.json().then(function (j) { return { ok: x.ok, j: j }; }); })
+      .then(function (res) { var ok = res.ok && (res.j.success === true || res.j.success === 'true'); if (!ok) throw new Error('send'); var s = $('r-status'); if (s) s.textContent = 'Te mandamos una copia a ' + c.email + '.'; try { localStorage.removeItem('ronin-dx'); } catch (e) {} })
+      .catch(function () { var s = $('r-status'); if (s) { s.className = 'status err'; s.textContent = 'No pudimos enviarte la copia por correo. Tu resultado está aquí arriba; si quieres guardarlo, mándanos un WhatsApp.'; } });
+  }
+
+  // arranque: ?sector= en la liga preselecciona el giro
+  var qsP = new URLSearchParams(location.search).get('sector');
+  load();
+  if (qsP && SECTORS[qsP] && qsP !== state.sector) { state.sector = qsP; state.i = 0; state.answers = []; }
+  if (!state.sector) renderSector(); else if (state.i >= questions().length) renderGate(); else renderQ();
+})();
+</script>
+</body>
+</html>

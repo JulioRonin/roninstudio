@@ -260,6 +260,14 @@
   .psector{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
   .pdesc{margin:0;font-size:13.5px;line-height:1.55;color:var(--mist)}
   .parrow{margin-top:auto;font-size:13px;color:var(--accent);opacity:.8}
+  .plabel{margin:48px 0 0;font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
+  .plabel + .pgrid{margin-top:14px}
+  .catrow a{color:var(--mist);text-decoration:none;border-bottom:1px solid transparent;padding-bottom:2px}
+  .catrow a:hover{color:var(--ink);border-color:var(--accent)}
+  .founder-mini{margin-top:22px;display:flex;align-items:center;gap:14px}
+  .founder-mini img{width:56px;height:56px;border-radius:50%;object-fit:cover;object-position:50% 20%;border:1px solid var(--border);filter:grayscale(1)}
+  .founder-mini b{display:block;font-size:14.5px}
+  .founder-mini span{font-size:12.5px;color:var(--mist)}
   a.pitem:hover .pname{color:var(--accent)}
   a.pitem:hover .parrow{opacity:1}
 
@@ -332,7 +340,7 @@
       </nav>
       <div class="navright">
         <button class="langbtn" id="langToggle" type="button">EN</button>
-        <a class="navlink-cta" href="#contacto" data-i18n="ctaShort">Agendar diagnóstico</a>
+        <a class="navlink-cta" href="/diagnostico/" data-i18n="ctaShort">Diagnóstico exprés</a>
       </div>
     </div>
   </header>
@@ -347,10 +355,10 @@
       <div class="heroright">
         <p class="sub" data-i18n="heroSub">Consultoría que mapea cómo trabaja tu equipo, diseña el flujo correcto y lo automatiza con agentes de IA. Con un método probado en dos años de operación real.</p>
         <div class="ctarow">
-          <a class="cta-solid" href="#contacto" data-i18n="ctaPrimary">Agendar diagnóstico</a>
+          <a class="cta-solid" href="/diagnostico/" data-i18n="ctaPrimary">Hacer el diagnóstico exprés</a>
           <a class="cta-text" href="#metodo" data-i18n="ctaSecondary">Ver cómo trabaja Ronin</a>
         </div>
-        <p class="microcopy" data-i18n="heroMicro">30 min · sin compromiso · un proceso concreto</p>
+        <p class="microcopy" data-i18n="heroMicro">12 preguntas · 5 minutos · resultado al instante · gratis</p>
       </div>
     </div>
   </div>
@@ -358,8 +366,8 @@
 
 <div class="credstrip">
   <div class="credinner side">
-    <p class="credline" data-i18n="credLine">Diseñamos sobre las herramientas que tu equipo ya utiliza.</p>
-    <div class="catrow"><span>CRM</span><span data-i18n="catOps">Operaciones</span><span data-i18n="catMsg">Mensajería</span><span data-i18n="catDocs">Documentos</span><span data-i18n="catRep">Reportes</span><span data-i18n="catBill">Facturación</span></div>
+    <p class="credline" data-i18n="credLine">Trabajamos con negocios de servicios de Juárez y El Paso. Elige el tuyo:</p>
+    <div class="catrow"><a href="/escuelas/" data-i18n="secEsc">Escuelas</a><a href="/restaurantes/" data-i18n="secRes">Restaurantes</a><a href="/clinicas/" data-i18n="secCli">Clínicas</a><a href="/diagnostico/?sector=gimnasios" data-i18n="secGym">Gimnasios</a><a href="/diagnostico/?sector=notarias" data-i18n="secNot">Notarías</a><a href="/diagnostico/?sector=manufactura" data-i18n="secMan">Talleres y plantas</a></div>
   </div>
 </div>
 
@@ -377,22 +385,45 @@
       <article class="feature">
         <div class="feature-body">
           <span class="ftag"><i></i><span data-i18n="fTag">Caso principal · Orka Oleo Group</span></span>
-          <h3 data-i18n="fTitle">Dos años transformando la operación de una comercializadora de aceites y derivados.</h3>
-          <p class="fdesc" data-i18n="fDesc">Ventas, proyectos y clientes vivían en hojas de cálculo separadas y en la memoria de pocas personas. Rediseñamos la estructura, automatizamos flujos con IA y dejamos una sola fuente de verdad que el equipo usa todos los días.</p>
+          <h3 data-i18n="fTitle">De un Excel compartido cada hora a un sistema que el equipo usa todos los días.</h3>
+          <p class="fdesc" data-i18n="fDesc">Orka, comercializadora de aceites y derivados con operación en Juárez y Texas, llevaba todo en un Excel. Cada hora, el director lo compartía con una agencia externa que lo convertía en tableros de Power BI. Lo primero que eliminamos fue ese proceso. Construimos desde cero una plataforma donde ventas, precios, crédito y clientes viven en un solo lugar, con los tableros integrados.</p>
           <div class="fstats">
-            <div class="fstat"><b data-i18n="fs1b">2 años</b><span data-i18n="fs1s">de consultoría continua</span></div>
-            <div class="fstat"><b data-i18n="fs2b">1</b><span data-i18n="fs2s">fuente de verdad para ventas, hitos y clientes</span></div>
-            <div class="fstat"><b data-i18n="fs3b">IA</b><span data-i18n="fs3s">integrada al trabajo diario del equipo</span></div>
+            <div class="fstat"><b data-i18n="fs1b">2 años</b><span data-i18n="fs1s">operando sobre la plataforma</span></div>
+            <div class="fstat"><b data-i18n="fs2b">1</b><span data-i18n="fs2s">fuente de verdad para ventas, precios, crédito y clientes</span></div>
+            <div class="fstat"><b data-i18n="fs3b">0</b><span data-i18n="fs3s">hojas de cálculo enviadas a mano cada hora</span></div>
           </div>
         </div>
         <div class="feature-side">
           <span class="fs-label" data-i18n="fsLabel">Lo que construimos</span>
           <ol class="fsteps">
-            <li><em>01</em><span data-i18n="fst1">Rediseño de estructura y roles según el trabajo real.</span></li>
-            <li><em>02</em><span data-i18n="fst2">Agentes de IA para aprobaciones, seguimiento de ventas y reportes.</span></li>
-            <li><em>03</em><span data-i18n="fst3">Sistema a la medida con dashboards de KPI en tiempo real.</span></li>
+            <li><em>01</em><span data-i18n="fst1">Sistema desde cero: ventas, clientes, crédito y precios en una sola plataforma.</span></li>
+            <li><em>02</em><span data-i18n="fst2">Tableros integrados que sustituyeron los reportes externos de Power BI.</span></li>
+            <li><em>03</em><span data-i18n="fst3">Agentes de IA para aprobaciones, seguimiento de ventas y reportes.</span></li>
             <li><em>04</em><span data-i18n="fst4">Talleres entre áreas y capacitación práctica para la adopción.</span></li>
           </ol>
+        </div>
+      </article>
+
+      <article class="feature" style="margin-top:24px">
+        <div class="feature-body">
+          <span class="ftag"><i></i><span data-i18n="kTag">Caso · Kanri para IMC Design</span></span>
+          <h3 data-i18n="kTitle">De procesos definidos en papel a un taller gestionado de punta a punta.</h3>
+          <p class="fdesc" data-i18n="kDescCase">IMC Design, taller de diseño y fabricación en Juárez, tenía procesos claros pero ninguno vivía en una plataforma: cotizar, comprar, producir y cobrar se seguían en hojas y mensajes. Construimos Kanri sobre esos procesos y hoy el taller opera ahí de la cotización al cobro.</p>
+          <div class="fstats">
+            <div class="fstat"><b data-i18n="ks1b">6</b><span data-i18n="ks1s">etapas conectadas, de la cotización al cobro</span></div>
+            <div class="fstat"><b data-i18n="ks2b">1</b><span data-i18n="ks2s">plataforma para todo el taller</span></div>
+            <div class="fstat"><b data-i18n="ks3b">SaaS</b><span data-i18n="ks3s">hoy disponible para otros talleres</span></div>
+          </div>
+        </div>
+        <div class="feature-side">
+          <span class="fs-label" data-i18n="fsLabel">Lo que construimos</span>
+          <ol class="fsteps">
+            <li><em>01</em><span data-i18n="kst1">Cotización con inventario y margen a la vista, lista para enviar.</span></li>
+            <li><em>02</em><span data-i18n="kst2">Compras y almacén conectados a cada orden.</span></li>
+            <li><em>03</em><span data-i18n="kst3">Piso y calidad por pieza, con evidencia.</span></li>
+            <li><em>04</em><span data-i18n="kst4">Entregas, facturación CFDI y cobranza en el mismo flujo.</span></li>
+          </ol>
+          <a class="cta-text" href="/kanri/" style="margin-top:18px;color:var(--paper-ink);border-color:var(--paper-border)" data-i18n="pSee">Ver plataforma →</a>
         </div>
       </article>
 
@@ -547,46 +578,25 @@
         <h2 data-i18n="pH2">Software que ya construimos y está en uso.</h2>
         <p data-i18n="pIntro">El mismo método, llevado a producto. Plataformas propias para sectores distintos, cada una nacida de un problema operativo real.</p>
       </div>
+      <p class="plabel" data-i18n="pUse">En uso</p>
       <div class="pgrid">
+        <a class="pitem" href="/kanri">
+          <div class="prow"><span class="pname">Kanri</span><span class="pstatus live"><i></i><span data-i18n="stProd">En producción</span></span></div>
+          <span class="psector" data-i18n="kSec">Manufactura · talleres CNC</span>
+          <p class="pdesc" data-i18n="kDesc">Construido para IMC Design, que hoy opera ahí de la cotización al cobro. Disponible como SaaS para otros talleres y maquilas.</p>
+          <span class="parrow" data-i18n="pSee">Ver plataforma →</span>
+        </a>
         <div class="pitem">
           <div class="prow"><span class="pname">Mono Atelier</span><span class="pstatus live"><i></i><span data-i18n="stYear">1 año en operación</span></span></div>
           <span class="psector" data-i18n="mSec">Diseño y fabricación de muebles</span>
           <p class="pdesc" data-i18n="mDesc">Proyecto propio. ERP con cotización, seguimiento a clientes, facturación y timbrado CFDI ante el SAT, más un agente de cotización.</p>
         </div>
-        <a class="pitem" href="/kanri">
-          <div class="prow"><span class="pname">Kanri</span><span class="pstatus live"><i></i><span data-i18n="stProd">En producción</span></span></div>
-          <span class="psector" data-i18n="kSec">Manufactura · talleres CNC</span>
-          <p class="pdesc" data-i18n="kDesc">ERP a la medida para IMC Design, hoy ofrecido como SaaS a otros talleres y maquilas.</p>
-          <span class="parrow" data-i18n="pSee">Ver plataforma →</span>
-        </a>
         <a class="pitem" href="/servirest">
           <div class="prow"><span class="pname">Servirest</span><span class="pstatus live"><i></i><span data-i18n="stLive">Cliente 1 en vivo</span></span></div>
           <span class="psector" data-i18n="sSec">Restaurantes</span>
           <p class="pdesc" data-i18n="sDesc">Caja, inventario, food cost y operación diaria de un restaurante en una sola app.</p>
           <span class="parrow" data-i18n="pSee">Ver plataforma →</span>
         </a>
-        <a class="pitem" href="https://genba-pm8jkzzus-julioronins-projects.vercel.app/" target="_blank" rel="noopener">
-          <div class="prow"><span class="pname">GENBA</span><span class="pstatus new"><i></i><span data-i18n="stTrial">Prueba gratis</span></span></div>
-          <span class="psector" data-i18n="gSec">Ingeniería industrial</span>
-          <p class="pdesc" data-i18n="gDesc">Estudios de tiempo, balanceo de línea y capacidad generados con IA desde un video.</p>
-          <span class="parrow" data-i18n="pSee">Ver plataforma →</span>
-        </a>
-        <a class="pitem" href="/vertice">
-          <div class="prow"><span class="pname">Vértice</span><span class="pstatus new"><i></i><span data-i18n="stNew">Nuevo</span></span></div>
-          <span class="psector" data-i18n="vSec">Educación</span>
-          <p class="pdesc" data-i18n="vDesc">Gestión escolar: matrícula, calificaciones, pagos y comunicación con padres.</p>
-          <span class="parrow" data-i18n="pSee">Ver plataforma →</span>
-        </a>
-        <div class="pitem">
-          <div class="prow"><span class="pname">Andén</span><span class="pstatus"><i></i><span data-i18n="stSoon">Próximamente</span></span></div>
-          <span class="psector" data-i18n="aSec">Transporte de personal</span>
-          <p class="pdesc" data-i18n="aDesc">Auditoría del servicio de transporte en tres vías: personal, maquiladora y transportista.</p>
-        </div>
-        <div class="pitem">
-          <div class="prow"><span class="pname">Dojo</span><span class="pstatus"><i></i><span data-i18n="stSoon">Próximamente</span></span></div>
-          <span class="psector" data-i18n="dSec">Gimnasios</span>
-          <p class="pdesc" data-i18n="dDesc">Membresías, clases, accesos y pagos bajo un mismo techo.</p>
-        </div>
         <div class="pitem">
           <div class="prow"><span class="pname">Lana</span><span class="pstatus live"><i></i><span data-i18n="stDaily">En uso diario</span></span></div>
           <span class="psector" data-i18n="lSec">Finanzas personales</span>
@@ -596,6 +606,37 @@
           <div class="prow"><span class="pname">Dogma</span><span class="pstatus"><i></i><span data-i18n="stIndigo">Hecha para Indigo</span></span></div>
           <span class="psector" data-i18n="dgSec">Moda y confección</span>
           <p class="pdesc" data-i18n="dgDesc">Arreglos y prendas a la medida: pedidos, avance de cada proyecto y pagos en línea.</p>
+        </div>
+        <a class="pitem" href="/restaurantes/">
+          <div class="prow"><span class="pname" data-i18n="rName">Operación multi-sucursal</span><span class="pstatus live"><i></i><span data-i18n="stBuilt">Construida</span></span></div>
+          <span class="psector" data-i18n="rSec">Cadenas de restaurantes</span>
+          <p class="pdesc" data-i18n="rDesc">Auditorías de inocuidad con foto y calificación por sucursal, reporte con IA, monitoreo con cámaras y reservaciones con asistente de voz.</p>
+          <span class="parrow" data-i18n="pSee">Ver plataforma →</span>
+        </a>
+      </div>
+      <p class="plabel" data-i18n="pDev">En desarrollo</p>
+      <div class="pgrid">
+        <a class="pitem" href="/vertice">
+          <div class="prow"><span class="pname">Vértice</span><span class="pstatus new"><i></i><span data-i18n="stNew">Nuevo</span></span></div>
+          <span class="psector" data-i18n="vSec">Educación</span>
+          <p class="pdesc" data-i18n="vDesc">Gestión escolar: matrícula, calificaciones, pagos y comunicación con padres.</p>
+          <span class="parrow" data-i18n="pSee">Ver plataforma →</span>
+        </a>
+        <a class="pitem" href="https://genba-pm8jkzzus-julioronins-projects.vercel.app/" target="_blank" rel="noopener">
+          <div class="prow"><span class="pname">GENBA</span><span class="pstatus new"><i></i><span data-i18n="stTrial">Prueba gratis</span></span></div>
+          <span class="psector" data-i18n="gSec">Ingeniería industrial</span>
+          <p class="pdesc" data-i18n="gDesc">Estudios de tiempo, balanceo de línea y capacidad generados con IA desde un video.</p>
+          <span class="parrow" data-i18n="pSee">Ver plataforma →</span>
+        </a>
+        <div class="pitem">
+          <div class="prow"><span class="pname">Dojo</span><span class="pstatus"><i></i><span data-i18n="stSoon">Próximamente</span></span></div>
+          <span class="psector" data-i18n="dSec">Gimnasios</span>
+          <p class="pdesc" data-i18n="dDesc">Membresías, clases, accesos y pagos bajo un mismo techo.</p>
+        </div>
+        <div class="pitem">
+          <div class="prow"><span class="pname">Andén</span><span class="pstatus"><i></i><span data-i18n="stSoon">Próximamente</span></span></div>
+          <span class="psector" data-i18n="aSec">Transporte de personal</span>
+          <p class="pdesc" data-i18n="aDesc">Auditoría del servicio de transporte en tres vías: personal, maquiladora y transportista.</p>
         </div>
       </div>
     </div>
@@ -607,7 +648,11 @@
       <div class="contact-intro">
         <span class="eyebrow" data-i18n="cEyebrow">Siguiente paso</span>
         <h2 data-i18n="cH2">Diagnosticamos tu flujo de trabajo. Lo rediseñamos. Lo automatizamos con IA.</h2>
-        <p data-i18n="cLead">Déjanos tus datos y te contactamos en menos de 24 horas hábiles para agendar un diagnóstico de 30 minutos, enfocado en un proceso concreto.</p>
+        <p data-i18n="cLead">Empieza por el diagnóstico exprés de 5 minutos o déjanos tus datos. El diagnóstico completo es una visita a tu negocio, un mapa de tu flujo actual y un plan priorizado con presupuesto cerrado; es un servicio pagado que se acredita al proyecto.</p>
+        <div class="founder-mini">
+          <img src="assets/julio-cesar-ibarra-sq.webp" width="56" height="56" alt="Julio César Ibarra" loading="lazy">
+          <div><b>Julio César Ibarra</b><span data-i18n="cWho">Fundador · te contesta él en menos de 24 horas hábiles</span></div>
+        </div>
         <a class="wa-btn" href="https://wa.me/5216565736505?text=Hola%20Ronin%20Studio%2C%20quiero%20agendar%20un%20diagn%C3%B3stico%20de%20mi%20flujo%20de%20trabajo." target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg>
           <span data-i18n="waBtn">Escríbenos por WhatsApp</span>
@@ -670,7 +715,7 @@
       <a href="#metodo" data-i18n="navMethod">Método</a>
       <a href="#agentes" data-i18n="navAgents">Agentes</a>
       <a href="#portafolio" data-i18n="navPort">Portafolio</a>
-      <a href="#contacto" data-i18n="ctaShort">Agendar diagnóstico</a>
+      <a href="/diagnostico/" data-i18n="ctaShort">Diagnóstico exprés</a>
     </nav>
     <div class="footcol">
       <a href="mailto:project@roninstudio.com.mx">project@roninstudio.com.mx</a>
@@ -686,7 +731,15 @@
 (function(){
   var dict = {
     es: {
-      navMethod:"Método", navWorkflows:"Workflows", navPort:"Portafolio", navCasos:"Casos", navAgents:"Agentes", ctaShort:"Agendar diagnóstico", catBill:"Facturación",
+      navMethod:"Método", navWorkflows:"Workflows", navPort:"Portafolio", navCasos:"Casos", navAgents:"Agentes", ctaShort:"Diagnóstico exprés", catBill:"Facturación",
+      secEsc:"Escuelas", secRes:"Restaurantes", secCli:"Clínicas", secGym:"Gimnasios", secNot:"Notarías", secMan:"Talleres y plantas",
+      kTag:"Caso · Kanri para IMC Design", kTitle:"De procesos definidos en papel a un taller gestionado de punta a punta.",
+      kDescCase:"IMC Design, taller de diseño y fabricación en Juárez, tenía procesos claros pero ninguno vivía en una plataforma: cotizar, comprar, producir y cobrar se seguían en hojas y mensajes. Construimos Kanri sobre esos procesos y hoy el taller opera ahí de la cotización al cobro.",
+      ks1b:"6", ks1s:"etapas conectadas, de la cotización al cobro", ks2b:"1", ks2s:"plataforma para todo el taller", ks3b:"SaaS", ks3s:"hoy disponible para otros talleres",
+      kst1:"Cotización con inventario y margen a la vista, lista para enviar.", kst2:"Compras y almacén conectados a cada orden.", kst3:"Piso y calidad por pieza, con evidencia.", kst4:"Entregas, facturación CFDI y cobranza en el mismo flujo.",
+      pUse:"En uso", pDev:"En desarrollo", rName:"Operación multi-sucursal", stBuilt:"Construida", rSec:"Cadenas de restaurantes",
+      rDesc:"Auditorías de inocuidad con foto y calificación por sucursal, reporte con IA, monitoreo con cámaras y reservaciones con asistente de voz.",
+      cWho:"Fundador · te contesta él en menos de 24 horas hábiles",
       ev2b:"Cotización y seguimiento · Mono Atelier",
       aEyebrow:"04 — Agentes de IA", aH2:"Agentes que trabajan dentro de tu operación.",
       aIntro:"Un agente no es un chatbot suelto. Es una pieza del workflow: lee tus datos, hace tareas con tus herramientas y deja que una persona apruebe lo importante. Estos dos ya están funcionando.",
@@ -711,20 +764,20 @@
       microLeft:"Consultoría · Workflows · Agentes de IA", microRight:"Método Ronin: Mapear → Diseñar → Construir → Evolucionar",
       heroH1:"Tu operación,<br>convertida en<br>workflows con IA.",
       heroSub:"Consultoría que mapea cómo trabaja tu equipo, diseña el flujo correcto y lo automatiza con agentes de IA. Con un método probado en dos años de operación real.",
-      ctaPrimary:"Agendar diagnóstico", ctaSecondary:"Ver cómo trabaja Ronin", heroMicro:"30 min · sin compromiso · un proceso concreto",
-      credLine:"Diseñamos sobre las herramientas que tu equipo ya utiliza.",
+      ctaPrimary:"Hacer el diagnóstico exprés", ctaSecondary:"Ver cómo trabaja Ronin", heroMicro:"12 preguntas · 5 minutos · resultado al instante · gratis",
+      credLine:"Trabajamos con negocios de servicios de Juárez y El Paso. Elige el tuyo:",
       catOps:"Operaciones", catMsg:"Mensajería", catDocs:"Documentos", catRep:"Reportes",
       wfEyebrow:"02 — Casos y workflows", wfH2:"Operaciones reales. Resultados que se sostienen.",
       wfIntro:"Antes de proponerte un workflow, te mostramos dónde ya lo hicimos funcionar.",
       fTag:"Caso principal · Orka Oleo Group",
-      fTitle:"Dos años transformando la operación de una comercializadora de aceites y derivados.",
-      fDesc:"Ventas, proyectos y clientes vivían en hojas de cálculo separadas y en la memoria de pocas personas. Rediseñamos la estructura, automatizamos flujos con IA y dejamos una sola fuente de verdad que el equipo usa todos los días.",
-      fs1b:"2 años", fs1s:"de consultoría continua", fs2b:"1", fs2s:"fuente de verdad para ventas, hitos y clientes",
-      fs3b:"IA", fs3s:"integrada al trabajo diario del equipo",
+      fTitle:"De un Excel compartido cada hora a un sistema que el equipo usa todos los días.",
+      fDesc:"Orka, comercializadora de aceites y derivados con operación en Juárez y Texas, llevaba todo en un Excel. Cada hora, el director lo compartía con una agencia externa que lo convertía en tableros de Power BI. Lo primero que eliminamos fue ese proceso. Construimos desde cero una plataforma donde ventas, precios, crédito y clientes viven en un solo lugar, con los tableros integrados.",
+      fs1b:"2 años", fs1s:"operando sobre la plataforma", fs2b:"1", fs2s:"fuente de verdad para ventas, precios, crédito y clientes",
+      fs3b:"0", fs3s:"hojas de cálculo enviadas a mano cada hora",
       fsLabel:"Lo que construimos",
-      fst1:"Rediseño de estructura y roles según el trabajo real.",
-      fst2:"Agentes de IA para aprobaciones, seguimiento de ventas y reportes.",
-      fst3:"Sistema a la medida con dashboards de KPI en tiempo real.",
+      fst1:"Sistema desde cero: ventas, clientes, crédito y precios en una sola plataforma.",
+      fst2:"Tableros integrados que sustituyeron los reportes externos de Power BI.",
+      fst3:"Agentes de IA para aprobaciones, seguimiento de ventas y reportes.",
       fst4:"Talleres entre áreas y capacitación práctica para la adopción.",
       wfH3:"Tres workflows donde empezamos.", wfH3p:"Cada uno con su evidencia a la vista.", evLab:"Evidencia",
       wf1label:"01 / Operaciones", wf1title:"De proceso disperso a operación con una fuente de verdad.",
@@ -749,14 +802,14 @@
       pEyebrow:"05 — Portafolio", pH2:"Software que ya construimos y está en uso.",
       pIntro:"El mismo método, llevado a producto. Plataformas propias para sectores distintos, cada una nacida de un problema operativo real.",
       stProd:"En producción", stLive:"Cliente 1 en vivo", stTrial:"Prueba gratis", stNew:"Nuevo", stSoon:"Próximamente", pSee:"Ver plataforma →",
-      kSec:"Manufactura · talleres CNC", kDesc:"ERP a la medida para IMC Design, hoy ofrecido como SaaS a otros talleres y maquilas.",
+      kSec:"Manufactura · talleres CNC", kDesc:"Construido para IMC Design, que hoy opera ahí de la cotización al cobro. Disponible como SaaS para otros talleres y maquilas.",
       sSec:"Restaurantes", sDesc:"Caja, inventario, food cost y operación diaria de un restaurante en una sola app.",
       gSec:"Ingeniería industrial", gDesc:"Estudios de tiempo, balanceo de línea y capacidad generados con IA desde un video.",
       vSec:"Educación", vDesc:"Gestión escolar: matrícula, calificaciones, pagos y comunicación con padres.",
       aSec:"Transporte de personal", aDesc:"Auditoría del servicio de transporte en tres vías: personal, maquiladora y transportista.",
       dSec:"Gimnasios", dDesc:"Membresías, clases, accesos y pagos bajo un mismo techo.",
       cEyebrow:"Siguiente paso", cH2:"Diagnosticamos tu flujo de trabajo. Lo rediseñamos. Lo automatizamos con IA.",
-      cLead:"Déjanos tus datos y te contactamos en menos de 24 horas hábiles para agendar un diagnóstico de 30 minutos, enfocado en un proceso concreto.",
+      cLead:"Empieza por el diagnóstico exprés de 5 minutos o déjanos tus datos. El diagnóstico completo es una visita a tu negocio, un mapa de tu flujo actual y un plan priorizado con presupuesto cerrado; es un servicio pagado que se acredita al proyecto.",
       waBtn:"Escríbenos por WhatsApp", cOr:"O escríbenos a",
       fName:"Nombre", fCompany:"Empresa", fEmail:"Correo", fPhone:"WhatsApp o teléfono", fOpt:"(opcional)",
       fArea:"¿Qué flujo quieres mejorar?", fAreaPick:"Elige una opción", fA1:"Operaciones", fA2:"Ventas y CRM",
@@ -768,7 +821,15 @@
       footTag:"Workflows y agentes de IA para operaciones que quieren avanzar mejor.", footLine:"Diseñado para hacer avanzar el trabajo."
     },
     en: {
-      navMethod:"Method", navWorkflows:"Workflows", navPort:"Portfolio", navCasos:"Cases", navAgents:"Agents", ctaShort:"Book a diagnostic", catBill:"Invoicing",
+      navMethod:"Method", navWorkflows:"Workflows", navPort:"Portfolio", navCasos:"Cases", navAgents:"Agents", ctaShort:"Quick diagnostic", catBill:"Invoicing",
+      secEsc:"Schools", secRes:"Restaurants", secCli:"Clinics", secGym:"Gyms", secNot:"Notaries", secMan:"Workshops and plants",
+      kTag:"Case · Kanri for IMC Design", kTitle:"From processes defined on paper to a workshop managed end to end.",
+      kDescCase:"IMC Design, a design and fabrication workshop in Juárez, had clear processes but none of them lived in a platform: quoting, purchasing, production and collections were tracked in sheets and messages. We built Kanri on those processes, and today the workshop runs there from quote to payment.",
+      ks1b:"6", ks1s:"connected stages, from quote to payment", ks2b:"1", ks2s:"platform for the whole workshop", ks3b:"SaaS", ks3s:"now available to other workshops",
+      kst1:"Quotes with inventory and margin in view, ready to send.", kst2:"Purchasing and warehouse tied to each order.", kst3:"Shop floor and quality per part, with evidence.", kst4:"Deliveries, CFDI invoicing and collections in the same flow.",
+      pUse:"In use", pDev:"In development", rName:"Multi-location operations", stBuilt:"Built", rSec:"Restaurant chains",
+      rDesc:"Food-safety audits with photos and per-location scoring, AI reports, camera monitoring and reservations with a voice assistant.",
+      cWho:"Founder · he answers you within 24 business hours",
       ev2b:"Quoting and follow-up · Mono Atelier",
       aEyebrow:"04 — AI agents", aH2:"Agents that work inside your operation.",
       aIntro:"An agent isn't a loose chatbot. It's part of the workflow: it reads your data, does tasks with your tools and lets a person approve what matters. These two are already running.",
@@ -793,20 +854,20 @@
       microLeft:"Consulting · Workflows · AI agents", microRight:"Ronin Method: Map → Design → Build → Evolve",
       heroH1:"Your operation,<br>turned into<br>AI workflows.",
       heroSub:"Consulting that maps how your team works, designs the right flow and automates it with AI agents. With a method proven over two years of real operation.",
-      ctaPrimary:"Book a diagnostic", ctaSecondary:"See how Ronin works", heroMicro:"30 min · no commitment · one concrete process",
-      credLine:"We build on the tools your team already uses.",
+      ctaPrimary:"Take the quick diagnostic", ctaSecondary:"See how Ronin works", heroMicro:"12 questions · 5 minutes · instant result · free",
+      credLine:"We work with service businesses in Juárez and El Paso. Pick yours:",
       catOps:"Operations", catMsg:"Messaging", catDocs:"Documents", catRep:"Reports",
       wfEyebrow:"02 — Cases and workflows", wfH2:"Real operations. Results that hold.",
       wfIntro:"Before we propose a workflow, we show you where we already made one work.",
       fTag:"Lead case · Orka Oleo Group",
-      fTitle:"Two years transforming the operation of an oils and derivatives trading company.",
-      fDesc:"Sales, projects and clients lived in separate spreadsheets and in the memory of a few people. We redesigned the structure, automated workflows with AI and left one source of truth the team uses every day.",
-      fs1b:"2 years", fs1s:"of continuous consulting", fs2b:"1", fs2s:"source of truth for sales, milestones and clients",
-      fs3b:"AI", fs3s:"built into the team's daily work",
+      fTitle:"From a spreadsheet shared every hour to a system the team uses every day.",
+      fDesc:"Orka, an oils and derivatives trading company operating in Juárez and Texas, ran everything in one Excel file. Every hour, the director shared it with an outside agency that turned it into Power BI dashboards. That process was the first thing we removed. We built a platform from scratch where sales, pricing, credit and clients live in one place, with the dashboards built in.",
+      fs1b:"2 years", fs1s:"running on the platform", fs2b:"1", fs2s:"source of truth for sales, pricing, credit and clients",
+      fs3b:"0", fs3s:"spreadsheets sent by hand every hour",
       fsLabel:"What we built",
-      fst1:"Structure and roles redesigned around the real work.",
-      fst2:"AI agents for approvals, sales follow-up and reporting.",
-      fst3:"Custom system with real-time KPI dashboards.",
+      fst1:"A system from scratch: sales, clients, credit and pricing in one platform.",
+      fst2:"Built-in dashboards that replaced the outside Power BI reports.",
+      fst3:"AI agents for approvals, sales follow-up and reporting.",
       fst4:"Cross-team workshops and hands-on training for adoption.",
       wfH3:"Three workflows where we start.", wfH3p:"Each one with its evidence in view.", evLab:"Evidence",
       wf1label:"01 / Operations", wf1title:"From scattered process to one source of truth.",
@@ -831,14 +892,14 @@
       pEyebrow:"05 — Portfolio", pH2:"Software we've already built and that's in use.",
       pIntro:"The same method, turned into product. Our own platforms for different sectors, each born from a real operational problem.",
       stProd:"In production", stLive:"Client 1 live", stTrial:"Free trial", stNew:"New", stSoon:"Coming soon", pSee:"See platform →",
-      kSec:"Manufacturing · CNC shops", kDesc:"Custom ERP for IMC Design, now offered as SaaS to other shops and maquilas.",
+      kSec:"Manufacturing · CNC shops", kDesc:"Built for IMC Design, which now runs on it from quote to payment. Available as SaaS to other shops and maquilas.",
       sSec:"Restaurants", sDesc:"Register, inventory, food cost and daily operations of a restaurant in one app.",
       gSec:"Industrial engineering", gDesc:"Time studies, line balancing and capacity generated with AI from a video.",
       vSec:"Education", vDesc:"School management: enrollment, grades, payments and parent communication.",
       aSec:"Staff transportation", aDesc:"Three-way audit of the transport service: staff, maquiladora and carrier.",
       dSec:"Gyms", dDesc:"Memberships, classes, access control and payments under one roof.",
       cEyebrow:"Next step", cH2:"We diagnose your workflow. We redesign it. We automate it with AI.",
-      cLead:"Leave your details and we'll reach out within 24 business hours to book a 30-minute diagnostic focused on one concrete process.",
+      cLead:"Start with the 5-minute quick diagnostic or leave your details. The full diagnostic is a visit to your business, a map of your current workflow and a prioritized plan with a fixed-price quote; it is a paid service credited toward the project.",
       waBtn:"Message us on WhatsApp", cOr:"Or email us at",
       fName:"Name", fCompany:"Company", fEmail:"Email", fPhone:"WhatsApp or phone", fOpt:"(optional)",
       fArea:"Which workflow do you want to improve?", fAreaPick:"Choose one", fA1:"Operations", fA2:"Sales & CRM",
