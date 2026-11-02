@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Expedientes digitales seguros · Ronin Studio</title>
+<meta name="description" content="Cómo protege Ronin Studio los expedientes y datos de salud de los pacientes de su clínica: ley de datos personales, NOM-004 y NOM-024.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='3' y='3' width='58' height='58' rx='14' fill='%230C0F14' stroke='%2322D3EE' stroke-width='4'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='monospace' font-weight='700' font-size='30' fill='%2322D3EE'%3ER%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --ink:#0C0F14; --mist:#556072; --faint:#7A8696; --line:#D6DDE5; --paper:#FFFFFF; --wash:#EEF1F4;
+  --accent:#0891B2; --accent-bright:#22D3EE; --accent2:#3B82F6;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --disp:'Anton',Impact,var(--sans);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--wash);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.sheet{max-width:880px;margin:0 auto;background:var(--paper)}
+.top{background:var(--ink);color:#E6EDF3;padding:28px 40px 26px}
+.brand{display:flex;align-items:center;justify-content:space-between;gap:12px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8593A2}
+.brand a{color:inherit;text-decoration:none;display:flex;align-items:center;gap:9px;font-weight:700}
+.brand b{display:inline-grid;place-items:center;width:26px;height:26px;border:2px solid var(--accent-bright);border-radius:7px;color:var(--accent-bright);font-size:12px}
+h1{font-family:var(--disp);font-weight:400;font-size:44px;line-height:.98;letter-spacing:.01em;text-transform:uppercase;margin-top:18px}
+h1 span{color:var(--accent-bright)}
+.lead{margin-top:12px;color:#B8C2CE;font-size:15.5px;max-width:64ch}
+.lead strong{color:#fff;font-weight:600}
+main{padding:26px 40px 8px}
+h2{font-family:var(--mono);font-size:11.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{text-align:left;font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);padding:0 12px 7px 0;border-bottom:2px solid var(--ink)}
+td{vertical-align:top;padding:8px 12px 8px 0;border-bottom:1px solid var(--line)}
+td:first-child{width:44%;font-weight:600}
+td small{display:block;font-weight:400;color:var(--faint);font-family:var(--mono);font-size:10.5px;margin-top:2px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:24px}
+ul{list-style:none;font-size:13.5px}
+li{position:relative;padding-left:16px;margin-bottom:6px}
+li::before{content:"";position:absolute;left:0;top:.62em;width:7px;height:7px;border-radius:2px;background:var(--accent)}
+.box{margin-top:18px;padding:12px 14px;border:1px solid var(--line);border-left:3px solid var(--accent2);border-radius:6px;font-size:13px;color:var(--mist)}
+.box strong{color:var(--ink)}
+.cta{margin:24px 40px 0;padding:18px 22px;border-radius:10px;background:var(--ink);color:#E6EDF3;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.cta .t{font-family:var(--disp);font-size:24px;line-height:1;text-transform:uppercase}
+.cta .t span{color:var(--accent-bright)}
+.cta .c{font-family:var(--mono);font-size:12px;line-height:1.7;color:#B8C2CE;text-align:right}
+.cta .c a{color:#E6EDF3;text-decoration:none}
+.note{padding:14px 40px 26px;font-size:11px;color:var(--faint)}
+.print{position:fixed;right:16px;bottom:16px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;background:var(--ink);color:#E6EDF3;border:1px solid #2a3542;border-radius:999px;padding:12px 18px}
+@media (max-width:700px){
+  .top{padding:24px 16px 22px} main{padding:22px 16px 4px} .cta{margin:22px 16px 0} .note{padding:14px 16px 8px}
+  .print{position:static;display:block;text-align:center;margin:0 16px 28px}
+  h1{font-size:36px}
+  .cols{grid-template-columns:1fr;gap:20px}
+  .cta .c{text-align:left}
+  table,thead,tbody,tr,td{display:block} thead{display:none}
+  tr{padding:10px 0;border-bottom:1px solid var(--line)} td{border:none;padding:0} td:first-child{width:auto;margin-bottom:3px}
+}
+@page{size:letter;margin:0}
+@media print{
+  body{background:#fff;font-size:13px}
+  .sheet{max-width:none}
+  .print{display:none}
+  .top,.cta{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .top{padding:20px 40px 18px} h1{font-size:36px;margin-top:12px} .lead{font-size:13px;margin-top:8px}
+  main{padding:16px 40px 2px}
+  h2{margin-bottom:6px}
+  table,ul{font-size:12px} td{padding:4px 12px 4px 0} th{padding-bottom:5px}
+  td small{font-size:9.5px;margin-top:0}
+  li{margin-bottom:3px}
+  .cols{margin-top:14px;gap:24px}
+  .box{margin-top:10px;padding:8px 12px;font-size:11.5px}
+  .cta{margin:14px 40px 0;padding:12px 20px} .cta .t{font-size:20px} .cta .c{font-size:11px;line-height:1.6}
+  .note{padding:8px 40px 0;font-size:10px}
+}
+</style>
+</head>
+<body>
+<div class="sheet">
+  <header class="top">
+    <div class="brand"><a href="/"><b>R</b>Ronin Studio</a><span>Para clínicas y laboratorios</span></div>
+    <h1>Expedientes digitales <span>seguros y legales</span></h1>
+    <p class="lead"><strong>Sí, su clínica puede tener los expedientes de sus pacientes en una plataforma digital, de forma legal.</strong> La construimos conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (2025) y, cuando sustituye su expediente clínico oficial, bajo las NOM-004 y NOM-024 de la Secretaría de Salud.</p>
+  </header>
+
+  <main>
+    <h2>Lo que pide la ley y cómo lo cumplimos</h2>
+    <table>
+      <thead><tr><th>La ley pide</th><th>En la plataforma</th></tr></thead>
+      <tbody>
+        <tr><td>Consentimiento expreso y por escrito del paciente para usar datos de salud<small>LFPDPPP, art. 8</small></td><td>El paciente firma en tableta o celular. Guardamos la fecha, la hora y la versión del aviso de privacidad que aceptó.</td></tr>
+        <tr><td>Medidas de seguridad administrativas, técnicas y físicas<small>LFPDPPP, art. 18</small></td><td>Datos cifrados en tránsito y guardados con cifrado AES-256. Acceso por rol y verificación en dos pasos para el personal.</td></tr>
+        <tr><td>Confidencialidad de quien trata los datos<small>LFPDPPP, art. 20</small></td><td>Bitácora de quién consultó o modificó cada expediente, y cuándo. Acuerdos de confidencialidad con nuestro equipo.</td></tr>
+        <tr><td>Aviso inmediato al paciente si hay una vulneración<small>LFPDPPP, art. 19</small></td><td>Plan de respuesta a incidentes acordado con su clínica desde el inicio.</td></tr>
+        <tr><td>Derechos del paciente a acceder, corregir, cancelar u oponerse<small>LFPDPPP, arts. 21 a 28</small></td><td>Su equipo exporta, corrige o cancela los datos de un paciente desde la plataforma.</td></tr>
+        <tr><td>Conservar el expediente clínico al menos 5 años<small>NOM-004-SSA3-2012</small></td><td>Respaldos automáticos con recuperación a cualquier momento y reglas de conservación por tipo de documento.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="cols">
+      <section>
+        <h2>Cómo está construida</h2>
+        <ul>
+          <li>Los datos de su clínica quedan aislados de cualquier otra, con reglas de acceso en cada tabla.</li>
+          <li>Estudios, resultados e identificaciones en almacenamiento privado, con ligas que caducan.</li>
+          <li>Infraestructura de Supabase y Vercel, con auditoría SOC 2 Tipo 2.</li>
+          <li>Ningún dato de pacientes en registros técnicos, analítica ni direcciones web.</li>
+          <li>Si usamos IA, se declara en su aviso de privacidad y el proveedor no entrena con sus datos.</li>
+          <li>Si sustituye al expediente oficial: firma electrónica de quien escribe y diseño bajo la NOM-024-SSA3-2012.</li>
+        </ul>
+      </section>
+      <section>
+        <h2>Lo que firmamos con su clínica</h2>
+        <ul>
+          <li>Aviso de privacidad integral para sus pacientes, que menciona el almacenamiento en la nube.</li>
+          <li>Contrato con cláusula de encargado: usamos los datos solo para el servicio y los protegemos.</li>
+          <li>Lista de los proveedores que participan y dónde se guardan los datos.</li>
+          <li>Al terminar, le entregamos toda su información y la borramos de nuestros sistemas.</li>
+        </ul>
+        <div class="box"><strong>¿Atiende pacientes en El Paso?</strong> Para clínicas en EE. UU. configuramos la plataforma bajo HIPAA y firmamos los acuerdos de socio comercial (BAA) con los proveedores.</div>
+      </section>
+    </div>
+  </main>
+
+  <div class="cta">
+    <div class="t">Primero el flujo. <span>Después la IA.</span></div>
+    <div class="c">Julio Ibarra · Ronin Studio<br><a href="tel:+526563147267">656 314 7267</a> · <a href="mailto:project@roninstudio.com.mx">project@roninstudio.com.mx</a><br><a href="https://www.roninstudio.com.mx">roninstudio.com.mx</a></div>
+  </div>
+  <p class="note">Este documento describe cómo trabajamos; no sustituye asesoría legal. Revisamos el aviso de privacidad y los contratos junto con el abogado de su clínica.</p>
+</div>
+<a class="print" href="Expedientes-digitales-Ronin-Studio.pdf" download>Descargar PDF</a>
+</body>
+</html>
