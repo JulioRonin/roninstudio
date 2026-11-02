@@ -1,0 +1,42 @@
+{
+  "palette": "Planta",
+  "colors": {
+    "tinta": {
+      "hex": "#0C0F14",
+      "rgb": "12, 15, 20",
+      "use": "Fondo principal, texto"
+    },
+    "papel": {
+      "hex": "#EEEBE4",
+      "rgb": "238, 235, 228",
+      "use": "Fondo claro"
+    },
+    "oxido": {
+      "hex": "#B05139",
+      "rgb": "176, 81, 57",
+      "oklch": "0.55 0.13 35",
+      "use": "Acción, CTA, aprobación, banda activa"
+    },
+    "olivo": {
+      "hex": "#4C8141",
+      "rgb": "76, 129, 65",
+      "oklch": "0.55 0.11 140",
+      "use": "En producción / workflow funcionando"
+    },
+    "acero": {
+      "hex": "#5B6068",
+      "rgb": "91, 96, 104",
+      "use": "Texto secundario, bordes"
+    },
+    "oxidoClaro": {
+      "hex": "#F7D6CA"
+    },
+    "olivoClaro": {
+      "hex": "#D1E5CC"
+    }
+  },
+  "fonts": {
+    "display": "Archivo (Google Fonts) — wdth 112, pesos 900 y 300",
+    "mono": "JetBrains Mono — 400/500"
+  }
+}

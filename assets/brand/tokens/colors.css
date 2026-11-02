@@ -1,0 +1,12 @@
+/* Ronin Studio — Paleta Planta */
+:root {
+  --ronin-tinta: #0C0F14;   /* oklch(0.17 0.01 260) — fondo principal, texto */
+  --ronin-papel: #EEEBE4;   /* fondo claro, texto sobre tinta */
+  --ronin-oxido: #B05139;   /* oklch(0.55 0.13 35) — acción, CTA, aprobación, banda activa */
+  --ronin-olivo: #4C8141;   /* oklch(0.55 0.11 140) — workflow funcionando, en producción */
+  --ronin-acero: #5B6068;   /* texto secundario, bordes */
+  --ronin-oxido-claro: #F7D6CA;
+  --ronin-olivo-claro: #D1E5CC;
+  --ronin-font-display: 'Archivo', system-ui, sans-serif;  /* wdth 112, 900 / 300 */
+  --ronin-font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
