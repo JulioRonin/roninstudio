@@ -6,29 +6,31 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Expedientes digitales seguros · Ronin Studio</title>
 <meta name="description" content="Cómo protege Ronin Studio los expedientes y datos de salud de los pacientes de su clínica: ley de datos personales, NOM-004 y NOM-024.">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='3' y='3' width='58' height='58' rx='14' fill='%230C0F14' stroke='%2322D3EE' stroke-width='4'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='monospace' font-weight='700' font-size='30' fill='%2322D3EE'%3ER%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="/assets/brand/logo/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,300..900&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
 :root{
-  --ink:#0C0F14; --mist:#556072; --faint:#7A8696; --line:#D6DDE5; --paper:#FFFFFF; --wash:#EEF1F4;
-  --accent:#0891B2; --accent-bright:#22D3EE; --accent2:#3B82F6;
-  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
-  --sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
-  --disp:'Anton',Impact,var(--sans);
+  --ink:#0C0F14; --mist:#5B6068; --faint:#7C8088; --line:#D8D3C9; --paper:#F7F5F0; --wash:#EEEBE4; --papel:#EEEBE4; --oxido:#B05139; --olivo:#4C8141;
+  --accent:#B05139; --accent-bright:#B05139; --accent2:#5B6068;
+  --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --sans:'Archivo',system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --disp:'Archivo',system-ui,sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-text-size-adjust:100%}
 body{background:var(--wash);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
 .sheet{max-width:880px;margin:0 auto;background:var(--paper)}
-.top{background:var(--ink);color:#E6EDF3;padding:28px 40px 26px}
-.brand{display:flex;align-items:center;justify-content:space-between;gap:12px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8593A2}
-.brand a{color:inherit;text-decoration:none;display:flex;align-items:center;gap:9px;font-weight:700}
-.brand b{display:inline-grid;place-items:center;width:26px;height:26px;border:2px solid var(--accent-bright);border-radius:7px;color:var(--accent-bright);font-size:12px}
-h1{font-family:var(--disp);font-weight:400;font-size:44px;line-height:.98;letter-spacing:.01em;text-transform:uppercase;margin-top:18px}
-h1 span{color:var(--accent-bright)}
-.lead{margin-top:12px;color:#B8C2CE;font-size:15.5px;max-width:64ch}
-.lead strong{color:#fff;font-weight:600}
+.top{background:var(--ink);color:var(--papel);padding:28px 40px 26px}
+.brand{display:flex;align-items:center;justify-content:space-between;gap:12px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#A9A6A0}
+.brand a{color:var(--papel);text-decoration:none;display:flex;align-items:center;gap:10px;font-family:var(--disp);font-stretch:112%;font-size:16px;letter-spacing:-.01em;text-transform:none}
+.brand a img{width:24px;height:auto}
+.brand a b{font-weight:900}
+.brand a span{font-weight:300}
+h1{font-family:var(--disp);font-stretch:112%;font-weight:900;font-size:38px;line-height:1;letter-spacing:-.02em;text-transform:uppercase;margin-top:18px}
+h1 span{font-weight:300}
+.lead{margin-top:12px;color:#B5B2AB;font-size:15.5px;max-width:64ch}
+.lead strong{color:var(--papel);font-weight:600}
 main{padding:26px 40px 8px}
 h2{font-family:var(--mono);font-size:11.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
 table{width:100%;border-collapse:collapse;font-size:13.5px}
@@ -39,16 +41,16 @@ td small{display:block;font-weight:400;color:var(--faint);font-family:var(--mono
 .cols{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:24px}
 ul{list-style:none;font-size:13.5px}
 li{position:relative;padding-left:16px;margin-bottom:6px}
-li::before{content:"";position:absolute;left:0;top:.62em;width:7px;height:7px;border-radius:2px;background:var(--accent)}
+li::before{content:"";position:absolute;left:0;top:.7em;width:9px;height:3px;background:var(--ink);transform:skewY(-14deg)}
 .box{margin-top:18px;padding:12px 14px;border:1px solid var(--line);border-left:3px solid var(--accent2);border-radius:6px;font-size:13px;color:var(--mist)}
 .box strong{color:var(--ink)}
-.cta{margin:24px 40px 0;padding:18px 22px;border-radius:10px;background:var(--ink);color:#E6EDF3;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
-.cta .t{font-family:var(--disp);font-size:24px;line-height:1;text-transform:uppercase}
-.cta .t span{color:var(--accent-bright)}
-.cta .c{font-family:var(--mono);font-size:12px;line-height:1.7;color:#B8C2CE;text-align:right}
-.cta .c a{color:#E6EDF3;text-decoration:none}
+.cta{margin:24px 40px 0;padding:18px 22px;border-radius:6px;background:var(--ink);color:var(--papel);display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.cta .t{font-family:var(--disp);font-stretch:112%;font-weight:900;font-size:21px;line-height:1;letter-spacing:-.02em;text-transform:uppercase}
+.cta .t span{font-weight:300}
+.cta .c{font-family:var(--mono);font-size:12px;line-height:1.7;color:#A9A6A0;text-align:right}
+.cta .c a{color:var(--papel);text-decoration:none}
 .note{padding:14px 40px 26px;font-size:11px;color:var(--faint)}
-.print{position:fixed;right:16px;bottom:16px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;background:var(--ink);color:#E6EDF3;border:1px solid #2a3542;border-radius:999px;padding:12px 18px}
+.print{position:fixed;right:16px;bottom:16px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;background:var(--ink);color:var(--papel);border:1px solid #3A4048;border-radius:4px;padding:12px 18px}
 @media (max-width:700px){
   .top{padding:24px 16px 22px} main{padding:22px 16px 4px} .cta{margin:22px 16px 0} .note{padding:14px 16px 8px}
   .print{position:static;display:block;text-align:center;margin:0 16px 28px}
@@ -80,7 +82,7 @@ li::before{content:"";position:absolute;left:0;top:.62em;width:7px;height:7px;bo
 <body>
 <div class="sheet">
   <header class="top">
-    <div class="brand"><a href="/"><b>R</b>Ronin Studio</a><span>Para clínicas y laboratorios</span></div>
+    <div class="brand"><a href="/" aria-label="Ronin Studio"><img src="/assets/brand/logo/ronin-isotipo-papel.svg" width="24" height="23" alt=""><span><b>RONIN</b> <span>STUDIO</span></span></a><span>Para clínicas y laboratorios</span></div>
     <h1>Expedientes digitales <span>seguros y legales</span></h1>
     <p class="lead"><strong>Sí, su clínica puede tener los expedientes de sus pacientes en una plataforma digital, de forma legal.</strong> La construimos conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (2025) y, cuando sustituye su expediente clínico oficial, bajo las NOM-004 y NOM-024 de la Secretaría de Salud.</p>
   </header>
