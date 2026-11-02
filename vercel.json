@@ -2,5 +2,9 @@
   "framework": null,
   "installCommand": "echo skip-install",
   "buildCommand": "echo skip-build",
-  "outputDirectory": "."
+  "outputDirectory": ".",
+  "rewrites": [
+    { "source": "/vertice/demo", "destination": "https://vertice-demo-kappa.vercel.app/vertice/demo" },
+    { "source": "/vertice/demo/:path*", "destination": "https://vertice-demo-kappa.vercel.app/vertice/demo/:path*" }
+  ]
 }
