@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Workflows y agentes de IA para tu operación | Ronin Studio</title>
-<meta name="description" content="Ronin Studio diseña e implementa workflows y agentes de IA para ventas, operaciones y atención al cliente. Agenda un diagnóstico de tu proceso.">
+<title>Primero el flujo, después la IA | Ronin Studio · Juárez y El Paso</title>
+<meta name="description" content="Ronin Studio ordena cómo trabaja tu negocio y después lo automatiza, con software propio que ya opera en escuelas, restaurantes, talleres y comercializadoras de Juárez y El Paso.">
 <link rel="canonical" href="https://www.roninstudio.com.mx/">
 <meta name="theme-color" content="#0C0F14">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Ronin Studio">
 <meta property="og:locale" content="es_MX">
-<meta property="og:title" content="Tu operación, convertida en workflows con IA | Ronin Studio">
-<meta property="og:description" content="Consultoría que mapea cómo trabaja tu equipo, diseña el flujo correcto y lo automatiza con agentes de IA.">
+<meta property="og:title" content="Tu operación, ordenada primero y automatizada después | Ronin Studio">
+<meta property="og:description" content="Mapeamos cómo trabaja tu equipo, lo convertimos en un sistema que todos usan y metemos IA solo donde ya hay orden.">
 <meta property="og:url" content="https://www.roninstudio.com.mx/">
 <meta property="og:image" content="https://www.roninstudio.com.mx/assets/og-ronin.jpg">
 <meta property="og:image:width" content="1200">
@@ -237,6 +237,41 @@
   .stagemeta .m b{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-weight:500}
   .stagemeta .m span{font-size:13px;color:var(--ink)}
   .method-cta{margin-top:24px}
+  /* Serie Método: foto B/N + R con la banda de la etapa en Óxido */
+  .method-layout{margin-top:56px}
+  .method-layout .method-grid{margin-top:40px}
+  .mvisual{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -16px;padding:0 16px 6px;
+    scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .mvisual::-webkit-scrollbar{display:none}
+  .scard{position:relative;margin:0;flex:0 0 72%;max-width:300px;aspect-ratio:4/5;overflow:hidden;border-radius:4px;
+    background:var(--tinta);scroll-snap-align:start;color:var(--papel)}
+  .scard .sphoto{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.1) brightness(.62)}
+  .scard .sover{position:absolute;inset:0;padding:16px;display:flex;flex-direction:column;justify-content:space-between;
+    background:linear-gradient(180deg,rgba(12,15,20,.35) 0%,rgba(12,15,20,0) 30%,rgba(12,15,20,0) 55%,rgba(12,15,20,.7) 100%)}
+  .scard .stop{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase}
+  .scard .stop .live{display:inline-flex;align-items:center;gap:6px}
+  .scard .stop .live i{width:7px;height:7px;border-radius:50%;background:var(--olivo)}
+  .scard .siso{width:46%;height:auto;align-self:center}
+  .scard .sbot{display:flex;flex-direction:column;gap:5px}
+  .scard .sbot b{font-family:var(--disp);font-stretch:112%;font-weight:900;font-size:24px;line-height:1;text-transform:uppercase;letter-spacing:-.01em}
+  .scard .sbot span{font-size:12.5px;line-height:1.4;color:#D9D5CD}
+  @media (min-width:960px){
+    .method-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.82fr);gap:72px;align-items:start}
+    .method-layout .method-grid{margin-top:0}
+    .mvisual{order:2;position:sticky;top:96px;display:block;overflow:visible;margin:0;padding:0;aspect-ratio:4/5;max-height:calc(100vh - 128px)}
+    .mvisual .scard{position:absolute;inset:0;max-width:none;width:100%;height:100%;opacity:0;transform:scale(1.02);
+      transition:opacity .6s ease,transform .8s ease}
+    .mvisual .scard.on{opacity:1;transform:none}
+    .scard .sover{padding:22px}
+    .scard .stop{font-size:10.5px}
+    .scard .sbot b{font-size:34px}
+    .scard .sbot span{font-size:14px}
+    .mdots{display:flex;gap:8px;position:absolute;right:22px;bottom:-28px}
+    .mdots i{width:22px;height:3px;background:var(--border);transition:background .4s}
+    .mdots i.on{background:var(--oxido)}
+  }
+  @media (max-width:959px){ .mdots{display:none} }
+  @media (prefers-reduced-motion:reduce){ .mvisual .scard{transition:none} }
 
   /* ============ 04 PORTAFOLIO ============ */
   .pgrid{margin-top:56px;display:grid;grid-template-columns:1fr;border-top:1px solid var(--border)}
@@ -350,13 +385,13 @@
 
   <div class="heroinner side">
     <div class="microrow">
-      <span data-i18n="microLeft">Consultoría · Workflows · Agentes de IA</span>
+      <span data-i18n="microLeft">Juárez · El Paso · Consultoría y software a la medida</span>
       <span data-i18n="microRight">Método Ronin: Mapear → Diseñar → Construir → Evolucionar</span>
     </div>
     <div class="herobottom">
-      <h1 data-i18n="heroH1">Tu operación,<br><span class="thin">convertida en</span><br>workflows con IA.</h1>
+      <h1 data-i18n="heroH1">Primero<br>el flujo.<br><span class="thin">Después la IA.</span></h1>
       <div class="heroright">
-        <p class="sub" data-i18n="heroSub">Consultoría que mapea cómo trabaja tu equipo, diseña el flujo correcto y lo automatiza con agentes de IA. Con un método probado en dos años de operación real.</p>
+        <p class="sub" data-i18n="heroSub">Mapeamos cómo trabaja tu equipo, lo convertimos en un sistema que todos usan y metemos IA solo donde ya hay orden. Software propio operando en escuelas, restaurantes, talleres y comercializadoras de la frontera.</p>
         <div class="ctarow">
           <a class="cta-solid" href="/diagnostico/" data-i18n="ctaPrimary">Hacer el diagnóstico exprés</a>
           <a class="cta-text" href="#metodo" data-i18n="ctaSecondary">Ver cómo trabaja Ronin</a>
@@ -475,6 +510,42 @@
         <h2 data-i18n="mH2">No empezamos con IA. Empezamos con el trabajo.</h2>
         <p data-i18n="mIntro">Antes de construir, hacemos visible cómo se mueve hoy la operación. Después decidimos dónde la automatización aporta valor y dónde debe quedarse una persona.</p>
       </div>
+      <div class="method-layout">
+        <div class="mvisual" aria-label="Serie Método">
+          <figure class="scard on" data-card="0">
+            <img class="sphoto" src="/assets/metodo/metodo-01.webp" width="896" height="1120" alt="Técnico recorriendo una línea de producción con su tableta" loading="lazy" decoding="async">
+            <figcaption class="sover">
+              <span class="stop"><span>Ronin Studio</span><span>01 / 04</span></span>
+              <img class="siso" src="/assets/brand/logo/ronin-isotipo-etapa-01.svg" width="228" height="220" alt="">
+              <span class="sbot"><b data-i18n="s1t">Mapear</b><span data-i18n="sc1">Documentamos cómo se mueve hoy tu operación.</span></span>
+            </figcaption>
+          </figure>
+          <figure class="scard" data-card="1">
+            <img class="sphoto" src="/assets/metodo/metodo-02.webp" width="896" height="1120" alt="Manos en el teclado junto a un diagrama de flujo dibujado a mano" loading="lazy" decoding="async">
+            <figcaption class="sover">
+              <span class="stop"><span>Ronin Studio</span><span>02 / 04</span></span>
+              <img class="siso" src="/assets/brand/logo/ronin-isotipo-etapa-02.svg" width="228" height="220" alt="">
+              <span class="sbot"><b data-i18n="s2t">Diseñar</b><span data-i18n="sc2">Definimos el flujo, el papel de la IA y quién aprueba.</span></span>
+            </figcaption>
+          </figure>
+          <figure class="scard" data-card="2">
+            <img class="sphoto" src="/assets/metodo/metodo-03.webp" width="896" height="1120" alt="Operario en un taller de metal con la orden de trabajo en una tableta" loading="lazy" decoding="async">
+            <figcaption class="sover">
+              <span class="stop"><span>Ronin Studio</span><span>03 / 04</span></span>
+              <img class="siso" src="/assets/brand/logo/ronin-isotipo-etapa-03.svg" width="228" height="220" alt="">
+              <span class="sbot"><b data-i18n="s3t">Construir</b><span data-i18n="sc3">Workflow en producción, probado con casos reales.</span></span>
+            </figcaption>
+          </figure>
+          <figure class="scard" data-card="3">
+            <img class="sphoto" src="/assets/metodo/metodo-04.webp" width="896" height="1120" alt="Cocina de restaurante en servicio; el gerente revisa la operación en una tableta" loading="lazy" decoding="async">
+            <figcaption class="sover">
+              <span class="stop"><span>Ronin Studio</span><span class="live"><i></i><span data-i18n="scLive">En producción</span></span></span>
+              <img class="siso" src="/assets/brand/logo/ronin-isotipo-etapa-04.svg" width="228" height="220" alt="">
+              <span class="sbot"><b data-i18n="s4t">Evolucionar</b><span data-i18n="sc4">Medimos, ajustamos y lo mantenemos útil.</span></span>
+            </figcaption>
+          </figure>
+          <span class="mdots" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></span>
+        </div>
       <div class="method-grid">
         <div class="spine"><i id="spineGlow"></i></div>
         <div class="stage" data-stage="0">
@@ -513,6 +584,7 @@
             <div class="m"><b data-i18n="entregable">Entregable</b><span data-i18n="s4e">Reporte y mejoras continuas</span></div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   </section>
@@ -620,24 +692,25 @@
       <p class="plabel" data-i18n="pDev">En desarrollo</p>
       <div class="pgrid">
         <a class="pitem" href="/vertice">
-          <div class="prow"><span class="pname">Vértice</span><span class="pstatus new"><i></i><span data-i18n="stNew">Nuevo</span></span></div>
+          <div class="prow"><span class="pname">Vértice</span></div>
           <span class="psector" data-i18n="vSec">Educación</span>
           <p class="pdesc" data-i18n="vDesc">Gestión escolar: matrícula, calificaciones, pagos y comunicación con padres.</p>
           <span class="parrow" data-i18n="pSee">Ver plataforma →</span>
         </a>
         <a class="pitem" href="https://genba-pm8jkzzus-julioronins-projects.vercel.app/" target="_blank" rel="noopener">
-          <div class="prow"><span class="pname">GENBA</span><span class="pstatus new"><i></i><span data-i18n="stTrial">Prueba gratis</span></span></div>
+          <div class="prow"><span class="pname">GENBA</span></div>
           <span class="psector" data-i18n="gSec">Ingeniería industrial</span>
           <p class="pdesc" data-i18n="gDesc">Estudios de tiempo, balanceo de línea y capacidad generados con IA desde un video.</p>
           <span class="parrow" data-i18n="pSee">Ver plataforma →</span>
         </a>
-        <div class="pitem">
-          <div class="prow"><span class="pname">Dojo</span><span class="pstatus"><i></i><span data-i18n="stSoon">Próximamente</span></span></div>
+        <a class="pitem" href="/dojo/">
+          <div class="prow"><span class="pname">Dojo</span></div>
           <span class="psector" data-i18n="dSec">Gimnasios</span>
           <p class="pdesc" data-i18n="dDesc">Membresías, clases, accesos y pagos bajo un mismo techo.</p>
-        </div>
+          <span class="parrow" data-i18n="pSee">Ver plataforma →</span>
+        </a>
         <div class="pitem">
-          <div class="prow"><span class="pname">Andén</span><span class="pstatus"><i></i><span data-i18n="stSoon">Próximamente</span></span></div>
+          <div class="prow"><span class="pname">Andén</span></div>
           <span class="psector" data-i18n="aSec">Transporte de personal</span>
           <p class="pdesc" data-i18n="aDesc">Auditoría del servicio de transporte en tres vías: personal, maquiladora y transportista.</p>
         </div>
@@ -764,9 +837,9 @@
       mDesc:"Proyecto propio. ERP con cotización, seguimiento a clientes, facturación y timbrado CFDI ante el SAT, más un agente de cotización.",
       stDaily:"En uso diario", lSec:"Finanzas personales", lDesc:"Gastos por categoría, flujo de efectivo, gastos fijos y un asistente de IA que responde qué puedes pagar.",
       stIndigo:"Hecha para Indigo", dgSec:"Moda y confección", dgDesc:"Arreglos y prendas a la medida: pedidos, avance de cada proyecto y pagos en línea.",
-      microLeft:"Consultoría · Workflows · Agentes de IA", microRight:"Método Ronin: Mapear → Diseñar → Construir → Evolucionar",
-      heroH1:"Tu operación,<br><span class=\"thin\">convertida en</span><br>workflows con IA.",
-      heroSub:"Consultoría que mapea cómo trabaja tu equipo, diseña el flujo correcto y lo automatiza con agentes de IA. Con un método probado en dos años de operación real.",
+      microLeft:"Juárez · El Paso · Consultoría y software a la medida", microRight:"Método Ronin: Mapear → Diseñar → Construir → Evolucionar",
+      heroH1:"Primero<br>el flujo.<br><span class=\"thin\">Después la IA.</span>",
+      heroSub:"Mapeamos cómo trabaja tu equipo, lo convertimos en un sistema que todos usan y metemos IA solo donde ya hay orden. Software propio operando en escuelas, restaurantes, talleres y comercializadoras de la frontera.",
       ctaPrimary:"Hacer el diagnóstico exprés", ctaSecondary:"Ver cómo trabaja Ronin", heroMicro:"12 preguntas · 5 minutos · resultado al instante · gratis",
       credLine:"Trabajamos con negocios de servicios de Juárez y El Paso. Elige el tuyo:",
       catOps:"Operaciones", catMsg:"Mensajería", catDocs:"Documentos", catRep:"Reportes",
@@ -802,6 +875,7 @@
       s3a:"Implementación de alcance cerrado", s3e:"Workflow en producción",
       s4t:"Evolucionar", s4p:"Medimos resultados, ajustamos reglas y mantenemos el workflow útil conforme cambia el negocio.",
       s4a:"Acompañamiento mensual", s4e:"Reporte y mejoras continuas",
+      sc1:"Documentamos cómo se mueve hoy tu operación.", sc2:"Definimos el flujo, el papel de la IA y quién aprueba.", sc3:"Workflow en producción, probado con casos reales.", sc4:"Medimos, ajustamos y lo mantenemos útil.", scLive:"En producción",
       pEyebrow:"05 — Portafolio", pH2:"Software que ya construimos y está en uso.",
       pIntro:"El mismo método, llevado a producto. Plataformas propias para sectores distintos, cada una nacida de un problema operativo real.",
       stProd:"En producción", stLive:"Cliente 1 en vivo", stTrial:"Prueba gratis", stNew:"Nuevo", stSoon:"Próximamente", pSee:"Ver plataforma →",
@@ -854,9 +928,9 @@
       mDesc:"Our own company. ERP with quoting, client follow-up, invoicing and CFDI stamping with Mexico's SAT, plus a quoting agent.",
       stDaily:"In daily use", lSec:"Personal finance", lDesc:"Expenses by category, cash flow, fixed expenses and an AI assistant that tells you what you can afford.",
       stIndigo:"Built for Indigo", dgSec:"Fashion and tailoring", dgDesc:"Alterations and made-to-measure garments: orders, progress on each project and online payments.",
-      microLeft:"Consulting · Workflows · AI agents", microRight:"Ronin Method: Map → Design → Build → Evolve",
-      heroH1:"Your operation,<br><span class=\"thin\">turned into</span><br>AI workflows.",
-      heroSub:"Consulting that maps how your team works, designs the right flow and automates it with AI agents. With a method proven over two years of real operation.",
+      microLeft:"Juárez · El Paso · Consulting and custom software", microRight:"Ronin Method: Map → Design → Build → Evolve",
+      heroH1:"Flow<br>first.<br><span class=\"thin\">AI second.</span>",
+      heroSub:"We map how your team works, turn it into a system everyone uses, and add AI only where there is already order. Our own software runs in schools, restaurants, workshops and distributors along the border.",
       ctaPrimary:"Take the quick diagnostic", ctaSecondary:"See how Ronin works", heroMicro:"12 questions · 5 minutes · instant result · free",
       credLine:"We work with service businesses in Juárez and El Paso. Pick yours:",
       catOps:"Operations", catMsg:"Messaging", catDocs:"Documents", catRep:"Reports",
@@ -892,6 +966,7 @@
       s3a:"Fixed-scope implementation", s3e:"Workflow in production",
       s4t:"Evolve", s4p:"We measure results, adjust rules and keep the workflow useful as the business changes.",
       s4a:"Monthly support", s4e:"Report and continuous improvements",
+      sc1:"We document how your operation moves today.", sc2:"We define the flow, the role of AI and who approves.", sc3:"A workflow in production, tested with real cases.", sc4:"We measure, adjust and keep it useful.", scLive:"In production",
       pEyebrow:"05 — Portfolio", pH2:"Software we've already built and that's in use.",
       pIntro:"The same method, turned into product. Our own platforms for different sectors, each born from a real operational problem.",
       stProd:"In production", stLive:"Client 1 live", stTrial:"Free trial", stNew:"New", stSoon:"Coming soon", pSee:"See platform →",
@@ -943,6 +1018,18 @@
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var glow = document.getElementById('spineGlow');
   var stages = Array.prototype.slice.call(document.querySelectorAll('.stage'));
+  var scards = Array.prototype.slice.call(document.querySelectorAll('.mvisual .scard'));
+  var mdots = Array.prototype.slice.call(document.querySelectorAll('.mdots i'));
+  function showCard(n){
+    scards.forEach(function(c, i){ c.classList.toggle('on', i === n); });
+    mdots.forEach(function(d, i){ d.classList.toggle('on', i === n); });
+  }
+  if('IntersectionObserver' in window){
+    var cardIO = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if(en.isIntersecting) showCard(+en.target.getAttribute('data-stage')); });
+    }, {rootMargin:'-45% 0px -45% 0px'});
+    stages.forEach(function(s){ cardIO.observe(s); });
+  }
   if(glow && !reduceMotion && 'IntersectionObserver' in window){
     var io = new IntersectionObserver(function(entries){
       entries.forEach(function(en){

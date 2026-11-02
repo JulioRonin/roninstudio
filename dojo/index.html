@@ -2,14 +2,20 @@
 <meta charset="utf-8">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
 <title>DOJO — El Sistema Operativo Inteligente de tu Gimnasio</title>
+<meta name="description" content="Dojo, por Ronin Studio: membresías, accesos, cobranza, aforo y agentes de IA para gimnasios, conectado a los torniquetes y cámaras que ya tienes.">
+<link rel="canonical" href="https://www.roninstudio.com.mx/dojo/">
+<meta property="og:title" content="DOJO — El Sistema Operativo de tu Gimnasio">
+<meta property="og:description" content="Membresías, accesos, cobranza, aforo y agentes de IA para gimnasios. Por Ronin Studio.">
+<meta property="og:image" content="https://www.roninstudio.com.mx/dojo/og-dojo.jpg">
+<link rel="icon" type="image/svg+xml" href="/assets/brand/logo/favicon.svg">
 <!-- Google Fonts: Space Grotesk & Inter -->
 <link href="https://fonts.googleapis.com" rel="preconnect">
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Space+Grotesk:wght@500;700;800;900&amp;display=swap" rel="stylesheet">
 <!-- Lucide Icons -->
-<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
 <!-- Tailwind CSS v3 with Plugins -->
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://cdn.tailwindcss.com/3.4.16?plugins=forms,container-queries"></script>
 <script>
     tailwind.config = {
       theme: {
@@ -84,7 +90,7 @@
 <header class="relative max-w-7xl mx-auto px-6 mb-12 flex items-center justify-between">
 <div class="flex items-center space-x-3">
 <span class="font-display font-black text-3xl tracking-tighter text-white">dojo<span class="text-[#e4572e]">.</span></span>
-<span class="text-xs uppercase tracking-widest text-slate-400 font-medium border-l border-slate-700 pl-3">por Ronin Studio</span>
+<a href="/" class="text-xs uppercase tracking-widest text-slate-400 hover:text-white font-medium border-l border-slate-700 pl-3">por Ronin Studio</a>
 </div>
 <nav class="hidden md:flex items-center space-x-8 text-sm font-medium tracking-wide text-slate-300">
 <a class="hover:text-amber-400 transition-colors" href="#hardware">DOJO BRIDGE</a>
@@ -863,19 +869,19 @@
         Conectamos un DOJO Bridge en tu club en modo prueba por 14 días. Si no recuperas dinero no pagas un centavo.
       </p>
 <!-- Fast Scheduling Form -->
-<form class="max-w-lg mx-auto bg-slate-900/90 border border-slate-800 p-6 rounded-2xl shadow-2xl space-y-4 text-left" onsubmit="event.preventDefault(); alert('Solicitud de Demo recibida. El equipo de Ronin Studio te contactará en menos de 2 horas.');">
+<form id="dojoForm" class="max-w-lg mx-auto bg-slate-900/90 border border-slate-800 p-6 rounded-2xl shadow-2xl space-y-4 text-left">
 <div>
 <label class="block text-xs font-mono uppercase text-slate-400 mb-1">Nombre Completo</label>
-<input class="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500" placeholder="Ej. Roberto Sánchez" required="" type="text">
+<input class="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500" placeholder="Ej. Roberto Sánchez" required="" type="text" name="nombre" autocomplete="name">
 </div>
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 <div>
 <label class="block text-xs font-mono uppercase text-slate-400 mb-1">WhatsApp Directo</label>
-<input class="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500" placeholder="+52 55 1234 5678" required="" type="tel">
+<input class="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500" placeholder="+52 656 123 4567" required="" type="tel" name="whatsapp" autocomplete="tel">
 </div>
 <div>
 <label class="block text-xs font-mono uppercase text-slate-400 mb-1">Número de Sedes</label>
-<select class="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
+<select name="sedes" class="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
 <option>1 Sede</option>
 <option>2 a 5 Sedes</option>
 <option>6 a 15 Sedes</option>
@@ -885,12 +891,13 @@
 </div>
 <div>
 <label class="block text-xs font-mono uppercase text-slate-400 mb-1">Marca de Torniquetes / Lectores Actuales</label>
-<input class="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500" placeholder="Ej. ZKTeco Pro, Hikvision, o molinetes sin lector" type="text">
+<input class="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500" placeholder="Ej. ZKTeco Pro, Hikvision, o molinetes sin lector" type="text" name="torniquetes">
 </div>
 <button class="w-full bg-gradient-to-r from-[#e4572e] via-[#f59e0b] to-[#ffa726] hover:opacity-95 text-black font-display font-black text-sm uppercase tracking-wider py-4 rounded shadow-xl transition-all flex items-center justify-center space-x-2 mt-4" type="submit">
 <span class="">Solicitar Prueba Piloto (14 Días)</span>
 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-right" aria-hidden="true" class="lucide lucide-arrow-right w-4 h-4 text-black"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
 </button>
+<p id="dojoMsg" class="hidden text-sm text-center font-mono mt-2" role="status" aria-live="polite"></p>
 <p class="text-[11px] text-center text-slate-500 font-mono mt-2">
           Garantía Ronin Studio: Cero interrupción a tus socios durante el setup.
         </p>
@@ -911,10 +918,10 @@
 <a class="hover:text-amber-400 transition-colors" href="#pulso">HEATMAP</a>
 <a class="hover:text-amber-400 transition-colors" href="#agentes">SQUAD IA</a>
 <a class="hover:text-amber-400 transition-colors" href="#metricas">TELEMETRÍA</a>
-<a class="hover:text-amber-400 transition-colors" href="#">PRIVACIDAD</a>
+<a class="hover:text-amber-400 transition-colors" href="/">RONIN STUDIO</a>
 </div>
 <div class="text-right text-slate-500 font-mono text-[11px]">
-        Diseñado &amp; Operado por <strong class="text-white">Ronin Studio</strong> © 2025.
+        Diseñado &amp; Operado por <strong class="text-white">Ronin Studio</strong> © 2026.
       </div>
 </div>
 </footer>
@@ -922,7 +929,27 @@
 <!-- BEGIN: Lucide Icon Activation Script -->
 <script data-purpose="lucide-initialization">
     // Render all Lucide icons
-    lucide.createIcons();
+    if (window.lucide) lucide.createIcons();
+    (function () {
+      var f = document.getElementById('dojoForm'), msg = document.getElementById('dojoMsg');
+      if (!f) return;
+      f.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var btn = f.querySelector('button[type=submit]'), d = new FormData(f);
+        var payload = { _subject: 'Demo Dojo · ' + (d.get('nombre') || ''), _template: 'table', _captcha: 'false', origen: 'Landing Dojo (/dojo/)' };
+        d.forEach(function (v, k) { payload[k] = v; });
+        btn.disabled = true; btn.style.opacity = '.6';
+        function show(t, ok) { msg.textContent = t; msg.className = 'text-sm text-center font-mono mt-2 ' + (ok ? 'text-emerald-400' : 'text-red-400'); }
+        fetch('https://formsubmit.co/ajax/project@roninstudio.com.mx', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(payload) })
+          .then(function (r) { return r.json(); })
+          .then(function (j) {
+            if (j && (j.success === true || j.success === 'true')) { show('Listo. Te escribimos por WhatsApp en menos de 24 horas hábiles.', true); f.reset(); }
+            else { throw new Error('fs'); }
+          })
+          .catch(function () { show('No se pudo enviar. Escríbenos por WhatsApp al 656 573 6505.', false); })
+          .finally(function () { btn.disabled = false; btn.style.opacity = ''; });
+      });
+    })();
   </script>
 <!-- END: Lucide Icon Activation Script -->
 
