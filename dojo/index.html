@@ -1,957 +1,394 @@
 <!DOCTYPE html><html class="scroll-smooth" lang="es"><head>
 <meta charset="utf-8">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>DOJO — El Sistema Operativo Inteligente de tu Gimnasio</title>
-<meta name="description" content="Dojo, por Ronin Studio: membresías, accesos, cobranza, aforo y agentes de IA para gimnasios, conectado a los torniquetes y cámaras que ya tienes.">
+<title>DOJO — El sistema operativo de tu gimnasio · Ronin Studio</title>
+<meta name="description" content="Dojo, por Ronin Studio: membresías, accesos, cobros, clases y aforo de tu gimnasio en un solo lugar. Primero entendemos cómo opera tu club; después automatizamos.">
 <link rel="canonical" href="https://www.roninstudio.com.mx/dojo/">
-<meta property="og:title" content="DOJO — El Sistema Operativo de tu Gimnasio">
-<meta property="og:description" content="Membresías, accesos, cobranza, aforo y agentes de IA para gimnasios. Por Ronin Studio.">
+<meta property="og:title" content="DOJO — El sistema operativo de tu gimnasio">
+<meta property="og:description" content="Membresías, accesos, cobros, clases y aforo en un solo lugar. Por Ronin Studio.">
 <meta property="og:image" content="https://www.roninstudio.com.mx/dojo/og-dojo.jpg">
 <link rel="icon" type="image/svg+xml" href="/assets/brand/logo/favicon.svg">
-<!-- Google Fonts: Space Grotesk & Inter -->
 <link href="https://fonts.googleapis.com" rel="preconnect">
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Space+Grotesk:wght@500;700;800;900&amp;display=swap" rel="stylesheet">
-<!-- Lucide Icons -->
 <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
-<!-- Tailwind CSS v3 with Plugins -->
 <script src="https://cdn.tailwindcss.com/3.4.16?plugins=forms,container-queries"></script>
 <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            brand: {
-              charcoal: '#0b0d13',
-              dark: '#12151d',
-              panel: '#181b24',
-              kiai: '#e4572e',
-              amber: '#f59e0b',
-              gold: '#ffa726',
-              jade: '#17bebb',
-              crimson: '#d7263d',
-              lightbg: '#f8fafc'
-            }
+            brand: { charcoal: '#0b0d13', dark: '#12151d', panel: '#181b24', kiai: '#e4572e', amber: '#f59e0b', gold: '#ffa726', jade: '#17bebb', crimson: '#d7263d', lightbg: '#f8fafc' }
           },
-          fontFamily: {
-            display: ['"Space Grotesk"', 'sans-serif'],
-            sans: ['Inter', 'sans-serif']
-          }
+          fontFamily: { display: ['"Space Grotesk"', 'sans-serif'], sans: ['Inter', 'sans-serif'] }
         }
       }
     }
-  </script>
-<!-- BEGIN: Custom Geometry & Polygons CSS -->
-<style data-purpose="geometric-polygons">
-    /* Angled Dividers & Asymmetric Geometric Polygon Cuts inspired by Reference */
-    .polygon-hero-bottom {
-      clip-path: polygon(0 0, 100% 0, 100% 86%, 50% 100%, 0 86%);
-    }
-    .polygon-cut-down {
-      clip-path: polygon(0 0, 100% 4vw, 100% 100%, 0 100%);
-    }
-    .polygon-cut-up {
-      clip-path: polygon(0 4vw, 100% 0, 100% 100%, 0 calc(100% - 4vw));
-    }
-    .polygon-diagonal-split {
-      clip-path: polygon(0 0, 100% 0, 100% 92%, 0 100%);
-    }
-    .polygon-diagonal-reverse {
-      clip-path: polygon(0 8%, 100% 0, 100% 100%, 0 92%);
-    }
-    .polygon-chevron-down {
-      clip-path: polygon(0 0, 50% 60px, 100% 0, 100% 100%, 0 100%);
-    }
-    .polygon-kiai-band {
-      clip-path: polygon(0 15%, 100% 0, 100% 85%, 0 100%);
-    }
-    .hud-crosshair {
-      background-image: radial-gradient(circle, rgba(245, 158, 11, 0.4) 1px, transparent 1px);
-      background-size: 24px 24px;
-    }
-  </style>
-<!-- END: Custom Geometry & Polygons CSS -->
-<style data-purpose="hud-effects">
-    /* Subtle glowing indicators and connector styles */
-    .pulse-glow {
-      box-shadow: 0 0 25px rgba(228, 87, 46, 0.35);
-    }
-    .hairline-connector {
-      background: linear-gradient(90deg, rgba(245, 158, 11, 0.6) 0%, rgba(245, 158, 11, 0.1) 100%);
-    }
-  </style>
+</script>
+<style>
+  .polygon-cut-down{clip-path:polygon(0 0,100% 4vw,100% 100%,0 100%)}
+  .polygon-cut-up{clip-path:polygon(0 4vw,100% 0,100% 100%,0 calc(100% - 4vw))}
+  .polygon-diagonal-reverse{clip-path:polygon(0 4vw,100% 0,100% 100%,0 calc(100% - 4vw))}
+  .polygon-kiai-band{clip-path:polygon(0 4vw,100% 0,100% calc(100% - 4vw),0 100%)}
+  .hud-crosshair{background-image:radial-gradient(circle,rgba(245,158,11,.4) 1px,transparent 1px);background-size:24px 24px}
+  .heat td{font-variant-numeric:tabular-nums}
+</style>
 </head>
 <body class="bg-[#0b0d13] text-slate-100 font-sans antialiased overflow-x-hidden selection:bg-[#e4572e] selection:text-white">
-<!-- BEGIN: Hero Section -->
-<section class="relative bg-gradient-to-b from-[#08090d] via-[#12151d] to-[#181b24] pt-8 pb-32 overflow-hidden" data-purpose="hero-section">
-<!-- Subtle technical grid background -->
-<div class="absolute inset-0 hud-crosshair opacity-30 pointer-events-none"></div>
-<!-- Hero Top Bar Navigation -->
-<header class="relative max-w-7xl mx-auto px-6 mb-12 flex items-center justify-between">
-<div class="flex items-center space-x-3">
-<span class="font-display font-black text-3xl tracking-tighter text-white">dojo<span class="text-[#e4572e]">.</span></span>
-<a href="/" class="text-xs uppercase tracking-widest text-slate-400 hover:text-white font-medium border-l border-slate-700 pl-3">por Ronin Studio</a>
-</div>
-<nav class="hidden md:flex items-center space-x-8 text-sm font-medium tracking-wide text-slate-300">
-<a class="hover:text-amber-400 transition-colors" href="#hardware">DOJO BRIDGE</a>
-<a class="hover:text-amber-400 transition-colors" href="#pulso">HEATMAP &amp; AFORO</a>
-<a class="hover:text-amber-400 transition-colors" href="#agentes">AGENTES IA</a>
-<a class="hover:text-amber-400 transition-colors" href="#metricas">TELEMETRÍA</a>
-</nav>
-<a class="inline-flex items-center space-x-2 bg-gradient-to-r from-[#e4572e] to-[#f59e0b] hover:from-[#d7263d] hover:to-[#e4572e] text-white text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded shadow-lg transition-all transform hover:-translate-y-0.5" href="#agenda">
-<span class="">Agendar Demo</span>
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-right" aria-hidden="true" class="lucide lucide-arrow-right w-4 h-4"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
-</a>
-</header>
-<!-- Main Hero Content -->
-<div class="relative max-w-7xl mx-auto px-6 pt-6 pb-16 flex flex-col items-center text-center">
-<!-- System Badge Tag -->
-<div class="inline-flex items-center space-x-2 bg-[#1f2430]/90 border border-amber-500/30 px-3.5 py-1.5 rounded-full text-xs font-semibold text-amber-400 mb-6 backdrop-blur">
-<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-<span class="tracking-wide uppercase font-mono">DOJO OS v4.2 // HARDWARE-NEUTRO ACTIVADO</span>
-</div>
-<!-- Main Headline in Space Grotesk Bold -->
-<h1 class="font-display font-black text-5xl md:text-7xl lg:text-8xl tracking-tight uppercase leading-[0.95] text-white max-w-5xl mb-6">
-        El Sistema Operativo <br class="hidden sm:inline">
-<span class="text-transparent bg-clip-text bg-gradient-to-r from-[#f59e0b] via-[#ffa726] to-[#e4572e]">
-          de tu Gimnasio.
-        </span>
-</h1>
-<p class="text-slate-300 text-lg md:text-xl max-w-2xl font-light mb-10 leading-relaxed">
-        Convierte tus torniquetes y cámaras en un motor biométrico de cobranza inmediata, aforo predictivo y squad de agentes autónomos.
-      </p>
-<!-- Primary Action Kick / CTA -->
-<div class="flex flex-col sm:flex-row items-center gap-4 mb-16">
-<a class="w-full sm:w-auto bg-[#e4572e] hover:bg-[#cf4821] text-white font-display font-bold text-sm tracking-wider uppercase px-8 py-4 rounded shadow-xl flex items-center justify-center space-x-3 transition-all hover:scale-105" href="#agenda">
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="zap" aria-hidden="true" class="lucide lucide-zap w-5 h-5 text-amber-300"><path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z"></path></svg>
-<span class="">Agendar Demostración En Vivo</span>
-</a>
-<a class="w-full sm:w-auto bg-slate-800/80 hover:bg-slate-700 text-slate-200 border border-slate-700 font-display font-bold text-sm tracking-wider uppercase px-8 py-4 rounded flex items-center justify-center space-x-2 transition-all" href="#pulso">
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="play-circle" aria-hidden="true" class="lucide lucide-play-circle w-5 h-5 text-slate-400"><path d="M9 9.003a1 1 0 0 1 1.517-.859l4.997 2.997a1 1 0 0 1 0 1.718l-4.997 2.997A1 1 0 0 1 9 14.996z"></path><circle cx="12" cy="12" r="10"></circle></svg>
-<span class="">Explorar Capacidad 7x18</span>
-</a>
-</div>
-<!-- Central Hero Visual with Biometric & Turnstile HUD Overlays -->
-<div class="relative w-full max-w-4xl mx-auto mt-2">
-<div class="relative rounded-2xl border border-slate-700/60 bg-gradient-to-b from-[#1c212c] to-[#0e1017] p-4 md:p-6 shadow-2xl overflow-hidden">
-<!-- Mockup Frame: Modern Turnstile and Access Bridge Interface -->
-<div class="relative aspect-[16/9] w-full rounded-xl bg-slate-950/80 border border-slate-800 flex flex-col justify-between p-6 overflow-hidden">
-<!-- Grid Background Lines -->
-<div class="absolute inset-0 bg-[radial-gradient(#334155_1px,transparent_1px)] [background-size:16px_16px] opacity-25"></div>
-<!-- Top HUD Bar -->
-<div class="relative z-10 flex items-center justify-between border-b border-slate-800 pb-3 text-xs font-mono text-slate-400">
-<div class="flex items-center space-x-3">
-<span class="flex h-2 w-2 relative">
-<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-<span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-</span>
-<span class="text-white font-bold">TORNIQUETE PRINCIPAL [GATE-01]</span>
-<span class="text-amber-500">FPS: 60 // LATENCIA: 12ms</span>
-</div>
-<div class="text-slate-400 uppercase">DOJO BRIDGE SYNCED</div>
-</div>
-<!-- Central HUD Visual Simulation -->
-<div class="relative z-10 my-auto grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-<!-- Left Telemetry Node -->
-<div class="text-left bg-slate-900/80 border border-slate-700/50 p-4 rounded-lg backdrop-blur">
-<div class="text-[10px] uppercase font-mono tracking-widest text-slate-400">Aforo Instantáneo</div>
-<div class="font-display text-3xl font-extrabold text-white mt-1">142 <span class="text-xs font-normal text-slate-400">/ 180 max</span></div>
-<div class="w-full bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
-<div class="bg-amber-500 h-full rounded-full" style="width: 78%"></div>
-</div>
-<div class="text-[11px] text-amber-400 mt-2 font-mono flex items-center">
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="trending-up" aria-hidden="true" class="lucide lucide-trending-up w-3.5 h-3.5 mr-1"><path d="M16 7h6v6"></path><path d="m22 7-8.5 8.5-5-5L2 17"></path></svg> +14% vs. promedio horario
-                </div>
-</div>
-<!-- Center Biometric Lock Node -->
-<div class="flex flex-col items-center justify-center p-4">
-<div class="relative w-28 h-28 rounded-full border-2 border-dashed border-amber-500/60 flex items-center justify-center animate-[spin_20s_linear_infinite]">
-<div class="w-20 h-20 rounded-full border border-emerald-500/50 flex items-center justify-center bg-emerald-950/20">
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="scan-face" aria-hidden="true" class="lucide lucide-scan-face w-10 h-10 text-emerald-400"><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><path d="M9 9h.01"></path><path d="M15 9h.01"></path></svg>
-</div>
-</div>
-<div class="mt-3 text-center">
-<span class="px-2 py-0.5 rounded bg-emerald-900/60 border border-emerald-500/40 text-emerald-300 font-mono text-[10px] uppercase tracking-wider font-semibold">
-                    Acceso Permitido
-                  </span>
-<p class="text-xs text-slate-300 font-medium mt-1">Carlos Mendoza — Socio Pro</p>
-</div>
-</div>
-<!-- Right Dunning Action Node -->
-<div class="text-left bg-slate-900/80 border border-slate-700/50 p-4 rounded-lg backdrop-blur">
-<div class="text-[10px] uppercase font-mono tracking-widest text-slate-400">Dunning Físico Automatizado</div>
-<div class="flex items-center space-x-2 mt-1">
-<span class="text-xs font-bold text-emerald-400 bg-emerald-950/60 border border-emerald-800 px-2 py-0.5 rounded">Cobro Inmediato</span>
-</div>
-<p class="text-[11px] text-slate-300 mt-2 leading-tight">
-                  Pago recurrente procesado vía Stripe en torniquete en 1.2 segundos sin fricción de caja.
-                </p>
-<div class="text-[10px] font-mono text-slate-400 mt-2">Ticket: $64.00 USD</div>
-</div>
-</div>
-<!-- Bottom Terminal Bar -->
-<div class="relative z-10 flex items-center justify-between border-t border-slate-800 pt-3 text-[11px] font-mono text-slate-400">
-<span class="text-slate-500">COMPATIBLE: ZKTECO / HIKVISION / DAHUA</span>
-<span class="text-amber-400 flex items-center">
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="cpu" aria-hidden="true" class="lucide lucide-cpu w-3.5 h-3.5 mr-1"><path d="M12 20v2"></path><path d="M12 2v2"></path><path d="M17 20v2"></path><path d="M17 2v2"></path><path d="M2 12h2"></path><path d="M2 17h2"></path><path d="M2 7h2"></path><path d="M20 12h2"></path><path d="M20 17h2"></path><path d="M20 7h2"></path><path d="M7 20v2"></path><path d="M7 2v2"></path><rect x="4" y="4" width="16" height="16" rx="2"></rect><rect x="8" y="8" width="8" height="8" rx="1"></rect></svg> SIN CAMBIO DE HARDWARE
-              </span>
-</div>
-</div>
-<!-- Decorative Floating HUD Corner Bracket Elements -->
-<div class="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-amber-500"></div>
-<div class="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-amber-500"></div>
-<div class="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-amber-500"></div>
-<div class="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-amber-500"></div>
-</div>
-</div>
-</div>
-<!-- Polygonal Edge Divider Transitioning to Angular Bar -->
-<div class="absolute bottom-0 inset-x-0 h-10 bg-amber-500 polygon-cut-down pointer-events-none"></div>
-</section>
-<!-- END: Hero Section -->
-<!-- BEGIN: Amber Accent Transition Strip -->
-<div class="relative bg-gradient-to-r from-[#e4572e] via-[#f59e0b] to-[#ffa726] py-4 text-black font-display font-black text-xs md:text-sm tracking-widest uppercase overflow-hidden shadow-xl" data-purpose="accent-marquee">
-<div class="max-w-7xl mx-auto px-6 flex flex-wrap items-center justify-between gap-4">
-<div class="flex items-center space-x-2">
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="shield-check" aria-hidden="true" class="lucide lucide-shield-check w-5 h-5 text-black"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
-<span class="">SISTEMA OPERATIVO COMPLETO PARA OPERADORES DE GIMNASIO</span>
-</div>
-<div class="hidden md:flex items-center space-x-8 font-bold">
-<span class="">• HARDWARE NEUTRO</span>
-<span class="">• DUNNING FÍSICO</span>
-<span class="">• 4 AGENTES AUTÓNOMOS</span>
-<span class="">• PULSO 7X18</span>
-</div>
-<div class="flex items-center space-x-1 font-mono text-xs font-bold bg-black text-amber-400 px-3 py-1 rounded">
-<span class="">STATUS: 99.99% ACTIVO</span>
-</div>
-</div>
-</div>
-<!-- END: Amber Accent Transition Strip -->
-<!-- BEGIN: Founder Operator Quote Banner -->
 
-<!-- END: Founder Operator Quote Banner -->
-<!-- BEGIN: Hardware Feature & Floating Callout Badges (Modeled on Stryd Pod Breakdown) -->
-<section class="relative bg-white text-slate-900 py-24 overflow-hidden" data-purpose="pod-feature-layout" id="hardware">
-<!-- Top Geometric Angular Cut Header -->
-<div class="max-w-7xl mx-auto px-6">
-<!-- Section Tag Header -->
-<div class="text-center mb-16">
-<div class="inline-flex items-center space-x-2 text-xs font-mono uppercase tracking-widest text-[#e4572e] font-bold mb-2">
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="cpu" aria-hidden="true" class="lucide lucide-cpu w-4 h-4"><path d="M12 20v2"></path><path d="M12 2v2"></path><path d="M17 20v2"></path><path d="M17 2v2"></path><path d="M2 12h2"></path><path d="M2 17h2"></path><path d="M2 7h2"></path><path d="M20 12h2"></path><path d="M20 17h2"></path><path d="M20 7h2"></path><path d="M7 20v2"></path><path d="M7 2v2"></path><rect x="4" y="4" width="16" height="16" rx="2"></rect><rect x="8" y="8" width="8" height="8" rx="1"></rect></svg>
-<span class="">Arquitectura DOJO Bridge</span>
-</div>
-<h2 class="font-display font-black text-4xl md:text-5xl text-slate-950 uppercase tracking-tight">
-          Conoce el Núcleo DOJO.
-        </h2>
-<p class="text-slate-600 text-base md:text-lg max-w-xl mx-auto mt-3">
-          El primer bridge inteligente que traduce biometría y aforo en decisiones financieras inmediatas.
-        </p>
-</div>
-<!-- 3-Column Diagram Layout with Central Hardware & Surrounding Badges -->
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-<!-- Left Side Features (3 columns) -->
-<div class="lg:col-span-3 space-y-12 text-left">
-<!-- Feature 1 -->
-<div class="group" data-purpose="feature-left-1">
-<div class="flex items-center space-x-3 mb-2">
-<span class="w-8 h-8 rounded-lg bg-orange-100 text-[#e4572e] flex items-center justify-center font-bold text-sm">
-                01
-              </span>
-<h3 class="font-display font-black text-lg text-slate-950 uppercase tracking-tight">Metas &amp; Aforo</h3>
-</div>
-<p class="text-sm text-slate-600 leading-relaxed pl-11">
-              Monitorea el flujo en tiempo real frente a los límites de capacidad. Alerta antes de que la saturación degrade la experiencia de tus socios.
-            </p>
-</div>
-<!-- Feature 2 -->
-<div class="group" data-purpose="feature-left-2">
-<div class="flex items-center space-x-3 mb-2">
-<span class="w-8 h-8 rounded-lg bg-orange-100 text-[#e4572e] flex items-center justify-center font-bold text-sm">
-                02
-              </span>
-<h3 class="font-display font-black text-lg text-slate-950 uppercase tracking-tight">Dunning Físico</h3>
-</div>
-<p class="text-sm text-slate-600 leading-relaxed pl-11">
-              Si la tarjeta fue rechazada online, el torniquete detiene el acceso amablemente y envía cobro instantáneo a WhatsApp o terminal PinPad.
-            </p>
-</div>
-<!-- Feature 3 -->
-<div class="group" data-purpose="feature-left-3">
-<div class="flex items-center space-x-3 mb-2">
-<span class="w-8 h-8 rounded-lg bg-orange-100 text-[#e4572e] flex items-center justify-center font-bold text-sm">
-                03
-              </span>
-<h3 class="font-display font-black text-lg text-slate-950 uppercase tracking-tight">Feedback al Instante</h3>
-</div>
-<p class="text-sm text-slate-600 leading-relaxed pl-11">
-              Pantalla del torniquete saluda por su nombre, confirma estatus de su membresía y avisa citas con entrenadores al instante.
-            </p>
-</div>
-</div>
-<!-- Center Column: Central Hardware / Terminal Graphic (6 columns) -->
-<div class="lg:col-span-6 flex flex-col items-center justify-center relative py-6">
-<!-- Outer Concentric Circle Guides inspired by Reference -->
-<div class="relative w-80 h-80 sm:w-96 sm:h-96 rounded-full border border-dashed border-amber-300 flex items-center justify-center">
-<div class="w-64 h-64 rounded-full border border-orange-200 flex items-center justify-center bg-orange-50/50">
-<!-- Dojo Bridge Device Visual representation -->
-<div class="relative w-48 h-48 rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-black p-5 shadow-2xl border-4 border-amber-400 flex flex-col justify-between transform -rotate-3 hover:rotate-0 transition-transform duration-300">
-<div class="flex justify-between items-center">
-<span class="font-display font-black text-white text-lg tracking-wider">DOJO</span>
-<div class="flex space-x-1">
-<span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-<span class="w-2 h-2 rounded-full bg-amber-400"></span>
-</div>
-</div>
-<div class="my-auto text-center py-2">
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="router" aria-hidden="true" class="lucide lucide-router w-12 h-12 mx-auto text-amber-400 mb-1"><rect width="20" height="8" x="2" y="14" rx="2"></rect><path d="M6.01 18H6"></path><path d="M10.01 18H10"></path><path d="M15 10v4"></path><path d="M17.84 7.17a4 4 0 0 0-5.66 0"></path><path d="M20.66 4.34a8 8 0 0 0-11.31 0"></path></svg>
-<span class="font-mono text-[10px] text-slate-400 tracking-wider">EDGE BRIDGE v2</span>
-</div>
-<div class="flex justify-between items-center text-[10px] font-mono text-slate-400 border-t border-slate-800 pt-2">
-<span class="">WIFI 6 / ETH</span>
-<span class="text-emerald-400">SYNC OK</span>
-</div>
-</div>
-</div>
-<!-- Top Indicator Pin -->
-<div class="absolute -top-3 bg-white px-3 py-1 rounded-full border border-amber-400 shadow-sm text-[11px] font-bold text-amber-600 font-mono">
-              ZERO-LATENCY BUS
-            </div>
-<!-- Bottom Indicator Pin -->
-<div class="absolute -bottom-3 bg-white px-3 py-1 rounded-full border border-slate-300 shadow-sm text-[11px] font-bold text-slate-700 font-mono">
-              PLUG &amp; PLAY // POE+
-            </div>
-</div>
-<!-- Micro specs badges underneath -->
-<div class="flex items-center space-x-8 mt-8 text-xs font-mono uppercase text-slate-500">
-<div class="flex items-center space-x-1.5">
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="zap" aria-hidden="true" class="lucide lucide-zap w-4 h-4 text-amber-500"><path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z"></path></svg>
-<span class="">Consumo 5W</span>
-</div>
-<div class="flex items-center space-x-1.5">
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="lock" aria-hidden="true" class="lucide lucide-lock w-4 h-4 text-emerald-500"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-<span class="">TLS 1.3 End-to-End</span>
-</div>
-<div class="flex items-center space-x-1.5">
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="refresh-cw" aria-hidden="true" class="lucide lucide-refresh-cw w-4 h-4 text-[#e4572e]"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M8 16H3v5"></path></svg>
-<span class="">Over-The-Air Updates</span>
-</div>
-</div>
-</div>
-<!-- Right Side Features (3 columns) -->
-<div class="lg:col-span-3 space-y-12 text-left">
-<!-- Feature 4 -->
-<div class="group" data-purpose="feature-right-1">
-<div class="flex items-center space-x-3 mb-2">
-<span class="w-8 h-8 rounded-lg bg-orange-100 text-[#e4572e] flex items-center justify-center font-bold text-sm">
-                04
-              </span>
-<h3 class="font-display font-black text-lg text-slate-950 uppercase tracking-tight">Plan Personalizado</h3>
-</div>
-<p class="text-sm text-slate-600 leading-relaxed pl-11">
-              Segmenta a los usuarios por patrones de asistencia: madrugadores, hora pico, o fines de semana para optimizar precios y paquetes dinámicos.
-            </p>
-</div>
-<!-- Feature 5 -->
-<div class="group" data-purpose="feature-right-2">
-<div class="flex items-center space-x-3 mb-2">
-<span class="w-8 h-8 rounded-lg bg-orange-100 text-[#e4572e] flex items-center justify-center font-bold text-sm">
-                05
-              </span>
-<h3 class="font-display font-black text-lg text-slate-950 uppercase tracking-tight">Análisis Post-Visita</h3>
-</div>
-<p class="text-sm text-slate-600 leading-relaxed pl-11">
-              Mide tiempo exacto de permanencia en sala y zonas específicas (fuerza vs. cardio) para optimizar el equipamiento y compras futuras.
-            </p>
-</div>
-<!-- Feature 6 -->
-<div class="group" data-purpose="feature-right-3">
-<div class="flex items-center space-x-3 mb-2">
-<span class="w-8 h-8 rounded-lg bg-orange-100 text-[#e4572e] flex items-center justify-center font-bold text-sm">
-                06
-              </span>
-<h3 class="font-display font-black text-lg text-slate-950 uppercase tracking-tight">Hardware Neutro</h3>
-</div>
-<p class="text-sm text-slate-600 leading-relaxed pl-11">
-              No tienes que tirar tus torniquetes ni cámaras actuales. DOJO se conecta mediante relé y protocolos Wiegand / OSDP universales.
-            </p>
-</div>
-</div>
-</div>
-</div>
-</section>
-<!-- END: Hardware Feature & Floating Callout Badges -->
-<!-- BEGIN: Angled Synchronized Device Flow (Modeled on "Get synced up and go" in Stryd) -->
-<section class="relative bg-[#0d0f15] py-24 text-white overflow-hidden polygon-diagonal-reverse" data-purpose="sync-flow-section">
-<div class="max-w-7xl mx-auto px-6 pt-12 pb-12">
-<!-- Section Title -->
-<div class="text-center max-w-3xl mx-auto mb-16">
-<span class="text-amber-400 font-mono text-xs uppercase tracking-widest font-bold">
-          [ INTEGRACIÓN MULTI-DISPOSITIVO ]
-        </span>
-<h2 class="font-display font-black text-4xl md:text-5xl uppercase tracking-tight text-white mt-2">
-          Sincronízate y opera al segundo.
-        </h2>
-<p class="text-slate-400 text-sm md:text-base mt-3">
-          DOJO conecta el hardware de control físico con los teléfonos de tus miembros y el tablero directivo del club sin fricción manual.
-        </p>
-</div>
-<!-- Diagram: 3 Nodes Connected by Dotted Lines (Torniquete -> Bridge -> App Socio) -->
-<div class="relative flex flex-col md:flex-row items-center justify-between gap-8 md:gap-4 max-w-4xl mx-auto">
-<!-- Node 1: Torniquete Reader / FaceID -->
-<div class="flex-1 flex flex-col items-center text-center">
-<div class="w-32 h-32 rounded-full border-2 border-dashed border-amber-500 bg-[#161a24] flex items-center justify-center relative shadow-lg">
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="scan" aria-hidden="true" class="lucide lucide-scan w-12 h-12 text-amber-400"><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path></svg>
-<span class="absolute -top-2 bg-amber-500 text-black font-mono text-[10px] font-black px-2 py-0.5 rounded uppercase">
-              1. Identifica
-            </span>
-</div>
-<h4 class="font-display font-bold text-lg text-white mt-4 uppercase">Lector Biométrico</h4>
-<p class="text-xs text-slate-400 mt-1 max-w-xs">
-            Reconocimiento facial o QR dinámico en menos de 300ms a la entrada.
-          </p>
-</div>
-<!-- Connector Line 1 -->
-<div class="hidden md:flex flex-1 items-center justify-center">
-<div class="w-full border-t-2 border-dashed border-amber-500/50 relative">
-<div class="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-amber-400 animate-ping"></div>
-</div>
-</div>
-<!-- Node 2: DOJO Bridge / Core -->
-<div class="flex-1 flex flex-col items-center text-center">
-<div class="w-32 h-32 rounded-2xl border-2 border-amber-400 bg-gradient-to-b from-[#222838] to-[#12151e] flex items-center justify-center relative shadow-xl">
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="layers" aria-hidden="true" class="lucide lucide-layers w-12 h-12 text-white"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"></path><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"></path><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"></path></svg>
-<span class="absolute -top-2 bg-[#e4572e] text-white font-mono text-[10px] font-black px-2 py-0.5 rounded uppercase">
-              2. Valida &amp; Cobra
-            </span>
-</div>
-<h4 class="font-display font-bold text-lg text-white mt-4 uppercase">DOJO Core Engine</h4>
-<p class="text-xs text-slate-400 mt-1 max-w-xs">
-            Ejecuta reglas financieras, valida vigencia y reconcilia pagos en Stripe o terminal.
-          </p>
-</div>
-<!-- Connector Line 2 -->
-<div class="hidden md:flex flex-1 items-center justify-center">
-<div class="w-full border-t-2 border-dashed border-amber-500/50 relative">
-<div class="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-amber-400 animate-ping"></div>
-</div>
-</div>
-<!-- Node 3: App Socio / WhatsApp -->
-<div class="flex-1 flex flex-col items-center text-center">
-<div class="w-32 h-32 rounded-full border-2 border-dashed border-amber-500 bg-[#161a24] flex items-center justify-center relative shadow-lg">
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="smartphone" aria-hidden="true" class="lucide lucide-smartphone w-12 h-12 text-amber-400"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"></rect><path d="M12 18h.01"></path></svg>
-<span class="absolute -top-2 bg-amber-500 text-black font-mono text-[10px] font-black px-2 py-0.5 rounded uppercase">
-              3. Notifica
-            </span>
-</div>
-<h4 class="font-display font-bold text-lg text-white mt-4 uppercase">WhatsApp &amp; App Socio</h4>
-<p class="text-xs text-slate-400 mt-1 max-w-xs">
-            Recibo digital automático, reservación de clase y métricas personales de visita.
-          </p>
-</div>
-</div>
-</div>
-</section>
-<!-- END: Angled Synchronized Device Flow -->
-<!-- BEGIN: Metric & Heatmap "PULSO 7x18" Section -->
-<section class="relative bg-white text-slate-900 py-24" data-purpose="pulso-capacity" id="pulso">
-<div class="max-w-7xl mx-auto px-6">
-<div class="text-center max-w-3xl mx-auto mb-16">
-<span class="text-[#e4572e] font-mono text-xs uppercase tracking-widest font-bold">
-          [ LA CAPACIDAD NO ES FÍSICA, ES HORARIA ]
-        </span>
-<h2 class="font-display font-black text-4xl md:text-5xl text-slate-950 uppercase tracking-tight mt-2">
-          PULSO: Heatmap Semanal 7x18.
-        </h2>
-<p class="text-slate-600 text-base mt-3">
-          126 slots horarios analizados al segundo. Descubre exactamente cuándo estás regalando espacio o perdiendo dinero por saturación.
-        </p>
-</div>
-<!-- Heatmap Visualization Card -->
-<div class="bg-slate-950 text-white rounded-2xl p-6 md:p-8 shadow-2xl border border-slate-800">
-<div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4 mb-6">
-<div class="flex items-center space-x-3">
-<span class="w-3 h-3 rounded-full bg-emerald-400"></span>
-<span class="font-display font-bold text-sm tracking-wider uppercase">Matriz de Ocupación por Hora (6:00 AM - 11:00 PM)</span>
-</div>
-<div class="flex items-center space-x-4 text-xs font-mono">
-<span class="flex items-center"><span class="w-3 h-3 bg-emerald-600 rounded mr-1.5"></span> Baja (&lt;40%)</span>
-<span class="flex items-center"><span class="w-3 h-3 bg-amber-500 rounded mr-1.5"></span> Óptima (70%)</span>
-<span class="flex items-center"><span class="w-3 h-3 bg-[#e4572e] rounded mr-1.5"></span> Saturada (&gt;90%)</span>
-</div>
-</div>
-<!-- Weekly Grid Simulation (Mon - Sun, 6 AM to 10 PM) -->
-<div class="overflow-x-auto">
-<div class="min-w-[650px]">
-<!-- Day Columns Header -->
-<div class="grid grid-cols-8 gap-2 text-xs font-mono font-bold text-slate-400 mb-2 text-center">
-<div class="text-left pl-2">HORA</div>
-<div class="">LUN</div>
-<div class="">MAR</div>
-<div class="">MIÉ</div>
-<div class="">JUE</div>
-<div class="">VIE</div>
-<div class="">SÁB</div>
-<div class="">DOM</div>
-</div>
-<!-- Row: 06:00 AM -->
-<div class="grid grid-cols-8 gap-2 text-xs font-mono mb-2 items-center text-center">
-<div class="text-left font-bold text-slate-400 pl-2">06:00</div>
-<div class="bg-amber-600/70 py-2 rounded text-white font-semibold">68%</div>
-<div class="bg-amber-600/80 py-2 rounded text-white font-semibold">72%</div>
-<div class="bg-amber-600/70 py-2 rounded text-white font-semibold">70%</div>
-<div class="bg-amber-600/80 py-2 rounded text-white font-semibold">74%</div>
-<div class="bg-emerald-800/80 py-2 rounded text-emerald-200">55%</div>
-<div class="bg-emerald-900/40 py-2 rounded text-slate-400">22%</div>
-<div class="bg-emerald-900/30 py-2 rounded text-slate-400">14%</div>
-</div>
-<!-- Row: 08:00 AM -->
-<div class="grid grid-cols-8 gap-2 text-xs font-mono mb-2 items-center text-center">
-<div class="text-left font-bold text-slate-400 pl-2">08:00</div>
-<div class="bg-[#e4572e] py-2 rounded text-white font-bold">94% 🔥</div>
-<div class="bg-[#e4572e] py-2 rounded text-white font-bold">96% 🔥</div>
-<div class="bg-[#e4572e] py-2 rounded text-white font-bold">91% 🔥</div>
-<div class="bg-[#e4572e] py-2 rounded text-white font-bold">92% 🔥</div>
-<div class="bg-amber-600 py-2 rounded text-white">78%</div>
-<div class="bg-amber-500 py-2 rounded text-black font-bold">85%</div>
-<div class="bg-emerald-800 py-2 rounded text-white">48%</div>
-</div>
-<!-- Row: 12:00 PM -->
-<div class="grid grid-cols-8 gap-2 text-xs font-mono mb-2 items-center text-center">
-<div class="text-left font-bold text-slate-400 pl-2">12:00</div>
-<div class="bg-emerald-900/50 py-2 rounded text-slate-300">38%</div>
-<div class="bg-emerald-900/60 py-2 rounded text-slate-300">42%</div>
-<div class="bg-emerald-900/50 py-2 rounded text-slate-300">40%</div>
-<div class="bg-emerald-900/60 py-2 rounded text-slate-300">41%</div>
-<div class="bg-emerald-900/70 py-2 rounded text-slate-300">45%</div>
-<div class="bg-amber-600/70 py-2 rounded text-white">65%</div>
-<div class="bg-emerald-900/40 py-2 rounded text-slate-300">30%</div>
-</div>
-<!-- Row: 07:00 PM -->
-<div class="grid grid-cols-8 gap-2 text-xs font-mono mb-2 items-center text-center">
-<div class="text-left font-bold text-slate-400 pl-2">19:00</div>
-<div class="bg-[#d7263d] py-2 rounded text-white font-black">99% ⚠️</div>
-<div class="bg-[#d7263d] py-2 rounded text-white font-black">98% ⚠️</div>
-<div class="bg-[#d7263d] py-2 rounded text-white font-black">97% ⚠️</div>
-<div class="bg-[#d7263d] py-2 rounded text-white font-black">95% ⚠️</div>
-<div class="bg-amber-600 py-2 rounded text-white">80%</div>
-<div class="bg-emerald-900/40 py-2 rounded text-slate-300">32%</div>
-<div class="bg-emerald-900/30 py-2 rounded text-slate-400">18%</div>
-</div>
-<!-- Row: 09:00 PM -->
-<div class="grid grid-cols-8 gap-2 text-xs font-mono items-center text-center">
-<div class="text-left font-bold text-slate-400 pl-2">21:00</div>
-<div class="bg-emerald-800 py-2 rounded text-emerald-100">58%</div>
-<div class="bg-emerald-800 py-2 rounded text-emerald-100">62%</div>
-<div class="bg-emerald-800 py-2 rounded text-emerald-100">60%</div>
-<div class="bg-emerald-800 py-2 rounded text-emerald-100">59%</div>
-<div class="bg-emerald-900/50 py-2 rounded text-slate-300">34%</div>
-<div class="bg-emerald-900/20 py-2 rounded text-slate-500">12%</div>
-<div class="bg-emerald-900/10 py-2 rounded text-slate-600">08%</div>
-</div>
-</div>
-</div>
-<!-- Heatmap Insight Strip -->
-<div class="mt-6 pt-4 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
-<div class="flex items-center space-x-2">
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="alert-triangle" aria-hidden="true" class="lucide lucide-alert-triangle w-4 h-4 text-amber-400"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
-<span class="">Diagnóstico Automático: <strong>26 horas con más de 92% de saturación</strong>. El agente KUMI recomienda pase "Off-Peak" para desviar 18% del flujo a horas valle.</span>
-</div>
-<a class="text-amber-400 hover:text-amber-300 font-bold underline font-mono" href="#agenda">
-            Optimizar mi capacidad →
-          </a>
-</div>
-</div>
-</div>
-</section>
-<!-- END: Metric & Heatmap Section -->
-<!-- BEGIN: Autonomous AI Agents Squad (HADO, SASOI, KUMI, BANSHO) -->
-<section class="relative bg-[#12151e] py-24 text-white polygon-cut-up" data-purpose="ai-agents-squad" id="agentes">
-<div class="max-w-7xl mx-auto px-6 pt-12">
-<div class="text-center max-w-3xl mx-auto mb-16">
-<span class="text-amber-400 font-mono text-xs uppercase tracking-widest font-bold">
-          [ AGENTES AUTÓNOMOS ACTIVOS 24/7 ]
-        </span>
-<h2 class="font-display font-black text-4xl md:text-5xl uppercase tracking-tight text-white mt-2">
-          El Squad Inteligente de DOJO.
-        </h2>
-<p class="text-slate-400 text-base mt-3">
-          Cuatro agentes especializados operan tu club como un equipo financiero y operativo de élite sin cansarse.
-        </p>
-</div>
-<!-- 4 Agent Cards Grid -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-<!-- Agent 1: HADO -->
-<div class="bg-[#181d28] border border-slate-800 rounded-xl p-6 hover:border-amber-500/60 transition-all flex flex-col justify-between group">
-<div>
-<div class="flex items-center justify-between mb-4">
-<span class="w-10 h-10 rounded-lg bg-orange-950/80 border border-[#e4572e]/50 flex items-center justify-center text-[#e4572e]">
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="shield-alert" aria-hidden="true" class="lucide lucide-shield-alert w-5 h-5"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg>
-</span>
-<span class="font-mono text-[10px] uppercase font-bold text-amber-400 bg-amber-950/50 px-2 py-0.5 rounded border border-amber-800">
-                Cobranza
-              </span>
-</div>
-<h3 class="font-display font-black text-2xl text-white tracking-tight">HADO</h3>
-<p class="text-xs font-mono text-[#e4572e] uppercase mb-3">Guardián de Ingresos &amp; Dunning</p>
-<p class="text-xs text-slate-300 leading-relaxed">
-              Detecta tarjetas vencidas antes del día 1. Si no hay cobro online, orquesta el bloqueo temporal y el link de pago por WhatsApp antes de llegar al torniquete.
-            </p>
-</div>
-<div class="mt-6 pt-3 border-t border-slate-800 text-[11px] font-mono text-emerald-400 flex items-center justify-between">
-<span class="">Tasa de Recuperación:</span>
-<span class="font-bold">91.4%</span>
-</div>
-</div>
-<!-- Agent 2: SASOI -->
-<div class="bg-[#181d28] border border-slate-800 rounded-xl p-6 hover:border-amber-500/60 transition-all flex flex-col justify-between group">
-<div>
-<div class="flex items-center justify-between mb-4">
-<span class="w-10 h-10 rounded-lg bg-blue-950/80 border border-blue-500/50 flex items-center justify-center text-blue-400">
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="heart-pulse" aria-hidden="true" class="lucide lucide-heart-pulse w-5 h-5"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"></path><path d="M3.22 13H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"></path></svg>
-</span>
-<span class="font-mono text-[10px] uppercase font-bold text-blue-400 bg-blue-950/50 px-2 py-0.5 rounded border border-blue-800">
-                Retención
-              </span>
-</div>
-<h3 class="font-display font-black text-2xl text-white tracking-tight">SASOI</h3>
-<p class="text-xs font-mono text-blue-400 uppercase mb-3">Centinela de Deserción (Churn)</p>
-<p class="text-xs text-slate-300 leading-relaxed">
-              Calcula anomalías de asistencia. Si un socio de 4 días por semana asiste solo 1, detona secuencias personalizadas para evitar la cancelación del siguiente mes.
-            </p>
-</div>
-<div class="mt-6 pt-3 border-t border-slate-800 text-[11px] font-mono text-emerald-400 flex items-center justify-between">
-<span class="">Reducción de Churn:</span>
-<span class="font-bold">-34%</span>
-</div>
-</div>
-<!-- Agent 3: KUMI -->
-<div class="bg-[#181d28] border border-slate-800 rounded-xl p-6 hover:border-amber-500/60 transition-all flex flex-col justify-between group">
-<div>
-<div class="flex items-center justify-between mb-4">
-<span class="w-10 h-10 rounded-lg bg-amber-950/80 border border-amber-500/50 flex items-center justify-center text-amber-400">
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="gauge" aria-hidden="true" class="lucide lucide-gauge w-5 h-5"><path d="m12 14 4-4"></path><path d="M3.34 19a10 10 0 1 1 17.32 0"></path></svg>
-</span>
-<span class="font-mono text-[10px] uppercase font-bold text-amber-400 bg-amber-950/50 px-2 py-0.5 rounded border border-amber-800">
-                Capacidad
-              </span>
-</div>
-<h3 class="font-display font-black text-2xl text-white tracking-tight">KUMI</h3>
-<p class="text-xs font-mono text-amber-400 uppercase mb-3">Balanceador de Aforo &amp; Clases</p>
-<p class="text-xs text-slate-300 leading-relaxed">
-              Equilibra salas de spinning, pesas y functional. Crea promociones en tiempo real para horas con menos del 40% de ocupación.
-            </p>
-</div>
-<div class="mt-6 pt-3 border-t border-slate-800 text-[11px] font-mono text-emerald-400 flex items-center justify-between">
-<span class="">Aumento Horas Valle:</span>
-<span class="font-bold">+28%</span>
-</div>
-</div>
-<!-- Agent 4: BANSHO -->
-<div class="bg-[#181d28] border border-slate-800 rounded-xl p-6 hover:border-amber-500/60 transition-all flex flex-col justify-between group">
-<div>
-<div class="flex items-center justify-between mb-4">
-<span class="w-10 h-10 rounded-lg bg-emerald-950/80 border border-emerald-500/50 flex items-center justify-center text-emerald-400">
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="file-spreadsheet" aria-hidden="true" class="lucide lucide-file-spreadsheet w-5 h-5"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"></path><path d="M14 2v5a1 1 0 0 0 1 1h5"></path><path d="M8 13h2"></path><path d="M14 13h2"></path><path d="M8 17h2"></path><path d="M14 17h2"></path></svg>
-</span>
-<span class="font-mono text-[10px] uppercase font-bold text-emerald-400 bg-emerald-950/50 px-2 py-0.5 rounded border border-emerald-800">
-                Directivo
-              </span>
-</div>
-<h3 class="font-display font-black text-2xl text-white tracking-tight">BANSHO</h3>
-<p class="text-xs font-mono text-emerald-400 uppercase mb-3">Briefing Matutino del Dueño</p>
-<p class="text-xs text-slate-300 leading-relaxed">
-              Envía a las 7:00 AM un reporte ejecutivo de 3 párrafos por WhatsApp: caja recaudada ayer, morosos que pisaron el club y slots con sobredemanda.
-            </p>
-</div>
-<div class="mt-6 pt-3 border-t border-slate-800 text-[11px] font-mono text-emerald-400 flex items-center justify-between">
-<span class="">Entrega Diaria:</span>
-<span class="font-bold">07:00 AM OK</span>
-</div>
-</div>
-</div>
-</div>
-</section>
-<!-- END: Autonomous AI Agents Squad -->
-<!-- BEGIN: Las 4 Preguntas de Oro del Dueño (Table & Telemetry) -->
-<section class="relative bg-white text-slate-950 py-24" data-purpose="owners-golden-questions" id="metricas">
-<div class="max-w-7xl mx-auto px-6">
-<div class="text-center max-w-3xl mx-auto mb-16">
-<span class="text-[#e4572e] font-mono text-xs uppercase tracking-widest font-bold">
-          [ TELEMETRÍA FINANCIERA SIN RODEOS ]
-        </span>
-<h2 class="font-display font-black text-4xl md:text-5xl uppercase tracking-tight text-slate-950 mt-2">
-          Las 4 Preguntas de Oro del Dueño.
-        </h2>
-<p class="text-slate-600 text-base mt-3">
-          Deja de exportar Excels desfasados a fin de mes. DOJO responde esto en tiempo real:
-        </p>
-</div>
-<!-- Telemetry Grid -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-<!-- Card 1 -->
-<div class="border border-slate-200 rounded-xl p-6 bg-slate-50/50 shadow-sm hover:shadow-md transition-shadow">
-<div class="flex items-center justify-between text-xs font-mono uppercase text-slate-500 mb-2">
-<span class="">PREGUNTA 01</span>
-<span class="text-emerald-600 font-bold">TIEMPO REAL</span>
-</div>
-<h3 class="font-display font-black text-xl text-slate-950 mb-3">
-            ¿Cuántos socios morosos entraron hoy a las instalaciones?
-          </h3>
-<p class="text-sm text-slate-600 mb-4">
-            En un sistema tradicional entran por amiguismo o descuido de recepción. En DOJO el torniquete detiene al usuario y resuelve el cobro ahí mismo.
-          </p>
-<div class="bg-white border border-slate-200 rounded p-3 flex justify-between items-center font-mono text-xs">
-<span class="text-slate-600">Fugas evitadas hoy:</span>
-<span class="text-[#e4572e] font-bold text-sm">18 cobros recuperados ($1,152 USD)</span>
-</div>
-</div>
-<!-- Card 2 -->
-<div class="border border-slate-200 rounded-xl p-6 bg-slate-50/50 shadow-sm hover:shadow-md transition-shadow">
-<div class="flex items-center justify-between text-xs font-mono uppercase text-slate-500 mb-2">
-<span class="">PREGUNTA 02</span>
-<span class="text-emerald-600 font-bold">PREDICTIVO</span>
-</div>
-<h3 class="font-display font-black text-xl text-slate-950 mb-3">
-            ¿Cuántos miembros activos están a punto de abandonar el club?
-          </h3>
-<p class="text-sm text-slate-600 mb-4">
-            El algoritmo cruza días sin acceso, horario y días de cobro para levantar bandera roja 18 días antes del corte de tarjeta.
-          </p>
-<div class="bg-white border border-slate-200 rounded p-3 flex justify-between items-center font-mono text-xs">
-<span class="text-slate-600">En riesgo esta semana:</span>
-<span class="text-amber-600 font-bold text-sm">24 socios (intervenidos por SASOI)</span>
-</div>
-</div>
-<!-- Card 3 -->
-<div class="border border-slate-200 rounded-xl p-6 bg-slate-50/50 shadow-sm hover:shadow-md transition-shadow">
-<div class="flex items-center justify-between text-xs font-mono uppercase text-slate-500 mb-2">
-<span class="">PREGUNTA 03</span>
-<span class="text-emerald-600 font-bold">EFICIENCIA ESPACIAL</span>
-</div>
-<h3 class="font-display font-black text-xl text-slate-950 mb-3">
-            ¿Cuál es el costo de aforo saturado en tus horas pico?
-          </h3>
-<p class="text-sm text-slate-600 mb-4">
-            Saturar al 105% rompe la retención de tus mejores socios. DOJO te dice exactamente qué precio fijar para despresurizar la hora pico.
-          </p>
-<div class="bg-white border border-slate-200 rounded p-3 flex justify-between items-center font-mono text-xs">
-<span class="text-slate-600">Recomendación KUMI:</span>
-<span class="text-emerald-700 font-bold text-sm">Tarifa Peak +15% / Off-Peak -20%</span>
-</div>
-</div>
-<!-- Card 4 -->
-<div class="border border-slate-200 rounded-xl p-6 bg-slate-50/50 shadow-sm hover:shadow-md transition-shadow">
-<div class="flex items-center justify-between text-xs font-mono uppercase text-slate-500 mb-2">
-<span class="">PREGUNTA 04</span>
-<span class="text-emerald-600 font-bold">AUDITORÍA</span>
-</div>
-<h3 class="font-display font-black text-xl text-slate-950 mb-3">
-            ¿Hubo 'cortesías' o accesos manuales no autorizados en turno?
-          </h3>
-<p class="text-sm text-slate-600 mb-4">
-            Cada apertura forzada con botón de recepción queda registrada con captura de foto en el log inmutable de BANSHO.
-          </p>
-<div class="bg-white border border-slate-200 rounded p-3 flex justify-between items-center font-mono text-xs">
-<span class="text-slate-600">Discrepancias registradas:</span>
-<span class="text-emerald-700 font-bold text-sm">0 eventos no auditados</span>
-</div>
-</div>
-</div>
-</div>
-</section>
-<!-- END: Las 4 Preguntas de Oro del Dueño -->
-<!-- BEGIN: Technical Area Graph & Comparison Wave (Modeled on Track Success in Stryd) -->
-<section class="relative bg-gradient-to-b from-[#f59e0b] to-[#e4572e] py-20 text-black polygon-kiai-band overflow-hidden" data-purpose="revenue-wave-graph">
-<div class="max-w-7xl mx-auto px-6 py-8">
-<!-- Section Header -->
-<div class="text-center max-w-2xl mx-auto mb-12">
-<span class="bg-black text-amber-400 font-mono text-[11px] font-black uppercase px-3 py-1 rounded">
-          TELEMETRÍA COMPARATIVA
-        </span>
-<h2 class="font-display font-black text-3xl md:text-5xl uppercase tracking-tight text-black mt-4">
-          Mide el Éxito. Multiplica el Margen.
-        </h2>
-<p class="text-black/80 font-medium text-sm md:text-base mt-2">
-          La curva de ingresos recuperados mes con mes tras activar el squad de agentes autónomos.
-        </p>
-</div>
-<!-- Graph Container Card -->
-<div class="bg-black/90 rounded-2xl p-6 md:p-8 max-w-4xl mx-auto text-white shadow-2xl border border-black/40">
-<div class="flex items-center justify-between text-xs font-mono text-slate-400 border-b border-slate-800 pb-3 mb-6">
-<span class="text-amber-400 font-bold">RECAUDACIÓN BRUTA VS. SIN DOJO OS</span>
-<span class="">PERIODO: ÚLTIMOS 6 MESES</span>
-</div>
-<!-- SVG Line/Area Graph -->
-<div class="relative w-full h-56 sm:h-64 flex items-end">
-<svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 500 200">
-<defs>
-<linearGradient id="brandGradient" x1="0%" x2="0%" y1="0%" y2="100%">
-<stop offset="0%" stop-color="#f59e0b" stop-opacity="0.6"></stop>
-<stop offset="100%" stop-color="#e4572e" stop-opacity="0.05"></stop>
-</linearGradient>
-</defs>
-<!-- Grid horizontal lines -->
-<line stroke="#334155" stroke-dasharray="4" stroke-width="0.8" x1="0" x2="500" y1="40" y2="40"></line>
-<line stroke="#334155" stroke-dasharray="4" stroke-width="0.8" x1="0" x2="500" y1="90" y2="90"></line>
-<line stroke="#334155" stroke-dasharray="4" stroke-width="0.8" x1="0" x2="500" y1="140" y2="140"></line>
-<!-- Baseline without Dojo (flat/struggling) -->
-<path d="M 0,160 Q 120,155 250,150 T 500,145" fill="none" stroke="#64748b" stroke-dasharray="5" stroke-width="2"></path>
-<!-- High-growth Area with Dojo -->
-<path d="M 0,160 Q 100,130 200,90 T 350,50 T 500,20 L 500,200 L 0,200 Z" fill="url(#brandGradient)"></path>
-<!-- High-growth Line with Dojo -->
-<path d="M 0,160 Q 100,130 200,90 T 350,50 T 500,20" fill="none" stroke="#f59e0b" stroke-width="3"></path>
-<!-- High Point Marker -->
-<circle cx="500" cy="20" fill="#f59e0b" r="5" stroke="#ffffff" stroke-width="2"></circle>
-</svg>
-</div>
-<!-- Graph X-Axis Labels -->
-<div class="flex justify-between text-[11px] font-mono text-slate-400 mt-4 border-t border-slate-800 pt-2">
-<span class="">MES 1 (Instalación)</span>
-<span class="">MES 2</span>
-<span class="">MES 3</span>
-<span class="">MES 4</span>
-<span class="">MES 5</span>
-<span class="text-amber-400 font-bold">MES 6 (+22.4% EBITDA)</span>
-</div>
-</div>
-</div>
-</section>
-<!-- END: Technical Area Graph & Comparison Wave -->
-<!-- BEGIN: Compatibility & Integrations Bar -->
-<section class="relative bg-[#0d0f15] py-20 border-t border-slate-900" data-purpose="partners-integrations">
-<div class="max-w-7xl mx-auto px-6 text-center">
-<p class="font-mono text-xs uppercase tracking-widest text-slate-500 mb-8">
-        Compatible de forma nativa con los estándares mundiales de control y pagos
-      </p>
-<!-- Hardware & Payment Gateways Logos -->
-<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-8 items-center justify-center opacity-70 hover:opacity-100 transition-opacity">
-<div class="flex flex-col items-center">
-<span class="font-display font-black text-xl tracking-wider text-slate-300">ZK<span class="text-amber-500">TECO</span></span>
-<span class="text-[9px] font-mono text-slate-500">BIOMETRÍA</span>
-</div>
-<div class="flex flex-col items-center">
-<span class="font-display font-black text-xl tracking-wider text-slate-300">HIK<span class="text-[#e4572e]">VISION</span></span>
-<span class="text-[9px] font-mono text-slate-500">FACE RECOGNITION</span>
-</div>
-<div class="flex flex-col items-center">
-<span class="font-display font-black text-xl tracking-wider text-slate-300">DAHUA</span>
-<span class="text-[9px] font-mono text-slate-500">CÁMARAS &amp; AFORO</span>
-</div>
-<div class="flex flex-col items-center">
-<span class="font-display font-black text-xl tracking-wider text-slate-300">stripe</span>
-<span class="text-[9px] font-mono text-slate-500">BILLING AUTOMATION</span>
-</div>
-<div class="flex flex-col items-center">
-<span class="font-display font-black text-xl tracking-wider text-slate-300">mercado<span class="text-blue-400">pago</span></span>
-<span class="text-[9px] font-mono text-slate-500">COBRO INMEDIATO</span>
-</div>
-<div class="flex flex-col items-center">
-<span class="font-display font-black text-xl tracking-wider text-slate-300">Clip.</span>
-<span class="text-[9px] font-mono text-slate-500">PINPAD BLUETOOTH</span>
-</div>
-</div>
-</div>
-</section>
-<!-- END: Compatibility & Integrations Bar -->
-<!-- BEGIN: High-Contrast CTA Section & Demo Scheduling -->
-<section class="relative bg-[#14171f] py-24 text-white overflow-hidden" data-purpose="cta-scheduling" id="agenda">
-<div class="max-w-4xl mx-auto px-6 relative z-10 text-center">
-<div class="inline-flex items-center space-x-2 bg-amber-500/10 border border-amber-500/40 text-amber-400 text-xs font-mono font-bold px-3 py-1 rounded-full mb-6 uppercase tracking-wider">
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="calendar" aria-hidden="true" class="lucide lucide-calendar w-3.5 h-3.5"><path d="M8 2v3"></path><path d="M16 2v3"></path><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M3 9h18"></path></svg>
-<span class="">INSTALACIÓN PILOTO DISPONIBLE EN 72 HORAS</span>
-</div>
-<h2 class="font-display font-black text-4xl sm:text-5xl md:text-6xl uppercase tracking-tight text-white mb-6">
-        Deja de adivinar.<br>
-<span class="text-[#f59e0b]">Empieza a medir.</span>
-</h2>
-<p class="text-slate-300 text-base md:text-lg max-w-xl mx-auto mb-10 leading-relaxed">
-        Conectamos un DOJO Bridge en tu club en modo prueba por 14 días. Si no recuperas dinero no pagas un centavo.
-      </p>
-<!-- Fast Scheduling Form -->
-<form id="dojoForm" class="max-w-lg mx-auto bg-slate-900/90 border border-slate-800 p-6 rounded-2xl shadow-2xl space-y-4 text-left">
-<div>
-<label class="block text-xs font-mono uppercase text-slate-400 mb-1">Nombre Completo</label>
-<input class="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500" placeholder="Ej. Roberto Sánchez" required="" type="text" name="nombre" autocomplete="name">
-</div>
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-<div>
-<label class="block text-xs font-mono uppercase text-slate-400 mb-1">WhatsApp Directo</label>
-<input class="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500" placeholder="+52 656 123 4567" required="" type="tel" name="whatsapp" autocomplete="tel">
-</div>
-<div>
-<label class="block text-xs font-mono uppercase text-slate-400 mb-1">Número de Sedes</label>
-<select name="sedes" class="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
-<option>1 Sede</option>
-<option>2 a 5 Sedes</option>
-<option>6 a 15 Sedes</option>
-<option>Más de 15 Sedes</option>
-</select>
-</div>
-</div>
-<div>
-<label class="block text-xs font-mono uppercase text-slate-400 mb-1">Marca de Torniquetes / Lectores Actuales</label>
-<input class="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500" placeholder="Ej. ZKTeco Pro, Hikvision, o molinetes sin lector" type="text" name="torniquetes">
-</div>
-<button class="w-full bg-gradient-to-r from-[#e4572e] via-[#f59e0b] to-[#ffa726] hover:opacity-95 text-black font-display font-black text-sm uppercase tracking-wider py-4 rounded shadow-xl transition-all flex items-center justify-center space-x-2 mt-4" type="submit">
-<span class="">Solicitar Prueba Piloto (14 Días)</span>
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="arrow-right" aria-hidden="true" class="lucide lucide-arrow-right w-4 h-4 text-black"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
-</button>
-<p id="dojoMsg" class="hidden text-sm text-center font-mono mt-2" role="status" aria-live="polite"></p>
-<p class="text-[11px] text-center text-slate-500 font-mono mt-2">
-          Garantía Ronin Studio: Cero interrupción a tus socios durante el setup.
-        </p>
-</form>
-</div>
-</section>
-<!-- END: High-Contrast CTA Section -->
-<!-- BEGIN: Technical Footer -->
-<footer class="bg-[#080a0e] text-slate-400 py-12 border-t border-slate-800 text-xs" data-purpose="site-footer">
-<div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
-<div class="flex items-center space-x-3">
-<span class="font-display font-black text-2xl tracking-tight text-white">dojo<span class="text-[#e4572e]">.</span></span>
-<span class="text-slate-600">|</span>
-<span class="text-slate-500 font-mono">El Sistema Operativo para Gimnasios</span>
-</div>
-<div class="flex flex-wrap items-center gap-6 font-mono text-[11px]">
-<a class="hover:text-amber-400 transition-colors" href="#hardware">BRIDGE</a>
-<a class="hover:text-amber-400 transition-colors" href="#pulso">HEATMAP</a>
-<a class="hover:text-amber-400 transition-colors" href="#agentes">SQUAD IA</a>
-<a class="hover:text-amber-400 transition-colors" href="#metricas">TELEMETRÍA</a>
-<a class="hover:text-amber-400 transition-colors" href="/">RONIN STUDIO</a>
-</div>
-<div class="text-right text-slate-500 font-mono text-[11px]">
-        Diseñado &amp; Operado por <strong class="text-white">Ronin Studio</strong> © 2026.
+<!-- HERO -->
+<section class="relative bg-gradient-to-b from-[#08090d] via-[#12151d] to-[#181b24] pt-8 pb-28 overflow-hidden">
+  <div class="absolute inset-0 hud-crosshair opacity-30 pointer-events-none"></div>
+  <header class="relative max-w-7xl mx-auto px-6 mb-12 flex items-center justify-between gap-4">
+    <div class="flex items-center space-x-3">
+      <span class="font-display font-black text-3xl tracking-tighter text-white">dojo<span class="text-[#e4572e]">.</span></span>
+      <a href="/" class="text-xs uppercase tracking-widest text-slate-400 hover:text-white font-medium border-l border-slate-700 pl-3">por Ronin Studio</a>
+    </div>
+    <nav class="hidden md:flex items-center space-x-8 text-sm font-medium tracking-wide text-slate-300">
+      <a class="hover:text-amber-400 transition-colors" href="#funciona">CÓMO FUNCIONA</a>
+      <a class="hover:text-amber-400 transition-colors" href="#pulso">AFORO</a>
+      <a class="hover:text-amber-400 transition-colors" href="#asistentes">ASISTENTES IA</a>
+      <a class="hover:text-amber-400 transition-colors" href="#empezamos">CÓMO EMPEZAMOS</a>
+    </nav>
+    <a class="inline-flex items-center gap-2 bg-gradient-to-r from-[#e4572e] to-[#f59e0b] hover:from-[#d7263d] hover:to-[#e4572e] text-white text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded shadow-lg transition-all" href="#agenda">
+      <span>Agendar demo</span><i data-lucide="arrow-right" class="w-4 h-4"></i>
+    </a>
+  </header>
+
+  <div class="relative max-w-7xl mx-auto px-6 pt-6 flex flex-col items-center text-center">
+    <div class="inline-flex items-center gap-2 bg-[#1f2430]/90 border border-amber-500/30 px-3.5 py-1.5 rounded-full text-xs font-semibold text-amber-400 mb-6">
+      <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+      <span class="tracking-wide uppercase font-mono">Plataforma para gimnasios · demo disponible</span>
+    </div>
+    <h1 class="font-display font-black text-5xl md:text-7xl lg:text-8xl tracking-tight uppercase leading-[0.95] text-white max-w-5xl mb-6">
+      El sistema operativo <br class="hidden sm:inline">
+      <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#f59e0b] via-[#ffa726] to-[#e4572e]">de tu gimnasio.</span>
+    </h1>
+    <p class="text-slate-300 text-lg md:text-xl max-w-2xl font-light mb-10 leading-relaxed">
+      Membresías, accesos, cobros, clases y aforo en un solo lugar, para que sepas cada día cuánto cobraste, quién está entrenando y quién está por irse.
+    </p>
+    <div class="flex flex-col sm:flex-row items-center gap-4 mb-14 w-full sm:w-auto">
+      <a class="w-full sm:w-auto bg-[#e4572e] hover:bg-[#cf4821] text-white font-display font-bold text-sm tracking-wider uppercase px-8 py-4 rounded shadow-xl flex items-center justify-center gap-3 transition-all" href="#agenda">
+        <i data-lucide="calendar" class="w-5 h-5 text-amber-300"></i><span>Agendar una demo</span>
+      </a>
+      <a class="w-full sm:w-auto bg-slate-800/80 hover:bg-slate-700 text-slate-200 border border-slate-700 font-display font-bold text-sm tracking-wider uppercase px-8 py-4 rounded flex items-center justify-center gap-2 transition-all" href="#funciona">
+        <i data-lucide="play-circle" class="w-5 h-5 text-slate-400"></i><span>Ver cómo funciona</span>
+      </a>
+    </div>
+
+    <figure class="relative w-full max-w-5xl mx-auto">
+      <div class="relative rounded-2xl border border-slate-700/60 bg-gradient-to-b from-[#1c212c] to-[#0e1017] p-2 md:p-3 shadow-2xl">
+        <img src="/assets/casos/dojo-panel.webp" width="1400" height="736" alt="Panel de Dojo: cobrado hoy por forma de pago, personas entrenando ahora, membresías activas y socios en riesgo" class="w-full h-auto rounded-xl" loading="eager">
+        <div class="absolute top-1 left-1 w-4 h-4 border-t-2 border-l-2 border-amber-500"></div>
+        <div class="absolute top-1 right-1 w-4 h-4 border-t-2 border-r-2 border-amber-500"></div>
+        <div class="absolute bottom-1 left-1 w-4 h-4 border-b-2 border-l-2 border-amber-500"></div>
+        <div class="absolute bottom-1 right-1 w-4 h-4 border-b-2 border-r-2 border-amber-500"></div>
       </div>
+      <figcaption class="mt-3 text-[11px] font-mono uppercase tracking-widest text-slate-500">Panel de Dojo · datos de demostración</figcaption>
+    </figure>
+  </div>
+  <div class="absolute bottom-0 inset-x-0 h-10 bg-amber-500 polygon-cut-down pointer-events-none"></div>
+</section>
+
+<!-- FRANJA -->
+<div class="relative bg-gradient-to-r from-[#e4572e] via-[#f59e0b] to-[#ffa726] py-4 text-black font-display font-black text-xs md:text-sm tracking-widest uppercase shadow-xl">
+  <div class="max-w-7xl mx-auto px-6 flex flex-wrap items-center justify-between gap-4">
+    <div class="hidden md:flex items-center gap-8 font-bold">
+      <span>• Membresías</span><span>• Accesos</span><span>• Cobros</span><span>• Clases</span><span>• Tienda</span><span>• Finanzas</span>
+    </div>
+    <div class="font-mono text-xs font-bold bg-black text-amber-400 px-3 py-1 rounded">Primero el flujo. Después la IA.</div>
+  </div>
 </div>
+
+<!-- CÓMO FUNCIONA -->
+<section class="relative bg-white text-slate-900 py-24" id="funciona">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="max-w-3xl">
+      <span class="font-mono text-xs uppercase tracking-widest text-[#e4572e] font-bold">Lo que resuelve</span>
+      <h2 class="font-display font-black text-4xl md:text-5xl uppercase tracking-tight mt-3">Todo el club en una sola pantalla.</h2>
+      <p class="text-slate-600 text-lg mt-5 leading-relaxed">Hoy la membresía vive en una libreta, el cobro en tres terminales y la asistencia en la memoria de recepción. Dojo junta esas piezas sobre la forma en que ya opera tu gimnasio.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-14">
+      <div class="border border-slate-200 rounded-xl p-6 hover:border-[#e4572e]/60 transition-colors">
+        <div class="font-mono text-xs text-[#e4572e] font-bold">01</div>
+        <h3 class="font-display font-bold text-xl uppercase mt-2">Membresías y cobros</h3>
+        <p class="text-slate-600 text-sm mt-3 leading-relaxed">Stripe, Mercado Pago, Clip y efectivo en un mismo corte. Ves lo cobrado hoy por membresías, tienda y entrenamiento.</p>
+      </div>
+      <div class="border border-slate-200 rounded-xl p-6 hover:border-[#e4572e]/60 transition-colors">
+        <div class="font-mono text-xs text-[#e4572e] font-bold">02</div>
+        <h3 class="font-display font-bold text-xl uppercase mt-2">Una entrada que sabe quién está al día</h3>
+        <p class="text-slate-600 text-sm mt-3 leading-relaxed">Al entrar se valida la membresía. Si hay un pago pendiente, recepción lo ve en ese momento y decide: cobrar ahí o mandar la liga de pago.</p>
+      </div>
+      <div class="border border-slate-200 rounded-xl p-6 hover:border-[#e4572e]/60 transition-colors">
+        <div class="font-mono text-xs text-[#e4572e] font-bold">03</div>
+        <h3 class="font-display font-bold text-xl uppercase mt-2">Aforo en vivo</h3>
+        <p class="text-slate-600 text-sm mt-3 leading-relaxed">Cuántas personas hay adentro, el pico del día y los lugares libres, por sucursal.</p>
+      </div>
+      <div class="border border-slate-200 rounded-xl p-6 hover:border-[#e4572e]/60 transition-colors">
+        <div class="font-mono text-xs text-[#e4572e] font-bold">04</div>
+        <h3 class="font-display font-bold text-xl uppercase mt-2">Agenda y clases</h3>
+        <p class="text-slate-600 text-sm mt-3 leading-relaxed">Reservaciones, cupos por clase y horarios de entrenadores, sin hojas ni grupos de WhatsApp.</p>
+      </div>
+      <div class="border border-slate-200 rounded-xl p-6 hover:border-[#e4572e]/60 transition-colors">
+        <div class="font-mono text-xs text-[#e4572e] font-bold">05</div>
+        <h3 class="font-display font-bold text-xl uppercase mt-2">Socios en riesgo</h3>
+        <p class="text-slate-600 text-sm mt-3 leading-relaxed">Quién dejó de venir, quién debe y quién vence esta semana, a tiempo para llamarle antes de que cancele.</p>
+      </div>
+      <div class="border border-slate-200 rounded-xl p-6 hover:border-[#e4572e]/60 transition-colors">
+        <div class="font-mono text-xs text-[#e4572e] font-bold">06</div>
+        <h3 class="font-display font-bold text-xl uppercase mt-2">Varias sucursales</h3>
+        <p class="text-slate-600 text-sm mt-3 leading-relaxed">Cada sede opera por separado y dirección ve el consolidado: altas, bajas, cobros y uso.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FLUJO DE ENTRADA -->
+<section class="relative bg-[#0d0f15] py-28 text-white polygon-diagonal-reverse">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="max-w-3xl">
+      <span class="font-mono text-xs uppercase tracking-widest text-amber-400 font-bold">Un acceso, tres pasos</span>
+      <h2 class="font-display font-black text-4xl md:text-5xl uppercase tracking-tight mt-3">Qué pasa cuando un socio llega.</h2>
+      <p class="text-slate-400 text-lg mt-5 leading-relaxed">Trabajamos con el control de acceso que ya tienes. En la visita revisamos tu equipo y te decimos qué se puede conectar.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-14">
+      <div class="bg-[#181b24] border border-slate-800 rounded-xl p-6">
+        <i data-lucide="scan-line" class="w-7 h-7 text-amber-400"></i>
+        <h3 class="font-display font-bold text-lg uppercase mt-4">1. Se identifica</h3>
+        <p class="text-slate-400 text-sm mt-2 leading-relaxed">Con QR desde su celular o con el lector que ya usa tu gimnasio.</p>
+      </div>
+      <div class="bg-[#181b24] border border-slate-800 rounded-xl p-6">
+        <i data-lucide="shield-check" class="w-7 h-7 text-amber-400"></i>
+        <h3 class="font-display font-bold text-lg uppercase mt-4">2. Dojo valida</h3>
+        <p class="text-slate-400 text-sm mt-2 leading-relaxed">Membresía vigente, pagos pendientes y reservación del día. Recepción ve el resultado.</p>
+      </div>
+      <div class="bg-[#181b24] border border-slate-800 rounded-xl p-6">
+        <i data-lucide="message-circle" class="w-7 h-7 text-amber-400"></i>
+        <h3 class="font-display font-bold text-lg uppercase mt-4">3. Avisa</h3>
+        <p class="text-slate-400 text-sm mt-2 leading-relaxed">Recibo, recordatorio de clase o liga de pago por WhatsApp, según lo que defina tu equipo.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PULSO -->
+<section class="relative bg-white text-slate-900 py-24" id="pulso">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="max-w-3xl">
+      <span class="font-mono text-xs uppercase tracking-widest text-[#e4572e] font-bold">Pulso · ocupación por hora</span>
+      <h2 class="font-display font-black text-4xl md:text-5xl uppercase tracking-tight mt-3">La capacidad no es física, es por horario.</h2>
+      <p class="text-slate-600 text-lg mt-5 leading-relaxed">Con los accesos de cada día, Dojo arma un mapa de ocupación por hora y por día. Así ves cuándo sobra espacio y cuándo se satura.</p>
+    </div>
+    <div class="mt-12 overflow-x-auto">
+      <table class="heat w-full min-w-[640px] text-center text-sm font-mono border-separate border-spacing-1">
+        <thead><tr class="text-[11px] text-slate-500 uppercase"><th class="text-left font-semibold">Hora</th><th>Lun</th><th>Mar</th><th>Mié</th><th>Jue</th><th>Vie</th><th>Sáb</th><th>Dom</th></tr></thead>
+        <tbody id="heatBody"></tbody>
+      </table>
+    </div>
+    <div class="mt-6 flex flex-wrap items-center gap-5 text-xs font-mono text-slate-500">
+      <span class="flex items-center gap-2"><i class="w-3 h-3 rounded-sm bg-slate-100 inline-block"></i>Baja</span>
+      <span class="flex items-center gap-2"><i class="w-3 h-3 rounded-sm bg-amber-200 inline-block"></i>Media</span>
+      <span class="flex items-center gap-2"><i class="w-3 h-3 rounded-sm bg-[#e4572e] inline-block"></i>Saturada</span>
+      <span class="uppercase tracking-widest">Datos de ejemplo</span>
+    </div>
+    <div class="mt-8 bg-slate-50 border-l-4 border-[#e4572e] p-5 rounded max-w-3xl text-sm text-slate-700 leading-relaxed">
+      <strong>Cómo se usa:</strong> en este ejemplo, las 8:00 y las 19:00 de lunes a jueves pasan del 90 %. Con ese dato tú decides si abres otra clase, mueves horarios o creas un pase para horas con menos gente.
+    </div>
+  </div>
+</section>
+
+<!-- ASISTENTES -->
+<section class="relative bg-[#12151e] py-28 text-white polygon-cut-up" id="asistentes">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="max-w-3xl">
+      <span class="font-mono text-xs uppercase tracking-widest text-amber-400 font-bold">Asistentes de IA</span>
+      <h2 class="font-display font-black text-4xl md:text-5xl uppercase tracking-tight mt-3">La IA prepara. Tu equipo decide.</h2>
+      <p class="text-slate-400 text-lg mt-5 leading-relaxed">Los asistentes trabajan sobre los datos que Dojo ya ordenó. Detectan y preparan; cobrar, bloquear o cambiar un precio lo aprueba una persona.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-14">
+      <div class="bg-[#181b24] border border-slate-800 rounded-xl p-6">
+        <div class="flex items-center justify-between"><span class="font-mono text-[11px] uppercase tracking-widest text-amber-400">Cobranza</span><i data-lucide="wallet" class="w-5 h-5 text-slate-500"></i></div>
+        <h3 class="font-display font-bold text-xl uppercase mt-3">Pagos pendientes</h3>
+        <p class="text-slate-400 text-sm mt-2 leading-relaxed">Detecta tarjetas por vencer y cobros rechazados antes del corte, y prepara el mensaje con la liga de pago.</p>
+        <p class="text-xs font-mono text-slate-300 mt-4 border-t border-slate-800 pt-3"><span class="text-slate-500">DECIDE:</span> recepción, antes de enviar.</p>
+      </div>
+      <div class="bg-[#181b24] border border-slate-800 rounded-xl p-6">
+        <div class="flex items-center justify-between"><span class="font-mono text-[11px] uppercase tracking-widest text-amber-400">Retención</span><i data-lucide="user-check" class="w-5 h-5 text-slate-500"></i></div>
+        <h3 class="font-display font-bold text-xl uppercase mt-3">Socios que dejaron de venir</h3>
+        <p class="text-slate-400 text-sm mt-2 leading-relaxed">Compara la asistencia de cada socio con su costumbre y arma la lista de a quién llamar esta semana.</p>
+        <p class="text-xs font-mono text-slate-300 mt-4 border-t border-slate-800 pt-3"><span class="text-slate-500">DECIDE:</span> el gerente o el entrenador.</p>
+      </div>
+      <div class="bg-[#181b24] border border-slate-800 rounded-xl p-6">
+        <div class="flex items-center justify-between"><span class="font-mono text-[11px] uppercase tracking-widest text-amber-400">Clases y aforo</span><i data-lucide="calendar-clock" class="w-5 h-5 text-slate-500"></i></div>
+        <h3 class="font-display font-bold text-xl uppercase mt-3">Horarios llenos y vacíos</h3>
+        <p class="text-slate-400 text-sm mt-2 leading-relaxed">Señala las clases que se llenan y las horas con poca gente, y sugiere ajustes de horario o paquetes.</p>
+        <p class="text-xs font-mono text-slate-300 mt-4 border-t border-slate-800 pt-3"><span class="text-slate-500">DECIDE:</span> dirección.</p>
+      </div>
+      <div class="bg-[#181b24] border border-slate-800 rounded-xl p-6">
+        <div class="flex items-center justify-between"><span class="font-mono text-[11px] uppercase tracking-widest text-amber-400">Dirección</span><i data-lucide="sunrise" class="w-5 h-5 text-slate-500"></i></div>
+        <h3 class="font-display font-bold text-xl uppercase mt-3">Resumen de la mañana</h3>
+        <p class="text-slate-400 text-sm mt-2 leading-relaxed">Un mensaje corto por WhatsApp con lo cobrado ayer, los pendientes y los horarios más llenos.</p>
+        <p class="text-xs font-mono text-slate-300 mt-4 border-t border-slate-800 pt-3"><span class="text-slate-500">DECIDE:</span> tú, con el dato en la mano.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PREGUNTAS DEL DUEÑO -->
+<section class="relative bg-white text-slate-950 py-24">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="max-w-3xl">
+      <span class="font-mono text-xs uppercase tracking-widest text-[#e4572e] font-bold">Sin esperar al cierre de mes</span>
+      <h2 class="font-display font-black text-4xl md:text-5xl uppercase tracking-tight mt-3">Las 4 preguntas del dueño.</h2>
+      <p class="text-slate-600 text-lg mt-5 leading-relaxed">Las que hoy se contestan con un Excel a fin de mes, o no se contestan.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
+      <div class="border border-slate-200 rounded-xl p-6">
+        <span class="font-mono text-[11px] uppercase tracking-widest text-slate-500">Pregunta 01</span>
+        <h3 class="font-display font-bold text-xl mt-2">¿Cuántos socios con pago pendiente entraron hoy?</h3>
+        <p class="text-slate-600 text-sm mt-3 leading-relaxed"><strong class="text-slate-900">Dónde lo ves:</strong> cada acceso queda ligado al estado de la membresía; recepción lo ve en la entrada y tú en el panel.</p>
+      </div>
+      <div class="border border-slate-200 rounded-xl p-6">
+        <span class="font-mono text-[11px] uppercase tracking-widest text-slate-500">Pregunta 02</span>
+        <h3 class="font-display font-bold text-xl mt-2">¿Quién está a punto de irse?</h3>
+        <p class="text-slate-600 text-sm mt-3 leading-relaxed"><strong class="text-slate-900">Dónde lo ves:</strong> en la lista de socios en riesgo, por días sin venir, pagos y fecha de vencimiento.</p>
+      </div>
+      <div class="border border-slate-200 rounded-xl p-6">
+        <span class="font-mono text-[11px] uppercase tracking-widest text-slate-500">Pregunta 03</span>
+        <h3 class="font-display font-bold text-xl mt-2">¿A qué hora se satura el club?</h3>
+        <p class="text-slate-600 text-sm mt-3 leading-relaxed"><strong class="text-slate-900">Dónde lo ves:</strong> en Pulso, la ocupación por hora y por día de cada sucursal.</p>
+      </div>
+      <div class="border border-slate-200 rounded-xl p-6">
+        <span class="font-mono text-[11px] uppercase tracking-widest text-slate-500">Pregunta 04</span>
+        <h3 class="font-display font-bold text-xl mt-2">¿Hubo accesos manuales o cortesías en el turno?</h3>
+        <p class="text-slate-600 text-sm mt-3 leading-relaxed"><strong class="text-slate-900">Dónde lo ves:</strong> cada apertura manual queda registrada con usuario, hora y motivo.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CÓMO EMPEZAMOS -->
+<section class="relative bg-gradient-to-b from-[#f59e0b] to-[#e4572e] py-28 text-black polygon-kiai-band" id="empezamos">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="max-w-3xl">
+      <span class="font-mono text-xs uppercase tracking-widest font-bold">Método Ronin</span>
+      <h2 class="font-display font-black text-4xl md:text-5xl uppercase tracking-tight mt-3">No instalamos un software y nos vamos.</h2>
+      <p class="text-black/75 text-lg mt-5 leading-relaxed">Primero entendemos cómo opera tu club; después lo ponemos en Dojo; la IA entra al final, donde ya hay orden.</p>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-12">
+      <div class="bg-black/90 text-white rounded-xl p-6"><span class="font-mono text-xs text-amber-400">01 · Mapear</span><h3 class="font-display font-bold text-lg uppercase mt-2">Visitamos tu club</h3><p class="text-slate-400 text-sm mt-2 leading-relaxed">Vemos cómo se inscribe, se cobra, se registra la entrada y se llenan las clases hoy.</p></div>
+      <div class="bg-black/90 text-white rounded-xl p-6"><span class="font-mono text-xs text-amber-400">02 · Diseñar</span><h3 class="font-display font-bold text-lg uppercase mt-2">Definimos reglas</h3><p class="text-slate-400 text-sm mt-2 leading-relaxed">Qué pasa con un pago pendiente, quién aprueba una cortesía, qué se avisa por WhatsApp.</p></div>
+      <div class="bg-black/90 text-white rounded-xl p-6"><span class="font-mono text-xs text-amber-400">03 · Construir</span><h3 class="font-display font-bold text-lg uppercase mt-2">Lo ponemos en una sede</h3><p class="text-slate-400 text-sm mt-2 leading-relaxed">Migramos tus socios, conectamos pagos y acceso, y lo probamos con tu recepción.</p></div>
+      <div class="bg-black/90 text-white rounded-xl p-6"><span class="font-mono text-xs text-amber-400">04 · Evolucionar</span><h3 class="font-display font-bold text-lg uppercase mt-2">Ajustamos cada mes</h3><p class="text-slate-400 text-sm mt-2 leading-relaxed">Revisamos cobros, bajas y uso, y sumamos asistentes cuando el flujo ya funciona.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PAGOS -->
+<section class="relative bg-[#0d0f15] py-16 border-t border-slate-900">
+  <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row md:items-center justify-between gap-8">
+    <div>
+      <p class="font-mono text-[11px] uppercase tracking-widest text-slate-500">Formas de pago en el panel</p>
+      <div class="flex flex-wrap items-center gap-x-8 gap-y-3 mt-3 font-display font-bold text-2xl text-slate-300">
+        <span>Stripe</span><span>Mercado Pago</span><span>Clip</span><span>Efectivo</span>
+      </div>
+    </div>
+    <p class="text-sm text-slate-400 max-w-md leading-relaxed"><strong class="text-slate-200">Control de acceso:</strong> revisamos en la visita los torniquetes y lectores que ya tienes y te decimos con claridad qué se conecta y qué no.</p>
+  </div>
+</section>
+
+<!-- AGENDA -->
+<section class="relative bg-[#14171f] py-24 text-white" id="agenda">
+  <div class="max-w-4xl mx-auto px-6 text-center">
+    <div class="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/40 text-amber-400 text-xs font-mono font-bold px-3 py-1 rounded-full mb-6 uppercase tracking-wider">
+      <i data-lucide="calendar" class="w-3.5 h-3.5"></i><span>Demo de 30 minutos</span>
+    </div>
+    <h2 class="font-display font-black text-4xl sm:text-5xl md:text-6xl uppercase tracking-tight text-white mb-6">Deja de adivinar.<br><span class="text-[#f59e0b]">Empieza a medir.</span></h2>
+    <p class="text-slate-300 text-base md:text-lg max-w-xl mx-auto mb-10 leading-relaxed">Te mostramos Dojo con datos de ejemplo. Si tiene sentido para tu club, el siguiente paso es una visita para mapear cómo operan hoy.</p>
+    <form id="dojoForm" class="max-w-lg mx-auto bg-slate-900/90 border border-slate-800 p-6 rounded-2xl shadow-2xl space-y-4 text-left">
+      <div>
+        <label class="block text-xs font-mono uppercase text-slate-400 mb-1" for="df-nombre">Nombre</label>
+        <input id="df-nombre" class="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500" placeholder="Ej. Roberto Sánchez" required type="text" name="nombre" autocomplete="name">
+      </div>
+      <div>
+        <label class="block text-xs font-mono uppercase text-slate-400 mb-1" for="df-gym">Gimnasio</label>
+        <input id="df-gym" class="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500" placeholder="Nombre de tu gimnasio" type="text" name="gimnasio" autocomplete="organization">
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-mono uppercase text-slate-400 mb-1" for="df-wa">WhatsApp</label>
+          <input id="df-wa" class="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500" placeholder="+52 656 123 4567" required type="tel" name="whatsapp" autocomplete="tel">
+        </div>
+        <div>
+          <label class="block text-xs font-mono uppercase text-slate-400 mb-1" for="df-sedes">Sucursales</label>
+          <select id="df-sedes" name="sedes" class="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500">
+            <option>1 sucursal</option><option>2 a 5 sucursales</option><option>Más de 5 sucursales</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs font-mono uppercase text-slate-400 mb-1" for="df-acceso">¿Cómo controlan la entrada hoy?</label>
+        <input id="df-acceso" class="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500" placeholder="Ej. torniquete con lector, recepción con lista, nada" type="text" name="acceso">
+      </div>
+      <button class="w-full bg-gradient-to-r from-[#e4572e] via-[#f59e0b] to-[#ffa726] hover:opacity-95 text-black font-display font-black text-sm uppercase tracking-wider py-4 rounded shadow-xl transition-all flex items-center justify-center gap-2 mt-4" type="submit">
+        <span>Agendar demo</span><i data-lucide="arrow-right" class="w-4 h-4 text-black"></i>
+      </button>
+      <p id="dojoMsg" class="hidden text-sm text-center font-mono mt-2" role="status" aria-live="polite"></p>
+      <p class="text-[11px] text-center text-slate-500 font-mono mt-2">Te contesta Julio César Ibarra, fundador de Ronin Studio, en menos de 24 horas hábiles.</p>
+    </form>
+  </div>
+</section>
+
+<footer class="bg-[#080a0e] text-slate-400 py-12 border-t border-slate-800 text-xs">
+  <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+    <div class="flex items-center gap-3">
+      <span class="font-display font-black text-2xl tracking-tight text-white">dojo<span class="text-[#e4572e]">.</span></span>
+      <span class="text-slate-600">|</span>
+      <span class="text-slate-500 font-mono">El sistema operativo para gimnasios</span>
+    </div>
+    <div class="flex flex-wrap items-center gap-6 font-mono text-[11px]">
+      <a class="hover:text-amber-400 transition-colors" href="#funciona">CÓMO FUNCIONA</a>
+      <a class="hover:text-amber-400 transition-colors" href="#pulso">AFORO</a>
+      <a class="hover:text-amber-400 transition-colors" href="#asistentes">ASISTENTES</a>
+      <a class="hover:text-amber-400 transition-colors" href="/">RONIN STUDIO</a>
+    </div>
+    <div class="text-slate-500 font-mono text-[11px]">Diseñado y operado por <strong class="text-white">Ronin Studio</strong> © 2026.</div>
+  </div>
 </footer>
-<!-- END: Technical Footer -->
-<!-- BEGIN: Lucide Icon Activation Script -->
-<script data-purpose="lucide-initialization">
-    // Render all Lucide icons
-    if (window.lucide) lucide.createIcons();
-    (function () {
-      var f = document.getElementById('dojoForm'), msg = document.getElementById('dojoMsg');
-      if (!f) return;
-      f.addEventListener('submit', function (e) {
-        e.preventDefault();
-        var btn = f.querySelector('button[type=submit]'), d = new FormData(f);
-        var payload = { _subject: 'Demo Dojo · ' + (d.get('nombre') || ''), _template: 'table', _captcha: 'false', origen: 'Landing Dojo (/dojo/)' };
-        d.forEach(function (v, k) { payload[k] = v; });
-        btn.disabled = true; btn.style.opacity = '.6';
-        function show(t, ok) { msg.textContent = t; msg.className = 'text-sm text-center font-mono mt-2 ' + (ok ? 'text-emerald-400' : 'text-red-400'); }
-        fetch('https://formsubmit.co/ajax/project@roninstudio.com.mx', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(payload) })
-          .then(function (r) { return r.json(); })
-          .then(function (j) {
-            if (j && (j.success === true || j.success === 'true')) { show('Listo. Te escribimos por WhatsApp en menos de 24 horas hábiles.', true); f.reset(); }
-            else { throw new Error('fs'); }
-          })
-          .catch(function () { show('No se pudo enviar. Escríbenos por WhatsApp al 656 573 6505.', false); })
-          .finally(function () { btn.disabled = false; btn.style.opacity = ''; });
+
+<script>
+  (function () {
+    // Mapa de ocupación (datos de ejemplo)
+    var rows = [['06:00',[68,72,70,74,55,22,14]],['08:00',[94,96,91,92,78,85,48]],['12:00',[38,42,40,41,45,65,30]],['19:00',[99,98,97,95,80,32,18]],['21:00',[58,62,60,59,34,12,8]]];
+    var tb = document.getElementById('heatBody');
+    if (tb) rows.forEach(function (r) {
+      var tr = '<tr><td class="text-left text-slate-500 text-xs pr-2">' + r[0] + '</td>';
+      r[1].forEach(function (v) {
+        var c = v >= 90 ? 'bg-[#e4572e] text-white font-bold' : v >= 60 ? 'bg-amber-200 text-slate-900' : 'bg-slate-100 text-slate-500';
+        tr += '<td class="rounded py-3 ' + c + '">' + v + '%</td>';
       });
-    })();
-  </script>
-<!-- END: Lucide Icon Activation Script -->
+      tb.insertAdjacentHTML('beforeend', tr + '</tr>');
+    });
+    if (window.lucide) lucide.createIcons();
 
-
+    var f = document.getElementById('dojoForm'), msg = document.getElementById('dojoMsg');
+    if (!f) return;
+    f.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var btn = f.querySelector('button[type=submit]'), d = new FormData(f);
+      var payload = { _subject: 'Demo Dojo · ' + (d.get('gimnasio') || d.get('nombre') || ''), _template: 'table', _captcha: 'false', origen: 'Landing Dojo (/dojo/)' };
+      d.forEach(function (v, k) { payload[k] = v; });
+      btn.disabled = true; btn.style.opacity = '.6';
+      function show(t, ok) { msg.textContent = t; msg.className = 'text-sm text-center font-mono mt-2 ' + (ok ? 'text-emerald-400' : 'text-red-400'); }
+      fetch('https://formsubmit.co/ajax/project@roninstudio.com.mx', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(payload) })
+        .then(function (r) { return r.json(); })
+        .then(function (j) {
+          if (j && (j.success === true || j.success === 'true')) { show('Listo. Te escribimos por WhatsApp en menos de 24 horas hábiles.', true); f.reset(); }
+          else { throw new Error('fs'); }
+        })
+        .catch(function () { show('No se pudo enviar. Escríbenos por WhatsApp al 656 573 6505.', false); })
+        .finally(function () { btn.disabled = false; btn.style.opacity = ''; });
+    });
+  })();
+</script>
 </body></html>

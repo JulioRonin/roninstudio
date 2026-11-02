@@ -166,6 +166,10 @@
   @media (min-width:720px){ .feature-side{padding:44px 40px} }
   .feature-side::before{content:'';position:absolute;right:-40px;top:-30px;width:180px;height:180px;
     background:url('/assets/brand/logo/ronin-isotipo-papel.svg') no-repeat center/contain;opacity:.05}
+  .fshot{grid-column:1/-1;margin:0;background:#0C0F14;padding:16px 16px 0;border-top:1px solid var(--paper-border)}
+  @media (min-width:720px){ .fshot{padding:28px 40px 0} }
+  .fshot img{display:block;width:100%;height:auto;border-radius:4px 4px 0 0;border:1px solid var(--border);border-bottom:none}
+  .fshot figcaption{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);padding:10px 0 14px}
   .fs-label{position:relative;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--mist)}
   .fsteps{position:relative;margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:0}
   .fsteps li{display:grid;grid-template-columns:34px 1fr;gap:12px;padding:13px 0;border-bottom:1px solid var(--border);
@@ -295,6 +299,9 @@
   .pstatus i{width:6px;height:6px;border-radius:50%;background:var(--faint)}
   .pstatus.live i{background:var(--olivo)}
   .pstatus.new i{background:var(--papel)}
+  .pthumb{display:block;aspect-ratio:16/9;overflow:hidden;border-radius:4px;border:1px solid var(--border);background:var(--panel2);margin-bottom:8px}
+  .pthumb img{width:100%;height:100%;object-fit:cover;object-position:left top;display:block;transition:transform .5s ease}
+  a.pitem:hover .pthumb img{transform:scale(1.03)}
   .psector{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
   .pdesc{margin:0;font-size:13.5px;line-height:1.55;color:var(--mist)}
   .parrow{margin-top:auto;font-size:13.5px;color:var(--ink);opacity:.75}
@@ -440,6 +447,10 @@
             <li><em>04</em><span data-i18n="fst4">Talleres entre áreas y capacitación práctica para la adopción.</span></li>
           </ol>
         </div>
+        <figure class="fshot">
+          <img src="/assets/casos/orka-panel.webp" width="1400" height="736" alt="Plataforma de Orka: índices de margen, diferencial competitivo, crédito y precios de combustibles en un solo tablero" loading="lazy" decoding="async">
+          <figcaption data-i18n="fshotOrka">Orka · tablero de dirección con precios, márgenes y crédito</figcaption>
+        </figure>
       </article>
 
       <article class="feature" style="margin-top:24px">
@@ -463,6 +474,10 @@
           </ol>
           <a class="cta-text" href="/kanri/" style="margin-top:18px;color:var(--paper-ink);border-color:var(--paper-border)" data-i18n="pSee">Ver plataforma →</a>
         </div>
+        <figure class="fshot">
+          <img src="/assets/casos/kanri-panel.webp" width="1400" height="647" alt="Kanri: resumen operativo del taller con piezas en producción, aprobación de calidad, no conformidades y producción semanal" loading="lazy" decoding="async">
+          <figcaption data-i18n="fshotKanri">Kanri · resumen operativo del taller</figcaption>
+        </figure>
       </article>
 
       <div class="wfhead">
@@ -656,9 +671,24 @@
       <p class="plabel" data-i18n="pUse">En uso</p>
       <div class="pgrid">
         <a class="pitem" href="/kanri">
+          <span class="pthumb"><img src="/assets/casos/kanri-panel.webp" width="1400" height="647" alt="Panel de Kanri" loading="lazy" decoding="async"></span>
           <div class="prow"><span class="pname">Kanri</span><span class="pstatus live"><i></i><span data-i18n="stProd">En producción</span></span></div>
           <span class="psector" data-i18n="kSec">Manufactura · talleres CNC</span>
           <p class="pdesc" data-i18n="kDesc">Construido para IMC Design, que hoy opera ahí de la cotización al cobro. Disponible como SaaS para otros talleres y maquilas.</p>
+          <span class="parrow" data-i18n="pSee">Ver plataforma →</span>
+        </a>
+        <a class="pitem" href="/servirest">
+          <span class="pthumb"><img src="/assets/casos/servirest-pos.webp" width="1400" height="705" alt="Punto de venta de Servirest" loading="lazy" decoding="async"></span>
+          <div class="prow"><span class="pname">Servirest</span><span class="pstatus live"><i></i><span data-i18n="stLive">Cliente 1 en vivo</span></span></div>
+          <span class="psector" data-i18n="sSec">Restaurantes</span>
+          <p class="pdesc" data-i18n="sDesc">Caja, inventario, food cost y operación diaria de un restaurante en una sola app.</p>
+          <span class="parrow" data-i18n="pSee">Ver plataforma →</span>
+        </a>
+        <a class="pitem" href="/restaurantes/">
+          <span class="pthumb"><img src="/assets/casos/restaurante-panel.webp" width="1400" height="907" alt="Panel de operación multi-sucursal" loading="lazy" decoding="async"></span>
+          <div class="prow"><span class="pname" data-i18n="rName">Operación multi-sucursal</span><span class="pstatus live"><i></i><span data-i18n="stBuilt">Construida</span></span></div>
+          <span class="psector" data-i18n="rSec">Cadenas de restaurantes</span>
+          <p class="pdesc" data-i18n="rDesc">Auditorías de inocuidad con foto y calificación por sucursal, reporte con IA, monitoreo con cámaras y reservaciones con asistente de voz.</p>
           <span class="parrow" data-i18n="pSee">Ver plataforma →</span>
         </a>
         <div class="pitem">
@@ -666,12 +696,6 @@
           <span class="psector" data-i18n="mSec">Diseño y fabricación de muebles</span>
           <p class="pdesc" data-i18n="mDesc">Proyecto propio. ERP con cotización, seguimiento a clientes, facturación y timbrado CFDI ante el SAT, más un agente de cotización.</p>
         </div>
-        <a class="pitem" href="/servirest">
-          <div class="prow"><span class="pname">Servirest</span><span class="pstatus live"><i></i><span data-i18n="stLive">Cliente 1 en vivo</span></span></div>
-          <span class="psector" data-i18n="sSec">Restaurantes</span>
-          <p class="pdesc" data-i18n="sDesc">Caja, inventario, food cost y operación diaria de un restaurante en una sola app.</p>
-          <span class="parrow" data-i18n="pSee">Ver plataforma →</span>
-        </a>
         <div class="pitem">
           <div class="prow"><span class="pname">Lana</span><span class="pstatus live"><i></i><span data-i18n="stDaily">En uso diario</span></span></div>
           <span class="psector" data-i18n="lSec">Finanzas personales</span>
@@ -682,31 +706,28 @@
           <span class="psector" data-i18n="dgSec">Moda y confección</span>
           <p class="pdesc" data-i18n="dgDesc">Arreglos y prendas a la medida: pedidos, avance de cada proyecto y pagos en línea.</p>
         </div>
-        <a class="pitem" href="/restaurantes/">
-          <div class="prow"><span class="pname" data-i18n="rName">Operación multi-sucursal</span><span class="pstatus live"><i></i><span data-i18n="stBuilt">Construida</span></span></div>
-          <span class="psector" data-i18n="rSec">Cadenas de restaurantes</span>
-          <p class="pdesc" data-i18n="rDesc">Auditorías de inocuidad con foto y calificación por sucursal, reporte con IA, monitoreo con cámaras y reservaciones con asistente de voz.</p>
-          <span class="parrow" data-i18n="pSee">Ver plataforma →</span>
-        </a>
       </div>
       <p class="plabel" data-i18n="pDev">En desarrollo</p>
       <div class="pgrid">
         <a class="pitem" href="/vertice">
+          <span class="pthumb"><img src="/assets/casos/vertice-modulos.webp" width="1400" height="499" alt="Módulos de Vértice" loading="lazy" decoding="async"></span>
           <div class="prow"><span class="pname">Vértice</span></div>
           <span class="psector" data-i18n="vSec">Educación</span>
           <p class="pdesc" data-i18n="vDesc">Gestión escolar: matrícula, calificaciones, pagos y comunicación con padres.</p>
           <span class="parrow" data-i18n="pSee">Ver plataforma →</span>
         </a>
-        <a class="pitem" href="https://genba-pm8jkzzus-julioronins-projects.vercel.app/" target="_blank" rel="noopener">
-          <div class="prow"><span class="pname">GENBA</span></div>
-          <span class="psector" data-i18n="gSec">Ingeniería industrial</span>
-          <p class="pdesc" data-i18n="gDesc">Estudios de tiempo, balanceo de línea y capacidad generados con IA desde un video.</p>
-          <span class="parrow" data-i18n="pSee">Ver plataforma →</span>
-        </a>
         <a class="pitem" href="/dojo/">
+          <span class="pthumb"><img src="/assets/casos/dojo-panel.webp" width="1400" height="736" alt="Panel de Dojo con datos de demostración" loading="lazy" decoding="async"></span>
           <div class="prow"><span class="pname">Dojo</span></div>
           <span class="psector" data-i18n="dSec">Gimnasios</span>
           <p class="pdesc" data-i18n="dDesc">Membresías, clases, accesos y pagos bajo un mismo techo.</p>
+          <span class="parrow" data-i18n="pSee">Ver plataforma →</span>
+        </a>
+        <a class="pitem" href="https://genba-box.vercel.app/" target="_blank" rel="noopener">
+          <span class="pthumb"><img src="/assets/casos/genba-estudios.webp" width="960" height="540" alt="GENBA: estudio de tiempo desde un video" loading="lazy" decoding="async"></span>
+          <div class="prow"><span class="pname">GENBA</span></div>
+          <span class="psector" data-i18n="gSec">Ingeniería industrial</span>
+          <p class="pdesc" data-i18n="gDesc">Estudios de tiempo, balanceo de línea y capacidad generados con IA desde un video.</p>
           <span class="parrow" data-i18n="pSee">Ver plataforma →</span>
         </a>
         <div class="pitem">
@@ -875,6 +896,7 @@
       s3a:"Implementación de alcance cerrado", s3e:"Workflow en producción",
       s4t:"Evolucionar", s4p:"Medimos resultados, ajustamos reglas y mantenemos el workflow útil conforme cambia el negocio.",
       s4a:"Acompañamiento mensual", s4e:"Reporte y mejoras continuas",
+      fshotOrka:"Orka · tablero de dirección con precios, márgenes y crédito", fshotKanri:"Kanri · resumen operativo del taller",
       sc1:"Documentamos cómo se mueve hoy tu operación.", sc2:"Definimos el flujo, el papel de la IA y quién aprueba.", sc3:"Workflow en producción, probado con casos reales.", sc4:"Medimos, ajustamos y lo mantenemos útil.", scLive:"En producción",
       pEyebrow:"05 — Portafolio", pH2:"Software que ya construimos y está en uso.",
       pIntro:"El mismo método, llevado a producto. Plataformas propias para sectores distintos, cada una nacida de un problema operativo real.",
@@ -966,6 +988,7 @@
       s3a:"Fixed-scope implementation", s3e:"Workflow in production",
       s4t:"Evolve", s4p:"We measure results, adjust rules and keep the workflow useful as the business changes.",
       s4a:"Monthly support", s4e:"Report and continuous improvements",
+      fshotOrka:"Orka · leadership dashboard with prices, margins and credit", fshotKanri:"Kanri · shop operations overview",
       sc1:"We document how your operation moves today.", sc2:"We define the flow, the role of AI and who approves.", sc3:"A workflow in production, tested with real cases.", sc4:"We measure, adjust and keep it useful.", scLive:"In production",
       pEyebrow:"05 — Portfolio", pH2:"Software we've already built and that's in use.",
       pIntro:"The same method, turned into product. Our own platforms for different sectors, each born from a real operational problem.",
@@ -1024,11 +1047,16 @@
     scards.forEach(function(c, i){ c.classList.toggle('on', i === n); });
     mdots.forEach(function(d, i){ d.classList.toggle('on', i === n); });
   }
-  if('IntersectionObserver' in window){
-    var cardIO = new IntersectionObserver(function(entries){
-      entries.forEach(function(en){ if(en.isIntersecting) showCard(+en.target.getAttribute('data-stage')); });
-    }, {rootMargin:'-45% 0px -45% 0px'});
-    stages.forEach(function(s){ cardIO.observe(s); });
+  var cardTick = false, curCard = 0;
+  function syncCard(){
+    cardTick = false;
+    var line = window.innerHeight * 0.55, n = 0;
+    stages.forEach(function(s, i){ if(s.getBoundingClientRect().top < line) n = i; });
+    if(n !== curCard){ curCard = n; showCard(n); }
+  }
+  if(scards.length){
+    window.addEventListener('scroll', function(){ if(!cardTick){ cardTick = true; requestAnimationFrame(syncCard); } }, {passive:true});
+    syncCard();
   }
   if(glow && !reduceMotion && 'IntersectionObserver' in window){
     var io = new IntersectionObserver(function(entries){
