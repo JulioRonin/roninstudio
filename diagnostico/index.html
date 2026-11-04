@@ -65,22 +65,22 @@
       ['En varias apps que no se hablan entre sí', 1, 'La información está repartida en herramientas que no se conectan: cada cambio se captura dos veces.'],
       ['En Excel y grupos de WhatsApp', 2, 'Tu operación vive en Excel y WhatsApp. No hay una sola versión de la verdad.'],
       ['En la cabeza de una o dos personas', 3, 'La operación depende de la memoria de una o dos personas. Si faltan, se detiene.'] ] },
-    { q: 'Si la persona clave falta un día, ¿qué pasa?', o: [
+    { s: 1, q: 'Si la persona clave falta un día, ¿qué pasa?', o: [
       ['Nada, el proceso sigue', 0],
       ['Se atrasa, pero sale', 1],
       ['Se detiene una parte', 2, 'Hay pasos que solo una persona sabe hacer. El flujo se frena cuando no está.'],
       ['Se detiene casi todo', 3, 'Tu negocio tiene un punto único de falla: una persona.'] ] },
-    { q: '¿Cuántas horas a la semana se van en capturar lo mismo en dos lugares o armar reportes a mano?', h: [1, 4, 8, 14], o: [
+    { s: 1, q: '¿Cuántas horas a la semana se van en capturar lo mismo en dos lugares o armar reportes a mano?', hr: [null, [3, 5], [6, 10], [10, null]], o: [
       ['Menos de 2', 0],
       ['De 3 a 5', 1],
-      ['De 6 a 10', 2, 'Tu equipo dedica unas 8 horas a la semana a captura doble y reportes manuales.'],
-      ['Más de 10', 3, 'Tu equipo dedica más de 10 horas a la semana a captura doble y reportes manuales.'] ] },
+      ['De 6 a 10', 2, 'Tu equipo pasa varias horas a la semana capturando lo mismo dos veces y armando reportes a mano.'],
+      ['Más de 10', 3, 'Tu equipo pasa más de un día de trabajo a la semana capturando lo mismo dos veces y armando reportes a mano.'] ] },
     { q: '¿Cómo te enteras de que algo salió mal?', o: [
       ['El sistema avisa', 0],
       ['En el reporte del día', 1],
       ['Alguien me lo dice', 2, 'Te enteras de los problemas por boca de alguien, no por el sistema. Llegan tarde y filtrados.'],
       ['Cuando el cliente reclama', 3, 'Los problemas llegan cuando el cliente ya reclamó. No hay alertas antes.'] ] },
-    { q: '¿Cuánto tardas en saber cómo va el mes: ventas, cobros, gastos?', o: [
+    { s: 1, q: '¿Cuánto tardas en saber cómo va el mes: ventas, cobros, gastos?', o: [
       ['Lo veo al momento', 0],
       ['Un día', 1],
       ['Una semana o más', 2, 'Tardas una semana en saber cómo va el mes. Decides con datos viejos.'],
@@ -105,7 +105,7 @@
   var SECTOR_Q = {
     escuelas: [
       { q: '¿Cómo cobran las colegiaturas?', o: [['En línea, desde una plataforma', 0], ['Transferencia y lo registramos a mano', 1], ['En caja y en Excel', 2, 'Las colegiaturas se registran a mano: cada pago es una captura y un posible error.'], ['Como se pueda; a veces no sabemos quién debe', 3, 'No sabes con certeza quién debe colegiatura. La cartera vencida crece sin que la veas.']] },
-      { q: '¿Qué porcentaje de familias se atrasa cada mes?', o: [['Menos de 5 %', 0], ['De 5 a 15 %', 1], ['De 15 a 30 %', 2, 'Entre 15 y 30 % de las familias se atrasa. La cobranza manual no alcanza.'], ['Más de 30 %, o no lo sé', 3, 'Más de 30 % de atraso, o no lo sabes. Es el primer flujo que hay que arreglar.']] },
+      { s: 1, q: '¿Qué porcentaje de familias se atrasa cada mes?', o: [['Menos de 5 %', 0], ['De 5 a 15 %', 1], ['De 15 a 30 %', 2, 'Entre 15 y 30 % de las familias se atrasa. La cobranza manual no alcanza.'], ['Más de 30 %, o no lo sé', 3, 'Más de 30 % de atraso, o no lo sabes. Es el primer flujo que hay que arreglar.']] },
       { q: '¿Cómo mandan circulares y avisos a los papás?', o: [['Plataforma con acuse de lectura', 0], ['Correo', 1], ['Grupos de WhatsApp', 2, 'Los avisos van por grupos de WhatsApp: no sabes quién leyó y se pierden en el ruido.'], ['Papel en la mochila', 3, 'Los avisos viajan en papel. Muchos no llegan y no hay forma de saberlo.']] },
       { q: '¿Dónde está el expediente de cada alumno?', o: [['En un sistema con acceso por rol', 0], ['Carpetas en la nube', 1], ['Excel y carpetas físicas', 2, 'Los expedientes viven en Excel y archiveros. Buscar un documento es una tarea.'], ['Depende de quién lo inscribió', 3, 'El expediente de cada alumno depende de quién lo inscribió. No hay un lugar único.']] }
     ],
@@ -117,24 +117,24 @@
     ],
     clinicas: [
       { q: '¿Dónde está el expediente de cada paciente?', o: [['Sistema digital con acceso por rol', 0], ['Archivos digitales sueltos: PDF, carpetas', 1], ['Papel, en archivero', 2, 'El expediente vive en papel. Buscarlo cuesta tiempo y cumplir la ley de datos personales es difícil.'], ['Mitad papel, mitad digital', 3, 'El expediente está partido entre papel y digital. No hay una versión completa en ningún lado.']] },
-      { q: '¿Qué porcentaje de citas no llega?', o: [['Menos de 5 %', 0], ['De 5 a 15 %', 1], ['De 15 a 30 %', 2, 'Entre 15 y 30 % de las citas no llega. Cada una es un espacio pagado sin ingreso.'], ['Más de 30 %, o no lo mido', 3, 'No mides las citas perdidas o pasan de 30 %. Es dinero que ya no se recupera.']] },
+      { s: 1, q: '¿Qué porcentaje de citas no llega?', o: [['Menos de 5 %', 0], ['De 5 a 15 %', 1], ['De 15 a 30 %', 2, 'Entre 15 y 30 % de las citas no llega. Cada una es un espacio pagado sin ingreso.'], ['Más de 30 %, o no lo mido', 3, 'No mides las citas perdidas o pasan de 30 %. Es dinero que ya no se recupera.']] },
       { q: '¿Cómo confirman las citas?', o: [['Recordatorio automático con confirmación', 0], ['Mensaje manual el día anterior', 1], ['Llamada, una por una', 2, 'Confirmar citas es una llamada por paciente: horas de recepción cada semana.'], ['No se confirman', 3, 'Las citas no se confirman. Las ausencias son inevitables.']] },
       { q: '¿Cómo manejan el consentimiento y el aviso de privacidad?', o: [['Firmado digitalmente, guardado con el expediente', 0], ['Firmado en papel y archivado', 1], ['Se les da a leer, no se guarda', 2, 'El consentimiento se da a leer pero no se guarda. Ante una queja, no hay prueba.'], ['No tenemos aviso de privacidad', 3, 'No hay aviso de privacidad. Con datos de salud es la primera obligación legal.']] }
     ],
     gimnasios: [
       { q: '¿Cómo cobran las membresías?', o: [['Cargo recurrente automático', 0], ['El socio paga en recepción cada mes', 1], ['Transferencia y lo registramos a mano', 2, 'Cada pago es una captura manual y una persecución al socio que no pagó.'], ['Como se pueda', 3, 'No hay un método de cobro. La morosidad es invisible hasta el corte.']] },
       { q: '¿Qué pasa cuando llega un socio que no ha pagado?', o: [['La puerta no abre y recibe la liga de pago', 0], ['Recepción le avisa', 1], ['Entra, y le cobramos después', 2, 'Los socios sin pagar entran igual. El cobro se vuelve una negociación.'], ['No sabemos quién debe', 3, 'No sabes quién debe en el momento en que entra. Cada visita sin pago es ingreso perdido.']] },
-      { q: '¿Qué porcentaje de socios no renueva cada mes?', o: [['Menos de 3 %', 0], ['De 3 a 6 %', 1], ['Más de 6 %', 2, 'Más de 6 % de los socios se va cada mes. Sin alertas tempranas no hay cómo retenerlos.'], ['No lo sé', 3, 'No sabes cuántos socios pierdes al mes. Es el número que más dinero mueve en un gym.']] },
+      { s: 1, q: '¿Qué porcentaje de socios no renueva cada mes?', o: [['Menos de 3 %', 0], ['De 3 a 6 %', 1], ['Más de 6 %', 2, 'Más de 6 % de los socios se va cada mes. Sin alertas tempranas no hay cómo retenerlos.'], ['No lo sé', 3, 'No sabes cuántos socios pierdes al mes. Es el número que más dinero mueve en un gym.']] },
       { q: '¿Cómo manejan el aforo en hora pico?', o: [['Lo medimos y lo mostramos a los socios', 0], ['Lo vemos en el momento', 1], ['Se llena y se quejan', 2, 'En hora pico el gym se llena y los socios se quejan. Es un problema de horario, no de espacio.'], ['No lo medimos', 3, 'No mides el aforo. No sabes cuánta capacidad pierdes en hora pico ni cuánta sobra en la tarde.']] }
     ],
     notarias: [
       { q: '¿Cómo se da seguimiento a cada trámite o escritura?', o: [['Sistema con estado por expediente', 0], ['Excel compartido', 1], ['Carpeta física y memoria del abogado', 2, 'El estado de cada trámite vive en la memoria de quien lo lleva. Nadie más puede contestar por él.'], ['Se le pregunta a quien lo lleva', 3, 'Para saber cómo va un trámite hay que preguntar. El cliente también.']] },
-      { q: '¿Cuántas llamadas al día reciben de clientes preguntando por su trámite?', o: [['Casi ninguna, los avisamos nosotros', 0], ['Unas 5', 1], ['De 5 a 15', 2, 'De 5 a 15 llamadas diarias son clientes que no tienen cómo ver su estatus.'], ['Más de 15', 3, 'Más de 15 llamadas al día preguntando por trámites: horas de recepción que un aviso automático resuelve.']] },
+      { s: 1, q: '¿Cuántas llamadas al día reciben de clientes preguntando por su trámite?', o: [['Casi ninguna, los avisamos nosotros', 0], ['Unas 5', 1], ['De 5 a 15', 2, 'De 5 a 15 llamadas diarias son clientes que no tienen cómo ver su estatus.'], ['Más de 15', 3, 'Más de 15 llamadas al día preguntando por trámites: horas de recepción que un aviso automático resuelve.']] },
       { q: '¿Cómo reciben los documentos del cliente?', o: [['Portal digital con lista de requisitos', 0], ['Por correo', 1], ['Por WhatsApp, uno por uno', 2, 'Los documentos llegan por WhatsApp uno por uno. Armar el expediente es una cacería.'], ['En persona, en papel', 3, 'Los documentos llegan en papel y en persona. Cada visita es una vuelta que el cliente no quiere dar.']] },
       { q: '¿Cómo saben qué le falta a cada expediente?', o: [['El sistema marca los requisitos', 0], ['Checklist en papel', 1], ['Lo revisa el abogado cuando le toca', 2, 'Los faltantes se descubren cuando el abogado revisa. El trámite se atrasa días.'], ['Se descubre en la firma', 3, 'Los faltantes aparecen en la firma. Es la peor hora para enterarse.']] }
     ],
     manufactura: [
-      { q: '¿Cuánto tarda una cotización?', o: [['Minutos, desde el sistema', 0], ['El mismo día', 1], ['De 2 a 3 días', 2, 'Cotizar tarda días. Algunos clientes ya compraron en otro lado.'], ['Una semana o más', 3, 'Una cotización tarda una semana. Es la venta que se pierde sin saberlo.']] },
+      { s: 1, q: '¿Cuánto tarda una cotización?', o: [['Minutos, desde el sistema', 0], ['El mismo día', 1], ['De 2 a 3 días', 2, 'Cotizar tarda días. Algunos clientes ya compraron en otro lado.'], ['Una semana o más', 3, 'Una cotización tarda una semana. Es la venta que se pierde sin saberlo.']] },
       { q: '¿Cómo se captura la producción en piso?', o: [['Terminal o tableta por estación', 0], ['Hoja de papel que se captura después', 1], ['El supervisor lo anota', 2, 'La producción se anota a mano y se captura después. El dato llega tarde y con errores.'], ['No se captura', 3, 'No hay captura en piso. No sabes cuánto produces por turno ni por qué se frena.']] },
       { q: '¿Cómo controlan el inventario de materia prima?', o: [['Sistema con mínimos y alertas', 0], ['Conteo periódico en Excel', 1], ['Lo ve el almacenista', 2, 'El inventario depende del almacenista. Los faltantes se descubren cuando paran una orden.'], ['Se compra cuando falta', 3, 'Compras cuando ya faltó. Cada paro por material es un día de producción.']] },
       { q: '¿Cómo se arman los reportes para dirección o para el cliente?', o: [['Salen del sistema', 0], ['Se arman en Excel cada semana', 1], ['Se arman a mano cuando los piden', 2, 'Los reportes se arman a mano cuando los piden: horas de alguien cada vez.'], ['No hay reportes', 3, 'No hay reportes. La dirección decide sin datos.']] }
@@ -144,11 +144,20 @@
   var state = { sector: null, i: 0, answers: [], contact: null };
   var $ = function (id) { return document.getElementById(id); };
   var step = $('step'), result = $('result'), bar = $('bar'), progress = $('progress');
+  var KEY = 'ronin-dx2', OTRO = -1;
 
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function questions() { return state.sector ? COMMON.concat(SECTOR_Q[state.sector]) : []; }
-  function save() { try { localStorage.setItem('ronin-dx', JSON.stringify({ sector: state.sector, i: state.i, answers: state.answers })); } catch (e) {} }
-  function load() { try { var s = JSON.parse(localStorage.getItem('ronin-dx') || 'null'); if (s && s.sector && SECTORS[s.sector]) { state.sector = s.sector; state.i = Math.min(Number(s.i) || 0, 12); state.answers = s.answers || []; } } catch (e) {} }
+  // Cada respuesta: { sel: [índices elegidos; -1 = Otro], otro: 'texto libre' }
+  function norm(a) {
+    if (typeof a === 'number') return { sel: [a], otro: '' };
+    if (!a || typeof a !== 'object') return { sel: [], otro: '' };
+    return { sel: Array.isArray(a.sel) ? a.sel.filter(function (n) { return typeof n === 'number'; }) : [], otro: typeof a.otro === 'string' ? a.otro : '' };
+  }
+  function valid(a) { return a.sel.length > 0 && (a.sel.indexOf(OTRO) < 0 || a.otro.trim().length > 0); }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify({ sector: state.sector, i: state.i, answers: state.answers })); } catch (e) {} }
+  function load() { try { localStorage.removeItem('ronin-dx'); var s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s && s.sector && SECTORS[s.sector]) { state.sector = s.sector; state.i = Math.min(Number(s.i) || 0, 12); state.answers = Array.isArray(s.answers) ? s.answers.map(norm) : []; } } catch (e) {} }
+  function clearSaved() { try { localStorage.removeItem(KEY); } catch (e) {} }
 
   function renderSector() {
     progress.hidden = true;
@@ -164,32 +173,53 @@
   }
 
   function renderQ() {
-    var qs = questions(); var q = qs[state.i];
+    var qs = questions(), q = qs[state.i], a = norm(state.answers[state.i]), multi = !q.s;
     progress.hidden = false; bar.style.width = Math.round((state.i / (qs.length + 1)) * 100) + '%';
     var h = '<p class="qnum">Pregunta ' + (state.i + 1) + ' de ' + qs.length + (state.i >= COMMON.length ? ' · ' + esc(SECTORS[state.sector].name) : '') + '</p>';
-    h += '<p class="qtext">' + esc(q.q) + '</p><div class="opts">';
+    h += '<p class="qtext">' + esc(q.q) + '</p><p class="qhint">' + (multi ? 'Puedes elegir más de una.' : 'Elige la que más se parezca.') + '</p><div class="opts">';
     q.o.forEach(function (o, j) {
-      var on = state.answers[state.i] === j ? ' on' : '';
-      h += '<button class="opt' + on + '" type="button" data-j="' + j + '"><span class="k">' + String.fromCharCode(65 + j) + '</span><span>' + esc(o[0]) + '</span></button>';
+      var on = a.sel.indexOf(j) > -1;
+      h += '<button class="opt' + (on ? ' on' : '') + '" type="button" data-j="' + j + '" aria-pressed="' + on + '"><span class="k">' + String.fromCharCode(65 + j) + '</span><span>' + esc(o[0]) + '</span></button>';
     });
-    h += '</div><div class="qnav"><button class="back" type="button" id="back">← Atrás</button></div>';
+    var oon = a.sel.indexOf(OTRO) > -1;
+    h += '<button class="opt' + (oon ? ' on' : '') + '" type="button" data-j="-1" aria-pressed="' + oon + '"><span class="k">' + String.fromCharCode(65 + q.o.length) + '</span><span>Otro</span></button>';
+    h += '<div class="otro" id="otroBox"' + (oon ? '' : ' hidden') + '><label for="otro">Cuéntanos cómo es en tu caso</label><textarea id="otro" rows="3" maxlength="500" placeholder="Escríbelo con tus palabras; nos ayuda a entender tu negocio.">' + esc(a.otro) + '</textarea></div>';
+    h += '</div><div class="qnav"><button class="back" type="button" id="back">← Atrás</button><button class="cta-solid" type="button" id="next">Siguiente →</button></div>';
     step.innerHTML = h;
+    var next = $('next'), box = $('otroBox'), ta = $('otro');
+    function sync() {
+      state.answers[state.i] = a; save();
+      next.disabled = !valid(a);
+      step.querySelectorAll('[data-j]').forEach(function (b) { var on = a.sel.indexOf(Number(b.getAttribute('data-j'))) > -1; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+      box.hidden = a.sel.indexOf(OTRO) < 0;
+    }
+    function advance() {
+      if (!valid(a)) return;
+      state.i += 1; save();
+      if (state.i >= qs.length) renderGate(); else renderQ();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
     step.querySelectorAll('[data-j]').forEach(function (b) {
       b.addEventListener('click', function () {
-        state.answers[state.i] = Number(b.getAttribute('data-j'));
-        state.i += 1; save();
-        if (state.i >= qs.length) renderGate(); else renderQ();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        var j = Number(b.getAttribute('data-j')), k = a.sel.indexOf(j);
+        if (multi) { if (k > -1) a.sel.splice(k, 1); else a.sel.push(j); }
+        else { a.sel = k > -1 ? [] : [j]; }
+        sync();
+        if (j === OTRO && a.sel.indexOf(OTRO) > -1) ta.focus();
+        else if (!multi && a.sel.length && j !== OTRO) setTimeout(advance, 180);
       });
     });
+    ta.addEventListener('input', function () { a.otro = ta.value; sync(); });
+    next.addEventListener('click', advance);
     $('back').addEventListener('click', function () { if (state.i === 0) { state.sector = null; renderSector(); } else { state.i -= 1; renderQ(); } });
+    sync();
   }
 
   function renderGate() {
     bar.style.width = '94%';
     step.innerHTML =
       '<p class="qnum">Último paso</p><p class="qtext">¿A dónde te mandamos el resultado?</p>' +
-      '<p class="lead" style="font-size:15px;margin-top:10px">Lo ves aquí mismo al instante y te llega por WhatsApp y correo para que lo compartas con tu socio o tu administrador.</p>' +
+      '<p class="lead" style="font-size:15px;margin-top:10px">Lo ves aquí mismo al instante, con el nombre de tu negocio, y te llega una copia por correo para compartirla con tu socio o tu administrador.</p>' +
       '<form id="gate" class="gate" novalidate>' +
       '<input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">' +
       '<div class="field"><label for="g-nombre">Nombre</label><input id="g-nombre" name="nombre" type="text" autocomplete="name" required></div>' +
@@ -211,73 +241,119 @@
       if (missing) { $('g-status').className = 'status err'; $('g-status').textContent = 'Completa los cuatro campos con un correo válido.'; return; }
       state.contact = { nombre: v('nombre'), negocio: v('negocio'), whatsapp: v('whatsapp'), email: v('email') };
       $('g-send').disabled = true; $('g-send').textContent = 'Calculando…';
-      var r = compute(); send(r); renderResult(r);
+      var r = compute(); renderResult(r); send(r);
     });
   }
 
   function compute() {
-    var qs = questions(), total = 0, max = 0, found = [], hours = 0;
+    var qs = questions(), total = 0, max = 0, found = [], hours = null;
     qs.forEach(function (q, i) {
-      var j = state.answers[i]; var o = q.o[j] || q.o[0];
-      total += o[1]; max += Math.max.apply(null, q.o.map(function (x) { return x[1]; }));
-      if (o[2]) found.push({ s: o[1] + (i >= COMMON.length ? 0.5 : 0), t: o[2] });
-      if (q.h) hours = q.h[j] || 0;
+      var a = norm(state.answers[i]);
+      var picks = a.sel.filter(function (j) { return j >= 0 && q.o[j]; });
+      var worst = null;
+      picks.forEach(function (j) { if (!worst || q.o[j][1] > worst[1]) worst = q.o[j]; });
+      if (worst) total += worst[1];
+      max += Math.max.apply(null, q.o.map(function (x) { return x[1]; }));
+      if (worst && worst[2]) found.push({ s: worst[1] + (i >= COMMON.length ? 0.5 : 0), t: worst[2] });
+      if (q.hr && picks.length) hours = q.hr[picks[0]];
     });
     found.sort(function (a, b) { return b.s - a.s; });
-    var pct = total / max;
+    var pct = max ? total / max : 0;
     var level = pct < 0.35 ? 1 : pct < 0.65 ? 2 : 3;
-    return { total: total, max: max, pct: pct, level: level, findings: found.slice(0, 3), hours: hours };
+    return { total: total, max: max, level: level, findings: found.slice(0, 3), hours: hours };
   }
 
-  var LEVELS = {
-    1: { t: 'Base sólida', d: 'Tu operación ya tiene estructura. Lo que sigue es quitar las capturas dobles que quedan y meter IA donde el flujo ya corre.' },
-    2: { t: 'Operación a medias', d: 'Hay partes que funcionan y partes que dependen de una persona o de un Excel. Conviene ordenar un flujo a la vez, empezando por el que más dinero toca.' },
-    3: { t: 'Operación en riesgo', d: 'Tu negocio funciona gracias a la memoria y el esfuerzo de pocas personas. Automatizar ahora amplificaría el desorden: primero hay que mapear y rediseñar el flujo.' }
-  };
+  // Lectura interna para Ronin (no se muestra al cliente)
+  var LEVELS = { 1: 'Base sólida', 2: 'Operación a medias', 3: 'Operación en riesgo' };
+
+  function r10(n) { return Math.round(n / 10) * 10; }
+  // Estimado prudente: rango de horas por semana y su equivalente anual con 46 semanas laborales
+  function hoursText(hr) {
+    if (!hr) return '';
+    var lo = hr[0], hi = hr[1];
+    var wk = hi ? 'entre ' + lo + ' y ' + hi + ' horas a la semana' : 'más de ' + lo + ' horas a la semana';
+    var yr = hi ? 'de ' + r10(lo * 46) + ' a ' + r10(hi * 46) + ' horas al año' : 'más de ' + r10(lo * 46) + ' horas al año';
+    return { wk: wk, yr: yr };
+  }
+  function firstName(n) { return String(n).trim().split(/\s+/)[0] || n; }
+
+  function summaryLines(r) {
+    return r.findings.map(function (f, i) { return (i + 1) + ') ' + f.t; });
+  }
+
+  function waLink(r) {
+    var sec = SECTORS[state.sector], c = state.contact;
+    var msg = 'Hola Julio, soy ' + c.nombre + ' de ' + c.negocio + ' (' + sec.name.toLowerCase() + '). Hice el diagnóstico exprés';
+    msg += r.findings.length ? ' y me salieron estos puntos:\n' + summaryLines(r).join('\n') + '\n' : '. ';
+    msg += 'Quiero la llamada de 15 minutos.';
+    return 'https://wa.me/5216565736505?text=' + encodeURIComponent(msg);
+  }
 
   function renderResult(r) {
-    var sec = SECTORS[state.sector], L = LEVELS[r.level], c = state.contact;
+    var sec = SECTORS[state.sector], c = state.contact, ht = hoursText(r.hours);
     bar.style.width = '100%';
-    $('title').textContent = c.negocio + ': ' + L.t.toLowerCase() + '.';
-    $('intro').textContent = L.d;
+    $('title').textContent = firstName(c.nombre) + ', esto encontramos en ' + c.negocio + '.';
+    $('intro').textContent = r.findings.length
+      ? 'Con lo que nos contaste, estos son los puntos donde más tiempo y dinero se le escapa a ' + c.negocio + '. Están ordenados por dónde conviene empezar.'
+      : 'Con lo que nos contaste, ' + c.negocio + ' ya tiene una base ordenada. Aun así, la llamada de 15 minutos sirve para decidir qué conviene automatizar primero.';
     step.hidden = true; result.hidden = false;
-    var h = '<span class="level l' + r.level + '"><i></i>' + esc(L.t) + ' · ' + r.total + ' de ' + r.max + ' puntos</span>';
+    var h = '';
     if (r.findings.length) {
-      h += '<h2 style="margin-top:28px;font-size:clamp(24px,3.4vw,36px)">Dónde se atora ' + esc(sec.ref) + '</h2><ol class="findings">';
+      h += '<h2 style="font-size:clamp(24px,3.4vw,36px)">Dónde se atora ' + esc(c.negocio) + '</h2><ol class="findings">';
       r.findings.forEach(function (f, i) { h += '<li><b>0' + (i + 1) + '</b><p>' + esc(f.t) + '</p></li>'; });
       h += '</ol>';
-    } else {
-      h += '<p class="lead">No encontramos puntos críticos en tus respuestas. Aun así, si quieres automatizar algo, la llamada de 15 minutos sirve para decidir por dónde.</p>';
     }
-    if (r.hours >= 4) h += '<div class="hours">Con tus respuestas, tu equipo dedica unas <strong>' + r.hours + ' horas a la semana</strong> a captura doble y reportes manuales: alrededor de <strong>' + (r.hours * 48) + ' horas al año</strong> que un flujo bien diseñado devuelve.</div>';
-    var wa = 'https://wa.me/5216565736505?text=' + encodeURIComponent('Hola Julio, hice el diagnóstico exprés para ' + c.negocio + ' (' + sec.name.toLowerCase() + '). Resultado: ' + L.t + ', ' + r.total + ' de ' + r.max + ' puntos. Quiero la llamada de 15 minutos.');
+    if (ht) h += '<div class="hours">Según tus respuestas, tu equipo dedica <strong>' + ht.wk + '</strong> a capturar la misma información dos veces y a armar reportes a mano. Si se mantiene así, son aproximadamente <strong>' + ht.yr + '</strong>. Es un estimado con lo que nos contaste; en el diagnóstico completo lo medimos junto con tu equipo.</div>';
     h += '<div class="next">' +
       '<div class="card"><em>01 · Para leer ahora</em><h3>' + esc(sec.piece.t) + '</h3><p>' + esc(sec.piece.d) + '</p><a class="cta-text" href="' + sec.piece.href + '">Verla →</a></div>' +
-      '<div class="card"><em>02 · 15 minutos</em><h3>Llamada con Julio</h3><p>Revisamos tu resultado y decidimos si vale la pena un diagnóstico completo. Sin asesoría gratis disfrazada de venta, sin presión.</p><a class="wa-btn" href="' + wa + '" target="_blank" rel="noopener">Agendar por WhatsApp</a></div>' +
+      '<div class="card"><em>02 · 15 minutos</em><h3>Llamada con Julio</h3><p>Revisamos estos puntos de ' + esc(c.negocio) + ' y decidimos si vale la pena un diagnóstico completo. Sin presión.</p><a class="wa-btn" href="' + waLink(r) + '" target="_blank" rel="noopener">Agendar por WhatsApp</a></div>' +
       '<div class="card"><em>03 · Si tiene sentido</em><h3>Diagnóstico completo</h3><p>Visitamos tu negocio, mapeamos el flujo actual y entregamos por escrito un plan priorizado con presupuesto cerrado. Es un servicio pagado que se acredita al proyecto si lo contratas en 30 días.</p><a class="cta-text" href="/#metodo">Cómo trabajamos →</a></div>' +
       '</div>' +
-      '<p class="status" id="r-status" style="margin-top:28px"></p>' +
+      '<div id="r-status-wrap" style="margin-top:28px"><p class="status" id="r-status">Enviando tu diagnóstico…</p></div>' +
       '<p class="microcopy"><button class="back" type="button" id="again" style="padding:0">Volver a empezar</button></p>';
     result.innerHTML = h;
-    $('again').addEventListener('click', function () { try { localStorage.removeItem('ronin-dx'); } catch (e) {} location.href = location.pathname; });
+    $('again').addEventListener('click', function () { clearSaved(); location.href = location.pathname; });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  function post(payload, tries) {
+    return fetch('https://formsubmit.co/ajax/project@roninstudio.com.mx', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(payload) })
+      .then(function (x) { return x.json().then(function (j) { return { ok: x.ok, j: j }; }); })
+      .then(function (res) { if (!(res.ok && (res.j.success === true || res.j.success === 'true'))) throw new Error('send'); })
+      .catch(function (e) {
+        if (tries > 1) return new Promise(function (ok) { setTimeout(ok, 3000); }).then(function () { return post(payload, tries - 1); });
+        throw e;
+      });
+  }
+
   function send(r) {
-    var qs = questions(), sec = SECTORS[state.sector], c = state.contact, L = LEVELS[r.level];
-    var answers = qs.map(function (q, i) { return (i + 1) + '. ' + q.q + ' → ' + (q.o[state.answers[i]] || q.o[0])[0]; }).join('\n');
+    var qs = questions(), sec = SECTORS[state.sector], c = state.contact, ht = hoursText(r.hours), otros = [];
+    var answers = qs.map(function (q, i) {
+      var a = norm(state.answers[i]);
+      var parts = a.sel.filter(function (j) { return j >= 0 && q.o[j]; }).map(function (j) { return q.o[j][0]; });
+      if (a.sel.indexOf(OTRO) > -1 && a.otro.trim()) { parts.push('Otro: "' + a.otro.trim() + '"'); otros.push((i + 1) + '. ' + q.q + ' → ' + a.otro.trim()); }
+      return (i + 1) + '. ' + q.q + ' → ' + (parts.join('; ') || '—');
+    }).join('\n');
+    var copy = 'Hola ' + firstName(c.nombre) + ':\n\nGracias por hacer el diagnóstico exprés de ' + c.negocio + '.' +
+      (r.findings.length ? '\n\nEstos son los puntos donde más tiempo y dinero se le escapa a tu operación:\n' + summaryLines(r).join('\n') : '') +
+      (ht ? '\n\nSegún tus respuestas, tu equipo dedica ' + ht.wk + ' a capturar información dos veces y armar reportes a mano (aproximadamente ' + ht.yr + ').' : '') +
+      '\n\nJulio César Ibarra, fundador de Ronin Studio, te escribe en menos de 24 horas hábiles para agendar una llamada de 15 minutos.\n\nRonin Studio · roninstudio.com.mx';
     var payload = {
       _subject: 'Diagnóstico exprés · ' + sec.name + ' · ' + c.negocio, _template: 'table', _captcha: 'false',
+      _autoresponse: copy,
       nombre: c.nombre, negocio: c.negocio, sector: sec.name, whatsapp: c.whatsapp, email: c.email,
-      resultado: L.t + ' (' + r.total + '/' + r.max + ')',
       hallazgos: r.findings.map(function (f) { return f.t; }).join(' | ') || '—',
-      horas_semana: r.hours || 0,
+      horas_estimadas: ht ? ht.wk + ' (' + ht.yr + ')' : '—',
+      contexto_otro: otros.join('\n') || '—',
+      lectura_interna: LEVELS[r.level] + ' (' + r.total + '/' + r.max + ')',
       respuestas: answers
     };
-    fetch('https://formsubmit.co/ajax/project@roninstudio.com.mx', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(payload) })
-      .then(function (x) { return x.json().then(function (j) { return { ok: x.ok, j: j }; }); })
-      .then(function (res) { var ok = res.ok && (res.j.success === true || res.j.success === 'true'); if (!ok) throw new Error('send'); var s = $('r-status'); if (s) s.textContent = 'Te mandamos una copia a ' + c.email + '.'; try { localStorage.removeItem('ronin-dx'); } catch (e) {} })
-      .catch(function () { var s = $('r-status'); if (s) { s.className = 'status err'; s.textContent = 'No pudimos enviarte la copia por correo. Tu resultado está aquí arriba; si quieres guardarlo, mándanos un WhatsApp.'; } });
+    post(payload, 3)
+      .then(function () { var s = $('r-status'); if (s) { s.className = 'status'; s.textContent = 'Listo. Te enviamos una copia a ' + c.email + ' y Julio te escribe en menos de 24 horas hábiles.'; } clearSaved(); })
+      .catch(function () {
+        var w = $('r-status-wrap'); if (!w) return;
+        w.innerHTML = '<p class="status err" id="r-status">Tu resultado está aquí, pero no pudimos enviarlo por correo en este momento. Mándalo por WhatsApp con un clic y Julio lo revisa hoy.</p><a class="wa-btn" style="margin-top:14px" href="' + waLink(r) + '" target="_blank" rel="noopener">Enviar mi diagnóstico por WhatsApp</a>';
+      });
   }
 
   // arranque: ?sector= en la liga preselecciona el giro

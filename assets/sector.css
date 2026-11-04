@@ -191,3 +191,11 @@ h3{font-size:19px;line-height:1.15;letter-spacing:-.01em}
 .next .card h3{font-size:18px}
 .next .card p{margin:0;font-size:14.5px;line-height:1.55;color:var(--mist);flex:1}
 .next .card a{align-self:flex-start}
+.qhint{margin:8px 0 0;font-size:14px;color:var(--mist)}
+.otro{display:flex;flex-direction:column;gap:7px;margin-top:4px}
+.otro[hidden]{display:none}
+.otro label{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--mist)}
+.otro textarea{width:100%;font:inherit;font-size:16px;line-height:1.5;color:var(--ink);background:var(--panel2);border:1px solid var(--border);border-radius:4px;padding:12px 13px;resize:vertical;min-height:84px}
+.otro textarea:focus{outline:none;border-color:var(--oxido);box-shadow:0 0 0 3px rgba(176,81,57,.22)}
+.qnav .cta-solid{border:none;cursor:pointer;font:inherit}
+.qnav .cta-solid:disabled{opacity:.4;cursor:not-allowed}
