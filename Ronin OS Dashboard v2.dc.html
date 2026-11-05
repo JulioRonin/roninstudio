@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,300..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#07090C;color:#EEEBE4;font-family:'Archivo',sans-serif;font-stretch:112%;-webkit-font-smoothing:antialiased}
+a{color:#EEEBE4;text-decoration:underline;text-decoration-color:#B05139}
+a:hover{color:#F7F5F0}
+*{box-sizing:border-box}
+button{font-family:inherit;font-stretch:inherit}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes pulseOx{0%{box-shadow:0 0 0 0 rgba(176,81,57,.7),0 0 18px rgba(176,81,57,.6)}70%{box-shadow:0 0 0 12px rgba(176,81,57,0),0 0 18px rgba(176,81,57,.6)}100%{box-shadow:0 0 0 0 rgba(176,81,57,0),0 0 18px rgba(176,81,57,.6)}}
+@keyframes pulsePa{0%{box-shadow:0 0 0 0 rgba(238,235,228,.5)}70%{box-shadow:0 0 0 14px rgba(238,235,228,0)}100%{box-shadow:0 0 0 0 rgba(238,235,228,0)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+@keyframes sweep{from{transform:translateX(-320px)}to{transform:translateX(1500px)}}
+@keyframes draw{from{stroke-dashoffset:140}to{stroke-dashoffset:0}}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-30px) scale(1.12)}}
+@keyframes shine{from{transform:translateX(-120%) skewX(-20deg)}to{transform:translateX(320%) skewX(-20deg)}}
+</style>
+</helmet>
+<div style="width:1440px;margin:0 auto;background:#0C0F14;min-height:100vh;position:relative;overflow:hidden;isolation:isolate">
+<div style="position:absolute;z-index:-1;left:260px;top:40px;width:620px;height:420px;border-radius:50%;background:radial-gradient(closest-side,rgba(176,81,57,.42),rgba(176,81,57,0));filter:blur(30px);animation:drift 14s ease-in-out infinite;pointer-events:none"></div>
+<div style="position:absolute;z-index:-1;right:80px;top:120px;width:520px;height:360px;border-radius:50%;background:radial-gradient(closest-side,rgba(238,235,228,.10),rgba(238,235,228,0));filter:blur(30px);animation:drift 18s ease-in-out infinite reverse;pointer-events:none"></div>
+<div style="position:absolute;z-index:-1;left:-120px;top:980px;width:700px;height:480px;border-radius:50%;background:radial-gradient(closest-side,rgba(176,81,57,.22),rgba(176,81,57,0));filter:blur(40px);animation:drift 20s ease-in-out infinite;pointer-events:none"></div>
+<div style="position:absolute;z-index:-1;right:-100px;top:1100px;width:620px;height:420px;border-radius:50%;background:radial-gradient(closest-side,rgba(76,129,65,.18),rgba(76,129,65,0));filter:blur(40px);animation:drift 16s ease-in-out infinite reverse;pointer-events:none"></div>
+
+<sc-if value="{{ demo }}" hint-placeholder-val="{{ true }}">
+<div style="height:26px;display:flex;align-items:center;justify-content:center;gap:10px;border-bottom:1px solid #252A31;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.16em;color:#A9A6A0;background:#101318">
+<span style="width:6px;height:6px;border-radius:50%;background:#B05139"></span>MODO DEMO · DATOS DE EJEMPLO
+</div>
+</sc-if>
+
+<header style="display:flex;align-items:center;gap:14px;padding:22px 32px 0">
+<div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+{{ logo }}
+<div style="display:flex;align-items:baseline;gap:6px"><span style="font-weight:900;font-size:17px;letter-spacing:-0.02em">RONIN</span><span style="font-weight:300;font-size:17px">OS</span></div>
+</div>
+<div style="display:flex;align-items:center;gap:12px;height:48px;padding:0 14px 0 6px;flex-shrink:0;border-radius:999px;background:#13171D;border:1px solid #252A31">
+<span style="width:36px;height:36px;border-radius:50%;background:#1B2027;display:flex;align-items:center;justify-content:center"><span style="width:12px;height:12px;border:1.5px solid #EEEBE4;border-radius:50%"></span></span>
+<span style="font-size:13px;color:#7C8088;white-space:nowrap">Buscar</span>
+<span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;color:#7C8088;padding:4px 8px;border:1px solid #252A31;border-radius:999px">CTRL K</span>
+</div>
+<nav style="display:flex;gap:4px;flex:1;justify-content:center;min-width:0">
+<sc-for list="{{ nav }}" as="n" hint-placeholder-count="9">
+<button style="height:44px;padding:0 12px;border-radius:999px;border:1px solid {{ n.border }};background:{{ n.bg }};color:{{ n.color }};font-size:13px;font-weight:{{ n.weight }};cursor:pointer;white-space:nowrap" style-hover="border-color:#3A4048">{{ n.label }}</button>
+</sc-for>
+</nav>
+<button onClick="{{ toggleTray }}" style="position:relative;width:48px;height:48px;flex-shrink:0;border-radius:50%;background:#13171D;border:1px solid #252A31;cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="border-color:#3A4048">
+<span style="width:14px;height:15px;border:1.5px solid #EEEBE4;border-radius:7px 7px 2px 2px"></span>
+<span style="position:absolute;top:-3px;right:-3px;min-width:20px;height:20px;padding:0 5px;border-radius:999px;background:#B05139;color:#EEEBE4;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;display:flex;align-items:center;justify-content:center;border:2px solid #0C0F14;animation:pulseOx 2.2s infinite">{{ trayCount }}</span>
+</button>
+<div style="width:48px;height:48px;flex-shrink:0;border-radius:50%;background:#EEEBE4;color:#0C0F14;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px">JC</div>
+</header>
+
+<section style="display:grid;grid-template-columns:268px 1fr;gap:28px;padding:30px 32px 0">
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px) saturate(140%);-webkit-backdrop-filter:blur(22px) saturate(140%);border:1px solid rgba(238,235,228,0.09);box-shadow:inset 0 1px 0 rgba(238,235,228,0.08);border-radius:28px;padding:22px;animation:rise .7s cubic-bezier(.2,.7,.2,1) both;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088"><span style="width:3px;height:12px;background:#B05139;transform:skewY(-14deg)"></span>JUEVES 5 NOV 2026</div>
+<div style="display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#A9A6A0"><span style="width:7px;height:7px;border-radius:50%;background:#4C8141;box-shadow:0 0 10px #4C8141;animation:blink 1.8s ease-in-out infinite"></span>13 AGENTES EN LÍNEA</div>
+<div style="font-weight:300;font-size:15px;color:#A9A6A0">Buenos días,</div>
+<div style="font-weight:900;font-size:30px;letter-spacing:-0.02em;line-height:1;margin-top:-6px">JULIO</div>
+<div style="display:flex;flex-direction:column;gap:6px;margin-top:8px">
+<div style="display:flex;justify-content:space-between;align-items:center;background:#1B2027;border-radius:16px;padding:10px 14px">
+<div><div style="font-size:11px;color:#7C8088">Propuestas de IA</div><div style="font-size:14px">{{ trayCount }} por aprobar</div></div>
+<button onClick="{{ toggleTray }}" style="background:none;border:none;color:#EEEBE4;font-size:16px;cursor:pointer">↗</button>
+</div>
+<div style="display:flex;justify-content:space-between;align-items:center;background:#1B2027;border-radius:16px;padding:10px 14px">
+<div><div style="font-size:11px;color:#7C8088">Siguiente</div><div style="font-size:14px">Llamada · 11:30</div></div>
+<span style="font-size:16px">↗</span>
+</div>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:22px">
+<div style="display:flex;align-items:flex-end;gap:10px;height:156px">
+<sc-for list="{{ kpis }}" as="k" hint-placeholder-count="6">
+<div style="flex:{{ k.flex }};height:{{ k.h }}px;background:{{ k.bg }};backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%);border:1px solid {{ k.edge }};box-shadow:{{ k.shadow }};border-radius:{{ k.r }}px;padding:16px 18px;display:flex;flex-direction:column;justify-content:space-between;position:relative;min-width:0;overflow:hidden;animation:rise .7s cubic-bezier(.2,.7,.2,1) both;animation-delay:{{ k.delay }};transition:transform .3s" style-hover="transform:translateY(-4px)">
+<div style="position:absolute;inset:0;border-radius:inherit;background:linear-gradient(180deg,rgba(255,255,255,0.10),rgba(255,255,255,0) 45%);pointer-events:none"></div>
+<div style="position:absolute;top:0;bottom:0;left:0;width:40%;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,0.10),rgba(255,255,255,0));animation:shine 6s ease-in-out infinite;animation-delay:{{ k.shineDelay }};pointer-events:none"></div>
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:{{ k.label }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ k.name }}</div>
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:8px">
+<div>
+<div style="font-weight:900;font-size:{{ k.size }}px;letter-spacing:-0.02em;line-height:1">{{ k.value }}<span style="font-weight:300;font-size:13px;margin-left:4px">{{ k.unit }}</span></div>
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.08em;color:{{ k.label }};margin-top:6px">{{ k.delta }}</div>
+</div>
+<sc-if value="{{ k.arrow }}" hint-placeholder-val="{{ false }}">
+<span style="width:52px;height:52px;border-radius:50%;background:#0C0F14;color:#EEEBE4;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;animation:pulsePa 2.4s infinite">↗</span>
+</sc-if>
+<sc-if value="{{ k.spark }}" hint-placeholder-val="{{ true }}">
+<svg width="60" height="24" viewBox="-2 -2 70 26" style="flex-shrink:0;overflow:visible;filter:drop-shadow(0 0 4px {{ k.stroke }})"><polyline points="{{ k.points }}" fill="none" stroke="{{ k.stroke }}" stroke-width="1.6" stroke-dasharray="140" style="animation:draw 1.6s ease-out both;animation-delay:{{ k.delay }}"></polyline><circle cx="66" cy="{{ k.endY }}" r="2.6" fill="{{ k.stroke }}" style="animation:blink 1.6s infinite"></circle></svg>
+</sc-if>
+</div>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;align-items:center;gap:8px">
+<span style="width:48px;height:48px;border-radius:50%;background:#13171D;border:1px solid #252A31;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:14px">≡</span>
+<sc-for list="{{ filters }}" as="f" hint-placeholder-count="6">
+<button onClick="{{ f.onClick }}" style="height:44px;padding:0 18px;border-radius:999px;border:1px solid {{ f.border }};background:{{ f.bg }};color:{{ f.color }};font-size:13px;cursor:pointer" style-hover="border-color:#3A4048">{{ f.label }}</button>
+</sc-for>
+<span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088">FILTRA TAREAS Y LÍNEA DE TIEMPO</span>
+</div>
+</div>
+</section>
+
+<section style="margin-top:34px;border-top:1px solid #252A31;position:relative">
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));position:relative">
+<div style="position:absolute;left:0;right:0;top:34px;height:4px;overflow:hidden;pointer-events:none;z-index:0"><div style="width:280px;height:4px;border-radius:2px;background:linear-gradient(90deg,rgba(176,81,57,0),#B05139,rgba(238,235,228,.9),rgba(176,81,57,0));filter:blur(1px);box-shadow:0 0 14px #B05139;animation:sweep 5s cubic-bezier(.5,0,.5,1) infinite"></div></div>
+<sc-for list="{{ stages }}" as="s" hint-placeholder-count="4">
+<div style="border-right:1px solid #1A1E24;padding:0 0 18px;position:relative;min-height:330px">
+<div style="height:72px;display:flex;align-items:center;padding-left:32px;position:relative">
+<div style="position:absolute;left:0;right:0;top:36px;height:1px;background:#3A4048"></div>
+<div style="position:relative;z-index:1;width:52px;height:52px;border-radius:50%;background:{{ s.nodeBg }};display:flex;align-items:center;justify-content:center;border:1px solid {{ s.nodeBorder }};box-shadow:{{ s.glow }};animation:{{ s.anim }}">{{ s.glyph }}</div>
+<div style="position:relative;margin-left:12px;background:#0C0F14;padding:0 10px">
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.16em;color:#7C8088">{{ s.num }} / 04</div>
+<div style="font-weight:900;font-size:15px;letter-spacing:-0.01em">{{ s.name }}</div>
+</div>
+<div style="position:relative;margin-left:auto;margin-right:{{ s.countMr }}px;background:#0C0F14;padding:0 8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#A9A6A0">{{ s.count }}</div>
+</div>
+<div style="position:relative;margin-left:57px;border-left:1px solid #3A4048;padding:14px 20px 4px 0;display:flex;flex-direction:column;gap:14px">
+<sc-for list="{{ s.projects }}" as="p" hint-placeholder-count="2">
+<div style="display:flex;align-items:center;gap:0;position:relative;animation:rise .6s cubic-bezier(.2,.7,.2,1) both;animation-delay:{{ p.delay }}">
+<div style="width:22px;height:1px;background:#3A4048"></div>
+<div style="display:flex;align-items:center;gap:10px;background:{{ p.bg }};backdrop-filter:blur(14px);border:1px solid {{ p.border }};box-shadow:{{ p.glow }};border-radius:999px;padding:4px 16px 4px 4px;position:relative;cursor:pointer;flex:1;min-width:0;transition:transform .25s,border-color .25s" style-hover="border-color:#A9A6A0;transform:translateX(4px)">
+<span style="width:40px;height:40px;border-radius:50%;background:{{ p.dot }};color:{{ p.dotText }};display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;flex-shrink:0;box-shadow:{{ p.dotGlow }};animation:{{ p.anim }}">{{ p.code }}</span>
+<div style="min-width:0">
+<div style="font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.name }}</div>
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.08em;color:{{ p.metaColor }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.meta }}</div>
+</div>
+<sc-if value="{{ p.badge }}" hint-placeholder-val="{{ false }}">
+<span style="position:absolute;top:-6px;left:30px;min-width:18px;height:18px;border-radius:999px;background:#EEEBE4;color:#0C0F14;font-family:'JetBrains Mono',monospace;font-size:10px;display:flex;align-items:center;justify-content:center;padding:0 4px">{{ p.badge }}</span>
+</sc-if>
+</div>
+</div>
+</sc-for>
+<sc-if value="{{ s.empty }}" hint-placeholder-val="{{ false }}">
+<div style="font-size:13px;color:#7C8088;padding:8px 0 0 22px;max-width:240px;text-wrap:pretty">{{ s.emptyText }}</div>
+</sc-if>
+</div>
+</div>
+</sc-for>
+<button style="position:absolute;right:28px;top:10px;width:52px;height:52px;border-radius:50%;background:#EEEBE4;color:#0C0F14;border:none;font-size:22px;cursor:pointer;box-shadow:0 0 24px rgba(238,235,228,.35);z-index:2" title="Nuevo proyecto">+</button>
+</div>
+
+<div style="display:flex;align-items:center;gap:10px;padding:8px 32px 0">
+<button style="width:48px;height:48px;border-radius:50%;background:#13171D;border:1px solid #252A31;color:#EEEBE4;font-size:18px;cursor:pointer">+</button>
+<button style="width:48px;height:48px;border-radius:50%;background:#13171D;border:1px solid #252A31;color:#EEEBE4;font-size:18px;cursor:pointer">−</button>
+<div style="flex:1;height:56px;border-radius:999px;background:rgba(22,26,33,0.55);backdrop-filter:blur(20px);border:1px solid rgba(238,235,228,0.09);display:flex;align-items:stretch;padding:0 18px;position:relative;overflow:hidden">
+<sc-for list="{{ weeks }}" as="w" hint-placeholder-count="26">
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;position:relative;background:{{ w.bg }};margin:{{ w.margin }};border-radius:{{ w.radius }};box-shadow:{{ w.glow }}">
+<span style="width:5px;height:5px;border-radius:50%;background:{{ w.c1 }};animation:{{ w.anim }}"></span>
+<span style="width:5px;height:5px;border-radius:50%;background:{{ w.c2 }}"></span>
+<span style="width:5px;height:5px;border-radius:50%;background:{{ w.c3 }}"></span>
+<sc-if value="{{ w.label }}" hint-placeholder-val="{{ false }}">
+<span style="position:absolute;bottom:4px;left:0;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.1em;color:{{ w.labelColor }}">{{ w.label }}</span>
+</sc-if>
+</div>
+</sc-for>
+</div>
+</div>
+</section>
+
+<section style="display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px;padding:28px 32px 40px">
+
+<div style="grid-column:span 6;background:rgba(22,26,33,0.5);backdrop-filter:blur(22px) saturate(140%);-webkit-backdrop-filter:blur(22px) saturate(140%);border:1px solid rgba(238,235,228,0.09);box-shadow:inset 0 1px 0 rgba(238,235,228,0.08);border-radius:28px;padding:24px;animation:rise .8s cubic-bezier(.2,.7,.2,1) both;animation-delay:.35s 24px 14px">
+<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px">
+<div>
+<div style="display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088"><span style="width:3px;height:12px;background:#B05139;transform:skewY(-14deg)"></span>LO DE HOY · {{ taskCount }} TAREAS</div>
+<div style="font-weight:900;font-size:24px;letter-spacing:-0.02em;margin-top:6px">HOY · TAREAS Y SEGUIMIENTOS</div>
+</div>
+<span style="width:48px;height:48px;border-radius:50%;background:#EEEBE4;color:#0C0F14;display:flex;align-items:center;justify-content:center;font-size:18px">↗</span>
+</div>
+<sc-if value="{{ showTasks }}" hint-placeholder-val="{{ true }}">
+<sc-for list="{{ groups }}" as="g" hint-placeholder-count="3">
+<div style="border-top:1px solid #252A31;padding:12px 0 6px">
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088;margin-bottom:6px">{{ g.client }}</div>
+<sc-for list="{{ g.tasks }}" as="t" hint-placeholder-count="2">
+<div style="display:grid;grid-template-columns:56px 1fr auto;gap:14px;align-items:center;padding:8px 0">
+<div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:{{ t.timeColor }}">{{ t.time }}</div>
+<div style="min-width:0">
+<div style="display:flex;align-items:center;gap:8px"><span style="width:7px;height:7px;border-radius:50%;background:{{ t.dot }};flex-shrink:0;animation:{{ t.anim }}"></span><span style="font-size:14px">{{ t.title }}</span></div>
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;color:#7C8088;margin:4px 0 0 15px">{{ t.meta }}</div>
+<sc-if value="{{ t.ai }}" hint-placeholder-val="{{ false }}">
+<div style="margin:8px 0 0 15px;background:#101318;border:1px dashed #3A4048;border-radius:14px;padding:8px 12px;font-size:13px;color:#A9A6A0;text-wrap:pretty">{{ t.ai }}</div>
+</sc-if>
+</div>
+<sc-if value="{{ t.ai }}" hint-placeholder-val="{{ false }}">
+<button onClick="{{ t.onApprove }}" style="height:36px;padding:0 14px;border-radius:999px;background:#B05139;color:#EEEBE4;border:none;font-size:12px;font-weight:600;cursor:pointer;align-self:start;box-shadow:0 0 18px rgba(176,81,57,.45)" style-hover="background:#9A4530">Aprobar y enviar</button>
+</sc-if>
+</div>
+</sc-for>
+</div>
+</sc-for>
+</sc-if>
+<sc-if value="{{ tasksEmpty }}" hint-placeholder-val="{{ false }}">
+<div style="border-top:1px solid #252A31;padding:22px 0 12px;font-size:14px;color:#7C8088">{{ tasksEmptyText }}</div>
+</sc-if>
+</div>
+
+<div style="grid-column:span 3;background:rgba(22,26,33,0.5);backdrop-filter:blur(22px) saturate(140%);-webkit-backdrop-filter:blur(22px) saturate(140%);border:1px solid rgba(238,235,228,0.09);box-shadow:inset 0 1px 0 rgba(238,235,228,0.08);border-radius:28px;padding:24px;animation:rise .8s cubic-bezier(.2,.7,.2,1) both;animation-delay:.35s;display:flex;flex-direction:column">
+<div style="display:flex;align-items:flex-start;justify-content:space-between">
+<div style="font-weight:900;font-size:24px;letter-spacing:-0.02em">COBRANZA</div>
+<span style="width:48px;height:48px;border-radius:50%;background:#1B2027;display:flex;align-items:center;justify-content:center;font-size:18px">↗</span>
+</div>
+<div style="display:flex;align-items:baseline;gap:6px;margin:14px 0 4px"><span style="font-weight:300;font-size:40px;letter-spacing:-0.02em">$55,500</span><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#7C8088">MXN POR COBRAR</span></div>
+<div style="display:flex;height:4px;border-radius:2px;overflow:hidden;gap:2px;margin-bottom:10px"><span style="flex:25;background:#B05139"></span><span style="flex:30.5;background:#5B6068"></span><span style="flex:20;background:#4C8141"></span></div>
+<sc-if value="{{ showData }}" hint-placeholder-val="{{ true }}">
+<sc-for list="{{ invoices }}" as="i" hint-placeholder-count="4">
+<div style="border-top:1px solid #252A31;padding:12px 0;display:flex;flex-direction:column;gap:6px">
+<div style="display:flex;justify-content:space-between;gap:8px"><span style="font-size:13px">{{ i.client }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px">{{ i.amount }}</span></div>
+<div style="display:flex;justify-content:space-between;align-items:center">
+<span style="display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#A9A6A0"><span style="width:6px;height:6px;border-radius:50%;background:{{ i.dot }};box-shadow:0 0 8px {{ i.dot }}"></span>{{ i.status }}</span>
+<span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;color:#7C8088">{{ i.id }}</span>
+</div>
+<sc-if value="{{ i.reminder }}" hint-placeholder-val="{{ false }}">
+<button onClick="{{ toggleTray }}" style="align-self:flex-start;height:32px;padding:0 12px;border-radius:999px;background:transparent;border:1px solid #B05139;color:#EEEBE4;font-size:12px;cursor:pointer">Recordatorio listo · revisar</button>
+</sc-if>
+</div>
+</sc-for>
+</sc-if>
+<sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}"><div style="font-size:14px;color:#7C8088;padding-top:12px">Las facturas aparecen aquí cuando un hito se acepta.</div></sc-if>
+</div>
+
+<div style="grid-column:span 3;background:rgba(22,26,33,0.5);backdrop-filter:blur(22px) saturate(140%);-webkit-backdrop-filter:blur(22px) saturate(140%);border:1px solid rgba(238,235,228,0.09);box-shadow:inset 0 1px 0 rgba(238,235,228,0.08);border-radius:28px;padding:24px;animation:rise .8s cubic-bezier(.2,.7,.2,1) both;animation-delay:.35s;display:flex;flex-direction:column">
+<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px">
+<div style="font-weight:900;font-size:24px;letter-spacing:-0.02em">EMBUDO</div>
+<span style="width:48px;height:48px;border-radius:50%;background:#1B2027;display:flex;align-items:center;justify-content:center;font-size:18px">↗</span>
+</div>
+<sc-for list="{{ funnel }}" as="f" hint-placeholder-count="6">
+<div style="display:grid;grid-template-columns:92px 1fr 28px;align-items:center;gap:10px;padding:7px 0">
+<span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#A9A6A0">{{ f.label }}</span>
+<span style="height:22px;border-radius:999px;background:#101318;overflow:hidden;display:block"><span style="display:block;height:100%;width:{{ f.w }}%;background:{{ f.color }};border-radius:999px;box-shadow:{{ f.glow }}"></span></span>
+<span style="font-family:'JetBrains Mono',monospace;font-size:13px;text-align:right">{{ f.n }}</span>
+</div>
+</sc-for>
+<div style="margin-top:auto;border-top:1px solid #252A31;padding-top:12px;display:flex;justify-content:space-between;align-items:baseline">
+<span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#7C8088">PERDIDOS · {{ lost }}</span>
+<span style="font-size:13px;color:#A9A6A0">Objeción principal: <span style="color:#EEEBE4">{{ objection }}</span></span>
+</div>
+</div>
+
+<div style="grid-column:span 7;background:rgba(22,26,33,0.5);backdrop-filter:blur(22px) saturate(140%);-webkit-backdrop-filter:blur(22px) saturate(140%);border:1px solid rgba(238,235,228,0.09);box-shadow:inset 0 1px 0 rgba(238,235,228,0.08);border-radius:28px;padding:24px;animation:rise .8s cubic-bezier(.2,.7,.2,1) both;animation-delay:.35s">
+<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px">
+<div>
+<div style="font-weight:900;font-size:24px;letter-spacing:-0.02em">CONTENIDO DE LA SEMANA</div>
+<div style="font-weight:300;font-size:14px;color:#A9A6A0;margin-top:2px">2 al 8 de noviembre · 5 piezas planeadas</div>
+</div>
+<span style="width:48px;height:48px;border-radius:50%;background:#1B2027;display:flex;align-items:center;justify-content:center;font-size:18px">↗</span>
+</div>
+<div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px">
+<sc-for list="{{ content }}" as="c" hint-placeholder-count="5">
+<div style="background:rgba(12,15,20,0.45);border:1px solid {{ c.border }};box-shadow:{{ c.glow }};border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:10px;min-height:170px">
+<div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#7C8088"><span>{{ c.day }}</span><span>{{ c.channel }}</span></div>
+<div style="font-size:13px;line-height:1.35;text-wrap:pretty;flex:1">{{ c.hook }}</div>
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;color:#7C8088">{{ c.type }}</div>
+<span style="display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#EEEBE4"><span style="width:6px;height:6px;border-radius:50%;background:{{ c.dot }};box-shadow:0 0 8px {{ c.dot }}"></span>{{ c.status }}</span>
+<sc-if value="{{ c.metrics }}" hint-placeholder-val="{{ false }}"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.08em;color:#A9A6A0;border-top:1px solid #252A31;padding-top:8px">{{ c.metrics }}</div></sc-if>
+</div>
+</sc-for>
+</div>
+</div>
+
+<div style="grid-column:span 5;background:rgba(238,235,228,0.92);backdrop-filter:blur(20px);color:#0C0F14;border-radius:28px;padding:24px;animation:rise .8s cubic-bezier(.2,.7,.2,1) both;animation-delay:.5s;box-shadow:0 0 60px rgba(238,235,228,0.08)">
+<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">
+<div>
+<div style="display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#5B6068"><span style="width:3px;height:12px;background:#B05139;transform:skewY(-14deg)"></span>BORRADOR DE IA · INVESTIGADOR · SEMANA 45</div>
+<div style="font-weight:900;font-size:24px;letter-spacing:-0.02em;margin-top:6px">INFORME DEL INVESTIGADOR</div>
+</div>
+<span style="width:48px;height:48px;border-radius:50%;background:#0C0F14;color:#EEEBE4;display:flex;align-items:center;justify-content:center;font-size:18px">↗</span>
+</div>
+<sc-for list="{{ research }}" as="r" hint-placeholder-count="3">
+<div style="display:grid;grid-template-columns:28px 1fr auto;gap:12px;align-items:start;border-top:1px solid #D6D2C9;padding:14px 0">
+<span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#5B6068;padding-top:2px">{{ r.n }}</span>
+<div>
+<div style="font-size:14px;line-height:1.4;text-wrap:pretty">{{ r.text }}</div>
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;color:#5B6068;margin-top:4px">{{ r.src }}</div>
+</div>
+<button onClick="{{ r.onClick }}" style="height:34px;padding:0 14px;border-radius:999px;background:{{ r.bg }};color:{{ r.color }};border:1px solid {{ r.border }};font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">{{ r.label }}</button>
+</div>
+</sc-for>
+</div>
+</section>
+
+<sc-if value="{{ trayOpen }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ toggleTray }}" style="position:absolute;inset:0;background:rgba(7,9,12,0.6)"></div>
+<aside style="position:absolute;top:16px;right:16px;bottom:16px;width:440px;max-height:980px;background:rgba(22,26,33,0.5);backdrop-filter:blur(22px) saturate(140%);-webkit-backdrop-filter:blur(22px) saturate(140%);border:1px solid rgba(238,235,228,0.09);box-shadow:inset 0 1px 0 rgba(238,235,228,0.08);border-radius:28px;padding:24px;animation:rise .8s cubic-bezier(.2,.7,.2,1) both;animation-delay:.35s;display:flex;flex-direction:column;gap:14px;overflow:auto">
+<div style="display:flex;justify-content:space-between;align-items:flex-start">
+<div>
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088">A APROBAR · E EDITAR · D DESCARTAR</div>
+<div style="font-weight:900;font-size:24px;letter-spacing:-0.02em;margin-top:6px">BANDEJA DE APROBACIÓN</div>
+<div style="font-weight:300;font-size:14px;color:#A9A6A0">{{ trayCount }} propuestas de hoy</div>
+</div>
+<button onClick="{{ toggleTray }}" style="width:44px;height:44px;border-radius:50%;background:#EEEBE4;color:#0C0F14;border:none;font-size:16px;cursor:pointer">✕</button>
+</div>
+<sc-for list="{{ tray }}" as="p" hint-placeholder-count="4">
+<div style="background:#101318;border:1px solid {{ p.border }};border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#7C8088"><span>BORRADOR DE IA · {{ p.agent }} · {{ p.model }}</span><span>{{ p.kind }}</span></div>
+<div style="font-size:14px;font-weight:600">{{ p.title }}</div>
+<div style="font-size:13px;color:#A9A6A0;line-height:1.45;text-wrap:pretty">{{ p.body }}</div>
+<div style="display:flex;gap:6px">
+<button onClick="{{ p.onApprove }}" style="height:36px;padding:0 16px;border-radius:999px;background:#B05139;color:#EEEBE4;border:none;font-size:12px;font-weight:600;cursor:pointer" style-hover="background:#9A4530">Aprobar</button>
+<button onClick="{{ p.onFocus }}" style="height:36px;padding:0 16px;border-radius:999px;background:transparent;color:#EEEBE4;border:1px solid #3A4048;font-size:12px;cursor:pointer">Editar</button>
+<button onClick="{{ p.onDiscard }}" style="height:36px;padding:0 16px;border-radius:999px;background:transparent;color:#A9A6A0;border:none;font-size:12px;cursor:pointer" style-hover="color:#EEEBE4">Descartar</button>
+</div>
+</div>
+</sc-for>
+<sc-if value="{{ trayEmpty }}" hint-placeholder-val="{{ false }}"><div style="font-size:14px;color:#7C8088;padding:20px 0">Nada por aprobar. Los agentes proponen aquí lo de hoy.</div></sc-if>
+</aside>
+</sc-if>
+
+<sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;left:24px;bottom:24px;background:#EEEBE4;color:#0C0F14;border-radius:999px;padding:12px 20px;display:flex;align-items:center;gap:10px;font-size:13px">
+<span style="width:7px;height:7px;border-radius:50%;background:#4C8141"></span>{{ toast }}
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;demo&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Estado&quot;},&quot;emptyState&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Estado&quot;}}">
+const C={tinta:'#0C0F14',panel:'#13171D',p2:'#101318',borde:'#252A31',papel:'#EEEBE4',niebla:'#A9A6A0',tenue:'#7C8088',acero:'#5B6068',oxido:'#B05139',olivo:'#4C8141',ambar:'#C98A3C'};
+const R_PATH='M0 0H122C170 0 198 28 198 66C198 98 180 120 152 128L200 220H128L88 134H64V220H0Z M64 50H116C131 50 138 57 138 67C138 78 131 85 116 85H64Z';
+let uid=0;
+function rGlyph(active,size,base){
+  const h=React.createElement,id='rb'+(uid++),offs=[-12,-4,4,12];
+  const bands=offs.map((o,i)=>{const y0=i*55,y1=y0+55;
+    return h('g',{key:i,transform:`translate(${o} 0)`},
+      h('clipPath',{id:id+i},h('polygon',{points:`-40,${y0+12} 240,${y0-12} 240,${y1-12} -40,${y1+12}`})),
+      h('path',{d:R_PATH,fill:i===active?C.oxido:base,fillRule:'evenodd',clipPath:`url(#${id+i})`}));});
+  return h('svg',{width:size,height:size*220/228,viewBox:'-14 0 228 220'},bands);
+}
+const TASKS=[
+ {id:1,client:'NEGOCIO DEMO 2 · RESTAURANTE CON SUCURSALES',time:'09:00',title:'Recordatorio de factura F-0112',origin:'Factura',channel:'WHATSAPP',overdue:true,ai:'Hola, te comparto el recordatorio de la factura F-0112 por $25,000.00 MXN, vencida el 2 de noviembre. ¿Te ayudo con el complemento de pago?'},
+ {id:2,client:'NEGOCIO DEMO 4 · CLÍNICA',time:'10:00',title:'Hito 2 atrasado · Mapa de flujo',origin:'Hito',channel:'INTERNO',overdue:true},
+ {id:3,client:'NEGOCIO DEMO 1 · ESCUELA PRIVADA',time:'11:30',title:'Llamada de 15 minutos',origin:'Lead',channel:'LLAMADA'},
+ {id:4,client:'NEGOCIO DEMO 1 · ESCUELA PRIVADA',time:'13:00',title:'Confirmar visita de diagnóstico',origin:'Llamada',channel:'WHATSAPP',ai:'Confirmo la visita del martes 10 a las 9:00. Llevamos la guía de escuelas; calcula una hora y media con dirección y control escolar.'},
+ {id:5,client:'NEGOCIO DEMO 5 · GIMNASIO',time:'17:30',title:'Reporte mensual de acompañamiento',origin:'Acompañamiento',channel:'CORREO'}
+];
+const TRAY=[
+ {id:'a',agent:'COBRADOR',model:'CLAUDE',kind:'MENSAJE',title:'Recordatorio F-0112 · Negocio demo 2',body:'Primer aviso por WhatsApp. Factura vencida hace 3 días, $25,000.00 MXN.'},
+ {id:'b',agent:'SEGUIMIENTO',model:'CLAUDE',kind:'MENSAJE',title:'Confirmar visita · Negocio demo 1',body:'Confirmación de visita de diagnóstico para el martes 10 de noviembre, 9:00.'},
+ {id:'c',agent:'ESTRATEGA',model:'CLAUDE',kind:'CALENDARIO',title:'Calendario de la semana 46',body:'5 piezas: 2 carruseles, 2 videos, 1 post. Tema: cuánto cuesta no ordenar el flujo.'},
+ {id:'d',agent:'GUIONISTA',model:'CLAUDE',kind:'GUION',title:'Video · El chatbot que nadie usa',body:'Gancho de 3 segundos y guion de 45 segundos para teleprompter, con tiempos.'},
+ {id:'e',agent:'REPORTERO',model:'CLAUDE',kind:'REPORTE',title:'Reporte semanal · Negocio demo 2',body:'Avance 62 %, hito 3 en curso, sin cambios de alcance.'}
+];
+class Component extends DCLogic {
+  state={t:0,filter:'Todo',trayOpen:false,done:[],tray:TRAY.map(t=>t.id),researched:[],toast:null};
+  flash(msg){this.setState({toast:msg});clearTimeout(this._t);this._t=setTimeout(()=>this.setState({toast:null}),2400);}
+  componentDidMount(){const t0=Date.now();this._iv=setInterval(()=>{const t=Math.min(1,Math.max(0,(Date.now()-t0-200)/1400));this.setState({t});if(t>=1)clearInterval(this._iv);},16);this._fb=setTimeout(()=>{clearInterval(this._iv);this.setState({t:1});},2000);this._k=e=>{if(!this.state.trayOpen||e.target.tagName==='INPUT')return;const first=this.state.tray[0];if(!first)return;
+    if(e.key==='a'){this.removeTray(first,'Aprobado y enviado');}else if(e.key==='d'){this.removeTray(first,'Propuesta descartada');}else if(e.key==='Escape')this.setState({trayOpen:false});};
+    window.addEventListener('keydown',this._k);}
+  componentWillUnmount(){clearInterval(this._iv);clearTimeout(this._fb);window.removeEventListener('keydown',this._k);}
+  removeTray(id,msg){this.setState(s=>({tray:s.tray.filter(x=>x!==id)}));this.flash(msg);}
+  renderVals(){
+    const demo=this.props.demo??true, empty=this.props.emptyState??false, s=this.state;
+    const navItems=['Dashboard','Marketing','Clientes','Diagnósticos','Proyectos','Tareas','Finanzas','Facturación','Agentes'];
+    const nav=navItems.map((l,i)=>({label:l,bg:i===0?C.papel:C.panel,color:i===0?C.tinta:C.papel,border:i===0?C.papel:C.borde,weight:i===0?600:400}));
+    const sp=a=>a.map((v,i)=>`${i*11},${20-v}`).join(' ');const e=1-Math.pow(1-s.t,3),cn=v=>Math.round(v*e),money=v=>'$'+cn(v).toLocaleString('en-US');
+    const G=(a)=>({bg:'rgba(34,39,46,'+a+')',edge:'rgba(238,235,228,0.10)',shadow:'inset 0 1px 0 rgba(238,235,228,0.12), 0 10px 30px rgba(0,0,0,0.25)'});
+    const kpis=[
+      {name:'TAREAS VENCIDAS',value:empty?'0':String(cn(3)),unit:'',delta:empty?'—':'+1 VS AYER',bg:'rgba(176,81,57,0.78)',edge:'rgba(247,214,202,0.35)',shadow:'inset 0 1px 0 rgba(247,214,202,0.35), 0 0 50px rgba(176,81,57,0.45), 0 0 120px rgba(176,81,57,0.18)',label:C.papel,h:156,flex:1.7,r:30,size:56,arrow:true,spark:false},
+      {...G(0.55),name:'COBRADO · NOVIEMBRE',value:empty?'$0':money(40000),unit:'MXN',delta:empty?'—':'+$10,000 VS OCT',label:C.niebla,h:138,flex:1.6,r:26,size:34,spark:true,a:[6,8,7,11,10,14,16],stroke:C.olivo},
+      {...G(0.45),name:'MARGEN DEL MES',value:empty?'—':String(cn(45)),unit:'%',delta:empty?'—':'+5 PTS VS OCT',label:C.niebla,h:126,flex:1.1,r:24,size:34,spark:true,a:[10,9,11,10,12,13,14],stroke:C.papel},
+      {...G(0.38),name:'LEADS · SEMANA',value:empty?'0':String(cn(12)),unit:'',delta:empty?'—':'8 IG · 3 LI · 1 TT',label:C.niebla,h:116,flex:1,r:22,size:30,spark:true,a:[4,6,5,9,8,12,13],stroke:C.papel},
+      {...G(0.3),name:'LLAMADAS',value:empty?'0':cn(5)+'/'+cn(3),unit:'',delta:'AGENDADAS / HECHAS',label:C.tenue,h:116,flex:0.9,r:20,size:24,spark:false},
+      {...G(0.24),name:'PIEZAS',value:empty?'0/0':cn(3)+'/'+cn(5),unit:'',delta:'PUBLICADAS / PLAN',label:C.tenue,h:110,flex:0.85,r:20,size:24,spark:false}
+    ].map((k,i)=>({...k,delay:(0.08*i)+'s',shineDelay:(1.2*i)+'s',points:k.a?sp(k.a):'',endY:k.a?20-k.a[6]:0}));
+    const fl=['Todo','Lead','Llamada','Hito','Factura','Acompañamiento'];
+    const filters=fl.map(l=>{const a=s.filter===l;return {label:l,bg:a?C.papel:C.panel,color:a?C.tinta:C.niebla,border:a?C.papel:C.borde,onClick:()=>this.setState({filter:l})};});
+    let pi=0;const P=(code,name,meta,o={})=>({code,name,meta,delay:(0.4+0.07*(pi++))+'s',bg:o.late?'rgba(176,81,57,0.16)':'rgba(22,26,33,0.55)',border:o.late?C.oxido:'rgba(238,235,228,0.09)',glow:o.late?'0 0 28px rgba(176,81,57,0.35)':'none',dot:o.late?C.oxido:o.ok?C.olivo:'#2A2F36',dotGlow:o.ok?'0 0 16px rgba(76,129,65,.7)':'none',anim:o.late?'pulseOx 2s infinite':'none',dotText:C.papel,metaColor:o.late?C.papel:C.tenue,badge:o.badge||null});
+    const stageDefs=[
+      ['01','MAPEAR',[P('D7','Negocio demo 7 · Notaría','VISITA · 07 NOV'),P('D8','Negocio demo 8 · Taller','MAPA DE FLUJO · 11 NOV',{badge:2})]],
+      ['02','DISEÑAR',[P('D4','Negocio demo 4 · Clínica','HITO 2 ATRASADO · 03 NOV',{late:true,badge:3}),P('D1','Negocio demo 1 · Escuela','PLAN · 13 NOV')]],
+      ['03','CONSTRUIR',[P('D2','Negocio demo 2 · Restaurante','MÓDULO POS · 18 NOV',{badge:2}),P('D5','Negocio demo 5 · Gimnasio','PRUEBAS · 20 NOV'),P('D6','Negocio demo 6 · Taller','ENTREGA · 25 NOV')]],
+      ['04','EVOLUCIONAR',[P('D3','Negocio demo 3 · Clínica','REPORTE · 30 NOV',{ok:true})]]
+    ];
+    const emptyLines=['Los proyectos entran aquí cuando un diagnóstico se convierte en proyecto.','','',''];
+    const stages=stageDefs.map(([num,name,pr],i)=>({num,name,glyph:rGlyph(i,26,C.papel),nodeBg:i===1?'rgba(176,81,57,0.18)':'rgba(22,26,33,0.8)',nodeBorder:i===1?C.oxido:C.borde,glow:i===1?'0 0 30px rgba(176,81,57,0.5)':'none',anim:i===1?'pulseOx 2.4s infinite':'none',count:empty?'0 PROY.':pr.length+' PROY.',projects:empty?[]:pr,empty:empty&&i===0,emptyText:emptyLines[0],countMr:i===3?96:20}));
+    const mon=['SEP','','','','OCT','','','','','NOV','','','','DIC','','','','ENE 27','','','','','FEB','','',''];
+    const weeks=mon.map((m,i)=>{const sel=i>=9&&i<=11;const v=[(i*7)%5,(i*3+1)%4,(i*5+2)%6];
+      const col=(n,t)=>n>t?(sel?C.tinta:C.niebla):(sel?C.acero:'#2A2F36');
+      return {glow:sel?'0 0 26px rgba(238,235,228,0.35)':'none',anim:!sel&&v[0]>3?'blink 2.4s infinite':'none',bg:sel?C.papel:'transparent',margin:sel?'6px 0':'0',radius:sel?(i===9?'999px 0 0 999px':i===11?'0 999px 999px 0':'0'):'0',c1:col(v[0],2),c2:col(v[1],1),c3:col(v[2],3),label:m||null,labelColor:sel?C.tinta:C.tenue};});
+    const fT=TASKS.filter(t=>!s.done.includes(t.id)&&(s.filter==='Todo'||t.origin===s.filter));
+    const sorted=[...fT].sort((a,b)=>(b.overdue?1:0)-(a.overdue?1:0));
+    const gm={};sorted.forEach(t=>{(gm[t.client]=gm[t.client]||[]).push(t);});
+    const groups=Object.entries(gm).map(([client,ts])=>({client,tasks:ts.map(t=>({time:t.time,title:t.title,timeColor:t.overdue?C.oxido:C.niebla,dot:t.overdue?C.oxido:C.acero,anim:t.overdue?'pulseOx 2s infinite':'none',meta:(t.overdue?'VENCIDA · ':'')+t.origin.toUpperCase()+' · '+t.channel,ai:t.ai||null,onApprove:()=>{this.setState(st=>({done:[...st.done,t.id]}));this.flash('Mensaje aprobado y enviado');}}))}));
+    const invoices=[
+      {client:'Negocio demo 2',amount:'$25,000.00',status:'VENCIDA · 3 DÍAS',dot:C.oxido,id:'F-0112',reminder:true},
+      {client:'Negocio demo 6',amount:'$18,000.00',status:'VENCE 10 NOV',dot:C.ambar,id:'F-0118'},
+      {client:'Negocio demo 4',amount:'$12,500.00',status:'VENCE 14 NOV',dot:C.niebla,id:'F-0120'},
+      {client:'Negocio demo 3',amount:'$20,000.00',status:'PAGADA · 2 NOV',dot:C.olivo,id:'F-0109'}
+    ];
+    const fd=[['LEAD',12],['CONTACTADO',8],['LLAMADA',5],['DIAGNÓSTICO',3],['PROPUESTA',2],['CLIENTE',1]];
+    const funnel=fd.map(([label,n],i)=>({label,n:empty?0:cn(n),glow:i>=4?'0 0 14px '+(i===5?'rgba(76,129,65,.6)':'rgba(176,81,57,.55)'):'none',w:empty?0:Math.max(6,n/12*100)*e,color:i===5?C.olivo:i===4?C.oxido:C.acero}));
+    const content=[
+      {day:'LUN 2',channel:'IG',hook:'El chatbot que nadie usa',type:'CARRUSEL',status:'PUBLICADA',dot:C.olivo,border:C.borde,metrics:'ALCANCE 4,000 · 2 LEADS'},
+      {day:'MAR 3',channel:'LI',hook:'Primero el flujo. Después la IA.',type:'POST',status:'PUBLICADA',dot:C.olivo,border:C.borde,metrics:'ALCANCE 1,500 · 1 LEAD'},
+      {day:'JUE 5',channel:'TT',hook:'Lo que pierdes copiando la misma orden tres veces',type:'VIDEO',status:'APROBACIÓN',dot:C.oxido,border:C.oxido},
+      {day:'VIE 6',channel:'YT',hook:'Cómo mapeamos una cocina en una mañana',type:'VIDEO',status:'PRODUCCIÓN',dot:C.ambar,border:C.borde},
+      {day:'SÁB 7',channel:'IG',hook:'Cuatro señales de que tu operación vive en WhatsApp',type:'CARRUSEL',status:'GUION',dot:C.niebla,border:C.borde}
+    ].map(c=>({...c,glow:c.dot===C.oxido?'0 0 26px rgba(176,81,57,0.3)':c.dot===C.olivo?'0 0 22px rgba(76,129,65,0.12)':'none',metrics:c.metrics||null}));
+    const rs=[
+      {n:'01',text:'Publicar el precio del diagnóstico completo en la página de clínicas; dos competidores ya lo muestran.',src:'2 FUENTES · SITIOS DE COMPETIDORES'},
+      {n:'02',text:'Responder leads de Instagram en menos de una hora; los que esperan más de un día rara vez agendan.',src:'1 FUENTE · HISTORIAL DEL EMBUDO'},
+      {n:'03',text:'Probar un carrusel por sector con el costo de no actuar en pesos al mes.',src:'3 FUENTES · MÉTRICAS DE CANAL'}
+    ];
+    const research=rs.map((r,i)=>{const d=s.researched.includes(i);return {...r,label:d?'Tarea creada':'Convertir en tarea',bg:d?'transparent':C.tinta,color:d?C.olivo:C.papel,border:d?C.olivo:C.tinta,onClick:()=>{if(d)return;this.setState(st=>({researched:[...st.researched,i]}));this.flash('Tarea creada en Hoy');}};});
+    const tray=TRAY.filter(t=>s.tray.includes(t.id)).map((t,i)=>({...t,border:i===0?C.oxido:C.borde,onApprove:()=>this.removeTray(t.id,'Aprobado · '+t.agent.toLowerCase()),onDiscard:()=>this.removeTray(t.id,'Propuesta descartada'),onFocus:()=>this.flash('Abriendo editor del borrador')}));
+    const taskCount=fT.length;
+    return {
+      demo,logo:rGlyph(1,26,C.papel),nav,kpis,filters,stages,weeks,groups,taskCount:empty?0:taskCount,
+      showTasks:!empty&&groups.length>0,tasksEmpty:empty||groups.length===0,
+      tasksEmptyText:empty?'Las tareas aparecen aquí cuando registres una llamada o entre un lead.':'Sin tareas para este filtro.',
+      invoices,showData:!empty,empty,funnel,lost:empty?0:2,objection:empty?'—':'Precio',
+      content:empty?[]:content,research,
+      tray:empty?[]:tray,trayCount:empty?0:tray.length,trayEmpty:empty||tray.length===0,trayOpen:s.trayOpen,
+      toggleTray:()=>this.setState(st=>({trayOpen:!st.trayOpen})),toast:s.toast
+    };
+  }
+}
+</script>
+</body>
+</html>

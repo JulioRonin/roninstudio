@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px) saturate(140%);-webkit-backdrop-filter:blur(22px) saturate(140%);border:1px solid rgba(238,235,228,0.09);box-shadow:inset 0 1px 0 rgba(238,235,228,0.08);border-radius:24px;padding:4px 22px 10px">
+<sc-if value="{{ hasTitle }}" hint-placeholder-val="{{ false }}"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:18px 0 4px"><div style="font-weight:900;font-size:22px;letter-spacing:-0.02em;text-transform:uppercase">{{ title }}</div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#7C8088">{{ sub }}</div></div></sc-if>
+<div style="display:grid;grid-template-columns:{{ grid }};gap:16px;padding:14px 0 10px;border-bottom:1px solid rgba(238,235,228,0.09)">
+<sc-for list="{{ head }}" as="h" hint-placeholder-count="6"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#7C8088;text-align:{{ h.align }};white-space:nowrap">{{ h.label }}</div></sc-for>
+</div>
+<sc-for list="{{ body }}" as="r" hint-placeholder-count="6">
+<sc-if value="{{ r.isGroup }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:8px;padding:18px 0 6px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#7C8088;color:#A9A6A0"><span style="width:6px;height:6px;border-radius:50%;background:{{ r.dot }};box-shadow:0 0 8px {{ r.dot }}"></span>{{ r.label }}</div></sc-if>
+<sc-if value="{{ r.isRow }}" hint-placeholder-val="{{ true }}">
+<div onClick="{{ r.onClick }}" style="display:grid;grid-template-columns:{{ grid }};gap:16px;padding:12px 0;align-items:center;border-bottom:1px solid rgba(238,235,228,0.06);background:{{ r.bg }};cursor:{{ r.cursor }};transition:background .2s" style-hover="background:rgba(238,235,228,0.035)">
+<sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="6">
+<div style="min-width:0;text-align:{{ c.align }}">
+<sc-if value="{{ c.isText }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;align-items:center;gap:7px;justify-content:{{ c.justify }};min-width:0">
+<sc-if value="{{ c.dot }}" hint-placeholder-val="{{ false }}"><span style="width:6px;height:6px;flex-shrink:0;border-radius:50%;background:{{ c.dot }};box-shadow:0 0 8px {{ c.dot }}"></span></sc-if>
+<span style="font-family:{{ c.ff }};font-size:{{ c.fs }}px;letter-spacing:{{ c.ls }};color:{{ c.color }};font-weight:{{ c.fw }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.t }}</span>
+</div>
+<sc-if value="{{ c.s }}" hint-placeholder-val="{{ false }}"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#7C8088;font-size:9.5px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.s }}</div></sc-if>
+</sc-if>
+<sc-if value="{{ c.isBar }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:10px"><span style="flex:1;height:4px;border-radius:2px;background:rgba(238,235,228,0.08);overflow:hidden;display:block"><span style="display:block;height:100%;width:{{ c.pct }}%;background:{{ c.barColor }};box-shadow:0 0 10px {{ c.barColor }}"></span></span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#EEEBE4;min-width:40px;text-align:right">{{ c.t }}</span></div></sc-if>
+<sc-if value="{{ c.isBtn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ c.onClick }}" style="height:32px;padding:0 14px;border-radius:999px;background:{{ c.btnBg }};border:1px solid {{ c.btnBorder }};box-shadow:{{ c.btnShadow }};color:#EEEBE4;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">{{ c.t }}</button></sc-if>
+</div>
+</sc-for>
+</div>
+</sc-if>
+</sc-for>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1100,&quot;height&quot;:400},&quot;title&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;sub&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;grid&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;cols&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;array&quot;},&quot;rows&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;array&quot;}}">
+const COL={ox:'#B05139',ol:'#4C8141',am:'#C98A3C',ni:'#A9A6A0',te:'#7C8088',pa:'#EEEBE4',ac:'#5B6068'};
+const col=c=>c?(COL[c]||c):null;
+class Component extends DCLogic {
+  renderVals(){
+    const p=this.props,cols=(p.cols||[]).map(c=>typeof c==='string'?{l:c}:c);
+    const head=cols.map(c=>({label:c.l,align:c.a==='r'?'right':'left'}));
+    const body=(p.rows||[]).map(r=>{
+      if(r.group)return {isGroup:true,isRow:false,label:r.group,dot:col(r.dot)||'#5B6068'};
+      const cells=r.cells.map((c,i)=>{if(c==null)c='';if(typeof c!=='object')c={t:String(c)};const al=cols[i]&&cols[i].a==='r';
+        return {align:al?'right':'left',justify:al?'flex-end':'flex-start',isBtn:!!c.btn,isBar:c.bar!=null,isText:!c.btn&&c.bar==null,t:c.btn||c.t||'',s:c.s||null,dot:col(c.dot),
+          ff:c.mono?"'JetBrains Mono',monospace":"'Archivo',sans-serif",fs:c.mono?(c.big?13:10.5):(c.b?14:13.5),ls:c.mono&&!c.big?'0.12em':'0',color:col(c.c)||(i===0?'#EEEBE4':'#D9D5CD'),fw:c.b?600:400,
+          pct:c.bar||0,barColor:col(c.bc)||'#B05139',btnBg:c.primary?'#B05139':'transparent',btnBorder:c.primary?'#B05139':'#3A4048',btnShadow:c.primary?'0 0 16px rgba(176,81,57,.4)':'none',onClick:c.onClick||null};});
+      return {isGroup:false,isRow:true,cells,bg:r.late?'rgba(176,81,57,0.07)':(r.sel?'rgba(238,235,228,0.05)':'transparent'),onClick:r.onClick||null,cursor:r.onClick?'pointer':'default'};});
+    return {head,body,grid:p.grid||cols.map(()=>'minmax(0,1fr)').join(' '),title:p.title||null,sub:p.sub||'',hasTitle:!!p.title};
+  }
+}
+</script>
+</body>
+</html>

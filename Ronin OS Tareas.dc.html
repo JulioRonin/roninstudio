@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,300..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#07090C;color:#EEEBE4;font-family:'Archivo',sans-serif;font-stretch:112%;-webkit-font-smoothing:antialiased}
+a{color:#EEEBE4;text-decoration-color:#B05139}a:hover{color:#F7F5F0}*{box-sizing:border-box}button,input,select{font-family:inherit;font-stretch:inherit}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes pulseOx{0%{box-shadow:0 0 0 0 rgba(176,81,57,.7),0 0 18px rgba(176,81,57,.6)}70%{box-shadow:0 0 0 12px rgba(176,81,57,0),0 0 18px rgba(176,81,57,.6)}100%{box-shadow:0 0 0 0 rgba(176,81,57,0),0 0 18px rgba(176,81,57,.6)}}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-30px) scale(1.12)}}
+</style>
+</helmet>
+<div style="width:1440px;margin:0 auto;background:#0C0F14;min-height:100vh;position:relative;overflow:hidden;isolation:isolate;padding-bottom:56px">
+<div style="position:absolute;z-index:-1;left:240px;top:60px;width:660px;height:420px;border-radius:50%;background:radial-gradient(closest-side,rgba(176,81,57,.36),rgba(176,81,57,0));filter:blur(30px);animation:drift 14s ease-in-out infinite;pointer-events:none"></div>
+<dc-import name="RoninHeader" active="Tareas" hint-size="100%,96px"></dc-import>
+<section style="padding:34px 32px 0;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;animation:rise .6s cubic-bezier(.2,.7,.2,1) both">
+<div>
+<div style="display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088"><span style="width:3px;height:12px;background:#B05139;transform:skewY(-14deg)"></span>06 · TAREAS Y SEGUIMIENTO</div>
+<h1 style="margin:8px 0 0;font-weight:900;font-size:44px;letter-spacing:-0.02em;line-height:1">LO DE HOY</h1>
+<div style="font-weight:300;font-size:16px;color:#A9A6A0;margin-top:6px">{{ subtitle }}</div>
+</div>
+<button onClick="{{ openForm }}" style="height:48px;padding:0 22px;border-radius:999px;background:#B05139;color:#EEEBE4;border:none;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 0 28px rgba(176,81,57,.45)" style-hover="background:#9A4530">Crear tarea</button>
+</section>
+<nav style="display:flex;gap:6px;padding:22px 32px 0">
+<sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3"><button onClick="{{ t.onClick }}" style="height:44px;padding:0 18px;border-radius:999px;border:1px solid {{ t.border }};background:{{ t.bg }};color:{{ t.color }};font-size:13px;cursor:pointer" style-hover="border-color:#5B6068">{{ t.label }}</button></sc-for>
+</nav>
+<section style="padding:22px 32px 0">
+<sc-if value="{{ isHoy }}" hint-placeholder-val="{{ true }}">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px">
+<div style="display:flex;flex-direction:column;gap:14px">
+<sc-for list="{{ groups }}" as="g" hint-placeholder-count="4">
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid {{ g.border }};box-shadow:{{ g.glow }};border-radius:26px;padding:18px 22px;animation:rise .55s cubic-bezier(.2,.7,.2,1) both;animation-delay:{{ g.delay }}">
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088;margin-bottom:4px">{{ g.client }}</div>
+<sc-for list="{{ g.tasks }}" as="t" hint-placeholder-count="2">
+<div style="display:grid;grid-template-columns:30px 60px 1fr auto;gap:14px;align-items:start;padding:12px 0;border-top:1px solid rgba(238,235,228,0.05)">
+<button onClick="{{ t.onDone }}" style="width:24px;height:24px;border-radius:50%;border:1.5px solid {{ t.dot }};background:transparent;cursor:pointer;margin-top:1px;animation:{{ t.anim }}" style-hover="background:rgba(76,129,65,0.4)"></button>
+<span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:{{ t.tc }};padding-top:3px">{{ t.time }}</span>
+<div>
+<div style="font-size:15px">{{ t.title }}</div>
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#7C8088;margin-top:4px">{{ t.meta }}</div>
+<sc-if value="{{ t.ai }}" hint-placeholder-val="{{ false }}"><div style="margin-top:10px;background:rgba(12,15,20,0.5);border:1px dashed #3A4048;border-radius:14px;padding:10px 12px"><div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.14em;color:#7C8088;margin-bottom:4px">BORRADOR DE IA · {{ t.agent }} · CLAUDE</div><div style="font-size:13px;color:#A9A6A0;line-height:1.5">{{ t.ai }}</div></div></sc-if>
+</div>
+<sc-if value="{{ t.ai }}" hint-placeholder-val="{{ false }}"><button onClick="{{ t.onSend }}" style="height:36px;padding:0 14px;border-radius:999px;background:#B05139;color:#EEEBE4;border:none;font-size:12px;font-weight:600;cursor:pointer;box-shadow:0 0 18px rgba(176,81,57,.45)" style-hover="background:#9A4530">Aprobar y enviar</button></sc-if>
+</div>
+</sc-for>
+</div>
+</sc-for>
+<sc-if value="{{ hoyEmpty }}" hint-placeholder-val="{{ false }}"><div style="font-size:14px;color:#7C8088;padding:20px 0">Todo listo por hoy. Las tareas aparecen aquí cuando registres una llamada o entre un lead.</div></sc-if>
+</div>
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.09);border-radius:26px;padding:22px;align-self:start">
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088">AVANCE DEL DÍA</div>
+<div style="font-weight:900;font-size:44px;letter-spacing:-0.02em;margin-top:6px">{{ doneN }}<span style="font-weight:300;font-size:18px;color:#A9A6A0"> / {{ totalN }}</span></div>
+<div style="height:4px;border-radius:2px;background:#1B2027;margin:10px 0 18px;overflow:hidden"><div style="height:100%;width:{{ pct }}%;background:#B05139;box-shadow:0 0 10px #B05139;transition:width .6s cubic-bezier(.2,.7,.2,1)"></div></div>
+<sc-for list="{{ origins }}" as="o" hint-placeholder-count="6"><div style="display:flex;justify-content:space-between;padding:7px 0;font-size:13px;border-bottom:1px solid rgba(238,235,228,0.05)"><span style="color:#A9A6A0">{{ o.n }}</span><span style="font-family:'JetBrains Mono',monospace">{{ o.v }}</span></div></sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isBoard }}" hint-placeholder-val="{{ false }}">
+<sc-if value="{{ isSemana }}" hint-placeholder-val="{{ false }}"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088;margin-bottom:12px">ARRASTRA PARA MOVER DE DÍA</div></sc-if>
+<sc-if value="{{ isProj }}" hint-placeholder-val="{{ false }}"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088;margin-bottom:12px">PLATAFORMA DE OPERACIÓN · NEGOCIO DEMO 2 · ARRASTRA PARA CAMBIAR DE ESTADO</div></sc-if>
+<div style="display:grid;grid-template-columns:repeat({{ colN }},minmax(0,1fr));gap:10px;align-items:start">
+<sc-for list="{{ cols }}" as="col" hint-placeholder-count="7">
+<div onDragOver="{{ col.onOver }}" onDrop="{{ col.onDrop }}" style="min-height:480px;border-radius:22px;background:{{ col.bg }};border:1px solid {{ col.border }};padding:10px;display:flex;flex-direction:column;gap:8px;transition:background .2s">
+<div style="display:flex;justify-content:space-between;padding:6px 6px 8px"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:{{ col.tc }}">{{ col.name }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#A9A6A0">{{ col.n }}</span></div>
+<sc-for list="{{ col.cards }}" as="k" hint-placeholder-count="2">
+<div draggable="true" onDragStart="{{ k.onDrag }}" style="background:rgba(22,26,33,0.72);backdrop-filter:blur(16px);border:1px solid {{ k.border }};box-shadow:{{ k.glow }};border-radius:16px;padding:12px;cursor:grab;display:flex;flex-direction:column;gap:6px;animation:rise .4s ease both">
+<span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;color:{{ k.tc }}">{{ k.time }}</span>
+<span style="font-size:13px;line-height:1.35">{{ k.title }}</span>
+<span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.1em;color:#7C8088">{{ k.meta }}</span>
+</div>
+</sc-for>
+</div>
+</sc-for>
+</div>
+</sc-if>
+</section>
+
+<sc-if value="{{ formOpen }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ closeForm }}" style="position:fixed;inset:0;background:rgba(7,9,12,0.65);z-index:40"></div>
+<div style="position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:500px;z-index:41;background:rgba(19,23,29,0.88);backdrop-filter:blur(28px);border:1px solid rgba(238,235,228,0.1);border-radius:28px;padding:26px;display:flex;flex-direction:column;gap:14px">
+<div style="font-weight:900;font-size:24px;letter-spacing:-0.02em">NUEVA TAREA</div>
+<sc-for list="{{ fields }}" as="f" hint-placeholder-count="4">
+<label style="display:flex;flex-direction:column;gap:6px"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088">{{ f.k }}</span><input placeholder="{{ f.p }}" style="height:44px;border-radius:12px;background:#101318;border:1px solid #252A31;color:#EEEBE4;padding:0 14px;font-size:14px;outline:none" style-focus="border-color:#B05139"></input></label>
+</sc-for>
+<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px">
+<button onClick="{{ closeForm }}" style="height:42px;padding:0 18px;border-radius:999px;background:transparent;color:#EEEBE4;border:1px solid #3A4048;font-size:13px;cursor:pointer">Cancelar</button>
+<button onClick="{{ saveForm }}" style="height:42px;padding:0 18px;border-radius:999px;background:#B05139;color:#EEEBE4;border:none;font-size:13px;font-weight:600;cursor:pointer">Guardar tarea</button>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;left:24px;bottom:24px;z-index:60;background:#EEEBE4;color:#0C0F14;border-radius:999px;padding:12px 20px;display:flex;align-items:center;gap:10px;font-size:13px;animation:rise .3s ease both"><span style="width:7px;height:7px;border-radius:50%;background:#4C8141"></span>{{ toast }}</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const C={tinta:'#0C0F14',papel:'#EEEBE4',niebla:'#A9A6A0',tenue:'#7C8088',acero:'#5B6068',oxido:'#B05139',olivo:'#4C8141',ambar:'#C98A3C'};
+const TASKS=[
+ {id:1,client:'NEGOCIO DEMO 2 · RESTAURANTE CON SUCURSALES',time:'09:00',title:'Recordatorio de factura F-0112',origin:'FACTURA',channel:'WHATSAPP',overdue:true,agent:'COBRADOR',ai:'Hola, te comparto el recordatorio de la factura F-0112 por $25,000.00 MXN, vencida el 2 de noviembre. ¿Te ayudo con el complemento de pago?',day:3,col:'EN CURSO'},
+ {id:2,client:'NEGOCIO DEMO 4 · CLÍNICA',time:'10:00',title:'Hito 2 atrasado · mapa de flujo',origin:'HITO',channel:'INTERNO',overdue:true,day:3,col:'POR HACER'},
+ {id:3,client:'NEGOCIO DEMO 1 · ESCUELA PRIVADA',time:'11:30',title:'Llamada de 15 minutos',origin:'LLAMADA',channel:'LLAMADA',day:3,col:'POR HACER'},
+ {id:4,client:'NEGOCIO DEMO 1 · ESCUELA PRIVADA',time:'13:00',title:'Confirmar visita de diagnóstico',origin:'LLAMADA',channel:'WHATSAPP',agent:'SEGUIMIENTO',ai:'Confirmo la visita del martes 10 a las 9:00. Llevamos la guía de escuelas; calcula una hora y media con dirección y control escolar.',day:3,col:'POR HACER'},
+ {id:5,client:'NEGOCIO DEMO 11 · RESTAURANTE',time:'16:00',title:'Primer contacto con lead de Instagram',origin:'LEAD NUEVO',channel:'WHATSAPP',agent:'SEGUIMIENTO',ai:'Gracias por hacer el diagnóstico exprés. Vi que la captura doble es lo que más les pesa; ¿te late una llamada de 15 minutos esta semana?',day:3,col:'POR HACER'},
+ {id:6,client:'NEGOCIO DEMO 5 · GIMNASIO',time:'17:30',title:'Reporte mensual de acompañamiento',origin:'ACOMPAÑAMIENTO',channel:'CORREO',day:3,col:'EN REVISIÓN'},
+ {id:7,client:'RONIN STUDIO',time:'18:00',title:'Revisar recomendación 01 del Investigador',origin:'INVESTIGACIÓN',channel:'INTERNO',day:3,col:'POR HACER'},
+ {id:8,client:'NEGOCIO DEMO 7 · NOTARÍA',time:'10:00',title:'Visita de diagnóstico',origin:'LLAMADA',channel:'PRESENCIAL',day:4,col:'POR HACER'},
+ {id:9,client:'NEGOCIO DEMO 2 · RESTAURANTE',time:'12:00',title:'Pruebas del POS en sucursal 1',origin:'HITO',channel:'PRESENCIAL',day:1,col:'HECHO',done:true},
+ {id:10,client:'NEGOCIO DEMO 6 · TALLER',time:'09:00',title:'Revisión de órdenes de trabajo',origin:'HITO',channel:'LLAMADA',day:0,col:'HECHO',done:true},
+ {id:11,client:'NEGOCIO DEMO 3 · CLÍNICA',time:'11:00',title:'Ajuste de tablero mensual',origin:'ACOMPAÑAMIENTO',channel:'INTERNO',day:2,col:'HECHO',done:true}
+];
+const DAYS=['LUN 2','MAR 3','MIÉ 4','JUE 5','VIE 6','SÁB 7','DOM 8'],KCOLS=['POR HACER','EN CURSO','EN REVISIÓN','HECHO'];
+class Component extends DCLogic {
+  state={tab:'Hoy',tasks:TASKS,over:null,form:false,toast:null};
+  flash(m){this.setState({toast:m});clearTimeout(this._t);this._t=setTimeout(()=>this.setState({toast:null}),2400);}
+  patch(id,p){this.setState(s=>({tasks:s.tasks.map(t=>t.id===id?{...t,...p}:t),over:null}));}
+  renderVals(){
+    const s=this.state;
+    const tabs=['Hoy','Semana','Tablero por proyecto'].map(l=>({label:l,bg:l===s.tab?C.papel:'rgba(22,26,33,0.55)',color:l===s.tab?C.tinta:C.papel,border:l===s.tab?C.papel:'rgba(238,235,228,0.09)',onClick:()=>this.setState({tab:l})}));
+    const today=s.tasks.filter(t=>t.day===3);const open=today.filter(t=>!t.done).sort((a,b)=>(b.overdue?1:0)-(a.overdue?1:0));
+    const gm={};open.forEach(t=>(gm[t.client]=gm[t.client]||[]).push(t));
+    const groups=Object.entries(gm).map(([client,ts],i)=>{const late=ts.some(t=>t.overdue);return {client,delay:(0.06*i)+'s',border:late?C.oxido:'rgba(238,235,228,0.09)',glow:late?'0 0 30px rgba(176,81,57,0.25)':'none',
+      tasks:ts.map(t=>({time:t.time,title:t.title,meta:(t.overdue?'VENCIDA · ':'')+t.origin+' · '+t.channel,tc:t.overdue?C.oxido:C.niebla,dot:t.overdue?C.oxido:C.acero,anim:t.overdue?'pulseOx 2.2s infinite':'none',ai:t.ai||null,agent:t.agent,
+        onDone:()=>{this.patch(t.id,{done:true,col:'HECHO'});this.flash('Tarea hecha');},onSend:()=>{this.patch(t.id,{done:true,col:'HECHO'});this.flash('Mensaje aprobado y enviado por '+t.channel.toLowerCase());}}))};});
+    const doneN=today.filter(t=>t.done).length;
+    const ocount={};today.forEach(t=>ocount[t.origin]=(ocount[t.origin]||0)+1);
+    const card=t=>({time:t.time,title:t.title,meta:t.origin+' · '+t.channel,tc:t.overdue&&!t.done?C.oxido:C.niebla,border:t.overdue&&!t.done?C.oxido:'rgba(238,235,228,0.09)',glow:t.overdue&&!t.done?'0 0 18px rgba(176,81,57,0.3)':'none',onDrag:e=>e.dataTransfer.setData('text/plain',String(t.id))});
+    const mk=(name,list,isToday,drop)=>({name,n:list.length,tc:isToday?C.papel:C.niebla,cards:list.map(card),bg:s.over===name?'rgba(176,81,57,0.12)':isToday?'rgba(238,235,228,0.05)':'rgba(22,26,33,0.35)',border:s.over===name?C.oxido:isToday?'rgba(238,235,228,0.25)':'rgba(238,235,228,0.07)',
+      onOver:e=>{e.preventDefault();if(s.over!==name)this.setState({over:name});},onDrop:e=>{e.preventDefault();const id=+e.dataTransfer.getData('text/plain');if(id){drop(id);this.flash('Tarea movida a '+name.toLowerCase());}}});
+    const isSemana=s.tab==='Semana',isProj=s.tab==='Tablero por proyecto';
+    const cols=isSemana?DAYS.map((d,i)=>mk(d,s.tasks.filter(t=>t.day===i),i===3,id=>this.patch(id,{day:i}))):KCOLS.map(k=>mk(k,s.tasks.filter(t=>t.col===k&&t.client.includes('DEMO 2')||t.col===k&&k!=='HECHO'&&false),false,id=>this.patch(id,{col:k,done:k==='HECHO'})));
+    const projCols=KCOLS.map(k=>mk(k,s.tasks.filter(t=>t.col===k),false,id=>this.patch(id,{col:k,done:k==='HECHO'})));
+    return {tabs,groups,hoyEmpty:groups.length===0,doneN,totalN:today.length,pct:today.length?doneN/today.length*100:0,
+      origins:Object.entries(ocount).map(([n,v])=>({n:n.charAt(0)+n.slice(1).toLowerCase(),v})),
+      subtitle:'Jueves 5 de noviembre · '+open.length+' pendientes · '+open.filter(t=>t.overdue).length+' vencidas',
+      isHoy:s.tab==='Hoy',isBoard:s.tab!=='Hoy',isSemana,isProj,cols:isSemana?cols:projCols,colN:isSemana?7:4,
+      formOpen:s.form,openForm:()=>this.setState({form:true}),closeForm:()=>this.setState({form:false}),
+      saveForm:()=>{this.setState({form:false});this.flash('Tarea creada para hoy');},
+      fields:[['TÍTULO','Llamar para confirmar visita'],['CLIENTE O PROYECTO','Negocio demo 1'],['FECHA','Jueves 5 de noviembre · 15:00'],['CANAL DEL SIGUIENTE PASO','WhatsApp, llamada, correo o presencial']].map(([k,p])=>({k,p})),toast:s.toast};
+  }
+}
+</script>
+</body>
+</html>

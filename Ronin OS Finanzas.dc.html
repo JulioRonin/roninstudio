@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,300..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#07090C;color:#EEEBE4;font-family:'Archivo',sans-serif;font-stretch:112%;-webkit-font-smoothing:antialiased}
+a{color:#EEEBE4;text-decoration-color:#B05139}a:hover{color:#F7F5F0}*{box-sizing:border-box}button{font-family:inherit;font-stretch:inherit}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes up{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-30px) scale(1.12)}}
+</style>
+</helmet>
+<div style="width:1440px;margin:0 auto;background:#0C0F14;min-height:100vh;position:relative;overflow:hidden;isolation:isolate;padding-bottom:56px">
+<div style="position:absolute;z-index:-1;left:260px;top:60px;width:640px;height:420px;border-radius:50%;background:radial-gradient(closest-side,rgba(76,129,65,.24),rgba(76,129,65,0));filter:blur(30px);animation:drift 14s ease-in-out infinite;pointer-events:none"></div>
+<div style="position:absolute;z-index:-1;right:-60px;top:420px;width:620px;height:460px;border-radius:50%;background:radial-gradient(closest-side,rgba(176,81,57,.22),rgba(176,81,57,0));filter:blur(40px);animation:drift 18s ease-in-out infinite reverse;pointer-events:none"></div>
+<dc-import name="RoninHeader" active="Finanzas" hint-size="100%,96px"></dc-import>
+<section style="padding:34px 32px 0;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;animation:rise .6s cubic-bezier(.2,.7,.2,1) both">
+<div>
+<div style="display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088"><span style="width:3px;height:12px;background:#B05139;transform:skewY(-14deg)"></span>07 · FINANZAS · NOVIEMBRE 2026</div>
+<h1 style="margin:8px 0 0;font-weight:900;font-size:44px;letter-spacing:-0.02em;line-height:1">FINANZAS</h1>
+<div style="font-weight:300;font-size:16px;color:#A9A6A0;margin-top:6px">Cifras de ejemplo en modo demo · pesos mexicanos</div>
+</div>
+<div style="display:flex;gap:10px">
+<sc-for list="{{ kpis }}" as="k" hint-placeholder-count="3">
+<div style="min-width:170px;padding:14px 18px;border-radius:22px;background:rgba(34,39,46,0.5);backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.1);box-shadow:inset 0 1px 0 rgba(238,235,228,0.12)">
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#A9A6A0">{{ k.k }}</div>
+<div style="font-weight:900;font-size:26px;letter-spacing:-0.02em;margin-top:4px">{{ k.v }}</div>
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.08em;color:{{ k.c }};margin-top:2px">{{ k.d }}</div>
+</div>
+</sc-for>
+</div>
+</section>
+<nav style="display:flex;gap:6px;padding:22px 32px 0">
+<sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5"><button onClick="{{ t.onClick }}" style="height:44px;padding:0 18px;border-radius:999px;border:1px solid {{ t.border }};background:{{ t.bg }};color:{{ t.color }};font-size:13px;cursor:pointer" style-hover="border-color:#5B6068">{{ t.label }}</button></sc-for>
+</nav>
+<section style="padding:22px 32px 0">
+
+<sc-if value="{{ tER }}" hint-placeholder-val="{{ true }}">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:16px">
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.09);border-radius:28px;padding:24px">
+<div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 80px;gap:12px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088;padding-bottom:10px;border-bottom:1px solid rgba(238,235,228,0.09)"><span>CONCEPTO</span><span style="text-align:right">NOVIEMBRE</span><span style="text-align:right">OCTUBRE</span><span style="text-align:right">VAR.</span></div>
+<sc-for list="{{ er }}" as="r" hint-placeholder-count="8">
+<div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 80px;gap:12px;padding:{{ r.pad }};border-bottom:1px solid {{ r.line }};align-items:center">
+<span style="font-size:{{ r.fs }};font-weight:{{ r.w }};padding-left:{{ r.ind }}px;color:{{ r.tc }}">{{ r.k }}</span>
+<span style="font-family:'JetBrains Mono',monospace;font-size:13px;text-align:right;font-weight:{{ r.w }}">{{ r.a }}</span>
+<span style="font-family:'JetBrains Mono',monospace;font-size:13px;text-align:right;color:#A9A6A0">{{ r.b }}</span>
+<span style="font-family:'JetBrains Mono',monospace;font-size:11px;text-align:right;color:{{ r.dc }}">{{ r.d }}</span>
+</div>
+</sc-for>
+</div>
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.09);border-radius:28px;padding:24px;display:flex;flex-direction:column">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-weight:900;font-size:22px;letter-spacing:-0.02em">12 MESES</span>
+<span style="display:flex;gap:14px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#A9A6A0"><span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;background:#4C8141"></span>COBRADO</span><span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;background:#EEEBE4"></span>UTILIDAD</span></span></div>
+<div style="flex:1;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:10px;align-items:end;margin-top:20px;min-height:300px;border-bottom:1px solid #252A31">
+<sc-for list="{{ months }}" as="m" hint-placeholder-count="12">
+<div style="height:100%;display:flex;align-items:flex-end;justify-content:center;gap:3px;position:relative">
+<span style="width:42%;height:{{ m.a }}%;border-radius:6px 6px 0 0;background:{{ m.ac }};box-shadow:{{ m.glow }};transform-origin:bottom;animation:up .9s cubic-bezier(.2,.7,.2,1) both;animation-delay:{{ m.delay }}"></span>
+<span style="width:42%;height:{{ m.b }}%;border-radius:6px 6px 0 0;background:{{ m.bc }};transform-origin:bottom;animation:up .9s cubic-bezier(.2,.7,.2,1) both;animation-delay:{{ m.delay }}"></span>
+</div>
+</sc-for>
+</div>
+<div style="display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:10px;margin-top:8px"><sc-for list="{{ months }}" as="m" hint-placeholder-count="12"><span style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.1em;color:{{ m.lc }}">{{ m.n }}</span></sc-for></div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ tMargen }}" hint-placeholder-val="{{ false }}">
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.09);border-radius:24px;overflow:hidden">
+<div style="display:grid;grid-template-columns:1.8fr 1fr 0.7fr 1fr 1fr 1.3fr;gap:16px;padding:14px 22px;border-bottom:1px solid rgba(238,235,228,0.09)">
+<sc-for list="{{ mhead }}" as="h" hint-placeholder-count="6"><button onClick="{{ h.onClick }}" style="background:none;border:none;padding:0;text-align:{{ h.al }};font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:{{ h.c }};cursor:pointer">{{ h.label }}</button></sc-for>
+</div>
+<sc-for list="{{ mrows }}" as="r" hint-placeholder-count="6">
+<div style="display:grid;grid-template-columns:1.8fr 1fr 0.7fr 1fr 1fr 1.3fr;gap:16px;padding:14px 22px;border-bottom:1px solid rgba(238,235,228,0.06);align-items:center">
+<div><div style="font-size:14px">{{ r.p }}</div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;color:#7C8088;margin-top:3px">{{ r.c }}</div></div>
+<span style="font-family:'JetBrains Mono',monospace;font-size:12px;text-align:right">{{ r.i }}</span>
+<span style="font-family:'JetBrains Mono',monospace;font-size:12px;text-align:right;color:#A9A6A0">{{ r.h }}</span>
+<span style="font-family:'JetBrains Mono',monospace;font-size:12px;text-align:right;color:#A9A6A0">{{ r.k }}</span>
+<span style="font-family:'JetBrains Mono',monospace;font-size:12px;text-align:right">{{ r.m }}</span>
+<span style="display:flex;align-items:center;gap:10px"><span style="flex:1;height:6px;border-radius:3px;background:#1B2027;overflow:hidden"><span style="display:block;height:100%;width:{{ r.pct }}%;background:{{ r.pc }};transform-origin:left;animation:grow .9s ease both"></span></span><span style="font-family:'JetBrains Mono',monospace;font-size:12px;width:40px;text-align:right;color:{{ r.tc }}">{{ r.pct }} %</span></span>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ tFlujo }}" hint-placeholder-val="{{ false }}">
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.09);border-radius:28px;padding:24px">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-weight:900;font-size:22px;letter-spacing:-0.02em">PRÓXIMAS 8 SEMANAS</span>
+<span style="display:flex;gap:14px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#A9A6A0"><span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;background:#4C8141"></span>COBROS POR HITO</span><span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;background:#5B6068"></span>GASTOS PREVISTOS</span></span></div>
+<div style="display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:14px;align-items:end;height:320px;margin-top:22px;border-bottom:1px solid #252A31">
+<sc-for list="{{ flow }}" as="f" hint-placeholder-count="8">
+<div style="height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px">
+<span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:{{ f.nc }}">{{ f.net }}</span>
+<div style="width:100%;height:85%;display:flex;align-items:flex-end;gap:4px;justify-content:center">
+<span style="width:38%;height:{{ f.a }}%;border-radius:8px 8px 0 0;background:#4C8141;box-shadow:0 0 16px rgba(76,129,65,.4);transform-origin:bottom;animation:up .9s ease both;animation-delay:{{ f.delay }}"></span>
+<span style="width:38%;height:{{ f.b }}%;border-radius:8px 8px 0 0;background:#5B6068;transform-origin:bottom;animation:up .9s ease both;animation-delay:{{ f.delay }}"></span>
+</div>
+</div>
+</sc-for>
+</div>
+<div style="display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:14px;margin-top:10px"><sc-for list="{{ flow }}" as="f" hint-placeholder-count="8"><div style="text-align:center"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;color:#A9A6A0">{{ f.w }}</div><div style="font-size:11px;color:#7C8088;margin-top:2px">{{ f.src }}</div></div></sc-for></div>
+</div>
+</sc-if>
+
+<sc-if value="{{ tIA }}" hint-placeholder-val="{{ false }}">
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.09);border-radius:28px;padding:24px">
+<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-weight:900;font-size:22px;letter-spacing:-0.02em">TOKENS POR AGENTE · NOVIEMBRE</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px">$1,200.00 / $3,000.00 MXN</span></div>
+<sc-for list="{{ ai }}" as="a" hint-placeholder-count="13">
+<div style="display:grid;grid-template-columns:160px 1fr 150px;gap:14px;align-items:center;padding:8px 0">
+<span style="font-size:13px">{{ a.n }}</span>
+<span style="position:relative;height:12px;border-radius:6px;background:#1B2027"><span style="position:absolute;left:0;top:0;bottom:0;width:{{ a.w }}%;border-radius:6px;background:{{ a.c }};box-shadow:0 0 10px {{ a.c }};transform-origin:left;animation:grow 1s ease both;animation-delay:{{ a.delay }}"></span></span>
+<span style="font-family:'JetBrains Mono',monospace;font-size:11px;text-align:right;color:{{ a.tc }}">{{ a.v }}</span>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ tRep }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px">
+<sc-for list="{{ reports }}" as="r" hint-placeholder-count="4">
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.09);border-radius:26px;padding:22px;display:flex;flex-direction:column;gap:10px;opacity:{{ r.op }};transition:opacity .3s">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088">{{ r.when }} · {{ r.ch }}</span>
+<button onClick="{{ r.onToggle }}" style="width:46px;height:26px;border-radius:999px;border:none;background:{{ r.tb }};position:relative;cursor:pointer;transition:background .25s"><span style="position:absolute;top:3px;left:{{ r.tl }}px;width:20px;height:20px;border-radius:50%;background:#EEEBE4;transition:left .25s"></span></button>
+</div>
+<div style="font-weight:900;font-size:20px;letter-spacing:-0.01em;text-transform:uppercase">{{ r.t }}</div>
+<div style="font-size:13px;color:#A9A6A0">{{ r.d }}</div>
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;color:#A9A6A0">PARA: {{ r.to }}</div>
+</div>
+</sc-for>
+</div>
+</sc-if>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const C={tinta:'#0C0F14',papel:'#EEEBE4',niebla:'#A9A6A0',tenue:'#7C8088',acero:'#5B6068',oxido:'#B05139',olivo:'#4C8141',ambar:'#C98A3C'};
+const f=n=>'$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const PROJ=[['Plataforma de operación','NEGOCIO DEMO 2',60000,90,22000],['Membresías y accesos','NEGOCIO DEMO 5',50000,96,28000],['Órdenes de trabajo','NEGOCIO DEMO 6',45000,88,26000],['Agenda y expediente','NEGOCIO DEMO 4',30000,42,14000],['Acompañamiento mensual','NEGOCIO DEMO 3',20000,6,2000],['Diagnóstico completo','NEGOCIO DEMO 7',10000,6,2500]];
+class Component extends DCLogic {
+  state={tab:'Estado de resultados',sort:5,dir:-1,rep:{1:true,2:true,3:true,4:false}};
+  renderVals(){
+    const s=this.state;
+    const tabs=['Estado de resultados','Margen por proyecto','Flujo de efectivo','Costo de IA','Reportes programados'].map(l=>({label:l,bg:l===s.tab?C.papel:'rgba(22,26,33,0.55)',color:l===s.tab?C.tinta:C.papel,border:l===s.tab?C.papel:'rgba(238,235,228,0.09)',onClick:()=>this.setState({tab:l})}));
+    const kpis=[['COBRADO','$40,000','+$10,000 VS OCT',C.olivo],['MARGEN BRUTO','45 %','+5 PTS VS OCT',C.niebla],['UTILIDAD','$10,000','+$6,000 VS OCT',C.olivo]].map(([k,v,d,c])=>({k,v,d,c}));
+    const L=(k,a,b,o={})=>{const d=b?Math.round((a-b)/Math.abs(b)*100):0;return {k,a:f(a),b:f(b),d:(d>0?'+':'')+d+' %',dc:o.cost?(d>0?C.oxido:C.olivo):(d>=0?C.olivo:C.oxido),fs:o.total?'15px':'14px',w:o.total?700:400,ind:o.sub?16:0,tc:o.sub?C.niebla:C.papel,pad:o.total?'14px 0':'10px 0',line:o.total?'rgba(238,235,228,0.16)':'rgba(238,235,228,0.05)'};};
+    const er=[L('Ingresos cobrados',40000,30000,{total:true}),L('Horas al costo',14000,12000,{sub:true,cost:true}),L('Subcontratos',5000,4000,{sub:true,cost:true}),L('Herramientas por proyecto',3000,2000,{sub:true,cost:true}),L('Margen bruto',18000,12000,{total:true}),L('Gastos generales',8000,8000,{cost:true}),L('Utilidad',10000,4000,{total:true})];
+    const MS=['DIC','ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV'],IN=[20,18,22,25,24,28,26,30,28,32,30,40],UT=[4,3,5,6,5,7,6,8,6,8,4,10];
+    const months=MS.map((n,i)=>({n,a:IN[i]/40*100,b:UT[i]/40*100,ac:i===11?C.olivo:'rgba(76,129,65,0.55)',bc:i===11?C.papel:'rgba(238,235,228,0.4)',glow:i===11?'0 0 20px rgba(76,129,65,.6)':'none',lc:i===11?C.papel:C.tenue,delay:(0.04*i)+'s'}));
+    const rows=PROJ.map(([p,c,i,h,k])=>({p,c,i,h,k,m:i-k,pct:Math.round((i-k)/i*100)}));
+    const keys=['p','i','h','k','m','pct'];const key=keys[s.sort];rows.sort((a,b)=>(a[key]>b[key]?1:-1)*s.dir);
+    const mrows=rows.map(r=>({p:r.p,c:r.c,i:f(r.i),h:r.h+' H',k:f(r.k),m:f(r.m),pct:r.pct,pc:r.pct<50?C.ambar:C.olivo,tc:r.pct<50?C.ambar:C.papel}));
+    const mhead=['PROYECTO','INGRESO','HORAS','COSTO','MARGEN $','MARGEN %'].map((label,i)=>({label:label+(s.sort===i?(s.dir<0?' ↓':' ↑'):''),al:i===0?'left':i===5?'left':'right',c:s.sort===i?C.papel:C.tenue,onClick:()=>this.setState(x=>({sort:i,dir:x.sort===i?-x.dir:-1}))}));
+    const FL=[['9 NOV',18000,6000,'F-0118'],['16 NOV',12500,8000,'F-0120'],['23 NOV',0,6000,'—'],['30 NOV',20000,9000,'Acompañamiento'],['7 DIC',40000,6000,'Hito 3'],['14 DIC',0,8000,'—'],['21 DIC',25000,6000,'Hito 4'],['28 DIC',20000,12000,'Acompañamiento']];
+    const flow=FL.map(([w,a,b,src],i)=>({w,src,a:a/40000*100,b:b/40000*100,net:(a-b>=0?'+':'−')+'$'+Math.abs(a-b).toLocaleString('en-US'),nc:a-b>=0?C.papel:C.oxido,delay:(0.05*i)+'s'}));
+    const AG=[['Perfilador',80,200],['Seguimiento',150,250],['Mapeador',120,250],['Planeador',90,200],['Reportero',60,150],['Cobrador',40,150],['Analista',50,150],['Investigador',180,250],['Estratega',90,200],['Guionista',140,250],['Productor',120,300],['Publicador',30,100],['Analista de canal',50,150]];
+    const ai=AG.map(([n,v,t],i)=>{const r=v/t;return {n,w:r*100,c:r>0.7?C.ambar:C.papel,tc:r>0.7?C.ambar:C.niebla,v:'$'+v+' / $'+t,delay:(0.03*i)+'s'};});
+    const RP=[[1,'LUNES 8:00','CORREO','Resumen semanal','Leads, llamadas, avance de proyectos y cobranza de la semana.','Julio'],[2,'DÍA 1 · 9:00','CORREO','Estado de resultados mensual','Ingresos, costos, margen y utilidad contra el mes anterior.','Julio'],[3,'LUNES 9:00','WHATSAPP','Reporte semanal al cliente','Avance, hitos y siguiente paso para cada proyecto activo.','Clientes activos'],[4,'VIERNES 17:00','CORREO','Costo de IA por agente','Tokens y costo de la semana contra el tope.','Julio']];
+    const reports=RP.map(([id,when,ch,t,d,to])=>{const on=s.rep[id];return {when,ch,t,d,to,op:on?1:0.55,tb:on?C.olivo:'#2A2F36',tl:on?23:3,onToggle:()=>this.setState(x=>({rep:{...x.rep,[id]:!x.rep[id]}}))};});
+    return {tabs,kpis,er,months,mrows,mhead,flow,ai,reports,tER:s.tab==='Estado de resultados',tMargen:s.tab==='Margen por proyecto',tFlujo:s.tab==='Flujo de efectivo',tIA:s.tab==='Costo de IA',tRep:s.tab==='Reportes programados'};
+  }
+}
+</script>
+</body>
+</html>

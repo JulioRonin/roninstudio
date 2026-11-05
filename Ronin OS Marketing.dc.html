@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,300..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#07090C;color:#EEEBE4;font-family:'Archivo',sans-serif;font-stretch:112%;-webkit-font-smoothing:antialiased}
+a{color:#EEEBE4;text-decoration-color:#B05139}a:hover{color:#F7F5F0}*{box-sizing:border-box}button,input,textarea{font-family:inherit;font-stretch:inherit}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes pulseOx{0%{box-shadow:0 0 0 0 rgba(176,81,57,.7),0 0 18px rgba(176,81,57,.6)}70%{box-shadow:0 0 0 12px rgba(176,81,57,0),0 0 18px rgba(176,81,57,.6)}100%{box-shadow:0 0 0 0 rgba(176,81,57,0),0 0 18px rgba(176,81,57,.6)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-30px) scale(1.12)}}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+</style>
+</helmet>
+<div style="width:1440px;margin:0 auto;background:#0C0F14;min-height:100vh;position:relative;overflow:hidden;isolation:isolate;padding-bottom:56px">
+<div style="position:absolute;z-index:-1;left:320px;top:60px;width:640px;height:420px;border-radius:50%;background:radial-gradient(closest-side,rgba(176,81,57,.36),rgba(176,81,57,0));filter:blur(30px);animation:drift 14s ease-in-out infinite;pointer-events:none"></div>
+<div style="position:absolute;z-index:-1;right:-80px;top:560px;width:620px;height:460px;border-radius:50%;background:radial-gradient(closest-side,rgba(76,129,65,.16),rgba(76,129,65,0));filter:blur(40px);animation:drift 18s ease-in-out infinite reverse;pointer-events:none"></div>
+<dc-import name="RoninHeader" active="Marketing" hint-size="100%,96px"></dc-import>
+
+<section style="padding:34px 32px 0;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;animation:rise .6s cubic-bezier(.2,.7,.2,1) both">
+<div>
+<div style="display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088"><span style="width:3px;height:12px;background:#B05139;transform:skewY(-14deg)"></span>02 · MARKETING Y CONTENIDO</div>
+<h1 style="margin:8px 0 0;font-weight:900;font-size:44px;letter-spacing:-0.02em;line-height:1">MARKETING</h1>
+<div style="font-weight:300;font-size:16px;color:#A9A6A0;margin-top:6px">Semana del 2 al 8 de noviembre · 5 piezas planeadas · 1 idea</div>
+</div>
+<button onClick="{{ newPiece }}" style="height:48px;padding:0 22px;border-radius:999px;background:#B05139;color:#EEEBE4;border:none;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 0 28px rgba(176,81,57,.45)" style-hover="background:#9A4530">Nueva pieza</button>
+</section>
+<nav style="display:flex;gap:6px;padding:22px 32px 0">
+<sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
+<button onClick="{{ t.onClick }}" style="height:44px;padding:0 18px;border-radius:999px;border:1px solid {{ t.border }};background:{{ t.bg }};color:{{ t.color }};font-size:13px;cursor:pointer;backdrop-filter:blur(14px)" style-hover="border-color:#5B6068">{{ t.label }}</button>
+</sc-for>
+</nav>
+
+<section style="padding:24px 32px 0">
+
+<sc-if value="{{ isCal }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
+<div style="display:flex;padding:4px;border-radius:999px;background:rgba(22,26,33,0.55);border:1px solid rgba(238,235,228,0.09)">
+<sc-for list="{{ views }}" as="v" hint-placeholder-count="2"><button onClick="{{ v.onClick }}" style="height:34px;padding:0 16px;border-radius:999px;border:none;background:{{ v.bg }};color:{{ v.color }};font-size:12px;cursor:pointer">{{ v.label }}</button></sc-for>
+</div>
+<div style="display:flex;gap:14px;margin-left:auto">
+<sc-for list="{{ legend }}" as="l" hint-placeholder-count="6"><span style="display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#A9A6A0"><span style="width:7px;height:7px;border-radius:50%;background:{{ l.c }};box-shadow:0 0 8px {{ l.c }}"></span>{{ l.n }}</span></sc-for>
+</div>
+</div>
+<sc-if value="{{ isWeek }}" hint-placeholder-val="{{ true }}">
+<div style="display:grid;grid-template-columns:120px repeat(7,minmax(0,1fr));gap:8px">
+<span></span>
+<sc-for list="{{ days }}" as="d" hint-placeholder-count="7"><div style="padding:10px 12px;border-radius:14px;background:{{ d.bg }};color:{{ d.color }};font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;box-shadow:{{ d.glow }}">{{ d.label }}</div></sc-for>
+</div>
+<sc-for list="{{ cal }}" as="row" hint-placeholder-count="4">
+<div style="display:grid;grid-template-columns:120px repeat(7,minmax(0,1fr));gap:8px;margin-top:8px">
+<div style="display:flex;align-items:center;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#A9A6A0;border-top:1px solid rgba(238,235,228,0.08)">{{ row.name }}</div>
+<sc-for list="{{ row.cells }}" as="c" hint-placeholder-count="7">
+<div style="min-height:136px;border-radius:18px;border:1px dashed rgba(238,235,228,0.06);position:relative">
+<sc-if value="{{ c.has }}" hint-placeholder-val="{{ false }}">
+<button onClick="{{ c.onClick }}" style="position:absolute;inset:0;text-align:left;border-radius:18px;background:rgba(22,26,33,0.6);backdrop-filter:blur(18px);border:1px solid {{ c.border }};box-shadow:{{ c.glow }};padding:12px;display:flex;flex-direction:column;gap:8px;color:#EEEBE4;cursor:pointer;animation:rise .5s cubic-bezier(.2,.7,.2,1) both;animation-delay:{{ c.delay }};transition:transform .25s" style-hover="transform:translateY(-3px)">
+<span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#7C8088">{{ c.type }}</span>
+<span style="font-size:13px;line-height:1.35;flex:1;text-wrap:pretty">{{ c.hook }}</span>
+<span style="display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em"><span style="width:6px;height:6px;border-radius:50%;background:{{ c.dot }};box-shadow:0 0 8px {{ c.dot }}"></span>{{ c.st }}</span>
+</button>
+</sc-if>
+</div>
+</sc-for>
+</div>
+</sc-for>
+</sc-if>
+<sc-if value="{{ isMonth }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px">
+<sc-for list="{{ monthHead }}" as="h" hint-placeholder-count="7"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088;padding:0 4px">{{ h }}</span></sc-for>
+<sc-for list="{{ month }}" as="d" hint-placeholder-count="35">
+<div style="height:96px;border-radius:16px;background:{{ d.bg }};border:1px solid {{ d.border }};padding:10px;display:flex;flex-direction:column;justify-content:space-between">
+<span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:{{ d.color }}">{{ d.n }}</span>
+<span style="display:flex;gap:4px;flex-wrap:wrap"><sc-for list="{{ d.dots }}" as="x" hint-placeholder-count="0"><span style="width:8px;height:8px;border-radius:50%;background:{{ x }};box-shadow:0 0 8px {{ x }}"></span></sc-for></span>
+</div>
+</sc-for>
+</div>
+</sc-if>
+</sc-if>
+
+<sc-if value="{{ showTable }}" hint-placeholder-val="{{ false }}">
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.09);box-shadow:inset 0 1px 0 rgba(238,235,228,0.08);border-radius:24px;overflow:hidden;animation:rise .6s cubic-bezier(.2,.7,.2,1) both">
+<div style="display:grid;grid-template-columns:{{ table.cols }};gap:16px;padding:14px 22px;border-bottom:1px solid rgba(238,235,228,0.09)">
+<sc-for list="{{ table.head }}" as="h" hint-placeholder-count="6"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088">{{ h }}</span></sc-for>
+</div>
+<sc-for list="{{ table.rows }}" as="r" hint-placeholder-count="5">
+<div style="display:grid;grid-template-columns:{{ r.cols }};gap:16px;padding:14px 22px;border-bottom:1px solid rgba(238,235,228,0.06);align-items:center;transition:background .2s" style-hover="background:rgba(238,235,228,0.04)">
+<sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="6"><span style="display:flex;align-items:center;gap:7px;justify-content:{{ c.align }};font-family:{{ c.font }};font-size:{{ c.size }};letter-spacing:{{ c.ls }};font-weight:{{ c.w }};color:{{ c.color }};min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><sc-if value="{{ c.dot }}" hint-placeholder-val="{{ false }}"><span style="width:6px;height:6px;border-radius:50%;flex-shrink:0;background:{{ c.dot }};box-shadow:0 0 8px {{ c.dot }}"></span></sc-if>{{ c.t }}</span></sc-for>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ isPiece }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px">
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.09);box-shadow:inset 0 1px 0 rgba(238,235,228,0.08);border-radius:28px;padding:26px;animation:rise .6s cubic-bezier(.2,.7,.2,1) both">
+<div style="display:flex;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088"><span>VIDEO</span><span>·</span><span>TIKTOK</span><span>·</span><span>CAMPAÑA FLUJO ANTES QUE IA</span></div>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:8px">
+<div style="font-weight:900;font-size:28px;letter-spacing:-0.02em;text-transform:uppercase">Lo que pierdes copiando la misma orden tres veces</div>
+<span style="display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;padding:8px 12px;border-radius:999px;border:1px solid #B05139;white-space:nowrap"><span style="width:6px;height:6px;border-radius:50%;background:#B05139;animation:blink 1.6s infinite"></span>APROBACIÓN</span>
+</div>
+<div style="display:flex;gap:4px;margin:20px 0 18px;border-bottom:1px solid rgba(238,235,228,0.09)">
+<sc-for list="{{ ptabs }}" as="t" hint-placeholder-count="5"><button onClick="{{ t.onClick }}" style="height:40px;padding:0 14px;background:none;border:none;border-bottom:2px solid {{ t.line }};color:{{ t.color }};font-size:13px;cursor:pointer">{{ t.label }}</button></sc-for>
+</div>
+<sc-if value="{{ pGuion }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:2px">
+<sc-for list="{{ script }}" as="l" hint-placeholder-count="5">
+<div style="display:grid;grid-template-columns:110px 1fr;gap:18px;padding:12px 0;border-bottom:1px solid rgba(238,235,228,0.06)">
+<span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.1em;color:{{ l.c }}">{{ l.time }}</span>
+<span style="font-size:{{ l.size }};line-height:1.45;font-weight:{{ l.w }};text-wrap:pretty">{{ l.text }}</span>
+</div>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{ pTextos }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
+<sc-for list="{{ copies }}" as="c" hint-placeholder-count="4">
+<div style="background:rgba(12,15,20,0.45);border:1px solid rgba(238,235,228,0.08);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#7C8088"><span>{{ c.ch }}</span><span style="color:{{ c.cc }}">{{ c.count }}</span></div>
+<div style="font-size:13px;line-height:1.5;color:#EEEBE4;text-wrap:pretty">{{ c.text }}</div>
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.08em;color:#A9A6A0">{{ c.tags }}</div>
+<div style="height:3px;border-radius:2px;background:#1B2027;overflow:hidden"><div style="height:100%;width:{{ c.pct }}%;background:#EEEBE4;transform-origin:left;animation:grow .9s ease both"></div></div>
+</div>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{ pApoyos }}" hint-placeholder-val="{{ false }}">
+<sc-for list="{{ assets }}" as="a" hint-placeholder-count="4">
+<div style="display:grid;grid-template-columns:52px 1fr auto;gap:16px;align-items:center;padding:12px 0;border-bottom:1px solid rgba(238,235,228,0.06)">
+<span style="width:52px;height:52px;border-radius:14px;background:#1B2027;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;color:#A9A6A0">{{ a.kind }}</span>
+<div><div style="font-size:14px">{{ a.name }}</div><div style="font-size:12px;color:#7C8088;margin-top:3px">Prompt: {{ a.prompt }}</div></div>
+<span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#A9A6A0">{{ a.src }}</span>
+</div>
+</sc-for>
+</sc-if>
+<sc-if value="{{ pPub }}" hint-placeholder-val="{{ false }}">
+<sc-for list="{{ pubs }}" as="p" hint-placeholder-count="4">
+<div style="display:grid;grid-template-columns:140px 1fr 1fr auto;gap:16px;align-items:center;padding:14px 0;border-bottom:1px solid rgba(238,235,228,0.06)">
+<span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#A9A6A0">{{ p.ch }}</span>
+<span style="font-size:14px">{{ p.date }}</span>
+<span style="font-family:'JetBrains Mono',monospace;font-size:12px">{{ p.time }}</span>
+<span style="display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em"><span style="width:6px;height:6px;border-radius:50%;background:{{ p.c }};box-shadow:0 0 8px {{ p.c }}"></span>{{ p.st }}</span>
+</div>
+</sc-for>
+</sc-if>
+<sc-if value="{{ pMet }}" hint-placeholder-val="{{ false }}">
+<div style="padding:30px 0;font-size:14px;color:#7C8088">Las métricas aparecen aquí 24 horas después de publicar la pieza.</div>
+</sc-if>
+</div>
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="aspect-ratio:9/14;border-radius:28px;background:linear-gradient(160deg,#1B2027,#0C0F14);border:1px solid rgba(238,235,228,0.09);position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:20px">
+<span style="position:absolute;top:16px;left:16px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088">VISTA PREVIA · 9:16 · 0:45</span>
+<span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:64px;height:64px;border-radius:50%;background:rgba(238,235,228,0.14);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;font-size:20px">▶</span>
+<span style="font-weight:900;font-size:22px;letter-spacing:-0.02em;text-transform:uppercase;line-height:1.05">Tres veces la misma orden.</span>
+</div>
+<div style="display:flex;gap:8px">
+<button onClick="{{ approvePiece }}" style="flex:1;height:48px;border-radius:999px;background:#B05139;color:#EEEBE4;border:none;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 0 24px rgba(176,81,57,.45)" style-hover="background:#9A4530">Aprobar pieza</button>
+<button style="height:48px;padding:0 18px;border-radius:999px;background:transparent;color:#EEEBE4;border:1px solid #3A4048;font-size:14px;cursor:pointer">Editar</button>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isApprove }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px">
+<sc-for list="{{ props }}" as="p" hint-placeholder-count="4">
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid {{ p.border }};box-shadow:{{ p.glow }};border-radius:24px;padding:22px;display:flex;flex-direction:column;gap:12px;animation:rise .6s cubic-bezier(.2,.7,.2,1) both;animation-delay:{{ p.delay }}">
+<div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#7C8088"><span>BORRADOR DE IA · {{ p.agent }} · CLAUDE</span><span>{{ p.kind }}</span></div>
+<div style="font-weight:900;font-size:19px;letter-spacing:-0.01em;text-transform:uppercase">{{ p.title }}</div>
+<div style="background:rgba(12,15,20,0.5);border:1px dashed #3A4048;border-radius:16px;padding:14px;font-size:13px;line-height:1.5;color:#A9A6A0;text-wrap:pretty">{{ p.body }}</div>
+<div style="display:flex;gap:6px">
+<button onClick="{{ p.onApprove }}" style="height:38px;padding:0 18px;border-radius:999px;background:#B05139;color:#EEEBE4;border:none;font-size:13px;font-weight:600;cursor:pointer" style-hover="background:#9A4530">Aprobar</button>
+<button style="height:38px;padding:0 18px;border-radius:999px;background:transparent;color:#EEEBE4;border:1px solid #3A4048;font-size:13px;cursor:pointer">Editar</button>
+<button onClick="{{ p.onDiscard }}" style="height:38px;padding:0 14px;border-radius:999px;background:transparent;color:#A9A6A0;border:none;font-size:13px;cursor:pointer">Descartar</button>
+</div>
+</div>
+</sc-for>
+</div>
+<sc-if value="{{ propsEmpty }}" hint-placeholder-val="{{ false }}"><div style="font-size:14px;color:#7C8088;padding:20px 0">Nada por aprobar. El Estratega propone el calendario cada viernes.</div></sc-if>
+</sc-if>
+
+<sc-if value="{{ isMetrics }}" hint-placeholder-val="{{ false }}">
+<div style="margin-top:16px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px">
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.09);border-radius:28px;padding:24px">
+<div style="font-weight:900;font-size:22px;letter-spacing:-0.02em">ALCANCE POR TIPO DE PIEZA</div>
+<sc-for list="{{ byType }}" as="b" hint-placeholder-count="3">
+<div style="display:grid;grid-template-columns:100px 1fr 70px;gap:12px;align-items:center;margin-top:16px">
+<span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#A9A6A0">{{ b.n }}</span>
+<span style="height:22px;border-radius:999px;background:#101318;overflow:hidden"><span style="display:block;height:100%;width:{{ b.w }}%;background:{{ b.c }};border-radius:999px;transform-origin:left;animation:grow 1s cubic-bezier(.2,.7,.2,1) both"></span></span>
+<span style="font-family:'JetBrains Mono',monospace;font-size:12px;text-align:right">{{ b.v }}</span>
+</div>
+</sc-for>
+</div>
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.09);border-radius:28px;padding:24px">
+<div style="font-weight:900;font-size:22px;letter-spacing:-0.02em">MEJORES GANCHOS DE LA SEMANA</div>
+<sc-for list="{{ hooks }}" as="h" hint-placeholder-count="3">
+<div style="display:grid;grid-template-columns:28px 1fr auto;gap:12px;padding:14px 0;border-bottom:1px solid rgba(238,235,228,0.06);align-items:center">
+<span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#7C8088">{{ h.n }}</span>
+<span style="font-size:14px">{{ h.t }}</span>
+<span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#A9A6A0">RET. 3S {{ h.r }}</span>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+</section>
+<sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;left:24px;bottom:24px;z-index:60;background:#EEEBE4;color:#0C0F14;border-radius:999px;padding:12px 20px;display:flex;align-items:center;gap:10px;font-size:13px;animation:rise .3s ease both"><span style="width:7px;height:7px;border-radius:50%;background:#4C8141"></span>{{ toast }}</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const C={tinta:'#0C0F14',papel:'#EEEBE4',niebla:'#A9A6A0',tenue:'#7C8088',acero:'#5B6068',oxido:'#B05139',olivo:'#4C8141',ambar:'#C98A3C'};
+const MONO="'JetBrains Mono',monospace",SANS="'Archivo',sans-serif";
+const tx=(t,o={})=>({t,color:o.c||C.papel,font:SANS,size:'14px',ls:'0',w:o.w||400,dot:null,align:o.a||'flex-start'});
+const mo=(t,o={})=>({t,color:o.c||C.niebla,font:MONO,size:'11px',ls:'0.08em',w:400,dot:null,align:o.a||'flex-start'});
+const ch=(t,dot)=>({t,color:C.papel,font:MONO,size:'10px',ls:'0.12em',w:500,dot,align:'flex-start'});
+const ST={IDEA:C.tenue,GUION:C.niebla,'PRODUCCIÓN':C.ambar,'APROBACIÓN':C.oxido,PROGRAMADA:C.papel,PUBLICADA:C.olivo};
+const DAYS=['LUN 2','MAR 3','MIÉ 4','JUE 5','VIE 6','SÁB 7','DOM 8'];
+const CHN=['INSTAGRAM','YOUTUBE','TIKTOK','LINKEDIN'];
+const PIECES=[{c:0,d:0,type:'CARRUSEL',hook:'El chatbot que nadie usa',st:'PUBLICADA'},{c:3,d:1,type:'POST',hook:'Primero el flujo. Después la IA.',st:'PUBLICADA'},{c:2,d:3,type:'VIDEO',hook:'Lo que pierdes copiando la misma orden tres veces',st:'APROBACIÓN'},{c:1,d:4,type:'VIDEO',hook:'Cómo mapeamos una cocina en una mañana',st:'PRODUCCIÓN'},{c:0,d:5,type:'CARRUSEL',hook:'Cuatro señales de que tu operación vive en WhatsApp',st:'GUION'},{c:3,d:6,type:'POST',hook:'Cuánto cuesta no ordenar el flujo',st:'IDEA'}];
+const PROPS=[
+ {id:1,agent:'ESTRATEGA',kind:'CALENDARIO',title:'Calendario de la semana 46',body:'5 piezas sobre el costo de no ordenar el flujo: 2 carruseles (IG), 2 videos (TT, YT) y 1 post (LI). Sector foco: clínicas.'},
+ {id:2,agent:'GUIONISTA',kind:'GUION',title:'Video · El chatbot que nadie usa',body:'00:00 Gancho: “Le pusieron IA a un negocio que todavía anota en libreta.” 00:03 Contexto, 00:15 el flujo real, 00:35 cierre con diagnóstico exprés.'},
+ {id:3,agent:'PRODUCTOR',kind:'APOYOS',title:'Tomas y voz · Cocina en una mañana',body:'6 tomas B/N generadas, voz en off de 45 segundos y subtítulos en español. Listo para edición final.'},
+ {id:4,agent:'PUBLICADOR',kind:'PUBLICACIÓN',title:'Programar en TikTok · jueves 19:00',body:'Publicar “Lo que pierdes copiando la misma orden tres veces” hoy a las 19:00 con texto y hashtags aprobados.'}
+];
+class Component extends DCLogic {
+  state={tab:'Calendario',view:'Semana',ptab:'Gancho y guion',props:PROPS.map(p=>p.id),toast:null};
+  flash(m){this.setState({toast:m});clearTimeout(this._t);this._t=setTimeout(()=>this.setState({toast:null}),2400);}
+  renderVals(){
+    const s=this.state,set=k=>v=>this.setState({[k]:v});
+    const pill=(l,cur,fn)=>({label:l,bg:l===cur?C.papel:'rgba(22,26,33,0.55)',color:l===cur?C.tinta:C.papel,border:l===cur?C.papel:'rgba(238,235,228,0.09)',onClick:()=>fn(l)});
+    const tabs=['Calendario','Campañas','Pieza','Aprobación','Métricas'].map(l=>pill(l,s.tab,set('tab')));
+    const views=['Semana','Mes'].map(l=>({label:l,bg:l===s.view?C.papel:'transparent',color:l===s.view?C.tinta:C.niebla,onClick:()=>this.setState({view:l})}));
+    const legend=Object.entries(ST).map(([n,c])=>({n,c}));
+    const days=DAYS.map((label,i)=>({label,bg:i===3?C.papel:'rgba(22,26,33,0.55)',color:i===3?C.tinta:C.niebla,glow:i===3?'0 0 24px rgba(238,235,228,0.3)':'none'}));
+    let k=0;
+    const cal=CHN.map((name,ci)=>({name,cells:DAYS.map((_,di)=>{const p=PIECES.find(x=>x.c===ci&&x.d===di);if(!p)return {has:false};const dot=ST[p.st];
+      return {has:true,...p,dot,delay:(0.05*(k++))+'s',border:p.st==='APROBACIÓN'?C.oxido:'rgba(238,235,228,0.09)',glow:p.st==='APROBACIÓN'?'0 0 30px rgba(176,81,57,0.35)':'none',onClick:()=>this.setState({tab:'Pieza'})};})}));
+    const plan={2:['PUBLICADA'],3:['PUBLICADA'],5:['APROBACIÓN'],6:['PRODUCCIÓN'],7:['GUION'],8:['IDEA'],10:['IDEA'],12:['IDEA','IDEA'],17:['IDEA']};
+    const month=Array.from({length:35},(_,i)=>{const n=i-5;const valid=n>=1&&n<=30;const today=n===5;
+      return {n:valid?n:'',dots:valid&&plan[n]?plan[n].map(x=>ST[x]):[],bg:today?'rgba(238,235,228,0.08)':valid?'rgba(22,26,33,0.5)':'transparent',border:today?C.papel:valid?'rgba(238,235,228,0.07)':'transparent',color:today?C.papel:C.tenue};});
+    const W='1.6fr 1.6fr 1fr 1fr 70px 120px 70px';
+    const campaigns={cols:W,head:['CAMPAÑA','OBJETIVO','SECTOR','FECHAS','PIEZAS','PAUTA','LEADS'],rows:[
+      ['Flujo antes que IA','Diagnósticos exprés','Restaurantes','2 – 30 NOV','8','$3,000.00 MXN','5','ACTIVA',C.olivo],
+      ['El chatbot que nadie usa','Llamadas agendadas','Clínicas','9 – 22 NOV','4','$2,000.00 MXN','—','PROGRAMADA',C.papel],
+      ['Escuelas sin libreta','Diagnósticos exprés','Escuelas','16 NOV – 6 DIC','6','$2,500.00 MXN','—','GUION',C.niebla],
+      ['Talleres en orden','Visitas al perfil','Talleres','1 – 31 OCT','10','$4,000.00 MXN','7','CERRADA',C.tenue]
+    ].map(r=>({cols:W,cells:[{...tx(r[0],{w:600}),dot:r[8]},tx(r[1],{c:C.niebla}),mo(r[2].toUpperCase()),mo(r[3]),mo(r[4],{c:C.papel}),mo(r[5],{c:C.papel}),mo(r[6],{c:C.papel})]}))};
+    const W2='1.2fr repeat(6,minmax(0,1fr))';
+    const metrics={cols:W2,head:['CANAL','ALCANCE','REPROD.','RET. 3S','COMPLETA','CLICS','DIAG. EXPRÉS'],rows:[
+      ['INSTAGRAM','4,000','—','—','—','60','2'],['LINKEDIN','1,500','—','—','—','30','1'],['TIKTOK','3,000','3,000','60 %','20 %','20','1'],['YOUTUBE','800','800','70 %','30 %','10','0']
+    ].map(r=>({cols:W2,cells:r.map((v,i)=>i===0?mo(v,{c:C.papel}):mo(v,{c:i===6&&v!=='0'?C.papel:C.niebla}))}))};
+    const showTable=s.tab==='Campañas'||s.tab==='Métricas';
+    const ptabs=['Gancho y guion','Textos por red','Apoyos','Publicación','Métricas'].map(l=>({label:l,line:l===s.ptab?C.oxido:'transparent',color:l===s.ptab?C.papel:C.tenue,onClick:()=>this.setState({ptab:l})}));
+    const script=[['00:00 – 00:03','Tres veces. La misma orden. Tres personas distintas.',C.oxido,'20px',600],['00:03 – 00:12','El mesero la anota, la cocina la vuelve a escribir y caja la captura otra vez al cobrar.',C.niebla,'16px',400],['00:12 – 00:28','Cada copia es un lugar donde se pierde un dato. Ahí nacen las cuentas que no cuadran.',C.niebla,'16px',400],['00:28 – 00:40','Primero ordenamos el flujo: una sola captura que llega a todos. Después, la IA.',C.niebla,'16px',400],['00:40 – 00:45','Haz el diagnóstico exprés. Son 12 preguntas, 5 minutos.',C.papel,'16px',600]].map(([time,text,c,size,w])=>({time,text,c,size,w}));
+    const copies=[['INSTAGRAM',182,2200,'#restaurantes #juarez #operacion'],['TIKTOK',96,2200,'#restaurantes #negocios'],['LINKEDIN',540,3000,'#operaciones #pyme'],['YOUTUBE',88,100,'#restaurantes #flujo']].map(([c,n,max,tags])=>({ch:c,count:n.toLocaleString('en-US')+' / '+max.toLocaleString('en-US'),cc:n/max>0.85?C.ambar:C.tenue,pct:Math.round(n/max*100),tags,
+      text:c==='YOUTUBE'?'Lo que pierdes copiando la misma orden tres veces · Ronin Studio':'La misma orden se captura tres veces en muchos restaurantes de la frontera. Cada copia es un error posible. Primero el flujo. Después la IA.'}));
+    const assets=[['TOMA','Cocina · comanda en papel','mano anotando comanda, blanco y negro, contraste alto','HIGGSFIELD'],['TOMA','Caja · captura doble','pantalla de punto de venta, blanco y negro','HIGGSFIELD'],['VOZ','Voz en off · 45 s','guion aprobado, tono directo','ELEVENLABS'],['SUB','Subtítulos ES','transcripción del guion con tiempos','GUIONISTA']].map(([kind,name,prompt,src])=>({kind,name,prompt,src}));
+    const pubs=[['TIKTOK','Jueves 5 de noviembre','19:00','POR APROBAR',C.oxido],['INSTAGRAM','Viernes 6 de noviembre','13:00','PROGRAMADA',C.papel],['YOUTUBE','Sábado 7 de noviembre','10:00','PROGRAMADA',C.papel],['LINKEDIN','—','—','NO APLICA',C.tenue]].map(([c,date,time,st,col])=>({ch:c,date,time,st,c:col}));
+    const props=PROPS.filter(p=>s.props.includes(p.id)).map((p,i)=>({...p,delay:(0.06*i)+'s',border:i===0?C.oxido:'rgba(238,235,228,0.09)',glow:i===0?'0 0 30px rgba(176,81,57,0.3)':'none',
+      onApprove:()=>{this.setState(x=>({props:x.props.filter(y=>y!==p.id)}));this.flash('Aprobado · '+p.agent.toLowerCase());},onDiscard:()=>{this.setState(x=>({props:x.props.filter(y=>y!==p.id)}));this.flash('Propuesta descartada');}}));
+    return {tabs,views,legend,days,cal,month,monthHead:['LUN','MAR','MIÉ','JUE','VIE','SÁB','DOM'],
+      isCal:s.tab==='Calendario',isWeek:s.view==='Semana',isMonth:s.view==='Mes',
+      showTable,table:s.tab==='Métricas'?metrics:campaigns,isPiece:s.tab==='Pieza',isApprove:s.tab==='Aprobación',isMetrics:s.tab==='Métricas',
+      ptabs,pGuion:s.ptab==='Gancho y guion',pTextos:s.ptab==='Textos por red',pApoyos:s.ptab==='Apoyos',pPub:s.ptab==='Publicación',pMet:s.ptab==='Métricas',
+      script,copies,assets,pubs,props,propsEmpty:props.length===0,
+      byType:[['VIDEO',3800,C.papel],['CARRUSEL',4000,C.papel],['POST',1500,C.acero]].map(([n,v,c])=>({n,v:v.toLocaleString('en-US'),w:v/40,c})),
+      hooks:[['01','El chatbot que nadie usa','62 %'],['02','Lo que pierdes copiando la misma orden','60 %'],['03','Primero el flujo. Después la IA.','48 %']].map(([n,t,r])=>({n,t,r})),
+      toast:s.toast,newPiece:()=>this.flash('Pieza creada como idea'),approvePiece:()=>this.flash('Pieza aprobada · se publica a las 19:00')};
+  }
+}
+</script>
+</body>
+</html>

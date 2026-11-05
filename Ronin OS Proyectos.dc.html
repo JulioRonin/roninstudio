@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,300..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#07090C;color:#EEEBE4;font-family:'Archivo',sans-serif;font-stretch:112%;-webkit-font-smoothing:antialiased}
+a{color:#EEEBE4;text-decoration-color:#B05139}a:hover{color:#F7F5F0}*{box-sizing:border-box}button,input,textarea{font-family:inherit;font-stretch:inherit}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes pulseOx{0%{box-shadow:0 0 0 0 rgba(176,81,57,.7),0 0 18px rgba(176,81,57,.6)}70%{box-shadow:0 0 0 12px rgba(176,81,57,0),0 0 18px rgba(176,81,57,.6)}100%{box-shadow:0 0 0 0 rgba(176,81,57,0),0 0 18px rgba(176,81,57,.6)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-30px) scale(1.12)}}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+</style>
+</helmet>
+<div style="width:1440px;margin:0 auto;background:#0C0F14;min-height:100vh;position:relative;overflow:hidden;isolation:isolate;padding-bottom:56px">
+<div style="position:absolute;z-index:-1;left:300px;top:60px;width:680px;height:420px;border-radius:50%;background:radial-gradient(closest-side,rgba(176,81,57,.34),rgba(176,81,57,0));filter:blur(30px);animation:drift 14s ease-in-out infinite;pointer-events:none"></div>
+<div style="position:absolute;z-index:-1;right:-80px;top:620px;width:620px;height:460px;border-radius:50%;background:radial-gradient(closest-side,rgba(76,129,65,.15),rgba(76,129,65,0));filter:blur(40px);animation:drift 18s ease-in-out infinite reverse;pointer-events:none"></div>
+<dc-import name="RoninHeader" active="Proyectos" hint-size="100%,96px"></dc-import>
+
+<section style="padding:34px 32px 0;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;animation:rise .6s cubic-bezier(.2,.7,.2,1) both">
+<div style="display:flex;align-items:flex-end;gap:18px">
+<sc-if value="{{ inProject }}" hint-placeholder-val="{{ true }}"><span style="width:64px;height:64px;border-radius:50%;border:1px solid #B05139;background:rgba(176,81,57,0.14);display:flex;align-items:center;justify-content:center;animation:pulseOx 2.6s infinite">{{ stageGlyph }}</span></sc-if>
+<div>
+<div style="display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088"><span style="width:3px;height:12px;background:#B05139;transform:skewY(-14deg)"></span>{{ eyebrow }}</div>
+<h1 style="margin:8px 0 0;font-weight:900;font-size:44px;letter-spacing:-0.02em;line-height:1">{{ title }}</h1>
+<div style="font-weight:300;font-size:16px;color:#A9A6A0;margin-top:6px">{{ subtitle }}</div>
+</div>
+</div>
+<div style="display:flex;gap:8px">
+<sc-if value="{{ inProject }}" hint-placeholder-val="{{ true }}"><button onClick="{{ copyLink }}" style="height:48px;padding:0 20px;border-radius:999px;background:transparent;color:#EEEBE4;border:1px solid #3A4048;font-size:14px;cursor:pointer">Copiar enlace del cliente</button></sc-if>
+<button style="height:48px;padding:0 22px;border-radius:999px;background:#B05139;color:#EEEBE4;border:none;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 0 28px rgba(176,81,57,.45)" style-hover="background:#9A4530">{{ primary }}</button>
+</div>
+</section>
+<nav style="display:flex;gap:4px;padding:22px 32px 0;flex-wrap:wrap">
+<sc-for list="{{ tabs }}" as="t" hint-placeholder-count="10">
+<button onClick="{{ t.onClick }}" style="height:42px;padding:0 15px;border-radius:999px;border:1px solid {{ t.border }};background:{{ t.bg }};color:{{ t.color }};font-size:12.5px;cursor:pointer" style-hover="border-color:#5B6068">{{ t.label }}</button>
+</sc-for>
+</nav>
+
+<section style="padding:22px 32px 0">
+
+<sc-if value="{{ tLista }}" hint-placeholder-val="{{ false }}">
+<sc-for list="{{ groups }}" as="g" hint-placeholder-count="4">
+<div style="margin-bottom:18px;animation:rise .6s ease both;animation-delay:{{ g.delay }}">
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">{{ g.glyph }}<span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em">{{ g.num }} / 04 · {{ g.name }}</span><span style="flex:1;height:1px;background:#252A31"></span><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#7C8088">{{ g.count }}</span></div>
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.09);border-radius:22px;overflow:hidden">
+<sc-for list="{{ g.rows }}" as="r" hint-placeholder-count="2">
+<div onClick="{{ open }}" style="display:grid;grid-template-columns:1.6fr 1.2fr 1.6fr 1fr 1fr;gap:16px;padding:15px 22px;border-bottom:1px solid rgba(238,235,228,0.06);align-items:center;cursor:pointer" style-hover="background:rgba(238,235,228,0.04)">
+<div><div style="font-size:14px;font-weight:600">{{ r.name }}</div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;color:#7C8088;margin-top:3px">{{ r.client }}</div></div>
+<div style="display:flex;align-items:center;gap:10px"><span style="flex:1;height:4px;border-radius:2px;background:#1B2027;overflow:hidden"><span style="display:block;height:100%;width:{{ r.pct }}%;background:#B05139;box-shadow:0 0 10px #B05139;transform-origin:left;animation:grow 1s ease both"></span></span><span style="font-family:'JetBrains Mono',monospace;font-size:11px">{{ r.pct }} %</span></div>
+<span style="font-size:13px;color:{{ r.nc }}">{{ r.next }}</span>
+<span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#A9A6A0">{{ r.hours }}</span>
+<span style="display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em"><span style="width:6px;height:6px;border-radius:50%;background:{{ r.bc }};box-shadow:0 0 8px {{ r.bc }}"></span>{{ r.bill }}</span>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</sc-if>
+
+<sc-if value="{{ tResumen }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px">
+<sc-for list="{{ facts }}" as="f" hint-placeholder-count="4"><div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.09);border-radius:22px;padding:18px"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088">{{ f.k }}</div><div style="font-weight:900;font-size:26px;letter-spacing:-0.02em;margin-top:8px">{{ f.v }}</div></div></sc-for>
+</div>
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px">
+<sc-for list="{{ cards }}" as="c" hint-placeholder-count="4">
+<div style="background:{{ c.bg }};backdrop-filter:blur(22px);border:1px solid {{ c.border }};box-shadow:{{ c.glow }};border-radius:28px;padding:22px;min-height:220px;display:flex;flex-direction:column;gap:8px;animation:rise .6s ease both;animation-delay:{{ c.delay }}">
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:{{ c.lc }}">{{ c.k }}</div>
+<div style="font-weight:900;font-size:22px;letter-spacing:-0.02em;text-transform:uppercase">{{ c.v }}</div>
+<div style="font-size:13px;color:{{ c.sc }};line-height:1.5;flex:1">{{ c.s }}</div>
+<button onClick="{{ c.onClick }}" style="align-self:flex-start;height:34px;padding:0 14px;border-radius:999px;background:transparent;border:1px solid {{ c.bb }};color:{{ c.tc }};font-size:12px;cursor:pointer">{{ c.cta }}</button>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ tActa }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:16px">
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.09);border-radius:28px;padding:28px">
+<span style="display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;padding:6px 10px;border-radius:999px;border:1px dashed #A9A6A0">BORRADOR DE IA · PLANEADOR · DESDE EL DIAGNÓSTICO</span>
+<sc-for list="{{ acta }}" as="a" hint-placeholder-count="6">
+<div style="display:grid;grid-template-columns:180px 1fr auto;gap:18px;padding:16px 0;border-bottom:1px solid rgba(238,235,228,0.06)">
+<span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#A9A6A0;padding-top:3px">{{ a.k }}</span>
+<span style="font-size:14px;line-height:1.55;text-wrap:pretty">{{ a.v }}</span>
+<button style="height:30px;padding:0 12px;border-radius:999px;background:transparent;border:1px solid #3A4048;color:#A9A6A0;font-size:11px;cursor:pointer">Editar</button>
+</div>
+</sc-for>
+</div>
+<div style="background:rgba(238,235,228,0.92);color:#0C0F14;border-radius:28px;padding:22px;align-self:start;display:flex;flex-direction:column;gap:10px">
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#5B6068">FIRMAS</div>
+<div style="font-size:14px;display:flex;justify-content:space-between"><span>Ronin Studio</span><span style="color:#4C8141;font-weight:600">Firmado</span></div>
+<div style="font-size:14px;display:flex;justify-content:space-between"><span>Negocio demo 2</span><span style="color:#B05139;font-weight:600">Pendiente</span></div>
+<button style="height:40px;border-radius:999px;background:#B05139;color:#EEEBE4;border:none;font-size:13px;font-weight:600;cursor:pointer;margin-top:6px">Enviar a firma</button>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ tEdt }}" hint-placeholder-val="{{ false }}">
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.09);border-radius:24px;overflow:hidden">
+<div style="display:grid;grid-template-columns:2fr 2fr 80px 90px 130px;gap:16px;padding:14px 22px;border-bottom:1px solid rgba(238,235,228,0.09);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088"><span>ENTREGABLE</span><span>CRITERIO DE ACEPTACIÓN</span><span>RESP.</span><span>HORAS</span><span>ESTADO</span></div>
+<sc-for list="{{ tree }}" as="n" hint-placeholder-count="8">
+<div onClick="{{ n.onClick }}" style="display:grid;grid-template-columns:2fr 2fr 80px 90px 130px;gap:16px;padding:13px 22px;border-bottom:1px solid rgba(238,235,228,0.06);align-items:center;cursor:{{ n.cursor }};background:{{ n.bg }}" style-hover="background:rgba(238,235,228,0.04)">
+<span style="display:flex;align-items:center;gap:10px;padding-left:{{ n.pad }}px;font-size:14px;font-weight:{{ n.w }}"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#7C8088;width:14px">{{ n.caret }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#7C8088">{{ n.code }}</span>{{ n.name }}</span>
+<span style="font-size:13px;color:#A9A6A0">{{ n.crit }}</span>
+<span style="font-family:'JetBrains Mono',monospace;font-size:11px">{{ n.who }}</span>
+<span style="font-family:'JetBrains Mono',monospace;font-size:11px">{{ n.h }}</span>
+<span style="display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em"><span style="width:6px;height:6px;border-radius:50%;background:{{ n.c }};box-shadow:0 0 8px {{ n.c }}"></span>{{ n.st }}</span>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ tGantt }}" hint-placeholder-val="{{ true }}">
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.09);box-shadow:inset 0 1px 0 rgba(238,235,228,0.08);border-radius:28px;padding:22px;animation:rise .6s ease both">
+<div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
+<div style="display:flex;padding:4px;border-radius:999px;background:rgba(12,15,20,0.5);border:1px solid rgba(238,235,228,0.09)">
+<sc-for list="{{ zooms }}" as="z" hint-placeholder-count="2"><button onClick="{{ z.onClick }}" style="height:32px;padding:0 14px;border-radius:999px;border:none;background:{{ z.bg }};color:{{ z.color }};font-size:12px;cursor:pointer">{{ z.label }}</button></sc-for>
+</div>
+<div style="display:flex;gap:16px;margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#A9A6A0">
+<span style="display:flex;align-items:center;gap:6px"><span style="width:18px;height:8px;border-radius:4px;background:#4C8141"></span>TERMINADO</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:18px;height:8px;border-radius:4px;background:#F7D6CA"></span>ETAPA ACTIVA</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:18px;height:8px;border-radius:4px;background:#A9A6A0"></span>PLANEADO</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:18px;height:8px;border-radius:4px;border:1.5px solid #B05139"></span>RUTA CRÍTICA</span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:18px;height:2px;background:#5B6068"></span>LÍNEA BASE</span>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:280px minmax(0,1fr)">
+<span></span>
+<div style="display:grid;grid-template-columns:repeat({{ colsN }},minmax(0,1fr));border-bottom:1px solid #252A31">
+<sc-for list="{{ ghead }}" as="h" hint-placeholder-count="12"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#7C8088;padding:0 0 10px 6px;border-left:1px solid rgba(238,235,228,0.06)">{{ h }}</span></sc-for>
+</div>
+</div>
+<div style="position:relative">
+<div style="position:absolute;top:0;bottom:0;left:calc(280px + (100% - 280px) * {{ todayF }});width:2px;background:#B05139;box-shadow:0 0 14px #B05139;z-index:2"><span style="position:absolute;top:-2px;left:6px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.14em;color:#EEEBE4;background:#B05139;padding:3px 6px;border-radius:999px;white-space:nowrap">HOY · 5 NOV</span></div>
+<sc-for list="{{ gantt }}" as="g" hint-placeholder-count="12">
+<div style="display:grid;grid-template-columns:280px minmax(0,1fr);height:{{ g.h }}px;align-items:center;border-bottom:1px solid rgba(238,235,228,0.05)">
+<span style="font-family:{{ g.font }};font-size:{{ g.fs }};letter-spacing:{{ g.ls }};color:{{ g.tc }};padding-left:{{ g.pad }}px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ g.name }}</span>
+<div style="position:relative;height:100%">
+<sc-if value="{{ g.bar }}" hint-placeholder-val="{{ false }}">
+<span style="position:absolute;top:28px;left:{{ g.bl }}%;width:{{ g.bw }}%;height:2px;background:#5B6068"></span>
+<span style="position:absolute;top:9px;left:{{ g.l }}%;width:{{ g.w }}%;height:16px;border-radius:8px;background:{{ g.c }};border:1.5px solid {{ g.crit }};box-shadow:{{ g.glow }};transform-origin:left;animation:grow .9s cubic-bezier(.2,.7,.2,1) both;animation-delay:{{ g.delay }};overflow:hidden">
+<span style="display:block;height:100%;width:{{ g.p }}%;background:rgba(12,15,20,0.25)"></span>
+</span>
+</sc-if>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ tEnt }}" hint-placeholder-val="{{ false }}">
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.09);border-radius:24px;overflow:hidden">
+<div style="display:grid;grid-template-columns:2fr 1fr 1.1fr 1.3fr 1fr 150px;gap:16px;padding:14px 22px;border-bottom:1px solid rgba(238,235,228,0.09);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088"><span>HITO</span><span>COMPROMISO</span><span>ESTADO</span><span>EVIDENCIA</span><span>FACTURA</span><span></span></div>
+<sc-for list="{{ miles }}" as="m" hint-placeholder-count="4">
+<div style="display:grid;grid-template-columns:2fr 1fr 1.1fr 1.3fr 1fr 150px;gap:16px;padding:15px 22px;border-bottom:1px solid rgba(238,235,228,0.06);align-items:center">
+<span style="font-size:14px">{{ m.name }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:{{ m.dc }}">{{ m.date }}</span>
+<span style="display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em"><span style="width:6px;height:6px;border-radius:50%;background:{{ m.c }};box-shadow:0 0 8px {{ m.c }}"></span>{{ m.st }}</span>
+<span style="font-size:13px;color:#A9A6A0">{{ m.ev }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:11px">{{ m.inv }}</span>
+<sc-if value="{{ m.can }}" hint-placeholder-val="{{ false }}"><button onClick="{{ m.onAccept }}" style="height:34px;border-radius:999px;background:#B05139;color:#EEEBE4;border:none;font-size:12px;font-weight:600;cursor:pointer;box-shadow:0 0 18px rgba(176,81,57,.45)">Aceptar hito</button></sc-if>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ tRiesgos }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:480px minmax(0,1fr);gap:16px">
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.09);border-radius:28px;padding:22px">
+<div style="font-weight:900;font-size:20px;letter-spacing:-0.02em;margin-bottom:14px">MATRIZ 3×3</div>
+<div style="display:grid;grid-template-columns:30px repeat(3,1fr);gap:6px">
+<sc-for list="{{ matrix }}" as="c" hint-placeholder-count="16"><div style="aspect-ratio:{{ c.ar }};border-radius:12px;background:{{ c.bg }};border:1px solid {{ c.border }};display:flex;align-items:center;justify-content:center;gap:4px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.1em;color:#7C8088"><sc-for list="{{ c.items }}" as="i" hint-placeholder-count="0"><span style="width:26px;height:26px;border-radius:50%;background:#EEEBE4;color:#0C0F14;display:flex;align-items:center;justify-content:center;font-size:10px">{{ i }}</span></sc-for>{{ c.label }}</div></sc-for>
+</div>
+<div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.14em;color:#7C8088;margin:10px 0 0 36px"><span>IMPACTO →</span><span>↑ PROBABILIDAD</span></div>
+</div>
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.09);border-radius:28px;padding:22px">
+<div style="font-weight:900;font-size:20px;letter-spacing:-0.02em">RIESGOS ABIERTOS</div>
+<sc-for list="{{ risks }}" as="r" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:30px 1fr 110px;gap:12px;padding:12px 0;border-bottom:1px solid rgba(238,235,228,0.06);align-items:center"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#7C8088">{{ r.n }}</span><span style="font-size:14px">{{ r.t }}</span><span style="display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em"><span style="width:6px;height:6px;border-radius:50%;background:{{ r.c }}"></span>{{ r.lvl }}</span></div></sc-for>
+</div>
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid #B05139;box-shadow:0 0 28px rgba(176,81,57,0.25);border-radius:28px;padding:22px">
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088">SOLICITUD DE CAMBIO · SC-02</div>
+<div style="font-weight:900;font-size:20px;letter-spacing:-0.02em;margin-top:6px">AGREGAR PEDIDOS PARA LLEVAR</div>
+<div style="display:flex;gap:24px;margin:12px 0;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.1em"><span>+1 SEMANA</span><span>+$12,000.00 MXN</span></div>
+<div style="display:flex;gap:6px"><button onClick="{{ approveChange }}" style="height:36px;padding:0 16px;border-radius:999px;background:#B05139;color:#EEEBE4;border:none;font-size:12px;font-weight:600;cursor:pointer">Aprobar cambio</button><button style="height:36px;padding:0 16px;border-radius:999px;background:transparent;color:#EEEBE4;border:1px solid #3A4048;font-size:12px;cursor:pointer">Rechazar</button></div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ tHoras }}" hint-placeholder-val="{{ false }}">
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.09);border-radius:28px;padding:24px">
+<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px"><span style="font-weight:900;font-size:22px;letter-spacing:-0.02em">HORAS CONTRA ESTIMACIÓN</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px">118 / 190 H · 62 %</span></div>
+<sc-for list="{{ hours }}" as="h" hint-placeholder-count="5">
+<div style="display:grid;grid-template-columns:260px 90px 1fr 110px;gap:14px;align-items:center;padding:11px 0;border-bottom:1px solid rgba(238,235,228,0.06)">
+<span style="font-size:14px">{{ h.a }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#A9A6A0">{{ h.who }}</span>
+<span style="position:relative;height:10px;border-radius:5px;background:#1B2027"><span style="position:absolute;left:0;top:0;bottom:0;width:{{ h.w }}%;border-radius:5px;background:{{ h.c }};box-shadow:0 0 10px {{ h.c }};transform-origin:left;animation:grow 1s ease both"></span></span>
+<span style="font-family:'JetBrains Mono',monospace;font-size:11px;text-align:right;color:{{ h.tc }}">{{ h.v }}</span>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ tCierre }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
+<sc-for list="{{ closing }}" as="c" hint-placeholder-count="3">
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.09);border-radius:28px;padding:22px;min-height:220px">
+<div style="font-weight:900;font-size:20px;letter-spacing:-0.02em">{{ c.t }}</div>
+<div style="font-size:13px;color:#A9A6A0;margin-top:8px;line-height:1.5">{{ c.s }}</div>
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#7C8088;margin-top:16px">{{ c.st }}</div>
+</div>
+</sc-for>
+</div>
+<div style="margin-top:16px;font-size:14px;color:#7C8088">El cierre se habilita cuando el hito 4 se acepta; al cerrar, el proyecto pasa a Evolucionar.</div>
+</sc-if>
+
+<sc-if value="{{ tCliente }}" hint-placeholder-val="{{ false }}">
+<div style="background:#EEEBE4;color:#0C0F14;border-radius:28px;padding:34px;animation:rise .6s ease both">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#5B6068">VISTA DEL CLIENTE · SOLO LECTURA</span>
+<span style="display:flex;align-items:center;gap:8px;font-size:12px;color:#5B6068">{{ inkGlyph }} Ronin Studio</span>
+</div>
+<div style="font-weight:900;font-size:36px;letter-spacing:-0.02em;margin-top:10px">PLATAFORMA DE OPERACIÓN · NEGOCIO DEMO 2</div>
+<div style="font-weight:300;font-size:16px;color:#5B6068">Etapa 03 · Construir · avance 62 %</div>
+<div style="height:4px;border-radius:2px;background:#D6D2C9;margin:18px 0 24px;overflow:hidden"><div style="height:100%;width:62%;background:#B05139;transform-origin:left;animation:grow 1.2s ease both"></div></div>
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px">
+<sc-for list="{{ clientMiles }}" as="m" hint-placeholder-count="4">
+<div style="background:#F7F5F0;border:1px solid #D6D2C9;border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:8px">
+<span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#5B6068">HITO {{ m.n }} · {{ m.date }}</span>
+<span style="font-size:15px;font-weight:600">{{ m.t }}</span>
+<span style="display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em"><span style="width:6px;height:6px;border-radius:50%;background:{{ m.c }}"></span>{{ m.st }}</span>
+<span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#5B6068">{{ m.inv }}</span>
+</div>
+</sc-for>
+</div>
+<div style="margin-top:20px;border-top:1px solid #D6D2C9;padding-top:16px;display:flex;justify-content:space-between;font-size:14px"><span>Reporte semanal · 2 de noviembre</span><span style="color:#5B6068">Módulo de punto de venta en pruebas con casos reales. Sin cambios de alcance.</span></div>
+</div>
+</sc-if>
+</section>
+<sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;left:24px;bottom:24px;z-index:60;background:#EEEBE4;color:#0C0F14;border-radius:999px;padding:12px 20px;display:flex;align-items:center;gap:10px;font-size:13px;animation:rise .3s ease both"><span style="width:7px;height:7px;border-radius:50%;background:#4C8141"></span>{{ toast }}</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const C={tinta:'#0C0F14',papel:'#EEEBE4',niebla:'#A9A6A0',tenue:'#7C8088',acero:'#5B6068',oxido:'#B05139',oxidoC:'#F7D6CA',olivo:'#4C8141',ambar:'#C98A3C'};
+const R_PATH='M0 0H122C170 0 198 28 198 66C198 98 180 120 152 128L200 220H128L88 134H64V220H0Z M64 50H116C131 50 138 57 138 67C138 78 131 85 116 85H64Z';
+let uid=0;
+function rGlyph(active,size,base){const h=React.createElement,id='pb'+(uid++),offs=[-12,-4,4,12];
+  return h('svg',{width:size,height:size*220/228,viewBox:'-14 0 228 220'},offs.map((o,i)=>{const y0=i*55,y1=y0+55;
+    return h('g',{key:i,transform:`translate(${o} 0)`},h('clipPath',{id:id+i},h('polygon',{points:`-40,${y0+12} 240,${y0-12} 240,${y1-12} -40,${y1+12}`})),
+      h('path',{d:R_PATH,fill:i===active?C.oxido:base,fillRule:'evenodd',clipPath:`url(#${id+i})`}));}));}
+const ACT=[
+ {g:'01 MAPEAR'},{n:'Visita y diagnóstico',s:0,d:1,b:0,bd:1,p:100,done:true},{n:'Mapa de flujo actual',s:1,d:1,b:1,bd:1,p:100,done:true},
+ {g:'02 DISEÑAR'},{n:'Flujo de comanda y roles',s:2,d:1.5,b:2,bd:1,p:100,done:true,crit:true},{n:'Prototipo de pantallas',s:3,d:1,b:2.5,bd:1,p:100,done:true},
+ {g:'03 CONSTRUIR'},{n:'Comanda digital y cocina',s:4,d:2,b:3.5,bd:2,p:70,active:true,crit:true},{n:'Módulo POS y caja',s:5,d:2.5,b:5,bd:2,p:30,active:true,crit:true},{n:'Cierre automático',s:7,d:1.5,b:7,bd:1.5,p:0,crit:true},{n:'Pruebas con casos reales',s:8,d:1,b:8,bd:1,p:0},
+ {g:'04 EVOLUCIONAR'},{n:'Inventario y tablero',s:9,d:2,b:9,bd:2,p:0},{n:'Acompañamiento mensual',s:11,d:1,b:11,bd:1,p:0}
+];
+class Component extends DCLogic {
+  state={tab:'Gantt',zoom:'Semana',open:{'1':true,'2':true,'3':true},accepted:[],toast:null};
+  flash(m){this.setState({toast:m});clearTimeout(this._t);this._t=setTimeout(()=>this.setState({toast:null}),2600);}
+  renderVals(){
+    const s=this.state,T=['Lista por etapa','Resumen','Acta','EDT','Gantt','Entregables','Riesgos y cambios','Horas','Cierre','Vista del cliente'];
+    const tabs=T.map(l=>({label:l,bg:l===s.tab?C.papel:'rgba(22,26,33,0.55)',color:l===s.tab?C.tinta:C.papel,border:l===s.tab?C.papel:'rgba(238,235,228,0.09)',onClick:()=>this.setState({tab:l})}));
+    const inProject=s.tab!=='Lista por etapa';
+    const R=(name,client,pct,next,late,hours,bill,bc)=>({name,client,pct,next,nc:late?C.oxido:C.papel,hours,bill,bc});
+    const groups=[['01','MAPEAR',[R('Diagnóstico completo','NEGOCIO DEMO 7 · NOTARÍA',40,'Visita · 7 nov',false,'6 / 16 H','POR FACTURAR',C.niebla),R('Diagnóstico completo','NEGOCIO DEMO 8 · TALLER',20,'Mapa de flujo · 11 nov',false,'3 / 16 H','POR FACTURAR',C.niebla)]],
+      ['02','DISEÑAR',[R('Agenda y expediente','NEGOCIO DEMO 4 · CLÍNICA',35,'Hito 2 atrasado · 3 nov',true,'42 / 60 H','VENCE 14 NOV',C.ambar),R('Inscripción y cobranza','NEGOCIO DEMO 1 · ESCUELA',10,'Plan · 13 nov',false,'4 / 80 H','AL CORRIENTE',C.olivo)]],
+      ['03','CONSTRUIR',[R('Plataforma de operación','NEGOCIO DEMO 2 · RESTAURANTE',62,'Módulo POS · 18 nov',false,'118 / 190 H','VENCIDA',C.oxido),R('Membresías y accesos','NEGOCIO DEMO 5 · GIMNASIO',80,'Pruebas · 20 nov',false,'96 / 110 H','AL CORRIENTE',C.olivo),R('Órdenes de trabajo','NEGOCIO DEMO 6 · TALLER',75,'Entrega · 25 nov',false,'88 / 120 H','VENCE 10 NOV',C.ambar)]],
+      ['04','EVOLUCIONAR',[R('Acompañamiento mensual','NEGOCIO DEMO 3 · CLÍNICA',100,'Reporte · 30 nov',false,'6 / 8 H','PAGADA',C.olivo)]]
+    ].map(([num,name,rows],i)=>({num,name,rows,glyph:rGlyph(i,22,C.papel),count:rows.length+' PROY.',delay:(0.08*i)+'s'}));
+    const facts=[['PRESUPUESTO','$140,000.00'],['FECHAS','5 OCT – 27 DIC'],['AVANCE','62 %'],['HORAS','118 / 190']].map(([k,v])=>({k,v}));
+    const cards=[
+      {k:'PRÓXIMO HITO · 18 NOV',v:'Módulo POS y caja',s:'Criterio: cobrar una cuenta completa sin recaptura, en las tres sucursales.',cta:'Ver Gantt',tab:'Gantt'},
+      {k:'RIESGOS ABIERTOS',v:'3 · 1 alto',s:'Conexión de internet inestable en la sucursal 3.',cta:'Ver riesgos',tab:'Riesgos y cambios',hot:true},
+      {k:'HORAS',v:'62 % usado',s:'Dentro de la estimación; Construir lleva 4 horas arriba.',cta:'Ver horas',tab:'Horas'},
+      {k:'FACTURAS DEL PROYECTO',v:'1 vencida',s:'F-0112 · $25,000.00 MXN · vencida el 2 de noviembre.',cta:'Ver entregables',tab:'Entregables',hot:true}
+    ].map((c,i)=>({...c,delay:(0.07*i)+'s',bg:c.hot?'rgba(176,81,57,0.16)':'rgba(22,26,33,0.5)',border:c.hot?C.oxido:'rgba(238,235,228,0.09)',glow:c.hot?'0 0 30px rgba(176,81,57,0.3)':'none',lc:c.hot?C.papel:C.tenue,sc:c.hot?C.papel:C.niebla,bb:'#3A4048',tc:C.papel,onClick:()=>this.setState({tab:c.tab})}));
+    const acta=[['OBJETIVO','Una sola captura de cada orden, de la mesa a la caja, en las tres sucursales.'],['ALCANCE','Comanda digital, pantalla de cocina, punto de venta, cierre automático, inventario por receta y tablero de sucursales.'],['FUERA DE ALCANCE','Pedidos a proveedor, nómina y facturación electrónica de los clientes del restaurante.'],['SUPUESTOS','Internet en las tres sucursales; un responsable por sucursal para pruebas.'],['RIESGOS INICIALES','Conexión inestable en la sucursal 3; rotación de meseros durante la capacitación.'],['HITOS Y PRESUPUESTO','4 hitos · 10 semanas · $140,000.00 MXN; se acredita el diagnóstico.']].map(([k,v])=>({k,v}));
+    const TREE=[{id:'1',code:'1',name:'Comanda digital',crit:'Una orden viaja de mesa a cocina sin papel',who:'JC',h:'40',st:'ACEPTADO',c:C.olivo,kids:[['1.1','Toma de orden en tableta','Mesero captura en menos de 1 minuto','JC','16','ACEPTADO',C.olivo],['1.2','Pantalla de cocina','Orden visible en 5 segundos','JC','24','ACEPTADO',C.olivo]]},
+      {id:'2',code:'2',name:'Punto de venta y caja',crit:'Cobro sin recaptura',who:'JC',h:'60',st:'EN CURSO',c:C.ambar,kids:[['2.1','Cuenta desde la comanda','Total igual a lo servido','JC','24','EN REVISIÓN',C.ambar],['2.2','Formas de pago','Efectivo, tarjeta y transferencia','JC','20','PENDIENTE',C.niebla],['2.3','Cierre automático','Cierre en menos de 5 minutos','JC','16','PENDIENTE',C.niebla]]},
+      {id:'3',code:'3',name:'Inventario y tablero',crit:'Inventario baja por receta',who:'JC',h:'48',st:'PENDIENTE',c:C.niebla,kids:[['3.1','Recetas','Cada platillo con sus insumos','JC','24','PENDIENTE',C.niebla],['3.2','Tablero por sucursal','Ventas y merma del día','JC','24','PENDIENTE',C.niebla]]}];
+    const tree=[];TREE.forEach(n=>{const o=s.open[n.id];tree.push({...n,caret:o?'▾':'▸',pad:0,w:600,cursor:'pointer',bg:'rgba(238,235,228,0.02)',onClick:()=>this.setState(x=>({open:{...x.open,[n.id]:!x.open[n.id]}}))});
+      if(o)n.kids.forEach(([code,name,crit,who,h,st,c])=>tree.push({code,name,crit,who,h,st,c,caret:'',pad:24,w:400,cursor:'default',bg:'transparent',onClick:null}));});
+    const N=12,weeks=['5 OCT','12','19','26','2 NOV','9','16','23','30','7 DIC','14','21'];
+    const ghead=s.zoom==='Semana'?weeks:['OCTUBRE','NOVIEMBRE','DICIEMBRE'];
+    let di=0;
+    const gantt=ACT.map(a=>a.g?{name:a.g,bar:false,h:34,font:"'JetBrains Mono',monospace",fs:'10px',ls:'0.14em',tc:a.g.startsWith('03')?C.papel:C.tenue,pad:0}:
+      {name:a.n,bar:true,h:40,font:"'Archivo',sans-serif",fs:'13px',ls:'0',tc:C.papel,pad:14,l:a.s/N*100,w:a.d/N*100,bl:a.b/N*100,bw:a.bd/N*100,p:a.p,
+        c:a.done?C.olivo:a.active?C.oxidoC:C.niebla,crit:a.crit?C.oxido:'transparent',glow:a.active?'0 0 18px rgba(247,214,202,0.35)':a.done?'0 0 12px rgba(76,129,65,0.35)':'none',delay:(0.05*(di++))+'s'});
+    const zooms=['Semana','Mes'].map(l=>({label:l,bg:l===s.zoom?C.papel:'transparent',color:l===s.zoom?C.tinta:C.niebla,onClick:()=>this.setState({zoom:l})}));
+    const MI=[['m1','Hito 1 · Diseño del flujo','12 OCT','ACEPTADO',C.olivo,'Acta firmada · 3 archivos','F-0098 · PAGADA'],['m2','Hito 2 · Comanda digital','2 NOV','ACEPTADO',C.olivo,'Video de prueba · 2 archivos','F-0112 · VENCIDA'],['m3','Hito 3 · POS y caja','18 NOV','EN REVISIÓN',C.ambar,'Pruebas en sucursal 1','POR EMITIR'],['m4','Hito 4 · Inventario y tablero','10 DIC','PENDIENTE',C.niebla,'—','POR EMITIR']];
+    const miles=MI.map(([id,name,date,st,c,ev,inv])=>{const acc=s.accepted.includes(id);return {name,date,dc:C.niebla,st:acc?'ACEPTADO':st,c:acc?C.olivo:c,ev,inv:acc?'F-0121 · EMITIDA':inv,can:st==='EN REVISIÓN'&&!acc,
+      onAccept:()=>{this.setState(x=>({accepted:[...x.accepted,id]}));this.flash('Hito aceptado · factura F-0121 emitida en borrador');}};});
+    const cells=[];const RS={'3-2':['1'],'2-2':['2'],'1-1':['3']};const lv=(p,i)=>p+i;
+    for(let p=3;p>=1;p--){cells.push({label:['','BAJA','MEDIA','ALTA'][p],ar:'0.5',bg:'transparent',border:'transparent',items:[]});
+      for(let i=1;i<=3;i++){const v=lv(p,i);cells.push({label:'',ar:'1',items:RS[p+'-'+i]||[],bg:v>=5?'rgba(176,81,57,0.28)':v===4?'rgba(201,138,60,0.2)':'rgba(238,235,228,0.04)',border:v>=5?C.oxido:'rgba(238,235,228,0.08)'});}}
+    const risks=[['1','Internet inestable en la sucursal 3','ALTO',C.oxido],['2','Rotación de meseros durante la capacitación','MEDIO',C.ambar],['3','Cambio de menú en diciembre','BAJO',C.niebla]].map(([n,t,lvl,c])=>({n,t,lvl,c}));
+    const hours=[['Comanda digital y cocina','JC',40,38],['Módulo POS y caja','JC',60,32],['Flujo y prototipo','JC',30,34],['Visita y mapa','JC',16,14],['Gestión del proyecto','JC',20,0]].map(([a,who,e,r])=>({a,who,w:Math.min(100,r/e*100),c:r>e?C.oxido:C.papel,tc:r>e?C.oxido:C.papel,v:r+' / '+e+' H'}));
+    const closing=[['ACTA DE CIERRE','Entregables aceptados, horas finales, facturas cobradas.','DISPONIBLE AL ACEPTAR HITO 4'],['LECCIONES APRENDIDAS','Qué funcionó, qué cambiaríamos, qué se vuelve plantilla.','0 REGISTRADAS'],['ENCUESTA AL CLIENTE','5 preguntas; se envía por WhatsApp al cerrar.','SIN ENVIAR']].map(([t,sub,st])=>({t,s:sub,st}));
+    const clientMiles=MI.map(([id,t,date,st,c,ev,inv],i)=>({n:'0'+(i+1),t:t.split(' · ')[1],date,st:s.accepted.includes(id)?'ACEPTADO':st,c:s.accepted.includes(id)?C.olivo:c,inv:inv.replace('VENCIDA','POR PAGAR')}));
+    return {tabs,inProject,stageGlyph:rGlyph(2,30,C.papel),inkGlyph:rGlyph(2,16,C.tinta),
+      eyebrow:inProject?'05 · PROYECTOS · ETAPA 03 / 04 CONSTRUIR':'05 · PROYECTOS · NIVEL PMI',
+      title:inProject?'PLATAFORMA DE OPERACIÓN':'PROYECTOS',
+      subtitle:inProject?'Negocio demo 2 · Restaurante con sucursales · 5 oct – 27 dic':'8 proyectos · 1 hito atrasado · 1 factura vencida',
+      primary:inProject?'Registrar horas':'Nuevo proyecto',
+      tLista:!inProject,tResumen:s.tab==='Resumen',tActa:s.tab==='Acta',tEdt:s.tab==='EDT',tGantt:s.tab==='Gantt',tEnt:s.tab==='Entregables',tRiesgos:s.tab==='Riesgos y cambios',tHoras:s.tab==='Horas',tCierre:s.tab==='Cierre',tCliente:s.tab==='Vista del cliente',
+      groups,facts,cards,acta,tree,gantt,ghead,colsN:ghead.length,todayF:(4+3/7)/N,zooms,miles,matrix:[{label:'',ar:'0.5',bg:'transparent',border:'transparent',items:[]},...['BAJO','MEDIO','ALTO'].map(l=>({label:l,ar:'2.5',bg:'transparent',border:'transparent',items:[]})),...cells].slice(4).concat([]),risks,hours,closing,clientMiles,
+      open:()=>this.setState({tab:'Resumen'}),copyLink:()=>this.flash('Enlace de solo lectura copiado'),approveChange:()=>this.flash('Cambio aprobado · fecha y precio actualizados'),toast:s.toast};
+  }
+}
+</script>
+</body>
+</html>

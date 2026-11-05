@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,300..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#07090C;color:#EEEBE4;font-family:'Archivo',sans-serif;font-stretch:112%;-webkit-font-smoothing:antialiased}
+a{color:#EEEBE4;text-decoration-color:#B05139}a:hover{color:#F7F5F0}*{box-sizing:border-box}button{font-family:inherit;font-stretch:inherit}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-30px) scale(1.12)}}
+@keyframes scan{from{transform:translateX(-100%)}to{transform:translateX(300%)}}
+</style>
+</helmet>
+<div style="width:1440px;margin:0 auto;background:#0C0F14;min-height:100vh;position:relative;overflow:hidden;isolation:isolate;padding-bottom:56px">
+<div style="position:absolute;z-index:-1;left:200px;top:60px;width:680px;height:440px;border-radius:50%;background:radial-gradient(closest-side,rgba(176,81,57,.32),rgba(176,81,57,0));filter:blur(30px);animation:drift 14s ease-in-out infinite;pointer-events:none"></div>
+<div style="position:absolute;z-index:-1;right:-60px;top:560px;width:620px;height:460px;border-radius:50%;background:radial-gradient(closest-side,rgba(76,129,65,.15),rgba(76,129,65,0));filter:blur(40px);animation:drift 18s ease-in-out infinite reverse;pointer-events:none"></div>
+<dc-import name="RoninHeader" active="Agentes" hint-size="100%,96px"></dc-import>
+<section style="padding:34px 32px 0;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;animation:rise .6s cubic-bezier(.2,.7,.2,1) both">
+<div>
+<div style="display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088"><span style="width:3px;height:12px;background:#B05139;transform:skewY(-14deg)"></span>09 · AGENTES · SOBRE HERMES AGENT</div>
+<h1 style="margin:8px 0 0;font-weight:900;font-size:44px;letter-spacing:-0.02em;line-height:1">AGENTES</h1>
+<div style="font-weight:300;font-size:16px;color:#A9A6A0;margin-top:6px">{{ subtitle }}</div>
+</div>
+<div style="display:flex;align-items:center;gap:10px;padding:12px 18px;border-radius:999px;background:rgba(22,26,33,0.55);backdrop-filter:blur(18px);border:1px solid rgba(238,235,228,0.1)"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#A9A6A0">COSTO DEL MES</span><span style="font-weight:900;font-size:20px">$1,200</span><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#7C8088">/ $3,000 MXN</span></div>
+</section>
+<nav style="display:flex;gap:6px;padding:22px 32px 0">
+<sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4"><button onClick="{{ t.onClick }}" style="height:44px;padding:0 18px;border-radius:999px;border:1px solid {{ t.border }};background:{{ t.bg }};color:{{ t.color }};font-size:13px;cursor:pointer" style-hover="border-color:#5B6068">{{ t.label }}</button></sc-for>
+</nav>
+<section style="padding:22px 32px 0">
+<sc-if value="{{ tPanel }}" hint-placeholder-val="{{ true }}">
+<sc-for list="{{ groups }}" as="g" hint-placeholder-count="3">
+<div style="display:flex;align-items:center;gap:12px;margin:6px 0 12px"><span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em">{{ g.name }}</span><span style="flex:1;height:1px;background:#252A31"></span><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#7C8088">{{ g.n }}</span></div>
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:22px">
+<sc-for list="{{ g.agents }}" as="a" hint-placeholder-count="4">
+<div style="position:relative;overflow:hidden;background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid {{ a.border }};box-shadow:{{ a.glow }};border-radius:24px;padding:18px;display:flex;flex-direction:column;gap:10px;opacity:{{ a.op }};transition:opacity .3s,border-color .3s;animation:rise .55s cubic-bezier(.2,.7,.2,1) both;animation-delay:{{ a.delay }}">
+<sc-if value="{{ a.running }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:0;left:0;width:40%;height:2px;background:linear-gradient(90deg,transparent,#B05139,transparent);animation:scan 2s linear infinite"></span></sc-if>
+<div style="display:flex;justify-content:space-between;align-items:center">
+<span style="display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:{{ a.sc }}"><span style="width:7px;height:7px;border-radius:50%;background:{{ a.dot }};box-shadow:0 0 10px {{ a.dot }};animation:{{ a.anim }}"></span>{{ a.state }}</span>
+<button onClick="{{ a.onToggle }}" style="width:42px;height:24px;border-radius:999px;border:none;background:{{ a.tb }};position:relative;cursor:pointer;transition:background .25s"><span style="position:absolute;top:3px;left:{{ a.tl }}px;width:18px;height:18px;border-radius:50%;background:#EEEBE4;transition:left .25s"></span></button>
+</div>
+<div style="font-weight:900;font-size:19px;letter-spacing:-0.01em;text-transform:uppercase">{{ a.name }}</div>
+<div style="font-size:13px;color:#A9A6A0;line-height:1.45;min-height:38px;text-wrap:pretty">{{ a.does }}</div>
+<div style="display:flex;flex-direction:column;gap:5px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.08em;color:#7C8088">
+<span>DISPARO · {{ a.trigger }}</span><span>MODELO · {{ a.model }} · ÚLTIMA · {{ a.last }}</span>
+</div>
+<div style="display:flex;align-items:center;gap:8px"><span style="flex:1;height:4px;border-radius:2px;background:#1B2027;overflow:hidden"><span style="display:block;height:100%;width:{{ a.pct }}%;background:{{ a.cc }};transform-origin:left;animation:grow 1s ease both"></span></span><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#A9A6A0">{{ a.cost }}</span></div>
+<span style="align-self:flex-start;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.12em;padding:4px 8px;border-radius:999px;border:1px solid {{ a.ab }};color:{{ a.ac }}">{{ a.auto }}</span>
+</div>
+</sc-for>
+</div>
+</sc-for>
+</sc-if>
+
+<sc-if value="{{ tHist }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:16px;align-items:start">
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.09);border-radius:24px;overflow:hidden">
+<div style="display:grid;grid-template-columns:70px 110px 1.1fr 1.6fr 110px 70px;gap:14px;padding:14px 22px;border-bottom:1px solid rgba(238,235,228,0.09);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088"><span>FECHA</span><span>AGENTE</span><span>CLIENTE</span><span>PROPUESTA</span><span>RESULTADO</span><span>COSTO</span></div>
+<sc-for list="{{ hist }}" as="h" hint-placeholder-count="7">
+<div onClick="{{ h.onClick }}" style="display:grid;grid-template-columns:70px 110px 1.1fr 1.6fr 110px 70px;gap:14px;padding:13px 22px;border-bottom:1px solid rgba(238,235,228,0.06);align-items:center;cursor:pointer;background:{{ h.bg }}" style-hover="background:rgba(238,235,228,0.04)">
+<span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#A9A6A0">{{ h.d }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em">{{ h.a }}</span><span style="font-size:13px">{{ h.c }}</span><span style="font-size:13px;color:#A9A6A0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ h.p }}</span>
+<span style="display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em"><span style="width:6px;height:6px;border-radius:50%;background:{{ h.rc }}"></span>{{ h.r }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#A9A6A0">{{ h.k }}</span>
+</div>
+</sc-for>
+</div>
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.09);border-radius:24px;padding:22px;display:flex;flex-direction:column;gap:12px;animation:rise .4s ease both">
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088">{{ cur.a }} · {{ cur.m }} · {{ cur.k }}</div>
+<div style="font-weight:900;font-size:20px;letter-spacing:-0.01em;text-transform:uppercase">{{ cur.c }}</div>
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088">ANTES · BORRADOR DE IA</div>
+<div style="background:rgba(12,15,20,0.5);border:1px dashed #3A4048;border-radius:14px;padding:12px;font-size:13px;line-height:1.5;color:#A9A6A0">{{ cur.before }}</div>
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088">DESPUÉS · {{ cur.r }}</div>
+<div style="background:rgba(12,15,20,0.5);border:1px solid {{ cur.rc }};border-radius:14px;padding:12px;font-size:13px;line-height:1.5">{{ cur.after }}</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ tInf }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:16px">
+<div style="display:flex;flex-direction:column;gap:6px">
+<sc-for list="{{ weeks }}" as="w" hint-placeholder-count="4"><button onClick="{{ w.onClick }}" style="height:44px;border-radius:14px;border:1px solid {{ w.border }};background:{{ w.bg }};color:{{ w.color }};font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;cursor:pointer;text-align:left;padding:0 14px">{{ w.label }}</button></sc-for>
+</div>
+<div style="background:#EEEBE4;color:#0C0F14;border-radius:28px;padding:34px;max-width:900px;animation:rise .5s ease both">
+<div style="display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#5B6068"><span style="width:3px;height:12px;background:#B05139;transform:skewY(-14deg)"></span>BORRADOR DE IA · INVESTIGADOR · {{ week }}</div>
+<div style="font-weight:900;font-size:32px;letter-spacing:-0.02em;margin-top:8px">INFORME SEMANAL</div>
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#5B6068;margin:24px 0 4px">TRES PRÁCTICAS QUE APLICAR</div>
+<sc-for list="{{ practices }}" as="r" hint-placeholder-count="3">
+<div style="display:grid;grid-template-columns:28px 1fr auto;gap:12px;align-items:start;border-top:1px solid #D6D2C9;padding:14px 0">
+<span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#5B6068">{{ r.n }}</span>
+<div><div style="font-size:14px;line-height:1.45">{{ r.t }}</div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;color:#5B6068;margin-top:4px">{{ r.src }}</div></div>
+<button onClick="{{ r.onClick }}" style="height:34px;padding:0 14px;border-radius:999px;background:{{ r.bg }};color:{{ r.color }};border:1px solid {{ r.border }};font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">{{ r.label }}</button>
+</div>
+</sc-for>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px">
+<div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#5B6068;margin-bottom:8px">QUÉ HICIERON LOS COMPETIDORES</div><div style="font-size:14px;line-height:1.55">Dos estudios publicaron casos de restaurantes con video corto; uno lanzó un paquete de automatización por WhatsApp sin diagnóstico previo.</div></div>
+<div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#5B6068;margin-bottom:8px">QUÉ OFRECEN Y A QUÉ PRECIO</div><div style="font-size:14px;line-height:1.55">Diagnóstico desde $5,000.00 MXN; proyectos de punto de venta desde $60,000.00 MXN con licencia mensual.</div></div>
+</div>
+<div style="margin-top:22px;background:#0C0F14;color:#EEEBE4;border-radius:18px;padding:18px"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#A9A6A0">RECOMENDACIÓN CONCRETA</div><div style="font-size:15px;margin-top:6px;line-height:1.5">Mostrar el precio del diagnóstico completo en las páginas por sector y aclarar que se acredita al proyecto.</div></div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ tTest }}" hint-placeholder-val="{{ false }}">
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088;margin-bottom:12px">GUIONISTA · 19 OCT – 1 NOV · 24 PROPUESTAS POR MODELO</div>
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px">
+<sc-for list="{{ models }}" as="m" hint-placeholder-count="2">
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid {{ m.border }};box-shadow:{{ m.glow }};border-radius:28px;padding:24px">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:900;font-size:24px;letter-spacing:-0.02em">{{ m.name }}</span><sc-if value="{{ m.win }}" hint-placeholder-val="{{ false }}"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;padding:6px 10px;border-radius:999px;background:#EEEBE4;color:#0C0F14">RECOMENDADO</span></sc-if></div>
+<sc-for list="{{ m.stats }}" as="x" hint-placeholder-count="3">
+<div style="display:grid;grid-template-columns:200px 1fr 90px;gap:12px;align-items:center;margin-top:16px"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#A9A6A0">{{ x.k }}</span><span style="height:10px;border-radius:5px;background:#1B2027;overflow:hidden"><span style="display:block;height:100%;width:{{ x.w }}%;background:{{ x.c }};transform-origin:left;animation:grow 1s ease both"></span></span><span style="font-family:'JetBrains Mono',monospace;font-size:12px;text-align:right">{{ x.v }}</span></div>
+</sc-for>
+</div>
+</sc-for>
+</div>
+<div style="margin-top:16px;display:flex;justify-content:flex-end"><button onClick="{{ adopt }}" style="height:46px;padding:0 20px;border-radius:999px;background:#B05139;color:#EEEBE4;border:none;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 0 24px rgba(176,81,57,.45)">Asignar modelo recomendado</button></div>
+</sc-if>
+</section>
+<sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;left:24px;bottom:24px;z-index:60;background:#EEEBE4;color:#0C0F14;border-radius:999px;padding:12px 20px;display:flex;align-items:center;gap:10px;font-size:13px;animation:rise .3s ease both"><span style="width:7px;height:7px;border-radius:50%;background:#4C8141"></span>{{ toast }}</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const C={tinta:'#0C0F14',papel:'#EEEBE4',niebla:'#A9A6A0',tenue:'#7C8088',acero:'#5B6068',oxido:'#B05139',olivo:'#4C8141',ambar:'#C98A3C'};
+const AG=[
+ ['OPERACIÓN','Perfilador','Resume cada cliente en cinco líneas','Nuevo lead o llamada','CLAUDE','HOY 09:10',80,200,false,false],
+ ['OPERACIÓN','Seguimiento','Prepara mensajes del siguiente paso','Tarea con canal','CLAUDE','HOY 08:00',150,250,false,true],
+ ['OPERACIÓN','Mapeador','Primer borrador del mapa de flujo','Visita terminada','CLAUDE','22 OCT',120,250,false,false],
+ ['OPERACIÓN','Planeador','Acta, EDT y Gantt desde el diagnóstico','Plan aprobado','CLAUDE','05 OCT',90,200,false,false],
+ ['OPERACIÓN','Reportero','Reporte semanal para cada cliente','Lunes 9:00','CLAUDE','02 NOV',60,150,false,false],
+ ['OPERACIÓN','Cobrador','Recordatorios de factura','Vencimiento de factura','CLAUDE','HOY 07:30',40,150,'SEGUNDO AVISO',false],
+ ['OPERACIÓN','Analista','Margen y desviaciones por proyecto','Cierre de semana','CLAUDE','01 NOV',50,150,false,false],
+ ['INVESTIGACIÓN','Investigador','Informe semanal de prácticas y competencia','Viernes 7:00','CLAUDE','30 OCT',180,250,false,true],
+ ['MARKETING','Estratega','Calendario editorial de la semana','Viernes 12:00','CLAUDE','30 OCT',90,200,false,false],
+ ['MARKETING','Guionista','Ganchos y guiones con tiempos','Pieza en guion','CLAUDE','HOY 10:20',140,250,false,true],
+ ['MARKETING','Productor','Tomas, voz y subtítulos','Guion aprobado','HIGGSFIELD · ELEVENLABS','04 NOV',120,300,false,false],
+ ['MARKETING','Publicador','Publica a la hora aprobada','Pieza programada','CLAUDE','03 NOV',30,100,'HORA APROBADA',false],
+ ['MARKETING','Analista de canal','Métricas por canal y mejores ganchos','Lunes 8:00','CLAUDE','02 NOV',50,150,false,false]
+];
+class Component extends DCLogic {
+  state={tab:'Panel',off:['Analista'],hsel:0,week:'SEMANA 45',done:[],toast:null};
+  flash(m){this.setState({toast:m});clearTimeout(this._t);this._t=setTimeout(()=>this.setState({toast:null}),2400);}
+  renderVals(){
+    const s=this.state;
+    const tabs=['Panel','Historial de propuestas','Informe del Investigador','Prueba de modelos'].map(l=>({label:l,bg:l===s.tab?C.papel:'rgba(22,26,33,0.55)',color:l===s.tab?C.tinta:C.papel,border:l===s.tab?C.papel:'rgba(238,235,228,0.09)',onClick:()=>this.setState({tab:l})}));
+    let k=0;
+    const groups=['OPERACIÓN','INVESTIGACIÓN','MARKETING'].map(g=>{const list=AG.filter(a=>a[0]===g);return {name:g,n:list.length+' AGENTES',agents:list.map(([,name,does,trigger,model,last,cost,cap,auto,running])=>{const on=!s.off.includes(name);const run=on&&running;
+      return {name,does,trigger:trigger.toUpperCase(),model,last,cost:'$'+cost+' / $'+cap,pct:cost/cap*100,cc:cost/cap>0.7?C.ambar:C.papel,running:run,
+        state:!on?'INACTIVO':run?'TRABAJANDO':'EN ESPERA',dot:!on?C.acero:run?C.oxido:C.olivo,sc:!on?C.tenue:C.papel,anim:run?'blink 1.2s infinite':'none',
+        border:run?C.oxido:'rgba(238,235,228,0.09)',glow:run?'0 0 28px rgba(176,81,57,0.25)':'none',op:on?1:0.5,tb:on?C.olivo:'#2A2F36',tl:on?21:3,
+        auto:auto?'ACTÚA SOLO · '+auto:'SIEMPRE CON APROBACIÓN',ab:auto?C.ambar:'#3A4048',ac:auto?C.papel:C.tenue,delay:(0.04*(k++))+'s',
+        onToggle:()=>{this.setState(x=>({off:on?[...x.off,name]:x.off.filter(n=>n!==name)}));this.flash(name+(on?' desactivado':' activado'));}};})};});
+    const H=[
+      ['05 NOV','COBRADOR','Negocio demo 2','Recordatorio F-0112 por WhatsApp','POR APROBAR',C.oxido,'$0.40','Hola, te comparto el recordatorio de la factura F-0112 por $25,000.00 MXN, vencida el 2 de noviembre.','Pendiente de aprobación.'],
+      ['04 NOV','GUIONISTA','Campaña Flujo antes que IA','Guion · la misma orden tres veces','CAMBIADO',C.ambar,'$1.20','Gancho: “¿Cuántas veces escribes la misma orden?”','Gancho: “Tres veces. La misma orden. Tres personas distintas.”'],
+      ['04 NOV','PERFILADOR','Negocio demo 1','Resumen de cinco líneas','APROBADO',C.olivo,'$0.30','Escuela privada de 60 personas con dos planteles en Juárez…','Aprobado sin cambios.'],
+      ['03 NOV','SEGUIMIENTO','Negocio demo 9','Agendar llamada de 15 minutos','APROBADO',C.olivo,'$0.20','¿Te queda bien el jueves a las 11:30 para una llamada de 15 minutos?','Aprobado sin cambios · enviado por WhatsApp.'],
+      ['02 NOV','REPORTERO','Negocio demo 2','Reporte semanal','CAMBIADO',C.ambar,'$0.60','Avance 60 %, hito 3 en curso.','Avance 62 %, hito 3 en curso, sin cambios de alcance.'],
+      ['30 OCT','ESTRATEGA','Semana 45','Calendario de 5 piezas','APROBADO',C.olivo,'$0.90','5 piezas: 2 carruseles, 2 videos, 1 post.','Aprobado sin cambios.'],
+      ['29 OCT','PUBLICADOR','Campaña Talleres en orden','Publicar carrusel en LinkedIn','DESCARTADO',C.acero,'$0.10','Publicar hoy a las 13:00.','Descartado: la campaña ya había cerrado.']
+    ];
+    const hist=H.map(([d,a,c,p,r,rc,kk],i)=>({d,a,c,p,r,rc,k:kk,bg:i===s.hsel?'rgba(238,235,228,0.05)':'transparent',onClick:()=>this.setState({hsel:i})}));
+    const h=H[s.hsel];const cur={a:h[1],c:h[2],r:h[4],rc:h[5],k:h[6],m:'CLAUDE',before:h[7],after:h[8]};
+    const weeks=['SEMANA 45','SEMANA 44','SEMANA 43','SEMANA 42'].map(l=>({label:l,bg:l===s.week?C.papel:'rgba(22,26,33,0.55)',color:l===s.week?C.tinta:C.niebla,border:l===s.week?C.papel:'rgba(238,235,228,0.09)',onClick:()=>this.setState({week:l})}));
+    const practices=[['01','Publicar el precio del diagnóstico completo en la página de clínicas; dos competidores ya lo muestran.','2 FUENTES · SITIOS DE COMPETIDORES'],['02','Responder leads de Instagram en menos de una hora; los que esperan más de un día rara vez agendan.','1 FUENTE · HISTORIAL DEL EMBUDO'],['03','Probar un carrusel por sector con el costo de no actuar en pesos al mes.','3 FUENTES · MÉTRICAS DE CANAL']].map(([n,t,src],i)=>{const d=s.done.includes(i);return {n,t,src,label:d?'Tarea creada':'Convertir en tarea',bg:d?'transparent':C.tinta,color:d?C.olivo:C.papel,border:d?C.olivo:C.tinta,onClick:()=>{if(d)return;this.setState(x=>({done:[...x.done,i]}));this.flash('Tarea creada en Hoy');}};});
+    const st=(k,v,w,c)=>({k,v,w,c});
+    const models=[{name:'MODELO A',win:true,border:C.oxido,glow:'0 0 30px rgba(176,81,57,0.25)',stats:[st('APROBADAS SIN CAMBIOS','18 / 24',75,C.olivo),st('COSTO POR PROPUESTA','$1.20',40,C.papel),st('TIEMPO PROMEDIO','14 S',35,C.papel)]},
+      {name:'MODELO B',win:false,border:'rgba(238,235,228,0.09)',glow:'none',stats:[st('APROBADAS SIN CAMBIOS','12 / 24',50,C.niebla),st('COSTO POR PROPUESTA','$0.60',20,C.papel),st('TIEMPO PROMEDIO','9 S',22,C.papel)]}];
+    return {tabs,groups,hist,cur,weeks,week:s.week,practices,models,subtitle:'13 agentes · '+(13-s.off.length)+' activos · ninguno actúa hacia afuera sin aprobación, salvo dos excepciones',
+      tPanel:s.tab==='Panel',tHist:s.tab==='Historial de propuestas',tInf:s.tab==='Informe del Investigador',tTest:s.tab==='Prueba de modelos',
+      adopt:()=>this.flash('Modelo A asignado al Guionista'),toast:s.toast};
+  }
+}
+</script>
+</body>
+</html>

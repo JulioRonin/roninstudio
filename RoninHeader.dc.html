@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<sc-if value="{{ demo }}" hint-placeholder-val="{{ true }}">
+<div style="height:26px;display:flex;align-items:center;justify-content:center;gap:10px;border-bottom:1px solid #252A31;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.16em;color:#A9A6A0;background:rgba(16,19,24,0.8)">
+<span style="width:6px;height:6px;border-radius:50%;background:#B05139;box-shadow:0 0 8px #B05139"></span>MODO DEMO · DATOS DE EJEMPLO
+</div>
+</sc-if>
+<header style="display:flex;align-items:center;gap:12px;padding:22px 32px 0">
+<a href="Ronin%20OS%20Dashboard%20v2.dc.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:#EEEBE4;margin-right:6px">
+{{ logo }}
+<span style="display:flex;align-items:baseline;gap:5px"><span style="font-weight:900;font-size:17px;letter-spacing:-0.02em">RONIN</span><span style="font-weight:300;font-size:17px">OS</span></span>
+</a>
+<div style="display:flex;align-items:center;gap:10px;height:48px;width:180px;padding:0 6px;border-radius:999px;background:rgba(22,26,33,0.55);backdrop-filter:blur(18px);border:1px solid rgba(238,235,228,0.09)">
+<span style="width:36px;height:36px;border-radius:50%;background:#1B2027;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="width:11px;height:11px;border:1.5px solid #EEEBE4;border-radius:50%"></span></span>
+<span style="font-size:13px;color:#7C8088;flex:1">Buscar…</span>
+<span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.1em;color:#7C8088;padding:4px 7px;border:1px solid #252A31;border-radius:999px">CTRL K</span>
+</div>
+<nav style="display:flex;gap:4px;flex:1;justify-content:center">
+<sc-for list="{{ nav }}" as="n" hint-placeholder-count="9">
+<a href="{{ n.href }}" style="height:44px;padding:0 12px;border-radius:999px;border:1px solid {{ n.border }};background:{{ n.bg }};color:{{ n.color }};font-size:12.5px;font-weight:{{ n.weight }};text-decoration:none;display:flex;align-items:center;white-space:nowrap;box-shadow:{{ n.glow }};transition:border-color .2s" style-hover="border-color:#5B6068">{{ n.label }}</a>
+</sc-for>
+</nav>
+<a href="Ronin%20OS%20Configuracion.dc.html" title="Configuración" style="width:44px;height:44px;border-radius:50%;background:{{ cfgBg }};color:{{ cfgColor }};border:1px solid rgba(238,235,228,0.1);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.08em;text-decoration:none">CFG</a>
+<button onClick="{{ toggleTray }}" title="Bandeja de aprobación" style="position:relative;width:48px;height:48px;border-radius:50%;background:rgba(22,26,33,0.55);border:1px solid rgba(238,235,228,0.1);cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="border-color:#5B6068">
+<span style="width:14px;height:15px;border:1.5px solid #EEEBE4;border-radius:7px 7px 2px 2px"></span>
+<span style="position:absolute;top:-3px;right:-3px;min-width:20px;height:20px;padding:0 5px;border-radius:999px;background:#B05139;color:#EEEBE4;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;display:flex;align-items:center;justify-content:center;border:2px solid #0C0F14;animation:pulseOx 2.2s infinite">{{ trayCount }}</span>
+</button>
+<div style="width:48px;height:48px;border-radius:50%;background:#EEEBE4;color:#0C0F14;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px">JC</div>
+</header>
+<sc-if value="{{ trayOpen }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ toggleTray }}" style="position:fixed;inset:0;background:rgba(7,9,12,0.6);z-index:50"></div>
+<aside style="position:fixed;top:16px;right:16px;bottom:16px;width:440px;background:rgba(19,23,29,0.78);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border:1px solid rgba(238,235,228,0.1);border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:14px;overflow:auto;z-index:51;animation:rise .35s ease both">
+<div style="display:flex;justify-content:space-between;align-items:flex-start">
+<div>
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088">A APROBAR · E EDITAR · D DESCARTAR</div>
+<div style="font-weight:900;font-size:24px;letter-spacing:-0.02em;margin-top:6px">BANDEJA DE APROBACIÓN</div>
+<div style="font-weight:300;font-size:14px;color:#A9A6A0">{{ trayCount }} propuestas de hoy</div>
+</div>
+<button onClick="{{ toggleTray }}" style="width:44px;height:44px;border-radius:50%;background:#EEEBE4;color:#0C0F14;border:none;font-size:16px;cursor:pointer">✕</button>
+</div>
+<sc-for list="{{ tray }}" as="p" hint-placeholder-count="4">
+<div style="background:rgba(12,15,20,0.5);border:1px solid {{ p.border }};box-shadow:{{ p.glow }};border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#7C8088"><span>BORRADOR DE IA · {{ p.agent }} · {{ p.model }}</span><span>{{ p.kind }}</span></div>
+<div style="font-size:14px;font-weight:600">{{ p.title }}</div>
+<div style="font-size:13px;color:#A9A6A0;line-height:1.45;text-wrap:pretty">{{ p.body }}</div>
+<div style="display:flex;gap:6px">
+<button onClick="{{ p.onApprove }}" style="height:36px;padding:0 16px;border-radius:999px;background:#B05139;color:#EEEBE4;border:none;font-size:12px;font-weight:600;cursor:pointer;box-shadow:0 0 18px rgba(176,81,57,.45)" style-hover="background:#9A4530">Aprobar</button>
+<button onClick="{{ p.onEdit }}" style="height:36px;padding:0 16px;border-radius:999px;background:transparent;color:#EEEBE4;border:1px solid #3A4048;font-size:12px;cursor:pointer">Editar</button>
+<button onClick="{{ p.onDiscard }}" style="height:36px;padding:0 16px;border-radius:999px;background:transparent;color:#A9A6A0;border:none;font-size:12px;cursor:pointer" style-hover="color:#EEEBE4">Descartar</button>
+</div>
+</div>
+</sc-for>
+<sc-if value="{{ trayEmpty }}" hint-placeholder-val="{{ false }}"><div style="font-size:14px;color:#7C8088;padding:20px 0">Nada por aprobar. Los agentes proponen aquí lo de hoy.</div></sc-if>
+</aside>
+</sc-if>
+<sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;left:24px;bottom:24px;z-index:60;background:#EEEBE4;color:#0C0F14;border-radius:999px;padding:12px 20px;display:flex;align-items:center;gap:10px;font-size:13px;animation:rise .3s ease both">
+<span style="width:7px;height:7px;border-radius:50%;background:#4C8141"></span>{{ toast }}
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:120},&quot;active&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Dashboard&quot;,&quot;Marketing&quot;,&quot;Clientes&quot;,&quot;Diagnósticos&quot;,&quot;Proyectos&quot;,&quot;Tareas&quot;,&quot;Finanzas&quot;,&quot;Facturación&quot;,&quot;Agentes&quot;,&quot;Configuración&quot;],&quot;default&quot;:&quot;Dashboard&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;demo&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+const C={tinta:'#0C0F14',papel:'#EEEBE4',oxido:'#B05139',borde:'#252A31'};
+const R_PATH='M0 0H122C170 0 198 28 198 66C198 98 180 120 152 128L200 220H128L88 134H64V220H0Z M64 50H116C131 50 138 57 138 67C138 78 131 85 116 85H64Z';
+let uid=0;
+function rGlyph(active,size){const h=React.createElement,id='hb'+(uid++),offs=[-12,-4,4,12];
+  return h('svg',{width:size,height:size*220/228,viewBox:'-14 0 228 220'},offs.map((o,i)=>{const y0=i*55,y1=y0+55;
+    return h('g',{key:i,transform:`translate(${o} 0)`},h('clipPath',{id:id+i},h('polygon',{points:`-40,${y0+12} 240,${y0-12} 240,${y1-12} -40,${y1+12}`})),
+      h('path',{d:R_PATH,fill:i===active?C.oxido:C.papel,fillRule:'evenodd',clipPath:`url(#${id+i})`}));}));}
+const PAGES=[['Dashboard','Ronin%20OS%20Dashboard%20v2.dc.html'],['Marketing','Ronin%20OS%20Marketing.dc.html'],['Clientes','Ronin%20OS%20Clientes.dc.html'],['Diagnósticos','Ronin%20OS%20Diagnosticos.dc.html'],['Proyectos','Ronin%20OS%20Proyectos.dc.html'],['Tareas','Ronin%20OS%20Tareas.dc.html'],['Finanzas','Ronin%20OS%20Finanzas.dc.html'],['Facturación','Ronin%20OS%20Facturacion.dc.html'],['Agentes','Ronin%20OS%20Agentes.dc.html']];
+const TRAY=[
+ {id:'a',agent:'COBRADOR',model:'CLAUDE',kind:'MENSAJE',title:'Recordatorio F-0112 · Negocio demo 2',body:'Primer aviso por WhatsApp. Factura vencida hace 3 días, $25,000.00 MXN.'},
+ {id:'b',agent:'SEGUIMIENTO',model:'CLAUDE',kind:'MENSAJE',title:'Confirmar visita · Negocio demo 1',body:'Confirmación de visita de diagnóstico para el martes 10 de noviembre, 9:00.'},
+ {id:'c',agent:'ESTRATEGA',model:'CLAUDE',kind:'CALENDARIO',title:'Calendario de la semana 46',body:'5 piezas: 2 carruseles, 2 videos, 1 post. Tema: cuánto cuesta no ordenar el flujo.'},
+ {id:'d',agent:'GUIONISTA',model:'CLAUDE',kind:'GUION',title:'Video · El chatbot que nadie usa',body:'Gancho de 3 segundos y guion de 45 segundos para teleprompter, con tiempos.'},
+ {id:'e',agent:'REPORTERO',model:'CLAUDE',kind:'REPORTE',title:'Reporte semanal · Negocio demo 2',body:'Avance 62 %, hito 3 en curso, sin cambios de alcance.'}
+];
+class Component extends DCLogic {
+  state={trayOpen:false,tray:TRAY.map(t=>t.id),toast:null};
+  flash(m){this.setState({toast:m});clearTimeout(this._t);this._t=setTimeout(()=>this.setState({toast:null}),2400);}
+  rm(id,m){this.setState(s=>({tray:s.tray.filter(x=>x!==id)}));this.flash(m);}
+  componentDidMount(){this._k=e=>{if(!this.state.trayOpen||/INPUT|TEXTAREA/.test(e.target.tagName))return;const f=this.state.tray[0];
+    if(e.key==='Escape')return this.setState({trayOpen:false});if(!f)return;
+    if(e.key==='a')this.rm(f,'Aprobado y enviado');else if(e.key==='d')this.rm(f,'Propuesta descartada');else if(e.key==='e')this.flash('Abriendo editor del borrador');};
+    window.addEventListener('keydown',this._k);}
+  componentWillUnmount(){window.removeEventListener('keydown',this._k);clearTimeout(this._t);}
+  renderVals(){
+    const active=this.props.active??'Dashboard',s=this.state;
+    const nav=PAGES.map(([label,href])=>{const a=label===active;return {label,href,bg:a?C.papel:'rgba(22,26,33,0.55)',color:a?C.tinta:C.papel,border:a?C.papel:'rgba(238,235,228,0.09)',weight:a?600:400,glow:a?'0 0 24px rgba(238,235,228,0.25)':'none'};});
+    const cfg=active==='Configuración';
+    const tray=TRAY.filter(t=>s.tray.includes(t.id)).map((t,i)=>({...t,border:i===0?C.oxido:'rgba(238,235,228,0.09)',glow:i===0?'0 0 26px rgba(176,81,57,0.3)':'none',
+      onApprove:()=>this.rm(t.id,'Aprobado · '+t.agent.toLowerCase()),onDiscard:()=>this.rm(t.id,'Propuesta descartada'),onEdit:()=>this.flash('Abriendo editor del borrador')}));
+    return {demo:this.props.demo??true,logo:rGlyph(1,26),nav,cfgBg:cfg?C.papel:'rgba(22,26,33,0.55)',cfgColor:cfg?C.tinta:C.papel,
+      tray,trayCount:tray.length,trayEmpty:tray.length===0,trayOpen:s.trayOpen,toast:s.toast,toggleTray:()=>this.setState(x=>({trayOpen:!x.trayOpen}))};
+  }
+}
+</script>
+</body>
+</html>

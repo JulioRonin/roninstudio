@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,300..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#07090C;color:#EEEBE4;font-family:'Archivo',sans-serif;font-stretch:112%;-webkit-font-smoothing:antialiased}
+a{color:#EEEBE4;text-decoration-color:#B05139}a:hover{color:#F7F5F0}*{box-sizing:border-box}button,input,textarea{font-family:inherit;font-stretch:inherit}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes pulseOx{0%{box-shadow:0 0 0 0 rgba(176,81,57,.7),0 0 18px rgba(176,81,57,.6)}70%{box-shadow:0 0 0 12px rgba(176,81,57,0),0 0 18px rgba(176,81,57,.6)}100%{box-shadow:0 0 0 0 rgba(176,81,57,0),0 0 18px rgba(176,81,57,.6)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-30px) scale(1.12)}}
+</style>
+</helmet>
+<div style="width:1440px;margin:0 auto;background:#0C0F14;min-height:100vh;position:relative;overflow:hidden;isolation:isolate;padding-bottom:56px">
+<div style="position:absolute;z-index:-1;left:200px;top:60px;width:640px;height:420px;border-radius:50%;background:radial-gradient(closest-side,rgba(176,81,57,.34),rgba(176,81,57,0));filter:blur(30px);animation:drift 14s ease-in-out infinite;pointer-events:none"></div>
+<div style="position:absolute;z-index:-1;right:-60px;top:500px;width:620px;height:460px;border-radius:50%;background:radial-gradient(closest-side,rgba(238,235,228,.08),rgba(238,235,228,0));filter:blur(40px);animation:drift 18s ease-in-out infinite reverse;pointer-events:none"></div>
+<dc-import name="RoninHeader" active="Clientes" hint-size="100%,96px"></dc-import>
+
+<section style="padding:34px 32px 0;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;animation:rise .6s cubic-bezier(.2,.7,.2,1) both">
+<div>
+<div style="display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088"><span style="width:3px;height:12px;background:#B05139;transform:skewY(-14deg)"></span>03 · CLIENTES Y PERFIL</div>
+<h1 style="margin:8px 0 0;font-weight:900;font-size:44px;letter-spacing:-0.02em;line-height:1">CLIENTES</h1>
+<div style="font-weight:300;font-size:16px;color:#A9A6A0;margin-top:6px">{{ subtitle }}</div>
+</div>
+<button style="height:48px;padding:0 22px;border-radius:999px;background:#B05139;color:#EEEBE4;border:none;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 0 28px rgba(176,81,57,.45)" style-hover="background:#9A4530">Nuevo cliente</button>
+</section>
+<nav style="display:flex;gap:6px;padding:22px 32px 0">
+<sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
+<button onClick="{{ t.onClick }}" style="height:44px;padding:0 18px;border-radius:999px;border:1px solid {{ t.border }};background:{{ t.bg }};color:{{ t.color }};font-size:13px;cursor:pointer" style-hover="border-color:#5B6068">{{ t.label }}</button>
+</sc-for>
+</nav>
+
+<section style="padding:22px 32px 0">
+<sc-if value="{{ isList }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;gap:6px;align-items:center;margin-bottom:14px">
+<span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088;margin-right:6px">SECTOR</span>
+<sc-for list="{{ sectors }}" as="f" hint-placeholder-count="7"><button onClick="{{ f.onClick }}" style="height:36px;padding:0 14px;border-radius:999px;border:1px solid {{ f.border }};background:{{ f.bg }};color:{{ f.color }};font-size:12px;cursor:pointer">{{ f.label }}</button></sc-for>
+</div>
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.09);box-shadow:inset 0 1px 0 rgba(238,235,228,0.08);border-radius:24px;overflow:hidden;animation:rise .6s cubic-bezier(.2,.7,.2,1) both">
+<div style="display:grid;grid-template-columns:{{ table.cols }};gap:16px;padding:14px 22px;border-bottom:1px solid rgba(238,235,228,0.09)">
+<sc-for list="{{ table.head }}" as="h" hint-placeholder-count="8"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088">{{ h }}</span></sc-for>
+</div>
+<sc-for list="{{ table.rows }}" as="r" hint-placeholder-count="7">
+<div onClick="{{ r.onClick }}" style="display:grid;grid-template-columns:{{ r.cols }};gap:16px;padding:14px 22px;border-bottom:1px solid rgba(238,235,228,0.06);align-items:center;cursor:pointer;transition:background .2s" style-hover="background:rgba(238,235,228,0.04)">
+<sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="8"><span style="display:flex;align-items:center;gap:7px;justify-content:{{ c.align }};font-family:{{ c.font }};font-size:{{ c.size }};letter-spacing:{{ c.ls }};font-weight:{{ c.w }};color:{{ c.color }};min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><sc-if value="{{ c.dot }}" hint-placeholder-val="{{ false }}"><span style="width:6px;height:6px;border-radius:50%;flex-shrink:0;background:{{ c.dot }};box-shadow:0 0 8px {{ c.dot }}"></span></sc-if>{{ c.t }}</span></sc-for>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ isBoard }}" hint-placeholder-val="{{ false }}">
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088;margin-bottom:12px">ARRASTRA UNA TARJETA PARA CAMBIAR DE ETAPA</div>
+<div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px;align-items:start">
+<sc-for list="{{ cols }}" as="col" hint-placeholder-count="7">
+<div onDragOver="{{ col.onOver }}" onDrop="{{ col.onDrop }}" style="min-height:520px;border-radius:22px;background:{{ col.bg }};border:1px solid {{ col.border }};padding:10px;display:flex;flex-direction:column;gap:8px;transition:background .2s">
+<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 6px 8px"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:{{ col.tc }}">{{ col.name }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#A9A6A0">{{ col.n }}</span></div>
+<sc-for list="{{ col.cards }}" as="k" hint-placeholder-count="2">
+<div draggable="true" onDragStart="{{ k.onDrag }}" onClick="{{ k.onClick }}" style="background:rgba(22,26,33,0.7);backdrop-filter:blur(16px);border:1px solid {{ k.border }};box-shadow:{{ k.glow }};border-radius:16px;padding:12px;cursor:grab;display:flex;flex-direction:column;gap:6px;animation:rise .45s cubic-bezier(.2,.7,.2,1) both;transition:transform .2s" style-hover="transform:translateY(-2px)">
+<span style="font-size:13px;font-weight:600">{{ k.name }}</span>
+<span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;color:#7C8088">{{ k.sector }}</span>
+<span style="display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;color:{{ k.dc }}"><span style="width:6px;height:6px;border-radius:50%;background:{{ k.dot }}"></span>{{ k.next }}</span>
+</div>
+</sc-for>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ isFicha }}" hint-placeholder-val="{{ false }}">
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.09);box-shadow:inset 0 1px 0 rgba(238,235,228,0.08);border-radius:28px;padding:26px;animation:rise .6s cubic-bezier(.2,.7,.2,1) both">
+<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:20px">
+<div>
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088">ESCUELA PRIVADA · 60 PERSONAS · 2 SUCURSALES · CIUDAD JUÁREZ</div>
+<div style="font-weight:900;font-size:34px;letter-spacing:-0.02em;margin-top:6px">NEGOCIO DEMO 1</div>
+</div>
+<div style="display:flex;gap:8px;align-items:center">
+<span style="display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;padding:10px 14px;border-radius:999px;border:1px solid #B05139;box-shadow:0 0 20px rgba(176,81,57,.3)"><span style="width:6px;height:6px;border-radius:50%;background:#B05139;animation:blink 1.6s infinite"></span>DIAGNÓSTICO</span>
+<button onClick="{{ openLoss }}" style="height:40px;padding:0 16px;border-radius:999px;background:transparent;color:#A9A6A0;border:1px solid #3A4048;font-size:13px;cursor:pointer">Marcar como perdido</button>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:20px">
+<sc-for list="{{ contacts }}" as="c" hint-placeholder-count="3">
+<div style="background:rgba(12,15,20,0.45);border:1px solid rgba(238,235,228,0.08);border-radius:18px;padding:14px;display:flex;align-items:center;gap:12px">
+<span style="width:42px;height:42px;border-radius:50%;background:#1B2027;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px">{{ c.ini }}</span>
+<div style="flex:1;min-width:0"><div style="font-size:14px">{{ c.name }}</div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;color:#7C8088;margin-top:3px">{{ c.role }}</div></div>
+<sc-if value="{{ c.decide }}" hint-placeholder-val="{{ false }}"><span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.12em;padding:4px 8px;border-radius:999px;background:#EEEBE4;color:#0C0F14">DECIDE</span></sc-if>
+<span style="height:32px;padding:0 12px;border-radius:999px;background:#25D366;color:#0C0F14;display:flex;align-items:center;font-size:11px;font-weight:600">WhatsApp</span>
+</div>
+</sc-for>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:16px;margin-top:16px">
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.09);border-radius:28px;padding:26px;animation:rise .7s cubic-bezier(.2,.7,.2,1) both;animation-delay:.1s">
+<div style="font-weight:900;font-size:22px;letter-spacing:-0.02em;margin-bottom:10px">LÍNEA DE TIEMPO</div>
+<sc-for list="{{ timeline }}" as="e" hint-placeholder-count="5">
+<div style="display:grid;grid-template-columns:90px 22px 1fr;gap:14px">
+<span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#7C8088;padding-top:16px">{{ e.date }}</span>
+<div style="display:flex;flex-direction:column;align-items:center"><span style="width:1px;height:16px;background:#3A4048"></span><span style="width:12px;height:12px;border-radius:50%;background:{{ e.dot }};box-shadow:{{ e.glow }};flex-shrink:0"></span><span style="width:1px;flex:1;background:#3A4048"></span></div>
+<div style="padding:12px 0 18px">
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#A9A6A0">{{ e.kind }}</div>
+<div style="font-size:15px;margin-top:4px">{{ e.title }}</div>
+<div style="font-size:13px;color:#A9A6A0;margin-top:4px;line-height:1.5;text-wrap:pretty">{{ e.note }}</div>
+<sc-if value="{{ e.call }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px">
+<sc-for list="{{ e.call }}" as="q" hint-placeholder-count="4"><div style="background:rgba(12,15,20,0.45);border:1px solid rgba(238,235,228,0.07);border-radius:14px;padding:10px 12px"><div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.14em;color:#7C8088">{{ q.k }}</div><div style="font-size:13px;margin-top:4px">{{ q.v }}</div></div></sc-for>
+</div>
+</sc-if>
+</div>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="background:rgba(238,235,228,0.92);color:#0C0F14;border-radius:28px;padding:22px;animation:rise .7s cubic-bezier(.2,.7,.2,1) both;animation-delay:.2s">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<span style="display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#5B6068"><span style="width:3px;height:12px;background:#B05139;transform:skewY(-14deg)"></span>BORRADOR DE IA · PERFILADOR</span>
+<button onClick="{{ regen }}" style="height:30px;padding:0 12px;border-radius:999px;background:#0C0F14;color:#EEEBE4;border:none;font-size:11px;cursor:pointer">Regenerar</button>
+</div>
+<sc-for list="{{ profile }}" as="p" hint-placeholder-count="5"><div style="font-size:13px;line-height:1.45;padding:9px 0;border-bottom:1px solid #D6D2C9;text-wrap:pretty">{{ p }}</div></sc-for>
+</div>
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.09);border-radius:28px;padding:22px">
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088;margin-bottom:8px">DIAGNÓSTICO EXPRÉS · 28 OCT</div>
+<sc-for list="{{ express }}" as="x" hint-placeholder-count="3"><div style="display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid rgba(238,235,228,0.06);font-size:13px"><span style="color:#A9A6A0">{{ x.k }}</span><span style="text-align:right">{{ x.v }}</span></div></sc-for>
+<div style="display:flex;justify-content:space-between;padding:12px 0 0;font-size:13px"><span style="color:#A9A6A0">Objeción principal</span><span>Tiempo del equipo</span></div>
+<div style="display:flex;justify-content:space-between;padding:8px 0 0;font-size:13px"><span style="color:#A9A6A0">Llegó por</span><span>Carrusel · El chatbot que nadie usa</span></div>
+</div>
+</div>
+</div>
+</sc-if>
+</section>
+
+<sc-if value="{{ lossOpen }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ closeLoss }}" style="position:fixed;inset:0;background:rgba(7,9,12,0.65);z-index:40"></div>
+<div style="position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:520px;z-index:41;background:rgba(19,23,29,0.85);backdrop-filter:blur(28px);border:1px solid rgba(238,235,228,0.1);border-radius:28px;padding:26px;display:flex;flex-direction:column;gap:14px">
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088">REGISTRO DE PÉRDIDA · {{ lossName }}</div>
+<div style="font-weight:900;font-size:24px;letter-spacing:-0.02em">¿POR QUÉ SE PERDIÓ?</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<sc-for list="{{ reasons }}" as="r" hint-placeholder-count="5"><button onClick="{{ r.onClick }}" style="height:44px;border-radius:14px;border:1px solid {{ r.border }};background:{{ r.bg }};color:#EEEBE4;font-size:13px;cursor:pointer;text-align:left;padding:0 14px">{{ r.label }}</button></sc-for>
+</div>
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088">NOTA</div>
+<textarea placeholder="Qué dijo y qué haríamos distinto" style="height:90px;border-radius:14px;background:#101318;border:1px solid #252A31;color:#EEEBE4;padding:12px;font-size:13px;resize:none;outline:none" style-focus="border-color:#B05139"></textarea>
+<div style="display:flex;gap:8px;justify-content:flex-end">
+<button onClick="{{ closeLoss }}" style="height:42px;padding:0 18px;border-radius:999px;background:transparent;color:#EEEBE4;border:1px solid #3A4048;font-size:13px;cursor:pointer">Cancelar</button>
+<button onClick="{{ confirmLoss }}" style="height:42px;padding:0 18px;border-radius:999px;background:#B05139;color:#EEEBE4;border:none;font-size:13px;font-weight:600;cursor:pointer">Registrar pérdida</button>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;left:24px;bottom:24px;z-index:60;background:#EEEBE4;color:#0C0F14;border-radius:999px;padding:12px 20px;display:flex;align-items:center;gap:10px;font-size:13px;animation:rise .3s ease both"><span style="width:7px;height:7px;border-radius:50%;background:#4C8141"></span>{{ toast }}</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const C={tinta:'#0C0F14',papel:'#EEEBE4',niebla:'#A9A6A0',tenue:'#7C8088',acero:'#5B6068',oxido:'#B05139',olivo:'#4C8141',ambar:'#C98A3C'};
+const MONO="'JetBrains Mono',monospace",SANS="'Archivo',sans-serif";
+const tx=(t,o={})=>({t,color:o.c||C.papel,font:SANS,size:'14px',ls:'0',w:o.w||400,dot:o.dot||null,align:'flex-start'});
+const mo=(t,o={})=>({t,color:o.c||C.niebla,font:MONO,size:'11px',ls:'0.08em',w:400,dot:o.dot||null,align:'flex-start'});
+const STAGES=['LEAD','CONTACTADO','LLAMADA','DIAGNÓSTICO','PROPUESTA','CLIENTE','PERDIDO'];
+const STC={LEAD:C.tenue,CONTACTADO:C.niebla,LLAMADA:C.ambar,'DIAGNÓSTICO':C.oxido,PROPUESTA:C.oxido,CLIENTE:C.olivo,PERDIDO:C.acero};
+const INIT=[
+ {id:1,name:'Negocio demo 1',sector:'Escuela privada',city:'Juárez',stage:'DIAGNÓSTICO',origin:'Instagram',last:'04 NOV',next:'Visita · 10 NOV',late:false,owner:'JC'},
+ {id:2,name:'Negocio demo 2',sector:'Restaurante con sucursales',city:'Juárez',stage:'CLIENTE',origin:'Referido',last:'05 NOV',next:'Cobrar F-0112 · 02 NOV',late:true,owner:'JC'},
+ {id:3,name:'Negocio demo 3',sector:'Clínica',city:'El Paso',stage:'CLIENTE',origin:'LinkedIn',last:'30 OCT',next:'Reporte · 30 NOV',late:false,owner:'JC'},
+ {id:4,name:'Negocio demo 4',sector:'Clínica',city:'Chihuahua',stage:'CLIENTE',origin:'TikTok',last:'03 NOV',next:'Hito 2 · 03 NOV',late:true,owner:'JC'},
+ {id:7,name:'Negocio demo 7',sector:'Notaría',city:'Juárez',stage:'PROPUESTA',origin:'Diagnóstico exprés',last:'02 NOV',next:'Seguimiento · 06 NOV',late:false,owner:'JC'},
+ {id:9,name:'Negocio demo 9',sector:'Gimnasio',city:'Juárez',stage:'LLAMADA',origin:'Instagram',last:'01 NOV',next:'Llamada · 05 NOV',late:false,owner:'JC'},
+ {id:10,name:'Negocio demo 10',sector:'Taller',city:'Juárez',stage:'CONTACTADO',origin:'Diagnóstico exprés',last:'29 OCT',next:'Agendar llamada · 03 NOV',late:true,owner:'JC'},
+ {id:11,name:'Negocio demo 11',sector:'Restaurante con sucursales',city:'El Paso',stage:'LEAD',origin:'Instagram',last:'—',next:'Primer contacto · 06 NOV',late:false,owner:'JC'},
+ {id:12,name:'Negocio demo 12',sector:'Escuela privada',city:'Chihuahua',stage:'LEAD',origin:'YouTube',last:'—',next:'Primer contacto · 06 NOV',late:false,owner:'JC'},
+ {id:13,name:'Negocio demo 13',sector:'Clínica',city:'Juárez',stage:'PERDIDO',origin:'TikTok',last:'20 OCT',next:'Precio',late:false,owner:'JC'}
+];
+class Component extends DCLogic {
+  state={tab:'Lista',sector:'Todos',clients:INIT,drag:null,over:null,loss:null,reason:null,toast:null};
+  flash(m){this.setState({toast:m});clearTimeout(this._t);this._t=setTimeout(()=>this.setState({toast:null}),2400);}
+  move(id,stage){if(stage==='PERDIDO'){this.setState({loss:id,reason:null,over:null});return;}
+    this.setState(s=>({clients:s.clients.map(c=>c.id===id?{...c,stage}:c),over:null}));this.flash('Movido a '+stage.toLowerCase());}
+  renderVals(){
+    const s=this.state;
+    const pill=(l,cur,fn)=>({label:l,bg:l===cur?C.papel:'rgba(22,26,33,0.55)',color:l===cur?C.tinta:C.papel,border:l===cur?C.papel:'rgba(238,235,228,0.09)',onClick:()=>fn(l)});
+    const tabs=['Lista','Tablero de embudo','Ficha del cliente'].map(l=>pill(l,s.tab,v=>this.setState({tab:v})));
+    const secs=['Todos','Escuela privada','Restaurante con sucursales','Clínica','Gimnasio','Notaría','Taller'];
+    const sectors=secs.map(l=>pill(l,s.sector,v=>this.setState({sector:v})));
+    const W='1.4fr 1.5fr 0.9fr 1.1fr 1.1fr 0.8fr 1.6fr 60px';
+    const rows=s.clients.filter(c=>s.sector==='Todos'||c.sector===s.sector).map(c=>({cols:W,onClick:()=>this.setState({tab:'Ficha del cliente'}),
+      cells:[tx(c.name,{w:600}),tx(c.sector,{c:C.niebla}),mo(c.city.toUpperCase()),{...mo(c.stage,{c:C.papel}),dot:STC[c.stage],size:'10px',ls:'0.12em'},mo(c.origin.toUpperCase()),mo(c.last),mo(c.next.toUpperCase(),{c:c.late?C.oxido:C.papel}),mo(c.owner,{c:C.papel})]}));
+    const table={cols:W,head:['NEGOCIO','SECTOR','CIUDAD','ETAPA','ORIGEN','ÚLTIMO','SIGUIENTE PASO','RESP.'],rows};
+    const cols=STAGES.map(st=>{const cards=s.clients.filter(c=>c.stage===st);const ov=s.over===st;
+      return {name:st,n:cards.length,tc:st==='PERDIDO'?C.tenue:C.niebla,bg:ov?'rgba(176,81,57,0.12)':'rgba(22,26,33,0.35)',border:ov?C.oxido:'rgba(238,235,228,0.07)',
+        onOver:e=>{e.preventDefault();if(s.over!==st)this.setState({over:st});},onDrop:e=>{e.preventDefault();const id=+e.dataTransfer.getData('text/plain');if(id)this.move(id,st);},
+        cards:cards.map(c=>({name:c.name,sector:c.sector.toUpperCase(),next:c.next.toUpperCase(),dot:c.late?C.oxido:STC[c.stage],dc:c.late?C.papel:C.tenue,
+          border:c.late?C.oxido:'rgba(238,235,228,0.09)',glow:c.late?'0 0 22px rgba(176,81,57,0.3)':'none',
+          onDrag:e=>{e.dataTransfer.setData('text/plain',String(c.id));},onClick:()=>this.setState({tab:'Ficha del cliente'})}))};});
+    const lossC=s.clients.find(c=>c.id===s.loss)||{name:'NEGOCIO DEMO 1'};
+    const reasons=['Precio','Tiempo del equipo','Ya tienen un sistema','No es prioridad','Cortina de humo'].map(l=>({label:l,bg:s.reason===l?'rgba(176,81,57,0.2)':'#101318',border:s.reason===l?C.oxido:'#252A31',onClick:()=>this.setState({reason:l})}));
+    const timeline=[
+      {date:'04 NOV',kind:'LLAMADA · 15 MIN',title:'Llamada con dirección',note:'Agendamos visita de diagnóstico completo para el martes 10.',dot:C.oxido,glow:'0 0 14px rgba(176,81,57,.7)',call:[['PUNTO A','Inscripciones y pagos en hojas de cálculo separadas'],['PUNTO B','Un solo registro por alumno, de inscripción a cobro'],['INTENTOS PREVIOS','Sistema escolar genérico, abandonado en 2025'],['COSTO DE NO ACTUAR','Unas 20 horas al mes de captura doble']].map(([k,v])=>({k,v}))},
+      {date:'30 OCT',kind:'MENSAJE · WHATSAPP',title:'Seguimiento del diagnóstico exprés',note:'Respondió el mismo día; pidió llamada la semana siguiente.',dot:C.papel,glow:'none',call:null},
+      {date:'28 OCT',kind:'DIAGNÓSTICO EXPRÉS',title:'Llenó el diagnóstico en el sitio',note:'Tres hallazgos: captura doble, cobranza manual, reportes tardíos.',dot:C.papel,glow:'none',call:null},
+      {date:'27 OCT',kind:'CONTENIDO',title:'Guardó el carrusel “El chatbot que nadie usa”',note:'Primera interacción registrada desde Instagram.',dot:C.acero,glow:'none',call:null}
+    ];
+    const subtitle=s.clients.length+' negocios · '+s.clients.filter(c=>c.late).length+' con siguiente paso vencido';
+    return {tabs,sectors,table,cols,subtitle,isList:s.tab==='Lista',isBoard:s.tab==='Tablero de embudo',isFicha:s.tab==='Ficha del cliente',
+      contacts:[['DR','Directora general','DIRECCIÓN',true],['CE','Control escolar','COORDINACIÓN',false],['AD','Administración','FINANZAS',false]].map(([ini,name,role,decide])=>({ini,name,role,decide})),
+      timeline,profile:['Escuela privada de 60 personas con dos planteles en Juárez.','El dolor principal es la captura doble entre inscripción y cobranza.','Ya probó un sistema genérico y el equipo lo abandonó.','Decide la directora; control escolar será quien más lo use.','Siguiente paso sugerido: visita con guía de escuelas.'],
+      express:[['Personas','60'],['Hallazgo 1','Captura doble'],['Horas estimadas al mes','20']].map(([k,v])=>({k,v})),
+      regen:()=>this.flash('El Perfilador está regenerando el resumen'),
+      lossOpen:s.loss!==null,lossName:lossC.name.toUpperCase(),reasons,openLoss:()=>this.setState({loss:1,reason:null}),closeLoss:()=>this.setState({loss:null}),
+      confirmLoss:()=>{const id=s.loss;this.setState(x=>({clients:x.clients.map(c=>c.id===id?{...c,stage:'PERDIDO',next:x.reason||'Sin razón',late:false}:c),loss:null}));this.flash('Pérdida registrada');},
+      toast:s.toast};
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="width:100%">
+<sc-if value="{{ demo }}" hint-placeholder-val="{{ true }}">
+<div style="height:26px;display:flex;align-items:center;justify-content:center;gap:10px;border-bottom:1px solid #252A31;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.16em;color:#A9A6A0;background:rgba(16,19,24,0.8)">
+<span style="width:6px;height:6px;border-radius:50%;background:#B05139;box-shadow:0 0 8px #B05139"></span>MODO DEMO · DATOS DE EJEMPLO
+</div>
+</sc-if>
+<header style="display:flex;align-items:center;gap:10px;padding:22px 32px 0">
+<a href="Ronin%20OS%20Dashboard%20v2.dc.html" style="display:flex;align-items:center;gap:10px;flex-shrink:0;margin-right:6px">
+{{ logo }}
+<div style="display:flex;align-items:baseline;gap:6px"><span style="font-weight:900;font-size:17px;letter-spacing:-0.02em">RONIN</span><span style="font-weight:300;font-size:17px">OS</span></div>
+</a>
+<div style="display:flex;align-items:center;gap:10px;height:48px;padding:0 12px 0 6px;flex-shrink:0;border-radius:999px;background:rgba(22,26,33,0.55);backdrop-filter:blur(20px);border:1px solid rgba(238,235,228,0.09)">
+<span style="width:36px;height:36px;border-radius:50%;background:#1B2027;display:flex;align-items:center;justify-content:center"><span style="width:12px;height:12px;border:1.5px solid #EEEBE4;border-radius:50%"></span></span>
+<span style="font-size:13px;color:#7C8088">Buscar</span>
+<span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;color:#7C8088;padding:4px 8px;border:1px solid #252A31;border-radius:999px;white-space:nowrap">CTRL K</span>
+</div>
+<nav style="display:flex;gap:3px;flex:1;justify-content:center;min-width:0">
+<sc-for list="{{ nav }}" as="n" hint-placeholder-count="9">
+<a href="{{ n.href }}" style="height:44px;display:flex;align-items:center;padding:0 11px;border-radius:999px;border:1px solid {{ n.border }};background:{{ n.bg }};color:{{ n.color }};font-size:12.5px;font-weight:{{ n.weight }};white-space:nowrap;box-shadow:{{ n.glow }};transition:border-color .2s" style-hover="border-color:#5B6068">{{ n.label }}</a>
+</sc-for>
+</nav>
+<a href="Ronin%20OS%20Configuracion.dc.html" title="Configuración" style="width:44px;height:44px;flex-shrink:0;border-radius:50%;background:{{ cfgBg }};color:{{ cfgColor }};border:1px solid rgba(238,235,228,0.09);display:flex;align-items:center;justify-content:center;font-size:17px">⚙</a>
+<a href="Ronin%20OS%20Dashboard%20v2.dc.html" title="Bandeja de aprobación" style="position:relative;width:48px;height:48px;flex-shrink:0;border-radius:50%;background:rgba(22,26,33,0.55);border:1px solid rgba(238,235,228,0.09);display:flex;align-items:center;justify-content:center">
+<span style="width:14px;height:15px;border:1.5px solid #EEEBE4;border-radius:7px 7px 2px 2px"></span>
+<span style="position:absolute;top:-3px;right:-3px;min-width:20px;height:20px;padding:0 5px;border-radius:999px;background:#B05139;color:#EEEBE4;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;display:flex;align-items:center;justify-content:center;border:2px solid #0C0F14;animation:pulseOx 2.2s infinite">{{ count }}</span>
+</a>
+<div style="width:48px;height:48px;flex-shrink:0;border-radius:50%;background:#EEEBE4;color:#0C0F14;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px">JC</div>
+</header>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:110},&quot;active&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Dashboard&quot;,&quot;Marketing&quot;,&quot;Clientes&quot;,&quot;Diagnósticos&quot;,&quot;Proyectos&quot;,&quot;Tareas&quot;,&quot;Finanzas&quot;,&quot;Facturación&quot;,&quot;Agentes&quot;,&quot;Configuración&quot;],&quot;default&quot;:&quot;Dashboard&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;demo&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;count&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:5,&quot;tsType&quot;:&quot;number&quot;}}">
+const R_PATH='M0 0H122C170 0 198 28 198 66C198 98 180 120 152 128L200 220H128L88 134H64V220H0Z M64 50H116C131 50 138 57 138 67C138 78 131 85 116 85H64Z';
+let _u=0;
+function rGlyph(active,size,base){const h=React.createElement,id='hb'+(_u++),offs=[-12,-4,4,12];
+  return h('svg',{width:size,height:size*220/228,viewBox:'-14 0 228 220'},offs.map((o,i)=>{const y0=i*55,y1=y0+55;
+    return h('g',{key:i,transform:`translate(${o} 0)`},h('clipPath',{id:id+i},h('polygon',{points:`-40,${y0+12} 240,${y0-12} 240,${y1-12} -40,${y1+12}`})),
+      h('path',{d:R_PATH,fill:i===active?'#B05139':base,fillRule:'evenodd',clipPath:`url(#${id+i})`}));}));}
+const NAV=[['Dashboard','Ronin OS Dashboard v2'],['Marketing','Ronin OS Marketing'],['Clientes','Ronin OS Clientes'],['Diagnósticos','Ronin OS Diagnosticos'],['Proyectos','Ronin OS Proyectos'],['Tareas','Ronin OS Tareas'],['Finanzas','Ronin OS Finanzas'],['Facturación','Ronin OS Facturacion'],['Agentes','Ronin OS Agentes']];
+class Component extends DCLogic {
+  renderVals(){
+    const act=this.props.active??'Dashboard';
+    if(!this._logo)this._logo=rGlyph(1,26,'#EEEBE4');
+    const nav=NAV.map(([l,f])=>{const a=l===act;return {label:l,href:encodeURI(f+'.dc.html'),bg:a?'#EEEBE4':'rgba(22,26,33,0.55)',color:a?'#0C0F14':'#EEEBE4',border:a?'#EEEBE4':'rgba(238,235,228,0.09)',weight:a?600:400,glow:a?'0 0 22px rgba(238,235,228,0.18)':'none'};});
+    const cfg=act==='Configuración';
+    return {demo:this.props.demo??true,logo:this._logo,nav,count:this.props.count??5,cfgBg:cfg?'#EEEBE4':'rgba(22,26,33,0.55)',cfgColor:cfg?'#0C0F14':'#EEEBE4'};
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,300..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#07090C;color:#EEEBE4;font-family:'Archivo',sans-serif;font-stretch:112%;-webkit-font-smoothing:antialiased}
+a{color:#EEEBE4;text-decoration-color:#B05139}a:hover{color:#F7F5F0}*{box-sizing:border-box}button,input{font-family:inherit;font-stretch:inherit}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-30px) scale(1.12)}}
+</style>
+</helmet>
+<div style="width:1440px;margin:0 auto;background:#0C0F14;min-height:100vh;position:relative;overflow:hidden;isolation:isolate;padding-bottom:56px">
+<div style="position:absolute;z-index:-1;left:260px;top:60px;width:640px;height:420px;border-radius:50%;background:radial-gradient(closest-side,rgba(238,235,228,.09),rgba(238,235,228,0));filter:blur(30px);animation:drift 14s ease-in-out infinite;pointer-events:none"></div>
+<dc-import name="RoninHeader" active="Configuración" hint-size="100%,96px"></dc-import>
+<section style="padding:34px 32px 0;animation:rise .6s cubic-bezier(.2,.7,.2,1) both">
+<div style="display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088"><span style="width:3px;height:12px;background:#B05139;transform:skewY(-14deg)"></span>10 · CONFIGURACIÓN</div>
+<h1 style="margin:8px 0 0;font-weight:900;font-size:44px;letter-spacing:-0.02em;line-height:1">CONFIGURACIÓN</h1>
+</section>
+<section style="display:grid;grid-template-columns:240px minmax(0,1fr);gap:20px;padding:26px 32px 0">
+<nav style="display:flex;flex-direction:column;gap:4px;align-self:start;background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.09);border-radius:24px;padding:10px">
+<sc-for list="{{ menu }}" as="m" hint-placeholder-count="6"><button onClick="{{ m.onClick }}" style="height:44px;border-radius:14px;border:none;background:{{ m.bg }};color:{{ m.color }};font-size:13px;cursor:pointer;text-align:left;padding:0 14px;display:flex;align-items:center;justify-content:space-between">{{ m.label }}<span style="width:6px;height:6px;border-radius:50%;background:{{ m.dot }}"></span></button></sc-for>
+</nav>
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.09);box-shadow:inset 0 1px 0 rgba(238,235,228,0.08);border-radius:28px;padding:26px;animation:rise .5s ease both">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><span style="font-weight:900;font-size:24px;letter-spacing:-0.02em;text-transform:uppercase">{{ secTitle }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088">{{ secNote }}</span></div>
+
+<sc-if value="{{ sUsers }}" hint-placeholder-val="{{ true }}">
+<sc-for list="{{ users }}" as="u" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:44px 1fr 1.6fr 120px;gap:14px;align-items:center;padding:12px 0;border-bottom:1px solid rgba(238,235,228,0.06)"><span style="width:40px;height:40px;border-radius:50%;background:{{ u.bg }};color:{{ u.fc }};display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px">{{ u.ini }}</span><div><div style="font-size:14px">{{ u.n }}</div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;color:#7C8088;margin-top:3px">{{ u.role }}</div></div><span style="font-size:13px;color:#A9A6A0">{{ u.mods }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;text-align:right">{{ u.st }}</span></div></sc-for>
+</sc-if>
+
+<sc-if value="{{ sSect }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">
+<sc-for list="{{ sectors }}" as="x" hint-placeholder-count="6"><div style="background:rgba(12,15,20,0.45);border:1px solid rgba(238,235,228,0.08);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:8px"><span style="font-weight:900;font-size:16px;text-transform:uppercase">{{ x.n }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;color:#A9A6A0">GUÍA {{ x.g }} · {{ x.q }} PREGUNTAS DE VISITA</span><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;color:#7C8088">12 PREGUNTAS DEL EXPRÉS</span></div></sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ sTpl }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px">
+<sc-for list="{{ templates }}" as="t" hint-placeholder-count="4"><div style="display:flex;flex-direction:column;gap:10px"><div style="aspect-ratio:8.5/11;background:#EEEBE4;border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:6px"><span style="font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:0.16em;color:#5B6068">RONIN STUDIO</span><span style="font-weight:900;font-size:15px;color:#0C0F14;line-height:1;text-transform:uppercase">{{ t.n }}</span><span style="height:3px;width:30%;background:#B05139;margin-top:4px"></span><span style="flex:1"></span><span style="height:6px;background:#D6D2C9;border-radius:2px"></span><span style="height:6px;width:70%;background:#D6D2C9;border-radius:2px"></span></div><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:#A9A6A0">{{ t.v }}</span></div></sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ sFiscal }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px">
+<sc-for list="{{ fiscal }}" as="f" hint-placeholder-count="6"><label style="display:flex;flex-direction:column;gap:6px"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088">{{ f.k }}</span><input value="{{ f.v }}" readonly="readonly" style="height:44px;border-radius:12px;background:#101318;border:1px solid #252A31;color:#EEEBE4;padding:0 14px;font-size:14px;outline:none" style-focus="border-color:#B05139"></input></label></sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ sInt }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+<sc-for list="{{ integrations }}" as="i" hint-placeholder-count="10"><div style="display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:18px;background:rgba(12,15,20,0.45);border:1px solid {{ i.border }};box-shadow:{{ i.glow }}"><span style="width:40px;height:40px;border-radius:12px;background:#1B2027;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px">{{ i.ab }}</span><div style="flex:1"><div style="font-size:14px">{{ i.n }}</div><div style="font-size:12px;color:#7C8088;margin-top:2px">{{ i.use }}</div></div><span style="display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em"><span style="width:7px;height:7px;border-radius:50%;background:{{ i.c }};box-shadow:0 0 8px {{ i.c }};animation:{{ i.anim }}"></span>{{ i.st }}</span><sc-if value="{{ i.err }}" hint-placeholder-val="{{ false }}"><button onClick="{{ i.onFix }}" style="height:32px;padding:0 12px;border-radius:999px;background:#B05139;color:#EEEBE4;border:none;font-size:12px;font-weight:600;cursor:pointer">Reconectar</button></sc-if></div></sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ sTok }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:20px;padding:8px 0 20px;border-bottom:1px solid rgba(238,235,228,0.08)">
+<span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088">TOPE TOTAL MENSUAL</span>
+<button onClick="{{ decCap }}" style="width:40px;height:40px;border-radius:50%;background:transparent;border:1px solid #3A4048;color:#EEEBE4;font-size:18px;cursor:pointer">−</button>
+<span style="font-weight:900;font-size:32px;letter-spacing:-0.02em">{{ cap }}</span>
+<button onClick="{{ incCap }}" style="width:40px;height:40px;border-radius:50%;background:transparent;border:1px solid #3A4048;color:#EEEBE4;font-size:18px;cursor:pointer">+</button>
+<span style="flex:1;height:6px;border-radius:3px;background:#1B2027;overflow:hidden"><span style="display:block;height:100%;width:{{ capPct }}%;background:#B05139;box-shadow:0 0 10px #B05139;transition:width .4s"></span></span>
+<span style="font-family:'JetBrains Mono',monospace;font-size:11px">$1,200 USADO</span>
+</div>
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 28px;margin-top:10px">
+<sc-for list="{{ caps }}" as="c" hint-placeholder-count="13"><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(238,235,228,0.05);font-size:13px"><span>{{ c.n }}</span><span style="font-family:'JetBrains Mono',monospace;color:#A9A6A0">{{ c.v }}</span></div></sc-for>
+</div>
+</sc-if>
+</div>
+</section>
+<sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;left:24px;bottom:24px;z-index:60;background:#EEEBE4;color:#0C0F14;border-radius:999px;padding:12px 20px;display:flex;align-items:center;gap:10px;font-size:13px;animation:rise .3s ease both"><span style="width:7px;height:7px;border-radius:50%;background:#4C8141"></span>{{ toast }}</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const C={tinta:'#0C0F14',papel:'#EEEBE4',niebla:'#A9A6A0',tenue:'#7C8088',acero:'#5B6068',oxido:'#B05139',olivo:'#4C8141',ambar:'#C98A3C'};
+const SECS=[['Usuarios y roles','3 USUARIOS'],['Sectores y guías','6 SECTORES'],['Plantillas de documentos','4 PLANTILLAS'],['Datos fiscales','EMISOR CFDI'],['Integraciones','10 SERVICIOS'],['Tope de tokens','POR AGENTE Y TOTAL']];
+class Component extends DCLogic {
+  state={sec:'Integraciones',fixed:false,cap:3000,toast:null};
+  flash(m){this.setState({toast:m});clearTimeout(this._t);this._t=setTimeout(()=>this.setState({toast:null}),2400);}
+  renderVals(){
+    const s=this.state;
+    const menu=SECS.map(([l])=>({label:l,bg:l===s.sec?C.papel:'transparent',color:l===s.sec?C.tinta:C.papel,dot:l==='Integraciones'&&!s.fixed?C.oxido:'transparent',onClick:()=>this.setState({sec:l})}));
+    const note=SECS.find(x=>x[0]===s.sec)[1];
+    const I=[['SB','Supabase','Base de datos y autenticación',true],['FA','Facturapi','Emisión de CFDI',true],['ST','Stripe','Cobros en dólares',true],['WA','WhatsApp Business','Mensajes a clientes',true],['MT','Meta','Instagram y métricas',!s.fixed?'err':true],['YT','YouTube','Publicación y métricas',true],['TT','TikTok','Publicación y métricas',true],['HF','Higgsfield','Imagen y video',true],['EL','ElevenLabs','Voz en off',true],['HA','Hermes Agent','Ejecución de los 13 agentes',true]];
+    const integrations=I.map(([ab,n,use,ok])=>{const err=ok==='err';return {ab,n,use,err,st:err?'DESCONECTADO':'CONECTADO',c:err?C.oxido:C.olivo,anim:err?'blink 1.4s infinite':'none',border:err?C.oxido:'rgba(238,235,228,0.08)',glow:err?'0 0 24px rgba(176,81,57,0.3)':'none',onFix:()=>{this.setState({fixed:true});this.flash('Meta reconectado');}};});
+    const AG=[['Perfilador',200],['Seguimiento',250],['Mapeador',250],['Planeador',200],['Reportero',150],['Cobrador',150],['Analista',150],['Investigador',250],['Estratega',200],['Guionista',250],['Productor',300],['Publicador',100],['Analista de canal',150]];
+    return {menu,secTitle:s.sec,secNote:note,sUsers:s.sec==='Usuarios y roles',sSect:s.sec==='Sectores y guías',sTpl:s.sec==='Plantillas de documentos',sFiscal:s.sec==='Datos fiscales',sInt:s.sec==='Integraciones',sTok:s.sec==='Tope de tokens',
+      users:[['JC','Julio César Ibarra','DUEÑO','Todos los módulos','ACTIVO',C.papel,C.tinta],['OP','Operación','EQUIPO','Proyectos, Tareas, Diagnósticos','ACTIVO','#1B2027',C.papel],['MK','Contenido','EQUIPO','Marketing y contenido','INVITADO','#1B2027',C.papel]].map(([ini,n,role,mods,st,bg,fc])=>({ini,n,role,mods,st,bg,fc})),
+      sectors:[['Escuela privada','V2',18],['Restaurante con sucursales','V3',22],['Clínica','V2',20],['Gimnasio','V1',14],['Notaría','V1',16],['Taller','V2',19]].map(([n,g,q])=>({n,g,q})),
+      templates:[['Acta de constitución','V4 · PLANEADOR'],['Cotización','V6 · TEMA PAPEL'],['Reporte semanal','V3 · REPORTERO'],['PDF del diagnóstico','V5 · TEMA PAPEL']].map(([n,v])=>({n,v})),
+      fiscal:[['RAZÓN SOCIAL','Ronin Studio (datos de ejemplo)'],['RFC','XAXX010101000'],['RÉGIMEN FISCAL','612 · Personas Físicas con Actividades Empresariales'],['CÓDIGO POSTAL','32000'],['SERIE DE FACTURAS','F'],['MONEDAS','MXN · USD']].map(([k,v])=>({k,v})),
+      integrations,cap:'$'+s.cap.toLocaleString('en-US'),capPct:1200/s.cap*100,caps:AG.map(([n,v])=>({n,v:'$'+v+' / MES'})),
+      decCap:()=>this.setState(x=>({cap:Math.max(1500,x.cap-500)})),incCap:()=>this.setState(x=>({cap:x.cap+500})),toast:s.toast};
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,300..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#07090C;color:#EEEBE4;font-family:'Archivo',sans-serif;font-stretch:112%;-webkit-font-smoothing:antialiased}
+a{color:#EEEBE4;text-decoration-color:#B05139}a:hover{color:#F7F5F0}*{box-sizing:border-box}button,input,textarea{font-family:inherit;font-stretch:inherit}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes pulseOx{0%{box-shadow:0 0 0 0 rgba(176,81,57,.7),0 0 18px rgba(176,81,57,.6)}70%{box-shadow:0 0 0 12px rgba(176,81,57,0),0 0 18px rgba(176,81,57,.6)}100%{box-shadow:0 0 0 0 rgba(176,81,57,0),0 0 18px rgba(176,81,57,.6)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-30px) scale(1.12)}}
+@keyframes flow{from{background-position:0 0}to{background-position:40px 0}}
+</style>
+</helmet>
+<div style="width:1440px;margin:0 auto;background:#0C0F14;min-height:100vh;position:relative;overflow:hidden;isolation:isolate;padding-bottom:56px">
+<div style="position:absolute;z-index:-1;left:380px;top:60px;width:640px;height:420px;border-radius:50%;background:radial-gradient(closest-side,rgba(176,81,57,.34),rgba(176,81,57,0));filter:blur(30px);animation:drift 14s ease-in-out infinite;pointer-events:none"></div>
+<div style="position:absolute;z-index:-1;left:-100px;top:600px;width:620px;height:460px;border-radius:50%;background:radial-gradient(closest-side,rgba(238,235,228,.07),rgba(238,235,228,0));filter:blur(40px);animation:drift 18s ease-in-out infinite reverse;pointer-events:none"></div>
+<dc-import name="RoninHeader" active="Diagnósticos" hint-size="100%,96px"></dc-import>
+
+<section style="padding:34px 32px 0;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;animation:rise .6s cubic-bezier(.2,.7,.2,1) both">
+<div>
+<div style="display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088"><span style="width:3px;height:12px;background:#B05139;transform:skewY(-14deg)"></span>04 · DIAGNÓSTICOS · ETAPA 01 MAPEAR</div>
+<h1 style="margin:8px 0 0;font-weight:900;font-size:44px;letter-spacing:-0.02em;line-height:1">DIAGNÓSTICOS</h1>
+<div style="font-weight:300;font-size:16px;color:#A9A6A0;margin-top:6px">{{ subtitle }}</div>
+</div>
+<sc-if value="{{ isFull }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:10px">
+<span style="display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;padding:10px 14px;border-radius:999px;border:1px solid #C98A3C"><span style="width:6px;height:6px;border-radius:50%;background:#C98A3C;box-shadow:0 0 8px #C98A3C"></span>EN REDACCIÓN</span>
+<button onClick="{{ toQuote }}" style="height:48px;padding:0 22px;border-radius:999px;background:#B05139;color:#EEEBE4;border:none;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 0 28px rgba(176,81,57,.45)" style-hover="background:#9A4530">Generar cotización</button>
+</div>
+</sc-if>
+</section>
+<nav style="display:flex;gap:6px;padding:22px 32px 0;align-items:center">
+<sc-for list="{{ tabs }}" as="t" hint-placeholder-count="2">
+<button onClick="{{ t.onClick }}" style="height:44px;padding:0 18px;border-radius:999px;border:1px solid {{ t.border }};background:{{ t.bg }};color:{{ t.color }};font-size:13px;cursor:pointer" style-hover="border-color:#5B6068">{{ t.label }}</button>
+</sc-for>
+<sc-if value="{{ isFull }}" hint-placeholder-val="{{ false }}">
+<span style="width:1px;height:24px;background:#3A4048;margin:0 8px"></span>
+<sc-for list="{{ subtabs }}" as="t" hint-placeholder-count="5"><button onClick="{{ t.onClick }}" style="height:40px;padding:0 14px;background:none;border:none;border-bottom:2px solid {{ t.line }};color:{{ t.color }};font-size:13px;cursor:pointer">{{ t.label }}</button></sc-for>
+</sc-if>
+</nav>
+
+<section style="padding:22px 32px 0">
+<sc-if value="{{ isInbox }}" hint-placeholder-val="{{ true }}">
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px">
+<sc-for list="{{ inbox }}" as="d" hint-placeholder-count="4">
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid {{ d.border }};box-shadow:{{ d.glow }};border-radius:24px;padding:22px;display:flex;flex-direction:column;gap:12px;animation:rise .6s cubic-bezier(.2,.7,.2,1) both;animation-delay:{{ d.delay }}">
+<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+<div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088">{{ d.sector }} · {{ d.date }}</div><div style="font-weight:900;font-size:20px;letter-spacing:-0.01em;margin-top:4px">{{ d.name }}</div></div>
+<span style="display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;white-space:nowrap"><span style="width:6px;height:6px;border-radius:50%;background:{{ d.dot }};box-shadow:0 0 8px {{ d.dot }}"></span>{{ d.status }}</span>
+</div>
+<div style="display:flex;flex-direction:column;gap:6px">
+<sc-for list="{{ d.finds }}" as="f" hint-placeholder-count="3"><div style="display:flex;gap:10px;font-size:13px"><span style="font-family:'JetBrains Mono',monospace;color:#7C8088">{{ f.n }}</span><span>{{ f.t }}</span></div></sc-for>
+</div>
+<div style="font-size:13px;color:#A9A6A0;border-top:1px solid rgba(238,235,228,0.06);padding-top:10px">Otro: {{ d.other }}</div>
+<div style="display:flex;align-items:center;justify-content:space-between">
+<span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.1em;color:#EEEBE4">{{ d.hours }} H / MES ESTIMADAS</span>
+<div style="display:flex;gap:6px">
+<sc-if value="{{ d.canCreate }}" hint-placeholder-val="{{ false }}"><button onClick="{{ d.onCreate }}" style="height:36px;padding:0 14px;border-radius:999px;background:transparent;color:#EEEBE4;border:1px solid #3A4048;font-size:12px;cursor:pointer">Crear cliente</button></sc-if>
+<button onClick="{{ openFull }}" style="height:36px;padding:0 14px;border-radius:999px;background:#EEEBE4;color:#0C0F14;border:none;font-size:12px;font-weight:600;cursor:pointer">Abrir</button>
+</div>
+</div>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ isFull }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;gap:18px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088;margin-bottom:16px"><span style="color:#EEEBE4">NEGOCIO DEMO 2 · RESTAURANTE CON SUCURSALES</span><span>VISITA 22 OCT</span><span>GUÍA · RESTAURANTES V3</span></div>
+
+<sc-if value="{{ sGuia }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:16px">
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.09);border-radius:28px;padding:24px">
+<sc-for list="{{ guide }}" as="g" hint-placeholder-count="5">
+<div style="display:grid;grid-template-columns:36px 1fr;gap:14px;padding:14px 0;border-bottom:1px solid rgba(238,235,228,0.06)">
+<span style="width:30px;height:30px;border-radius:50%;border:1px solid {{ g.border }};background:{{ g.bg }};display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:{{ g.c }}">{{ g.n }}</span>
+<div><div style="font-size:15px">{{ g.q }}</div><div style="font-size:13px;color:#A9A6A0;margin-top:6px;line-height:1.5">{{ g.note }}</div>
+<div style="display:flex;gap:6px;margin-top:8px"><sc-for list="{{ g.att }}" as="a" hint-placeholder-count="0"><span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.12em;padding:4px 8px;border-radius:999px;border:1px solid #3A4048;color:#A9A6A0">{{ a }}</span></sc-for></div></div>
+</div>
+</sc-for>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-content:start">
+<sc-for list="{{ photos }}" as="p" hint-placeholder-count="4"><div style="aspect-ratio:1;border-radius:18px;background:linear-gradient(140deg,#2A2F36,#101318);filter:grayscale(1) contrast(1.2);border:1px solid rgba(238,235,228,0.08);display:flex;align-items:flex-end;padding:10px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.12em;color:#A9A6A0">{{ p }}</div></sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ sMapa }}" hint-placeholder-val="{{ true }}">
+<div style="display:grid;grid-template-columns:170px minmax(0,1fr) 280px;gap:12px;height:600px">
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.09);border-radius:24px;padding:16px;display:flex;flex-direction:column;gap:8px">
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088;margin-bottom:4px">PALETA</div>
+<sc-for list="{{ palette }}" as="p" hint-placeholder-count="5"><div style="height:42px;border-radius:12px;border:1px solid #3A4048;display:flex;align-items:center;gap:10px;padding:0 12px;font-size:13px;cursor:grab;background:rgba(12,15,20,0.4)" style-hover="border-color:#A9A6A0"><span style="width:12px;height:12px;border:1.5px solid #EEEBE4;border-radius:{{ p.r }};transform:{{ p.tf }}"></span>{{ p.n }}</div></sc-for>
+</div>
+<div style="position:relative;border-radius:24px;border:1px solid rgba(238,235,228,0.09);background-color:rgba(16,19,24,0.7);background-image:radial-gradient(rgba(238,235,228,0.08) 1px,transparent 1px);background-size:20px 20px;overflow:hidden;padding:46px 18px 18px">
+<span style="position:absolute;top:14px;left:14px;display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;padding:6px 10px;border-radius:999px;border:1px dashed #A9A6A0;color:#EEEBE4">BORRADOR DE IA · MAPEADOR · CAPA EDITABLE</span>
+<span style="position:absolute;top:14px;right:14px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088">3 PUNTOS DONDE SE ATORA</span>
+<sc-for list="{{ lanes }}" as="l" hint-placeholder-count="3">
+<div style="display:grid;grid-template-columns:96px repeat(6,minmax(0,1fr));gap:10px;align-items:center;height:168px;border-top:1px solid rgba(238,235,228,0.07);position:relative">
+<span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#A9A6A0">{{ l.name }}</span>
+<sc-for list="{{ l.cells }}" as="c" hint-placeholder-count="6">
+<div style="position:relative;height:100%;display:flex;align-items:center">
+<sc-if value="{{ c.line }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;left:-10px;right:-10px;top:50%;height:2px;background-image:linear-gradient(90deg,#5B6068 50%,transparent 50%);background-size:10px 2px;animation:flow 1.2s linear infinite"></span></sc-if>
+<sc-if value="{{ c.has }}" hint-placeholder-val="{{ false }}">
+<button onClick="{{ c.onClick }}" style="position:relative;width:100%;min-height:76px;border-radius:14px;background:{{ c.bg }};border:1px solid {{ c.border }};box-shadow:{{ c.glow }};color:#EEEBE4;padding:10px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:6px;animation:{{ c.anim }}">
+<span style="font-size:12px;line-height:1.3">{{ c.label }}</span>
+<span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.1em;color:{{ c.mc }}">{{ c.meta }}</span>
+</button>
+</sc-if>
+</div>
+</sc-for>
+</div>
+</sc-for>
+</div>
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.09);border-radius:24px;padding:18px;display:flex;flex-direction:column;gap:12px">
+<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088">PROPIEDADES</div>
+<div style="font-weight:900;font-size:18px;letter-spacing:-0.01em;text-transform:uppercase">{{ sel.label }}</div>
+<sc-for list="{{ sel.fields }}" as="f" hint-placeholder-count="4">
+<div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.14em;color:#7C8088;margin-bottom:4px">{{ f.k }}</div><div style="height:38px;border-radius:10px;background:#101318;border:1px solid #252A31;display:flex;align-items:center;padding:0 12px;font-size:13px">{{ f.v }}</div></div>
+</sc-for>
+<sc-if value="{{ sel.stuck }}" hint-placeholder-val="{{ false }}"><div style="border:1px solid #B05139;border-radius:14px;padding:12px;font-size:13px;line-height:1.45;background:rgba(176,81,57,0.12)">Punto donde se atora. {{ sel.why }}</div></sc-if>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ sHall }}" hint-placeholder-val="{{ false }}">
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.09);border-radius:24px;overflow:hidden">
+<div style="display:grid;grid-template-columns:40px 2.4fr 110px 1.2fr 120px;gap:16px;padding:14px 22px;border-bottom:1px solid rgba(238,235,228,0.09);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088"><span>#</span><span>HALLAZGO</span><span>PRIORIDAD</span><span>MÓDULO PROPUESTO</span><span>ESTIMACIÓN</span></div>
+<sc-for list="{{ findings }}" as="f" hint-placeholder-count="5">
+<div style="display:grid;grid-template-columns:40px 2.4fr 110px 1.2fr 120px;gap:16px;padding:15px 22px;border-bottom:1px solid rgba(238,235,228,0.06);align-items:center;animation:rise .5s ease both;animation-delay:{{ f.delay }}">
+<span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#7C8088">{{ f.n }}</span><span style="font-size:14px">{{ f.t }}</span>
+<span style="display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em"><span style="width:6px;height:6px;border-radius:50%;background:{{ f.c }};box-shadow:0 0 8px {{ f.c }}"></span>{{ f.p }}</span>
+<span style="font-size:13px;color:#A9A6A0">{{ f.m }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px">{{ f.h }}</span>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ sPlan }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px">
+<sc-for list="{{ plan }}" as="p" hint-placeholder-count="4">
+<div style="background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid {{ p.border }};box-shadow:{{ p.glow }};border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:10px;min-height:220px;animation:rise .6s ease both;animation-delay:{{ p.delay }}">
+<span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;color:#7C8088">HITO {{ p.n }} · {{ p.stage }}</span>
+<span style="font-weight:900;font-size:18px;letter-spacing:-0.01em;text-transform:uppercase;flex:1">{{ p.t }}</span>
+<span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#A9A6A0">{{ p.w }} SEMANAS</span>
+<span style="font-weight:300;font-size:26px;letter-spacing:-0.02em">{{ p.price }}</span>
+</div>
+</sc-for>
+</div>
+<div style="margin-top:16px;display:flex;justify-content:space-between;align-items:center;background:rgba(22,26,33,0.5);backdrop-filter:blur(22px);border:1px solid rgba(238,235,228,0.09);border-radius:999px;padding:10px 10px 10px 26px">
+<span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;color:#A9A6A0">TOTAL · 10 SEMANAS · SE ACREDITA EL DIAGNÓSTICO</span>
+<div style="display:flex;align-items:center;gap:16px"><span style="font-weight:900;font-size:26px;letter-spacing:-0.02em">$140,000.00 MXN</span><button onClick="{{ toQuote }}" style="height:44px;padding:0 20px;border-radius:999px;background:#B05139;color:#EEEBE4;border:none;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 0 24px rgba(176,81,57,.45)">Generar cotización</button></div>
+</div>
+</sc-if>
+
+<sc-if value="{{ sPdf }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;gap:24px;justify-content:center;padding:10px 0">
+<sc-for list="{{ pages }}" as="p" hint-placeholder-count="3">
+<div style="width:340px;aspect-ratio:8.5/11;background:#EEEBE4;color:#0C0F14;border-radius:6px;padding:28px;display:flex;flex-direction:column;gap:12px;box-shadow:0 30px 60px rgba(0,0,0,0.45);animation:rise .6s ease both;animation-delay:{{ p.delay }}">
+<span style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.16em;color:#5B6068">RONIN STUDIO · DIAGNÓSTICO · {{ p.n }} / 03</span>
+<span style="font-weight:900;font-size:{{ p.size }};letter-spacing:-0.02em;line-height:1;text-transform:uppercase">{{ p.title }}</span>
+<span style="font-weight:300;font-size:12px;color:#5B6068">{{ p.sub }}</span>
+<div style="flex:1;display:flex;flex-direction:column;gap:6px;justify-content:flex-end">
+<sc-for list="{{ p.lines }}" as="l" hint-placeholder-count="3"><div style="height:8px;border-radius:2px;background:{{ l.c }};width:{{ l.w }}%"></div></sc-for>
+</div>
+</div>
+</sc-for>
+</div>
+</sc-if>
+</sc-if>
+</section>
+<sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;left:24px;bottom:24px;z-index:60;background:#EEEBE4;color:#0C0F14;border-radius:999px;padding:12px 20px;display:flex;align-items:center;gap:10px;font-size:13px;animation:rise .3s ease both"><span style="width:7px;height:7px;border-radius:50%;background:#4C8141"></span>{{ toast }}</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const C={tinta:'#0C0F14',papel:'#EEEBE4',niebla:'#A9A6A0',tenue:'#7C8088',acero:'#5B6068',oxido:'#B05139',olivo:'#4C8141',ambar:'#C98A3C'};
+const STEPS=[
+ {id:'s1',lane:0,col:0,label:'Toma la orden en libreta',meta:'PAPEL · 2 MIN',tool:'Libreta',who:'Mesero',time:'2 min'},
+ {id:'s2',lane:0,col:1,label:'Lleva la comanda a cocina',meta:'A PIE · 1 MIN',tool:'Papel',who:'Mesero',time:'1 min'},
+ {id:'s3',lane:1,col:2,label:'Reescribe la orden en el tablero',meta:'CAPTURA DOBLE · 3 MIN',tool:'Pizarrón',who:'Cocina',time:'3 min',stuck:true,why:'La misma orden se copia por segunda vez; aquí nacen los platillos equivocados.'},
+ {id:'s4',lane:1,col:3,label:'Prepara y avisa en voz alta',meta:'VOZ · 12 MIN',tool:'—',who:'Cocina',time:'12 min'},
+ {id:'s5',lane:2,col:4,label:'Captura la cuenta en el POS',meta:'CAPTURA TRIPLE · 4 MIN',tool:'POS genérico',who:'Caja',time:'4 min',stuck:true,why:'Tercera captura de la misma orden; diferencias entre lo servido y lo cobrado.'},
+ {id:'s6',lane:2,col:5,label:'Cierre de caja en hoja de cálculo',meta:'MANUAL · 40 MIN',tool:'Hoja de cálculo',who:'Caja',time:'40 min al día',stuck:true,why:'El cierre no cuadra con el inventario y se revisa a mano cada noche.'}
+];
+class Component extends DCLogic {
+  state={tab:'Diagnóstico completo',sub:'Mapa de flujo',sel:'s3',created:[],toast:null};
+  flash(m){this.setState({toast:m});clearTimeout(this._t);this._t=setTimeout(()=>this.setState({toast:null}),2400);}
+  renderVals(){
+    const s=this.state;
+    const pill=(l,cur,fn)=>({label:l,bg:l===cur?C.papel:'rgba(22,26,33,0.55)',color:l===cur?C.tinta:C.papel,border:l===cur?C.papel:'rgba(238,235,228,0.09)',onClick:()=>fn(l)});
+    const tabs=['Bandeja exprés','Diagnóstico completo'].map(l=>pill(l,s.tab,v=>this.setState({tab:v})));
+    const subtabs=['Guía de visita','Mapa de flujo','Hallazgos','Plan','PDF'].map(l=>({label:l,line:l===s.sub?C.oxido:'transparent',color:l===s.sub?C.papel:C.tenue,onClick:()=>this.setState({sub:l})}));
+    const INB=[
+      {id:1,name:'Negocio demo 11',sector:'RESTAURANTE CON SUCURSALES',date:'04 NOV',finds:['Captura doble de órdenes','Inventario en hoja de cálculo','Cierre de caja manual'],other:'Tres sucursales con sistemas distintos',hours:30,status:'SIN CONTACTAR',dot:C.oxido,exists:true},
+      {id:2,name:'Negocio demo 14',sector:'CLÍNICA',date:'03 NOV',finds:['Citas por WhatsApp sin registro','Expedientes en papel','Cobranza a fin de mes'],other:'—',hours:25,status:'CONTACTADO',dot:C.ambar,exists:false},
+      {id:3,name:'Negocio demo 12',sector:'ESCUELA PRIVADA',date:'02 NOV',finds:['Inscripciones en formularios sueltos','Colegiaturas sin recordatorio','Reportes tardíos'],other:'Quieren app para padres',hours:20,status:'LLAMADA AGENDADA',dot:C.olivo,exists:true},
+      {id:4,name:'Negocio demo 15',sector:'TALLER',date:'31 OCT',finds:['Cotizaciones en Excel','Órdenes de trabajo en papel','Sin control de horas'],other:'—',hours:35,status:'SIN CONTACTAR',dot:C.oxido,exists:false}
+    ];
+    const inbox=INB.map((d,i)=>{const can=!d.exists&&!s.created.includes(d.id);return {...d,finds:d.finds.map((t,j)=>({n:'0'+(j+1),t})),delay:(0.06*i)+'s',canCreate:can,
+      border:d.dot===C.oxido?C.oxido:'rgba(238,235,228,0.09)',glow:d.dot===C.oxido?'0 0 28px rgba(176,81,57,0.28)':'none',
+      onCreate:()=>{this.setState(x=>({created:[...x.created,d.id]}));this.flash('Cliente creado · '+d.name);}};});
+    const guide=[['¿Cómo entra una orden hoy?','Libreta del mesero; se lleva a cocina en papel.',['3 FOTOS','AUDIO 2:10'],true],['¿Quién la vuelve a capturar?','Cocina la copia al pizarrón; caja la captura en el POS.',['2 FOTOS'],true],['¿Cómo se hace el cierre de caja?','Hoja de cálculo, 40 minutos cada noche.',['1 FOTO'],true],['¿Cómo se controla el inventario?','Conteo semanal; sin relación con las ventas.',[],false],['¿Qué ya intentaron automatizar?','—',[],false]].map(([q,note,att,done],i)=>({n:'0'+(i+1),q,note,att,border:done?C.olivo:'#3A4048',bg:done?'rgba(76,129,65,0.18)':'transparent',c:done?C.papel:C.tenue}));
+    const lanes=['MESERO','COCINA','CAJA'].map((name,li)=>({name,cells:Array.from({length:6},(_,ci)=>{const st=STEPS.find(x=>x.lane===li&&x.col===ci);const lane=STEPS.filter(x=>x.lane===li).map(x=>x.col);
+      const line=ci>Math.min(...lane)&&ci<=Math.max(...lane);if(!st)return {has:false,line};const sel=s.sel===st.id;
+      return {has:true,line,label:st.label,meta:st.meta,mc:st.stuck?C.papel:C.tenue,bg:st.stuck?'rgba(176,81,57,0.22)':'rgba(22,26,33,0.85)',
+        border:sel?C.papel:st.stuck?C.oxido:'#3A4048',glow:sel?'0 0 0 3px rgba(238,235,228,0.15)':'none',anim:st.stuck?'pulseOx 2.4s infinite':'none',onClick:()=>this.setState({sel:st.id})};})}));
+    const ss=STEPS.find(x=>x.id===s.sel);
+    const sel={label:ss.label,stuck:!!ss.stuck,why:ss.why||'',fields:[['RESPONSABLE',ss.who],['HERRAMIENTA',ss.tool],['TIEMPO',ss.time],['ORIGEN','Mapeador · revisado por JC']].map(([k,v])=>({k,v}))};
+    const findings=[['Captura triple de cada orden (mesero, cocina, caja)','ALTA',C.oxido,'Comanda digital','40 h'],['Cierre de caja manual que no cuadra','ALTA',C.oxido,'Cierre automático','24 h'],['Inventario sin relación con ventas','MEDIA',C.ambar,'Inventario por receta','32 h'],['Sin reporte por sucursal','MEDIA',C.ambar,'Tablero de sucursales','16 h'],['Pedidos a proveedor por teléfono','BAJA',C.niebla,'Fuera de alcance','—']].map(([t,p,c,m,h],i)=>({n:'0'+(i+1),t,p,c,m,h,delay:(0.05*i)+'s'}));
+    const plan=[['01','DISEÑAR','Flujo de comanda y roles',2,'$30,000.00'],['02','CONSTRUIR','Comanda digital y cocina',3,'$45,000.00'],['03','CONSTRUIR','Caja y cierre automático',3,'$40,000.00'],['04','EVOLUCIONAR','Inventario y tablero',2,'$25,000.00']].map(([n,stage,t,w,price],i)=>({n,stage,t,w,price,delay:(0.07*i)+'s',border:i===0?C.oxido:'rgba(238,235,228,0.09)',glow:i===0?'0 0 28px rgba(176,81,57,0.3)':'none'}));
+    const L=(arr)=>arr.map(([w,c])=>({w,c}));
+    const pages=[{n:'01',title:'Negocio demo 2',size:'34px',sub:'Diagnóstico completo · 22 de octubre de 2026',lines:L([[30,'#B05139'],[80,'#5B6068'],[60,'#5B6068']])},{n:'02',title:'Mapa del flujo actual',size:'24px',sub:'3 responsables · 6 pasos · 3 puntos donde se atora',lines:L([[90,'#5B6068'],[45,'#B05139'],[70,'#5B6068'],[55,'#5B6068']])},{n:'03',title:'Hallazgos y plan',size:'24px',sub:'4 hitos · 10 semanas · $140,000.00 MXN',lines:L([[85,'#0C0F14'],[70,'#5B6068'],[50,'#5B6068'],[30,'#4C8141']])}].map((p,i)=>({...p,delay:(0.1*i)+'s'}));
+    const isFull=s.tab==='Diagnóstico completo';
+    return {tabs,subtabs,inbox,guide,lanes,sel,findings,plan,pages,isFull,isInbox:!isFull,
+      subtitle:isFull?'Negocio demo 2 · visita del 22 de octubre · en redacción':'4 diagnósticos exprés esta semana · 2 sin contactar',
+      sGuia:s.sub==='Guía de visita',sMapa:s.sub==='Mapa de flujo',sHall:s.sub==='Hallazgos',sPlan:s.sub==='Plan',sPdf:s.sub==='PDF',
+      photos:['COMANDA · LIBRETA','PIZARRÓN · COCINA','CAJA · POS','CIERRE · HOJA'],
+      palette:[['Paso','3px','none'],['Decisión','2px','rotate(45deg)'],['Espera','50%','none'],['Herramienta','2px','none'],['Carril','0','scaleX(1.6)']].map(([n,r,tf])=>({n,r,tf})),
+      openFull:()=>this.setState({tab:'Diagnóstico completo',sub:'Mapa de flujo'}),toQuote:()=>this.flash('Cotización creada en Facturación · borrador'),toast:s.toast};
+  }
+}
+</script>
+</body>
+</html>
