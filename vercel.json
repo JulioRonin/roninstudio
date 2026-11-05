@@ -4,6 +4,8 @@
   "buildCommand": "echo skip-build",
   "outputDirectory": ".",
   "rewrites": [
+    { "source": "/musashi/:path*", "destination": "/404" },
+    { "source": "/research_notes/:path*", "destination": "/404" },
     { "source": "/vertice/demo", "destination": "https://vertice-demo-kappa.vercel.app/vertice/demo" },
     { "source": "/vertice/demo/:path*", "destination": "https://vertice-demo-kappa.vercel.app/vertice/demo/:path*" }
   ]
