@@ -102,7 +102,6 @@ function Header() {
           <RGlyph active={1} size={26} />
           <span style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
             <span style={{ fontWeight: 900, fontSize: 17, letterSpacing: "-0.02em" }}>MUSASHI</span>
-            <span style={{ fontWeight: 300, fontSize: 11, letterSpacing: "0.08em", color: C.niebla }}>RONIN STUDIO</span>
           </span>
         </Link>
         <div style={{ display: "flex", alignItems: "center", gap: 10, height: 48, width: 180, padding: "0 6px", borderRadius: 999, background: "rgba(22,26,33,0.55)", backdropFilter: "blur(18px)", border: "1px solid rgba(238,235,228,0.09)", flexShrink: 0 }}>
