@@ -1,0 +1,72 @@
+/* Musashi · sistema visual (Paleta Planta) */
+:root {
+  --tinta: #0c0f14;
+  --fondo: #07090c;
+  --panel: #13171d;
+  --panel2: #101318;
+  --panel3: #1b2027;
+  --borde: #252a31;
+  --borde2: #3a4048;
+  --papel: #eeebe4;
+  --niebla: #a9a6a0;
+  --tenue: #7c8088;
+  --acero: #5b6068;
+  --oxido: #b05139;
+  --oxido-hover: #9a4530;
+  --olivo: #4c8141;
+  --ambar: #c98a3c;
+  --glass-bg: rgba(22, 26, 33, 0.5);
+  --glass-border: rgba(238, 235, 228, 0.09);
+  --glass-inset: inset 0 1px 0 rgba(238, 235, 228, 0.08);
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --sans: "Archivo", system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--fondo);
+  color: var(--papel);
+  font-family: var(--sans);
+  font-stretch: 112%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+a { color: var(--papel); text-decoration: none; }
+a:hover { color: #f7f5f0; }
+button, input, textarea, select { font-family: inherit; font-stretch: inherit; color: inherit; }
+input::placeholder, textarea::placeholder { color: var(--tenue); }
+::-webkit-scrollbar { height: 6px; width: 6px; }
+::-webkit-scrollbar-thumb { background: var(--borde); border-radius: 3px; }
+
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes pulseOx {
+  0% { box-shadow: 0 0 0 0 rgba(176, 81, 57, .7), 0 0 18px rgba(176, 81, 57, .6); }
+  70% { box-shadow: 0 0 0 12px rgba(176, 81, 57, 0), 0 0 18px rgba(176, 81, 57, .6); }
+  100% { box-shadow: 0 0 0 0 rgba(176, 81, 57, 0), 0 0 18px rgba(176, 81, 57, .6); }
+}
+@keyframes pulsePa {
+  0% { box-shadow: 0 0 0 0 rgba(238, 235, 228, .5); }
+  70% { box-shadow: 0 0 0 14px rgba(238, 235, 228, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(238, 235, 228, 0); }
+}
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
+@keyframes drift { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(40px, -30px) scale(1.12); } }
+@keyframes grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@keyframes growX { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes sweep { from { transform: translateX(-320px); } to { transform: translateX(1500px); } }
+@keyframes draw { from { stroke-dashoffset: 140; } to { stroke-dashoffset: 0; } }
+@keyframes shine { from { transform: translateX(-120%) skewX(-20deg); } to { transform: translateX(320%) skewX(-20deg); } }
+
+/* Utilidades del sistema */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-inset);
+}
+.mono { font-family: var(--mono); }
+.label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; color: var(--tenue); }
+.h2 { font-weight: 900; font-size: 22px; letter-spacing: -0.02em; text-transform: uppercase; }
+.rise { animation: rise .7s cubic-bezier(.2, .7, .2, 1) both; }

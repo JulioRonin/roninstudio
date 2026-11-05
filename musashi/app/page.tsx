@@ -1,0 +1,308 @@
+"use client";
+import React, { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { C, MONO } from "@/lib/tokens";
+import { Glass, Eyebrow, H, RGlyph, Dot, Circle, Chips, PB } from "@/components/ui";
+import { useUI } from "@/components/shell";
+import { TASKS } from "@/lib/demo";
+
+const FILTERS = ["Todo", "Lead", "Llamada", "Hito", "Factura", "Acompañamiento"];
+
+/* Interpolación de entrada (los números "crecen" al cargar) */
+function useEase(ms = 1400) {
+  const [t, setT] = useState(0);
+  useEffect(() => {
+    const t0 = Date.now();
+    const iv = setInterval(() => { const v = Math.min(1, Math.max(0, (Date.now() - t0 - 200) / ms)); setT(v); if (v >= 1) clearInterval(iv); }, 16);
+    return () => clearInterval(iv);
+  }, [ms]);
+  return 1 - Math.pow(1 - t, 3);
+}
+
+export default function Dashboard() {
+  const { flash, tray, toggleTray } = useUI();
+  const e = useEase();
+  const [filter, setFilter] = useState("Todo");
+  const [done, setDone] = useState<number[]>([]);
+  const [researched, setResearched] = useState<number[]>([]);
+  const cn = (v: number) => Math.round(v * e);
+  const money = (v: number) => "$" + cn(v).toLocaleString("en-US");
+  const sp = (a: number[]) => a.map((v, i) => `${i * 11},${20 - v}`).join(" ");
+
+  const G = (a: number) => ({ bg: `rgba(34,39,46,${a})`, edge: "rgba(238,235,228,0.10)", shadow: "inset 0 1px 0 rgba(238,235,228,0.12), 0 10px 30px rgba(0,0,0,0.25)" });
+  const kpis = [
+    { name: "TAREAS VENCIDAS", value: String(cn(3)), unit: "", delta: "+1 VS AYER", bg: "rgba(176,81,57,0.78)", edge: "rgba(247,214,202,0.35)", shadow: "inset 0 1px 0 rgba(247,214,202,0.35), 0 0 50px rgba(176,81,57,0.45), 0 0 120px rgba(176,81,57,0.18)", label: C.papel, h: 156, flex: 1.7, r: 30, size: 56, arrow: true, a: null as number[] | null, stroke: "" },
+    { ...G(0.55), name: "COBRADO · NOVIEMBRE", value: money(40000), unit: "MXN", delta: "+$10,000 VS OCT", label: C.niebla, h: 138, flex: 1.6, r: 26, size: 34, arrow: false, a: [6, 8, 7, 11, 10, 14, 16], stroke: C.olivo },
+    { ...G(0.45), name: "MARGEN DEL MES", value: String(cn(45)), unit: "%", delta: "+5 PTS VS OCT", label: C.niebla, h: 126, flex: 1.1, r: 24, size: 34, arrow: false, a: [10, 9, 11, 10, 12, 13, 14], stroke: C.papel },
+    { ...G(0.38), name: "LEADS · SEMANA", value: String(cn(12)), unit: "", delta: "8 IG · 3 LI · 1 TT", label: C.niebla, h: 116, flex: 1, r: 22, size: 30, arrow: false, a: [4, 6, 5, 9, 8, 12, 13], stroke: C.papel },
+    { ...G(0.3), name: "LLAMADAS", value: cn(5) + "/" + cn(3), unit: "", delta: "AGENDADAS / HECHAS", label: C.tenue, h: 116, flex: 0.9, r: 20, size: 24, arrow: false, a: null, stroke: "" },
+    { ...G(0.24), name: "PIEZAS", value: cn(3) + "/" + cn(5), unit: "", delta: "PUBLICADAS / PLAN", label: C.tenue, h: 110, flex: 0.85, r: 20, size: 24, arrow: false, a: null, stroke: "" },
+  ];
+
+  type P = { code: string; name: string; meta: string; late?: boolean; ok?: boolean; badge?: number };
+  const stageDefs: [string, string, P[]][] = [
+    ["01", "MAPEAR", [{ code: "D7", name: "Negocio demo 7 · Notaría", meta: "VISITA · 07 NOV" }, { code: "D8", name: "Negocio demo 8 · Taller", meta: "MAPA DE FLUJO · 11 NOV", badge: 2 }]],
+    ["02", "DISEÑAR", [{ code: "D4", name: "Negocio demo 4 · Clínica", meta: "HITO 2 ATRASADO · 03 NOV", late: true, badge: 3 }, { code: "D1", name: "Negocio demo 1 · Escuela", meta: "PLAN · 13 NOV" }]],
+    ["03", "CONSTRUIR", [{ code: "D2", name: "Negocio demo 2 · Restaurante", meta: "MÓDULO POS · 18 NOV", badge: 2 }, { code: "D5", name: "Negocio demo 5 · Gimnasio", meta: "PRUEBAS · 20 NOV" }, { code: "D6", name: "Negocio demo 6 · Taller", meta: "ENTREGA · 25 NOV" }]],
+    ["04", "EVOLUCIONAR", [{ code: "D3", name: "Negocio demo 3 · Clínica", meta: "REPORTE · 30 NOV", ok: true }]],
+  ];
+
+  const mon = ["SEP", "", "", "", "OCT", "", "", "", "", "NOV", "", "", "", "DIC", "", "", "", "ENE 27", "", "", "", "", "FEB", "", "", ""];
+  const weeks = mon.map((m, i) => {
+    const sel = i >= 9 && i <= 11; const v = [(i * 7) % 5, (i * 3 + 1) % 4, (i * 5 + 2) % 6];
+    const cc = (n: number, t: number) => (n > t ? (sel ? C.tinta : C.niebla) : sel ? C.acero : "#2A2F36");
+    return { sel, glow: sel ? "0 0 26px rgba(238,235,228,0.35)" : "none", anim: !sel && v[0] > 3 ? "blink 2.4s infinite" : "none", bg: sel ? C.papel : "transparent", margin: sel ? "6px 0" : "0", radius: sel ? (i === 9 ? "999px 0 0 999px" : i === 11 ? "0 999px 999px 0" : "0") : "0", c1: cc(v[0], 2), c2: cc(v[1], 1), c3: cc(v[2], 3), label: m || null, labelColor: sel ? C.tinta : C.tenue };
+  });
+
+  const fT = useMemo(() => TASKS.filter((t) => !done.includes(t.id) && (filter === "Todo" || t.origin === filter)), [done, filter]);
+  const groups = useMemo(() => {
+    const sorted = [...fT].sort((a, b) => (b.overdue ? 1 : 0) - (a.overdue ? 1 : 0));
+    const gm: Record<string, typeof TASKS> = {};
+    sorted.forEach((t) => { (gm[t.client] = gm[t.client] || []).push(t); });
+    return Object.entries(gm);
+  }, [fT]);
+
+  const invoices = [
+    { client: "Negocio demo 2", amount: "$25,000.00", status: "VENCIDA · 3 DÍAS", dot: C.oxido, id: "F-0112", reminder: true },
+    { client: "Negocio demo 6", amount: "$18,000.00", status: "VENCE 10 NOV", dot: C.ambar, id: "F-0118" },
+    { client: "Negocio demo 4", amount: "$12,500.00", status: "VENCE 14 NOV", dot: C.niebla, id: "F-0120" },
+    { client: "Negocio demo 3", amount: "$20,000.00", status: "PAGADA · 2 NOV", dot: C.olivo, id: "F-0109" },
+  ];
+  const fd: [string, number][] = [["LEAD", 12], ["CONTACTADO", 8], ["LLAMADA", 5], ["DIAGNÓSTICO", 3], ["PROPUESTA", 2], ["CLIENTE", 1]];
+  const content = [
+    { day: "LUN 2", channel: "IG", hook: "El chatbot que nadie usa", type: "CARRUSEL", status: "PUBLICADA", dot: C.olivo, metrics: "ALCANCE 4,000 · 2 LEADS" },
+    { day: "MAR 3", channel: "LI", hook: "Primero el flujo. Después la IA.", type: "POST", status: "PUBLICADA", dot: C.olivo, metrics: "ALCANCE 1,500 · 1 LEAD" },
+    { day: "JUE 5", channel: "TT", hook: "Lo que pierdes copiando la misma orden tres veces", type: "VIDEO", status: "APROBACIÓN", dot: C.oxido },
+    { day: "VIE 6", channel: "YT", hook: "Cómo mapeamos una cocina en una mañana", type: "VIDEO", status: "PRODUCCIÓN", dot: C.ambar },
+    { day: "SÁB 7", channel: "IG", hook: "Cuatro señales de que tu operación vive en WhatsApp", type: "CARRUSEL", status: "GUION", dot: C.niebla },
+  ];
+  const rs = [
+    { n: "01", text: "Publicar el precio del diagnóstico completo en la página de clínicas; dos competidores ya lo muestran.", src: "2 FUENTES · SITIOS DE COMPETIDORES" },
+    { n: "02", text: "Responder leads de Instagram en menos de una hora; los que esperan más de un día rara vez agendan.", src: "1 FUENTE · HISTORIAL DEL EMBUDO" },
+    { n: "03", text: "Probar un carrusel por sector con el costo de no actuar en pesos al mes.", src: "3 FUENTES · MÉTRICAS DE CANAL" },
+  ];
+
+  let pi = 0;
+  return (
+    <>
+      {/* Saludo + KPIs */}
+      <section style={{ display: "grid", gridTemplateColumns: "268px 1fr", gap: 28, padding: "30px 32px 0" }}>
+        <Glass pad={22} style={{ display: "flex", flexDirection: "column", gap: 10, animation: "rise .7s cubic-bezier(.2,.7,.2,1) both" }}>
+          <Eyebrow>JUEVES 5 NOV 2026</Eyebrow>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, fontFamily: MONO, fontSize: 10, letterSpacing: "0.14em", color: C.niebla }}><Dot color={C.olivo} size={7} anim="blink 1.8s ease-in-out infinite" />13 AGENTES EN LÍNEA</div>
+          <div style={{ fontWeight: 300, fontSize: 15, color: C.niebla }}>Buenos días,</div>
+          <div style={{ fontWeight: 900, fontSize: 30, letterSpacing: "-0.02em", lineHeight: 1, marginTop: -6 }}>JULIO</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 8 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: C.p3, borderRadius: 16, padding: "10px 14px" }}>
+              <div><div style={{ fontSize: 11, color: C.tenue }}>Propuestas de IA</div><div style={{ fontSize: 14 }}>{tray.length} por aprobar</div></div>
+              <button type="button" onClick={toggleTray} style={{ background: "none", border: "none", color: C.papel, fontSize: 16, cursor: "pointer" }}>↗</button>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: C.p3, borderRadius: 16, padding: "10px 14px" }}>
+              <div><div style={{ fontSize: 11, color: C.tenue }}>Siguiente</div><div style={{ fontSize: 14 }}>Llamada · 11:30</div></div>
+              <span style={{ fontSize: 16 }}>↗</span>
+            </div>
+          </div>
+        </Glass>
+        <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
+          <div style={{ display: "flex", alignItems: "flex-end", gap: 10, height: 156 }}>
+            {kpis.map((k, i) => (
+              <H key={k.name} style={{ flex: k.flex, height: k.h, background: k.bg, backdropFilter: "blur(24px) saturate(150%)", WebkitBackdropFilter: "blur(24px) saturate(150%)", border: `1px solid ${k.edge}`, boxShadow: k.shadow, borderRadius: k.r, padding: "16px 18px", display: "flex", flexDirection: "column", justifyContent: "space-between", position: "relative", minWidth: 0, overflow: "hidden", animation: "rise .7s cubic-bezier(.2,.7,.2,1) both", animationDelay: `${0.08 * i}s`, transition: "transform .3s" }} hover={{ transform: "translateY(-4px)" }}>
+                <div style={{ position: "absolute", inset: 0, borderRadius: "inherit", background: "linear-gradient(180deg,rgba(255,255,255,0.10),rgba(255,255,255,0) 45%)", pointerEvents: "none" }} />
+                <div style={{ position: "absolute", top: 0, bottom: 0, left: 0, width: "40%", background: "linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,0.10),rgba(255,255,255,0))", animation: "shine 6s ease-in-out infinite", animationDelay: `${1.2 * i}s`, pointerEvents: "none" }} />
+                <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.12em", color: k.label, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{k.name}</div>
+                <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 8 }}>
+                  <div>
+                    <div style={{ fontWeight: 900, fontSize: k.size, letterSpacing: "-0.02em", lineHeight: 1 }}>{k.value}<span style={{ fontWeight: 300, fontSize: 13, marginLeft: 4 }}>{k.unit}</span></div>
+                    <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.08em", color: k.label, marginTop: 6 }}>{k.delta}</div>
+                  </div>
+                  {k.arrow && <span style={{ width: 52, height: 52, borderRadius: "50%", background: C.tinta, color: C.papel, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0, animation: "pulsePa 2.4s infinite" }}>↗</span>}
+                  {k.a && (
+                    <svg width="60" height="24" viewBox="-2 -2 70 26" style={{ flexShrink: 0, overflow: "visible", filter: `drop-shadow(0 0 4px ${k.stroke})` }}>
+                      <polyline points={sp(k.a)} fill="none" stroke={k.stroke} strokeWidth="1.6" strokeDasharray="140" style={{ animation: "draw 1.6s ease-out both", animationDelay: `${0.08 * i}s` }} />
+                      <circle cx="66" cy={20 - k.a[6]} r="2.6" fill={k.stroke} style={{ animation: "blink 1.6s infinite" }} />
+                    </svg>
+                  )}
+                </div>
+              </H>
+            ))}
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ width: 48, height: 48, borderRadius: "50%", background: C.panel, border: `1px solid ${C.borde}`, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: MONO, fontSize: 14 }}>≡</span>
+            <Chips items={FILTERS} value={filter} onChange={setFilter} />
+            <span style={{ marginLeft: "auto", fontFamily: MONO, fontSize: 10, letterSpacing: "0.14em", color: C.tenue }}>FILTRA TAREAS Y LÍNEA DE TIEMPO</span>
+          </div>
+        </div>
+      </section>
+
+      {/* Etapas del método */}
+      <section style={{ marginTop: 34, borderTop: `1px solid ${C.borde}`, position: "relative" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,minmax(0,1fr))", position: "relative" }}>
+          <div style={{ position: "absolute", left: 0, right: 0, top: 34, height: 4, overflow: "hidden", pointerEvents: "none", zIndex: 0 }}>
+            <div style={{ width: 280, height: 4, borderRadius: 2, background: "linear-gradient(90deg,rgba(176,81,57,0),#B05139,rgba(238,235,228,.9),rgba(176,81,57,0))", filter: "blur(1px)", boxShadow: `0 0 14px ${C.oxido}`, animation: "sweep 5s cubic-bezier(.5,0,.5,1) infinite" }} />
+          </div>
+          {stageDefs.map(([num, name, pr], i) => {
+            const hot = i === 1;
+            return (
+              <div key={num} style={{ borderRight: "1px solid #1A1E24", padding: "0 0 18px", position: "relative", minHeight: 330 }}>
+                <div style={{ height: 72, display: "flex", alignItems: "center", paddingLeft: 32, position: "relative" }}>
+                  <div style={{ position: "absolute", left: 0, right: 0, top: 36, height: 1, background: C.borde2 }} />
+                  <div style={{ position: "relative", zIndex: 1, width: 52, height: 52, borderRadius: "50%", background: hot ? "rgba(176,81,57,0.18)" : "rgba(22,26,33,0.8)", display: "flex", alignItems: "center", justifyContent: "center", border: `1px solid ${hot ? C.oxido : C.borde}`, boxShadow: hot ? "0 0 30px rgba(176,81,57,0.5)" : "none", animation: hot ? "pulseOx 2.4s infinite" : "none" }}><RGlyph active={i} size={26} /></div>
+                  <div style={{ position: "relative", marginLeft: 12, background: C.tinta, padding: "0 10px" }}>
+                    <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.16em", color: C.tenue }}>{num} / 04</div>
+                    <div style={{ fontWeight: 900, fontSize: 15, letterSpacing: "-0.01em" }}>{name}</div>
+                  </div>
+                  <div style={{ position: "relative", marginLeft: "auto", marginRight: i === 3 ? 96 : 20, background: C.tinta, padding: "0 8px", fontFamily: MONO, fontSize: 10, letterSpacing: "0.12em", color: C.niebla }}>{pr.length} PROY.</div>
+                </div>
+                <div style={{ position: "relative", marginLeft: 57, borderLeft: `1px solid ${C.borde2}`, padding: "14px 20px 4px 0", display: "flex", flexDirection: "column", gap: 14 }}>
+                  {pr.map((p) => {
+                    const d = 0.4 + 0.07 * pi++;
+                    return (
+                      <div key={p.code} style={{ display: "flex", alignItems: "center", position: "relative", animation: "rise .6s cubic-bezier(.2,.7,.2,1) both", animationDelay: `${d}s` }}>
+                        <div style={{ width: 22, height: 1, background: C.borde2 }} />
+                        <H as={Link as unknown as "a"} {...({ href: "/proyectos" } as object)} style={{ display: "flex", alignItems: "center", gap: 10, background: p.late ? "rgba(176,81,57,0.16)" : "rgba(22,26,33,0.55)", backdropFilter: "blur(14px)", border: `1px solid ${p.late ? C.oxido : "rgba(238,235,228,0.09)"}`, boxShadow: p.late ? "0 0 28px rgba(176,81,57,0.35)" : "none", borderRadius: 999, padding: "4px 16px 4px 4px", position: "relative", cursor: "pointer", flex: 1, minWidth: 0, transition: "transform .25s,border-color .25s", color: C.papel }} hover={{ borderColor: C.niebla, transform: "translateX(4px)" }}>
+                          <span style={{ width: 40, height: 40, borderRadius: "50%", background: p.late ? C.oxido : p.ok ? C.olivo : "#2A2F36", color: C.papel, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: MONO, fontSize: 11, fontWeight: 500, flexShrink: 0, boxShadow: p.ok ? "0 0 16px rgba(76,129,65,.7)" : "none", animation: p.late ? "pulseOx 2s infinite" : "none" }}>{p.code}</span>
+                          <div style={{ minWidth: 0 }}>
+                            <div style={{ fontSize: 13, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.name}</div>
+                            <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.08em", color: p.late ? C.papel : C.tenue, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.meta}</div>
+                          </div>
+                          {p.badge && <span style={{ position: "absolute", top: -6, left: 30, minWidth: 18, height: 18, borderRadius: 999, background: C.papel, color: C.tinta, fontFamily: MONO, fontSize: 10, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 4px" }}>{p.badge}</span>}
+                        </H>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+          <button type="button" title="Nuevo proyecto" onClick={() => flash("Nuevo proyecto: pendiente de conectar")} style={{ position: "absolute", right: 28, top: 10, width: 52, height: 52, borderRadius: "50%", background: C.papel, color: C.tinta, border: "none", fontSize: 22, cursor: "pointer", boxShadow: "0 0 24px rgba(238,235,228,.35)", zIndex: 2 }}>+</button>
+        </div>
+
+        {/* Línea de tiempo · 26 semanas */}
+        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 32px 0" }}>
+          <button type="button" style={{ width: 48, height: 48, borderRadius: "50%", background: C.panel, border: `1px solid ${C.borde}`, color: C.papel, fontSize: 18, cursor: "pointer" }}>+</button>
+          <button type="button" style={{ width: 48, height: 48, borderRadius: "50%", background: C.panel, border: `1px solid ${C.borde}`, color: C.papel, fontSize: 18, cursor: "pointer" }}>−</button>
+          <div style={{ flex: 1, height: 56, borderRadius: 999, background: "rgba(22,26,33,0.55)", backdropFilter: "blur(20px)", border: "1px solid rgba(238,235,228,0.09)", display: "flex", alignItems: "stretch", padding: "0 18px", position: "relative", overflow: "hidden" }}>
+            {weeks.map((w, i) => (
+              <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4, position: "relative", background: w.bg, margin: w.margin, borderRadius: w.radius, boxShadow: w.glow }}>
+                <span style={{ width: 5, height: 5, borderRadius: "50%", background: w.c1, animation: w.anim }} />
+                <span style={{ width: 5, height: 5, borderRadius: "50%", background: w.c2 }} />
+                <span style={{ width: 5, height: 5, borderRadius: "50%", background: w.c3 }} />
+                {w.label && <span style={{ position: "absolute", bottom: 4, left: 0, fontFamily: MONO, fontSize: 9, letterSpacing: "0.1em", color: w.labelColor }}>{w.label}</span>}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Rejilla 12 */}
+      <section style={{ display: "grid", gridTemplateColumns: "repeat(12,minmax(0,1fr))", gap: 16, padding: "28px 32px 40px" }}>
+        <Glass delay=".35s" style={{ gridColumn: "span 6" }}>
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 14 }}>
+            <div>
+              <Eyebrow>LO DE HOY · {fT.length} TAREAS</Eyebrow>
+              <div style={{ fontWeight: 900, fontSize: 24, letterSpacing: "-0.02em", marginTop: 6 }}>HOY · TAREAS Y SEGUIMIENTOS</div>
+            </div>
+            <Link href="/tareas"><Circle bg={C.papel} color={C.tinta}>↗</Circle></Link>
+          </div>
+          {groups.length > 0 ? groups.map(([client, ts]) => (
+            <div key={client} style={{ borderTop: `1px solid ${C.borde}`, padding: "12px 0 6px" }}>
+              <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.14em", color: C.tenue, marginBottom: 6 }}>{client}</div>
+              {ts.map((t) => (
+                <div key={t.id} style={{ display: "grid", gridTemplateColumns: "56px 1fr auto", gap: 14, alignItems: "center", padding: "8px 0" }}>
+                  <div style={{ fontFamily: MONO, fontSize: 13, color: t.overdue ? C.oxido : C.niebla }}>{t.time}</div>
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}><span style={{ width: 7, height: 7, borderRadius: "50%", background: t.overdue ? C.oxido : C.acero, flexShrink: 0, animation: t.overdue ? "pulseOx 2s infinite" : "none" }} /><span style={{ fontSize: 14 }}>{t.title}</span></div>
+                    <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.1em", color: C.tenue, margin: "4px 0 0 15px" }}>{(t.overdue ? "VENCIDA · " : "") + t.origin.toUpperCase() + " · " + t.channel}</div>
+                    {t.ai && <div style={{ margin: "8px 0 0 15px", background: C.p2, border: `1px dashed ${C.borde2}`, borderRadius: 14, padding: "8px 12px", fontSize: 13, color: C.niebla, textWrap: "pretty" }}>{t.ai}</div>}
+                  </div>
+                  {t.ai && <PB small style={{ alignSelf: "start", padding: "0 14px" }} onClick={() => { setDone((d) => [...d, t.id]); flash("Mensaje aprobado y enviado"); }}>Aprobar y enviar</PB>}
+                </div>
+              ))}
+            </div>
+          )) : <div style={{ borderTop: `1px solid ${C.borde}`, padding: "22px 0 12px", fontSize: 14, color: C.tenue }}>Sin tareas para este filtro.</div>}
+        </Glass>
+
+        <Glass delay=".35s" style={{ gridColumn: "span 3", display: "flex", flexDirection: "column" }}>
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+            <div style={{ fontWeight: 900, fontSize: 24, letterSpacing: "-0.02em" }}>COBRANZA</div>
+            <Link href="/facturacion"><Circle>↗</Circle></Link>
+          </div>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 6, margin: "14px 0 4px" }}><span style={{ fontWeight: 300, fontSize: 40, letterSpacing: "-0.02em" }}>$55,500</span><span style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.12em", color: C.tenue }}>MXN POR COBRAR</span></div>
+          <div style={{ display: "flex", height: 4, borderRadius: 2, overflow: "hidden", gap: 2, marginBottom: 10 }}><span style={{ flex: 25, background: C.oxido }} /><span style={{ flex: 30.5, background: C.acero }} /><span style={{ flex: 20, background: C.olivo }} /></div>
+          {invoices.map((iv) => (
+            <div key={iv.id} style={{ borderTop: `1px solid ${C.borde}`, padding: "12px 0", display: "flex", flexDirection: "column", gap: 6 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}><span style={{ fontSize: 13 }}>{iv.client}</span><span style={{ fontFamily: MONO, fontSize: 12 }}>{iv.amount}</span></div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ display: "flex", alignItems: "center", gap: 6, fontFamily: MONO, fontSize: 10, letterSpacing: "0.12em", color: C.niebla }}><Dot color={iv.dot} />{iv.status}</span>
+                <span style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.1em", color: C.tenue }}>{iv.id}</span>
+              </div>
+              {iv.reminder && <button type="button" onClick={toggleTray} style={{ alignSelf: "flex-start", height: 32, padding: "0 12px", borderRadius: 999, background: "transparent", border: `1px solid ${C.oxido}`, color: C.papel, fontSize: 12, cursor: "pointer" }}>Recordatorio listo · revisar</button>}
+            </div>
+          ))}
+        </Glass>
+
+        <Glass delay=".35s" style={{ gridColumn: "span 3", display: "flex", flexDirection: "column" }}>
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 16 }}>
+            <div style={{ fontWeight: 900, fontSize: 24, letterSpacing: "-0.02em" }}>EMBUDO</div>
+            <Link href="/clientes"><Circle>↗</Circle></Link>
+          </div>
+          {fd.map(([label, n], i) => (
+            <div key={label} style={{ display: "grid", gridTemplateColumns: "92px 1fr 28px", alignItems: "center", gap: 10, padding: "7px 0" }}>
+              <span style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.12em", color: C.niebla }}>{label}</span>
+              <span style={{ height: 22, borderRadius: 999, background: C.p2, overflow: "hidden", display: "block" }}><span style={{ display: "block", height: "100%", width: `${Math.max(6, (n / 12) * 100) * e}%`, background: i === 5 ? C.olivo : i === 4 ? C.oxido : C.acero, borderRadius: 999, boxShadow: i >= 4 ? `0 0 14px ${i === 5 ? "rgba(76,129,65,.6)" : "rgba(176,81,57,.55)"}` : "none" }} /></span>
+              <span style={{ fontFamily: MONO, fontSize: 13, textAlign: "right" }}>{cn(n)}</span>
+            </div>
+          ))}
+          <div style={{ marginTop: "auto", borderTop: `1px solid ${C.borde}`, paddingTop: 12, display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+            <span style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.12em", color: C.tenue }}>PERDIDOS · 2</span>
+            <span style={{ fontSize: 13, color: C.niebla }}>Objeción principal: <span style={{ color: C.papel }}>Precio</span></span>
+          </div>
+        </Glass>
+
+        <Glass delay=".35s" style={{ gridColumn: "span 7" }}>
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 16 }}>
+            <div>
+              <div style={{ fontWeight: 900, fontSize: 24, letterSpacing: "-0.02em" }}>CONTENIDO DE LA SEMANA</div>
+              <div style={{ fontWeight: 300, fontSize: 14, color: C.niebla, marginTop: 2 }}>2 al 8 de noviembre · 5 piezas planeadas</div>
+            </div>
+            <Link href="/marketing"><Circle>↗</Circle></Link>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(5,minmax(0,1fr))", gap: 10 }}>
+            {content.map((c) => (
+              <div key={c.day} style={{ background: "rgba(12,15,20,0.45)", border: `1px solid ${c.dot === C.oxido ? C.oxido : C.borde}`, boxShadow: c.dot === C.oxido ? "0 0 26px rgba(176,81,57,0.3)" : c.dot === C.olivo ? "0 0 22px rgba(76,129,65,0.12)" : "none", borderRadius: 20, padding: 14, display: "flex", flexDirection: "column", gap: 10, minHeight: 170 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontFamily: MONO, fontSize: 10, letterSpacing: "0.12em", color: C.tenue }}><span>{c.day}</span><span>{c.channel}</span></div>
+                <div style={{ fontSize: 13, lineHeight: 1.35, textWrap: "pretty", flex: 1 }}>{c.hook}</div>
+                <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.1em", color: C.tenue }}>{c.type}</div>
+                <span style={{ display: "flex", alignItems: "center", gap: 6, fontFamily: MONO, fontSize: 10, letterSpacing: "0.12em", color: C.papel }}><Dot color={c.dot} />{c.status}</span>
+                {c.metrics && <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.08em", color: C.niebla, borderTop: `1px solid ${C.borde}`, paddingTop: 8 }}>{c.metrics}</div>}
+              </div>
+            ))}
+          </div>
+        </Glass>
+
+        <div style={{ gridColumn: "span 5", background: "rgba(238,235,228,0.92)", backdropFilter: "blur(20px)", color: C.tinta, borderRadius: 28, padding: 24, animation: "rise .8s cubic-bezier(.2,.7,.2,1) both", animationDelay: ".5s", boxShadow: "0 0 60px rgba(238,235,228,0.08)" }}>
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 6 }}>
+            <div>
+              <Eyebrow color={C.acero}>BORRADOR DE IA · INVESTIGADOR · SEMANA 45</Eyebrow>
+              <div style={{ fontWeight: 900, fontSize: 24, letterSpacing: "-0.02em", marginTop: 6 }}>INFORME DEL INVESTIGADOR</div>
+            </div>
+            <Link href="/agentes"><Circle bg={C.tinta} color={C.papel}>↗</Circle></Link>
+          </div>
+          {rs.map((r, i) => {
+            const d = researched.includes(i);
+            return (
+              <div key={r.n} style={{ display: "grid", gridTemplateColumns: "28px 1fr auto", gap: 12, alignItems: "start", borderTop: "1px solid #D6D2C9", padding: "14px 0" }}>
+                <span style={{ fontFamily: MONO, fontSize: 11, color: C.acero, paddingTop: 2 }}>{r.n}</span>
+                <div>
+                  <div style={{ fontSize: 14, lineHeight: 1.4, textWrap: "pretty" }}>{r.text}</div>
+                  <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.1em", color: C.acero, marginTop: 4 }}>{r.src}</div>
+                </div>
+                <button type="button" onClick={() => { if (d) return; setResearched((x) => [...x, i]); flash("Tarea creada en Hoy"); }} style={{ height: 34, padding: "0 14px", borderRadius: 999, background: d ? "transparent" : C.tinta, color: d ? C.olivo : C.papel, border: `1px solid ${d ? C.olivo : C.tinta}`, fontSize: 12, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap" }}>{d ? "Tarea creada" : "Convertir en tarea"}</button>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+    </>
+  );
+}
