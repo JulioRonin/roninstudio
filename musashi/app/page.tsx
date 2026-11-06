@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { C, MONO } from "@/lib/tokens";
 import { Glass, Eyebrow, H, RGlyph, Dot, Circle, Chips, PB } from "@/components/ui";
@@ -25,6 +25,10 @@ export default function Dashboard() {
   const [filter, setFilter] = useState("Todo");
   const [done, setDone] = useState<number[]>([]);
   const [researched, setResearched] = useState<number[]>([]);
+  const [win, setWin] = useState({ start: 9, len: 3 });
+  const [dragging, setDragging] = useState(false);
+  const stripRef = useRef<HTMLDivElement>(null);
+  const drag = useRef<{ x: number; start: number } | null>(null);
   const cn = (v: number) => Math.round(v * e);
   const money = (v: number) => "$" + cn(v).toLocaleString("en-US");
   const sp = (a: number[]) => a.map((v, i) => `${i * 11},${20 - v}`).join(" ");
@@ -39,20 +43,66 @@ export default function Dashboard() {
     { ...G(0.24), name: "PIEZAS", value: cn(3) + "/" + cn(5), unit: "", delta: "PUBLICADAS / PLAN", label: C.tenue, h: 110, flex: 0.85, r: 20, size: 24, arrow: false, a: null, stroke: "" },
   ];
 
-  type P = { code: string; name: string; meta: string; late?: boolean; ok?: boolean; badge?: number };
-  const stageDefs: [string, string, P[]][] = [
-    ["01", "MAPEAR", [{ code: "D7", name: "Negocio demo 7 · Notaría", meta: "VISITA · 07 NOV" }, { code: "D8", name: "Negocio demo 8 · Taller", meta: "MAPA DE FLUJO · 11 NOV", badge: 2 }]],
-    ["02", "DISEÑAR", [{ code: "D4", name: "Negocio demo 4 · Clínica", meta: "HITO 2 ATRASADO · 03 NOV", late: true, badge: 3 }, { code: "D1", name: "Negocio demo 1 · Escuela", meta: "PLAN · 13 NOV" }]],
-    ["03", "CONSTRUIR", [{ code: "D2", name: "Negocio demo 2 · Restaurante", meta: "MÓDULO POS · 18 NOV", badge: 2 }, { code: "D5", name: "Negocio demo 5 · Gimnasio", meta: "PRUEBAS · 20 NOV" }, { code: "D6", name: "Negocio demo 6 · Taller", meta: "ENTREGA · 25 NOV" }]],
-    ["04", "EVOLUCIONAR", [{ code: "D3", name: "Negocio demo 3 · Clínica", meta: "REPORTE · 30 NOV", ok: true }]],
-  ];
+  // ---- Línea de tiempo: 26 semanas desde el lunes 31 de agosto de 2026 ----
+  const W = 26, DAY = 86400000, BASE = Date.UTC(2026, 7, 31);
+  const d = (m: number, day: number, y = 2026) => Date.UTC(y, m, day);
+  const MONTHS = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
+  const fmt = (t: number) => { const x = new Date(t); return `${x.getUTCDate()} ${MONTHS[x.getUTCMonth()]}`; };
+  const isoWeek = (t: number) => { const x = new Date(t); const dn = (x.getUTCDay() + 6) % 7; x.setUTCDate(x.getUTCDate() - dn + 3); const y1 = Date.UTC(x.getUTCFullYear(), 0, 4); return 1 + Math.round(((x.getTime() - y1) / DAY - 3 + ((new Date(y1).getUTCDay() + 6) % 7)) / 7); };
+  const winStart = BASE + win.start * 7 * DAY, winEnd = winStart + win.len * 7 * DAY - 1;
+  const TODAY = d(10, 5);
 
-  const mon = ["SEP", "", "", "", "OCT", "", "", "", "", "NOV", "", "", "", "DIC", "", "", "", "ENE 27", "", "", "", "", "FEB", "", "", ""];
-  const weeks = mon.map((m, i) => {
-    const sel = i >= 9 && i <= 11; const v = [(i * 7) % 5, (i * 3 + 1) % 4, (i * 5 + 2) % 6];
-    const cc = (n: number, t: number) => (n > t ? (sel ? C.tinta : C.niebla) : sel ? C.acero : "#2A2F36");
-    return { sel, glow: sel ? "0 0 26px rgba(238,235,228,0.35)" : "none", anim: !sel && v[0] > 3 ? "blink 2.4s infinite" : "none", bg: sel ? C.papel : "transparent", margin: sel ? "6px 0" : "0", radius: sel ? (i === 9 ? "999px 0 0 999px" : i === 11 ? "0 999px 999px 0" : "0") : "0", c1: cc(v[0], 2), c2: cc(v[1], 1), c3: cc(v[2], 3), label: m || null, labelColor: sel ? C.tinta : C.tenue };
+  type P = { code: string; name: string; meta: string; late?: boolean; ok?: boolean; badge?: number; from: number; to: number; next: number };
+  const stageDefs: [string, string, P[]][] = [
+    ["01", "MAPEAR", [
+      { code: "D7", name: "Negocio demo 7 · Notaría", meta: "VISITA · 07 NOV", from: d(10, 2), to: d(10, 20), next: d(10, 7) },
+      { code: "D8", name: "Negocio demo 8 · Taller", meta: "MAPA DE FLUJO · 11 NOV", badge: 2, from: d(10, 9), to: d(11, 4), next: d(10, 11) },
+      { code: "D9", name: "Negocio demo 9 · Gimnasio", meta: "VISITA · 14 DIC", from: d(11, 7), to: d(0, 15, 2027), next: d(11, 14) },
+    ]],
+    ["02", "DISEÑAR", [
+      { code: "D4", name: "Negocio demo 4 · Clínica", meta: "HITO 2 ATRASADO · 03 NOV", late: true, badge: 3, from: d(9, 5), to: d(11, 18), next: d(10, 3) },
+      { code: "D1", name: "Negocio demo 1 · Escuela", meta: "PLAN · 13 NOV", from: d(9, 26), to: d(11, 11), next: d(10, 13) },
+      { code: "D10", name: "Negocio demo 10 · Taller", meta: "PLAN · 20 ENE", from: d(0, 4, 2027), to: d(1, 26, 2027), next: d(0, 20, 2027) },
+    ]],
+    ["03", "CONSTRUIR", [
+      { code: "D2", name: "Negocio demo 2 · Restaurante", meta: "MÓDULO POS · 18 NOV", badge: 2, from: d(9, 5), to: d(11, 27), next: d(10, 18) },
+      { code: "D5", name: "Negocio demo 5 · Gimnasio", meta: "PRUEBAS · 20 NOV", from: d(8, 14), to: d(10, 27), next: d(10, 20) },
+      { code: "D6", name: "Negocio demo 6 · Taller", meta: "ENTREGA · 25 NOV", from: d(8, 28), to: d(10, 27), next: d(10, 25) },
+    ]],
+    ["04", "EVOLUCIONAR", [
+      { code: "D3", name: "Negocio demo 3 · Clínica", meta: "REPORTE · 30 NOV", ok: true, from: d(7, 31), to: d(1, 26, 2027), next: d(10, 30) },
+      { code: "D12", name: "Negocio demo 12 · Escuela", meta: "REPORTE · 15 SEP", ok: true, from: d(7, 31), to: d(8, 30), next: d(8, 15) },
+    ]],
+  ];
+  const inWin = (p: P) => p.from <= winEnd && p.to >= winStart;
+  const stages = stageDefs.map(([num, name, pr]) => [num, name, pr.filter(inWin)] as [string, string, P[]]);
+  const visibles = stages.reduce((n, [, , pr]) => n + pr.length, 0);
+
+  // Actividad por semana: hitos (fila 1), proyectos activos (fila 2), vencimientos de facturas (fila 3)
+  const allP = stageDefs.flatMap(([, , pr]) => pr);
+  const INV = [d(10, 2), d(10, 10), d(10, 14), d(10, 2)];
+  const weeks = Array.from({ length: W }, (_, i) => {
+    const s = BASE + i * 7 * DAY, e = s + 7 * DAY - 1;
+    const sel = i >= win.start && i < win.start + win.len;
+    let label: string | null = null;
+    for (let k = 0; k < 7; k++) { const x = new Date(s + k * DAY); if (x.getUTCDate() === 1) label = MONTHS[x.getUTCMonth()] + (x.getUTCMonth() === 0 ? " " + String(x.getUTCFullYear()).slice(2) : ""); }
+    const hitos = allP.filter((p) => p.next >= s && p.next <= e);
+    const activos = allP.filter((p) => p.from <= e && p.to >= s).length;
+    const facturas = INV.filter((t) => t >= s && t <= e).length;
+    const late = hitos.some((p) => p.late);
+    const on = (v: boolean) => (v ? (sel ? C.tinta : C.niebla) : sel ? "rgba(12,15,20,0.22)" : "#2A2F36");
+    return { sel, label, c1: late ? C.oxido : on(hitos.length > 0), c2: on(activos >= 3), c3: on(facturas > 0), anim: late && !sel ? "blink 2.4s infinite" : "none", today: TODAY >= s && TODAY <= e, labelColor: sel ? C.tinta : C.tenue, title: `${fmt(s)} – ${fmt(e)} · ${hitos.length} hitos · ${activos} proyectos · ${facturas} facturas` };
   });
+  const setLen = (n: number) => setWin((w) => { const len = Math.max(1, Math.min(13, n)); return { start: Math.min(w.start, W - len), len }; });
+  const setStart = (n: number) => setWin((w) => ({ ...w, start: Math.max(0, Math.min(W - w.len, n)) }));
+  const idxAt = (clientX: number) => { const r = stripRef.current!.getBoundingClientRect(); return Math.floor((clientX - r.left - 18) / ((r.width - 36) / W)); };
+  const onDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    const i = idxAt(e.clientX);
+    if (i >= win.start && i < win.start + win.len) { drag.current = { x: e.clientX, start: win.start }; setDragging(true); e.currentTarget.setPointerCapture(e.pointerId); }
+    else setStart(i - Math.floor(win.len / 2));
+  };
+  const onMove = (e: React.PointerEvent<HTMLDivElement>) => { if (!drag.current) return; const r = stripRef.current!.getBoundingClientRect(); setStart(drag.current.start + Math.round((e.clientX - drag.current.x) / ((r.width - 36) / W))); };
+  const onUp = () => { drag.current = null; setDragging(false); };
 
   const fT = useMemo(() => TASKS.filter((t) => !done.includes(t.id) && (filter === "Todo" || t.origin === filter)), [done, filter]);
   const groups = useMemo(() => {
@@ -140,7 +190,7 @@ export default function Dashboard() {
           <div style={{ position: "absolute", left: 0, right: 0, top: 34, height: 4, overflow: "hidden", pointerEvents: "none", zIndex: 0 }}>
             <div style={{ width: 280, height: 4, borderRadius: 2, background: "linear-gradient(90deg,rgba(176,81,57,0),#B05139,rgba(238,235,228,.9),rgba(176,81,57,0))", filter: "blur(1px)", boxShadow: `0 0 14px ${C.oxido}`, animation: "sweep 5s cubic-bezier(.5,0,.5,1) infinite" }} />
           </div>
-          {stageDefs.map(([num, name, pr], i) => {
+          {stages.map(([num, name, pr], i) => {
             const hot = i === 1;
             return (
               <div key={num} style={{ borderRight: "1px solid #1A1E24", padding: "0 0 18px", position: "relative", minHeight: 330 }}>
@@ -170,6 +220,7 @@ export default function Dashboard() {
                       </div>
                     );
                   })}
+                  {pr.length === 0 && <div style={{ fontSize: 13, color: C.tenue, padding: "8px 0 0 22px", maxWidth: 240, textWrap: "pretty" }}>Sin proyectos en este rango.</div>}
                 </div>
               </div>
             );
@@ -177,20 +228,46 @@ export default function Dashboard() {
           <button type="button" title="Nuevo proyecto" onClick={() => flash("Nuevo proyecto: pendiente de conectar")} style={{ position: "absolute", right: 28, top: 10, width: 52, height: 52, borderRadius: "50%", background: C.papel, color: C.tinta, border: "none", fontSize: 22, cursor: "pointer", boxShadow: "0 0 24px rgba(238,235,228,.35)", zIndex: 2 }}>+</button>
         </div>
 
-        {/* Línea de tiempo · 26 semanas */}
+        {/* Línea de tiempo · 26 semanas · ventana arrastrable */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "12px 32px 0" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, fontFamily: MONO, fontSize: 10, letterSpacing: "0.14em", color: C.tenue }}>
+            <span style={{ width: 3, height: 12, background: C.oxido, transform: "skewY(-14deg)" }} />
+            VIENDO · <span style={{ color: C.papel }}>{fmt(winStart)} – {fmt(winEnd)}</span> · SEMANAS {isoWeek(winStart)}–{isoWeek(winEnd)} · {visibles} PROYECTOS EN EL RANGO
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <span style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.14em", color: C.tenue, marginRight: 6 }}>RANGO</span>
+            {([["2 sem", 2], ["4 sem", 4], ["8 sem", 8], ["13 sem", 13]] as [string, number][]).map(([l, n]) => {
+              const a = win.len === n;
+              return <H key={l} as="button" type="button" onClick={() => setLen(n)} style={{ height: 34, padding: "0 14px", borderRadius: 999, border: `1px solid ${a ? C.papel : C.borde}`, background: a ? C.papel : C.panel, color: a ? C.tinta : C.niebla, fontSize: 12, cursor: "pointer" }} hover={a ? {} : { borderColor: C.borde2 }}>{l}</H>;
+            })}
+            <H as="button" type="button" onClick={() => setStart(9 - Math.floor(win.len / 2))} style={{ height: 34, padding: "0 14px", borderRadius: 999, border: `1px solid ${C.oxido}`, background: "transparent", color: C.papel, fontSize: 12, cursor: "pointer", marginLeft: 6 }} hover={{ background: "rgba(176,81,57,0.15)" }}>Hoy</H>
+          </div>
+        </div>
         <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 32px 0" }}>
-          <button type="button" style={{ width: 48, height: 48, borderRadius: "50%", background: C.panel, border: `1px solid ${C.borde}`, color: C.papel, fontSize: 18, cursor: "pointer" }}>+</button>
-          <button type="button" style={{ width: 48, height: 48, borderRadius: "50%", background: C.panel, border: `1px solid ${C.borde}`, color: C.papel, fontSize: 18, cursor: "pointer" }}>−</button>
-          <div style={{ flex: 1, height: 56, borderRadius: 999, background: "rgba(22,26,33,0.55)", backdropFilter: "blur(20px)", border: "1px solid rgba(238,235,228,0.09)", display: "flex", alignItems: "stretch", padding: "0 18px", position: "relative", overflow: "hidden" }}>
+          <button type="button" title="Una semana más de rango" onClick={() => setLen(win.len + 1)} style={{ width: 48, height: 48, borderRadius: "50%", background: C.panel, border: `1px solid ${C.borde}`, color: C.papel, fontSize: 18, cursor: "pointer" }}>+</button>
+          <button type="button" title="Una semana menos de rango" onClick={() => setLen(win.len - 1)} style={{ width: 48, height: 48, borderRadius: "50%", background: C.panel, border: `1px solid ${C.borde}`, color: C.papel, fontSize: 18, cursor: "pointer" }}>−</button>
+          <div ref={stripRef} tabIndex={0} title="Arrastra la ventana o haz clic en una semana · ← → mueven · + − cambian el rango"
+            onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp}
+            onWheel={(e) => { if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) setStart(win.start + Math.sign(e.deltaX)); }}
+            onKeyDown={(e) => { if (e.key === "ArrowLeft") setStart(win.start - 1); else if (e.key === "ArrowRight") setStart(win.start + 1); else if (e.key === "+") setLen(win.len + 1); else if (e.key === "-") setLen(win.len - 1); }}
+            style={{ flex: 1, height: 56, borderRadius: 999, background: "rgba(22,26,33,0.55)", backdropFilter: "blur(20px)", border: "1px solid rgba(238,235,228,0.09)", display: "flex", alignItems: "stretch", padding: "0 18px", position: "relative", overflow: "hidden", cursor: dragging ? "grabbing" : "grab", userSelect: "none", touchAction: "none", outline: "none" }}>
+            <div style={{ position: "absolute", top: 6, bottom: 6, left: `calc(18px + (100% - 36px) * ${win.start / W})`, width: `calc((100% - 36px) * ${win.len / W})`, borderRadius: 999, background: C.papel, boxShadow: "0 0 26px rgba(238,235,228,0.35)", transition: dragging ? "none" : "left .18s cubic-bezier(.2,.7,.2,1), width .18s cubic-bezier(.2,.7,.2,1)", pointerEvents: "none" }} />
             {weeks.map((w, i) => (
-              <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4, position: "relative", background: w.bg, margin: w.margin, borderRadius: w.radius, boxShadow: w.glow }}>
+              <div key={i} title={w.title} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4, position: "relative", pointerEvents: "none" }}>
+                {w.today && <span style={{ position: "absolute", top: 5, width: 4, height: 4, borderRadius: "50%", background: C.oxido, boxShadow: `0 0 8px ${C.oxido}` }} />}
                 <span style={{ width: 5, height: 5, borderRadius: "50%", background: w.c1, animation: w.anim }} />
                 <span style={{ width: 5, height: 5, borderRadius: "50%", background: w.c2 }} />
                 <span style={{ width: 5, height: 5, borderRadius: "50%", background: w.c3 }} />
-                {w.label && <span style={{ position: "absolute", bottom: 4, left: 0, fontFamily: MONO, fontSize: 9, letterSpacing: "0.1em", color: w.labelColor }}>{w.label}</span>}
+                {w.label && <span style={{ position: "absolute", bottom: 4, left: 0, fontFamily: MONO, fontSize: 9, letterSpacing: "0.1em", color: w.labelColor, whiteSpace: "nowrap" }}>{w.label}</span>}
               </div>
             ))}
           </div>
+        </div>
+        <div style={{ display: "flex", gap: 18, padding: "8px 32px 0 138px", fontFamily: MONO, fontSize: 9, letterSpacing: "0.12em", color: C.tenue }}>
+          <span style={{ display: "flex", alignItems: "center", gap: 6 }}><span style={{ width: 5, height: 5, borderRadius: "50%", background: C.niebla }} />HITOS</span>
+          <span style={{ display: "flex", alignItems: "center", gap: 6 }}><span style={{ width: 5, height: 5, borderRadius: "50%", background: C.niebla }} />3+ PROYECTOS ACTIVOS</span>
+          <span style={{ display: "flex", alignItems: "center", gap: 6 }}><span style={{ width: 5, height: 5, borderRadius: "50%", background: C.niebla }} />FACTURAS</span>
+          <span style={{ display: "flex", alignItems: "center", gap: 6 }}><span style={{ width: 5, height: 5, borderRadius: "50%", background: C.oxido }} />HITO ATRASADO · HOY</span>
         </div>
       </section>
 
