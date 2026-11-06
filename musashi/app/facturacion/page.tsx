@@ -74,6 +74,7 @@ export default function Facturacion() {
           <h1 style={{ margin: "8px 0 0", fontWeight: 900, fontSize: 44, letterSpacing: "-0.02em", lineHeight: 1 }}>FACTURACIÓN</h1>
           <div style={{ fontWeight: 300, fontSize: 16, color: C.niebla, marginTop: 6 }}>$55,500.00 MXN por cobrar · 1 factura vencida</div>
         </div>
+        <a href="/cotizaciones" style={{ height: 48, padding: "0 20px", borderRadius: 999, background: "transparent", color: C.papel, border: `1px solid ${C.borde2}`, fontSize: 14, display: "flex", alignItems: "center", marginRight: 8 }}>Cotizaciones y cobros</a>
         <H as="button" type="button" onClick={() => setCfdi(true)} style={{ height: 48, padding: "0 22px", borderRadius: 999, background: C.oxido, color: C.papel, border: "none", fontSize: 14, fontWeight: 600, cursor: "pointer", boxShadow: "0 0 28px rgba(176,81,57,.45)" }} hover={{ background: C.oxidoHover }}>Emitir CFDI</H>
       </section>
 

@@ -302,7 +302,7 @@ export default function Dashboard() {
         <Glass delay=".35s" style={{ gridColumn: "span 3", display: "flex", flexDirection: "column" }}>
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
             <div style={{ fontWeight: 900, fontSize: 24, letterSpacing: "-0.02em" }}>COBRANZA</div>
-            <Link href="/facturacion"><Circle>↗</Circle></Link>
+            <Link href="/cotizaciones?tab=cobros"><Circle>↗</Circle></Link>
           </div>
           <div style={{ display: "flex", alignItems: "baseline", gap: 6, margin: "14px 0 4px" }}><span style={{ fontWeight: 300, fontSize: 40, letterSpacing: "-0.02em" }}>$55,500</span><span style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.12em", color: C.tenue }}>MXN POR COBRAR</span></div>
           <div style={{ display: "flex", height: 4, borderRadius: 2, overflow: "hidden", gap: 2, marginBottom: 10 }}><span style={{ flex: 25, background: C.oxido }} /><span style={{ flex: 30.5, background: C.acero }} /><span style={{ flex: 20, background: C.olivo }} /></div>

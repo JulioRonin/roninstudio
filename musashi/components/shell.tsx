@@ -25,7 +25,7 @@ export const useUI = () => {
 
 export const NAV: [string, string][] = [
   ["Dashboard", "/"], ["Marketing", "/marketing"], ["Estudio", "/estudio"], ["Clientes", "/clientes"], ["Diagnósticos", "/diagnosticos"],
-  ["Proyectos", "/proyectos"], ["Tareas", "/tareas"], ["Finanzas", "/finanzas"], ["Facturación", "/facturacion"], ["Agentes", "/agentes"],
+  ["Cotizaciones", "/cotizaciones"], ["Proyectos", "/proyectos"], ["Tareas", "/tareas"], ["Finanzas", "/finanzas"], ["Facturación", "/facturacion"], ["Agentes", "/agentes"],
 ];
 
 const BARE = ["/documentos", "/proyectos/reporte"];
@@ -87,6 +87,9 @@ const PALETTE: { t: string; s: string; href: string }[] = [
   { t: "Configuración", s: "Pantalla", href: "/configuracion" },
   { t: "Nueva pieza de contenido", s: "Estudio", href: "/estudio" },
   { t: "Nuevo proyecto", s: "Proyectos", href: "/proyectos?nuevo=1" },
+  { t: "Nueva cotización", s: "Cotizaciones", href: "/cotizaciones?tab=nueva" },
+  { t: "Registrar cobro o gasto", s: "Cotizaciones", href: "/cotizaciones?tab=cobros" },
+  { t: "Balance del mes", s: "Cotizaciones", href: "/cotizaciones?tab=balance" },
   { t: "Reporte para el cliente · Negocio demo 2", s: "Documento", href: "/proyectos/reporte?p=D2" },
   { t: "Contrato de servicios", s: "Plantilla", href: "/documentos/contrato" },
   { t: "Términos y condiciones", s: "Plantilla", href: "/documentos/terminos" },
@@ -152,19 +155,19 @@ function Header({ onSearch }: { onSearch: () => void }) {
             <span style={{ fontWeight: 900, fontSize: 17, letterSpacing: "-0.02em" }}>MUSASHI</span>
           </span>
         </Link>
-        <H as="button" type="button" onClick={onSearch} title="Buscar · Ctrl K" style={{ display: "flex", alignItems: "center", gap: 10, height: 48, width: 180, padding: "0 6px", borderRadius: 999, background: "rgba(22,26,33,0.55)", backdropFilter: "blur(18px)", border: "1px solid rgba(238,235,228,0.09)", flexShrink: 0, cursor: "pointer", color: C.papel, textAlign: "left" }} hover={{ borderColor: C.acero }}>
+        <H as="button" type="button" onClick={onSearch} title="Buscar · Ctrl K" style={{ display: "flex", alignItems: "center", gap: 10, height: 48, width: 150, padding: "0 6px", borderRadius: 999, background: "rgba(22,26,33,0.55)", backdropFilter: "blur(18px)", border: "1px solid rgba(238,235,228,0.09)", flexShrink: 0, cursor: "pointer", color: C.papel, textAlign: "left" }} hover={{ borderColor: C.acero }}>
           <span style={{ width: 36, height: 36, borderRadius: "50%", background: C.p3, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
             <span style={{ width: 11, height: 11, border: `1.5px solid ${C.papel}`, borderRadius: "50%" }} />
           </span>
-          <span style={{ fontSize: 13, color: C.tenue, flex: 1 }}>Buscar…</span>
-          <span style={{ fontFamily: MONO, fontSize: 9, letterSpacing: "0.1em", color: C.tenue, padding: "4px 7px", border: `1px solid ${C.borde}`, borderRadius: 999 }}>CTRL K</span>
+          <span style={{ fontSize: 13, color: C.tenue, flex: 1, whiteSpace: "nowrap", overflow: "hidden" }}>Buscar…</span>
+          <span style={{ fontFamily: MONO, fontSize: 9, letterSpacing: "0.1em", color: C.tenue, padding: "4px 7px", border: `1px solid ${C.borde}`, borderRadius: 999, whiteSpace: "nowrap", flexShrink: 0 }}>CTRL K</span>
         </H>
-        <nav style={{ display: "flex", gap: 4, flex: 1, justifyContent: "center", minWidth: 0 }}>
+        <nav style={{ display: "flex", gap: 3, flex: 1, justifyContent: "center", minWidth: 0 }}>
           {NAV.map(([label, href]) => {
             const a = isActive(href);
             return (
               <H key={href} as={Link as unknown as "a"} {...({ href } as object)}
-                style={{ height: 44, padding: "0 12px", borderRadius: 999, border: `1px solid ${a ? C.papel : "rgba(238,235,228,0.09)"}`, background: a ? C.papel : "rgba(22,26,33,0.55)", color: a ? C.tinta : C.papel, fontSize: 12.5, fontWeight: a ? 600 : 400, display: "flex", alignItems: "center", whiteSpace: "nowrap", boxShadow: a ? "0 0 24px rgba(238,235,228,0.25)" : "none", transition: "border-color .2s" }}
+                style={{ height: 44, padding: "0 8px", borderRadius: 999, border: `1px solid ${a ? C.papel : "rgba(238,235,228,0.09)"}`, background: a ? C.papel : "rgba(22,26,33,0.55)", color: a ? C.tinta : C.papel, fontSize: 12, fontWeight: a ? 600 : 400, display: "flex", alignItems: "center", whiteSpace: "nowrap", boxShadow: a ? "0 0 24px rgba(238,235,228,0.25)" : "none", transition: "border-color .2s" }}
                 hover={a ? {} : { borderColor: C.acero }}>
                 {label}
               </H>
