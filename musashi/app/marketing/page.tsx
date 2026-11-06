@@ -1,5 +1,6 @@
 "use client";
 import React, { useMemo, useState, type CSSProperties } from "react";
+import Link from "next/link";
 import { C, MONO, SANS } from "@/lib/tokens";
 import { H, Dot } from "@/components/ui";
 import { useUI, PageHead } from "@/components/shell";
@@ -154,10 +155,10 @@ export default function Marketing() {
         sub="Semana del 2 al 8 de noviembre · 5 piezas planeadas · 1 idea"
         style={{ paddingTop: 34, gap: 24, animation: "rise .6s cubic-bezier(.2,.7,.2,1) both" }}
         right={
-          <H as="button" type="button" onClick={() => flash("Pieza creada como idea")}
-            style={{ height: 48, padding: "0 22px", borderRadius: 999, background: C.oxido, color: C.papel, border: "none", fontSize: 14, fontWeight: 600, cursor: "pointer", boxShadow: "0 0 28px rgba(176,81,57,.45)" }}
+          <H as={Link as unknown as "a"} {...({ href: "/estudio" } as object)}
+            style={{ height: 48, padding: "0 22px", borderRadius: 999, background: C.oxido, color: C.papel, border: "none", fontSize: 14, fontWeight: 600, cursor: "pointer", boxShadow: "0 0 28px rgba(176,81,57,.45)", display: "flex", alignItems: "center" }}
             hover={{ background: C.oxidoHover }}>
-            Nueva pieza
+            Nueva pieza · Estudio
           </H>
         }
       />

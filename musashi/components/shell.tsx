@@ -24,7 +24,7 @@ export const useUI = () => {
 };
 
 export const NAV: [string, string][] = [
-  ["Dashboard", "/"], ["Marketing", "/marketing"], ["Clientes", "/clientes"], ["Diagnósticos", "/diagnosticos"],
+  ["Dashboard", "/"], ["Marketing", "/marketing"], ["Estudio", "/estudio"], ["Clientes", "/clientes"], ["Diagnósticos", "/diagnosticos"],
   ["Proyectos", "/proyectos"], ["Tareas", "/tareas"], ["Finanzas", "/finanzas"], ["Facturación", "/facturacion"], ["Agentes", "/agentes"],
 ];
 
