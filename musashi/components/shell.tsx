@@ -1,7 +1,7 @@
 "use client";
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { C, MONO } from "@/lib/tokens";
 import { H, RGlyph, Dot } from "@/components/ui";
 import { TRAY, type TrayItem } from "@/lib/demo";
@@ -28,8 +28,12 @@ export const NAV: [string, string][] = [
   ["Proyectos", "/proyectos"], ["Tareas", "/tareas"], ["Finanzas", "/finanzas"], ["Facturación", "/facturacion"], ["Agentes", "/agentes"],
 ];
 
+const BARE = ["/documentos", "/proyectos/reporte"];
+
 export function Shell({ children, demo = true }: { children: ReactNode; demo?: boolean }) {
+  const path = usePathname();
   const [toast, setToast] = useState<string | null>(null);
+  const [palette, setPalette] = useState(false);
   const [trayIds, setTrayIds] = useState<string[]>(() => TRAY.map((t) => t.id));
   const [trayOpen, setTrayOpen] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -47,6 +51,8 @@ export function Shell({ children, demo = true }: { children: ReactNode; demo?: b
 
   useEffect(() => {
     const k = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { e.preventDefault(); setPalette((o) => !o); return; }
+      if (palette) { if (e.key === "Escape") setPalette(false); return; }
       if (!trayOpen || /INPUT|TEXTAREA/.test((e.target as HTMLElement).tagName)) return;
       const f = tray[0];
       if (e.key === "Escape") return setTrayOpen(false);
@@ -55,20 +61,62 @@ export function Shell({ children, demo = true }: { children: ReactNode; demo?: b
     };
     window.addEventListener("keydown", k);
     return () => window.removeEventListener("keydown", k);
-  }, [trayOpen, tray, approve, discard, flash]);
+  }, [trayOpen, tray, approve, discard, flash, palette]);
 
   const value = useMemo<UI>(() => ({ flash, tray, trayOpen, toggleTray, approve, discard, demo }), [flash, tray, trayOpen, toggleTray, approve, discard, demo]);
+
+  if (BARE.some((b) => path.startsWith(b))) return <UICtx.Provider value={value}>{children}</UICtx.Provider>;
 
   return (
     <UICtx.Provider value={value}>
       <div style={{ maxWidth: 1440, width: "100%", margin: "0 auto", background: C.tinta, minHeight: "100vh", position: "relative", overflow: "hidden", isolation: "isolate" }}>
         <Glows />
-        <Header />
+        <Header onSearch={() => setPalette(true)} />
         {children}
         {trayOpen && <Tray />}
+        {palette && <Palette close={() => setPalette(false)} />}
         {toast && <Toast msg={toast} />}
       </div>
     </UICtx.Provider>
+  );
+}
+
+/* ---------- Paleta de búsqueda (Ctrl K) ---------- */
+const PALETTE: { t: string; s: string; href: string }[] = [
+  ...NAV.map(([t, href]) => ({ t, s: "Pantalla", href })),
+  { t: "Configuración", s: "Pantalla", href: "/configuracion" },
+  { t: "Nueva pieza de contenido", s: "Estudio", href: "/estudio" },
+  { t: "Nuevo proyecto", s: "Proyectos", href: "/proyectos?nuevo=1" },
+  { t: "Reporte para el cliente · Negocio demo 2", s: "Documento", href: "/proyectos/reporte?p=D2" },
+  { t: "Contrato de servicios", s: "Plantilla", href: "/documentos/contrato" },
+  { t: "Términos y condiciones", s: "Plantilla", href: "/documentos/terminos" },
+  { t: "Negocio demo 2 · Restaurante con sucursales", s: "Cliente", href: "/clientes" },
+  { t: "Negocio demo 4 · Clínica", s: "Cliente", href: "/clientes" },
+  { t: "Factura F-0112 · vencida", s: "Facturación", href: "/facturacion" },
+  { t: "Informe del Investigador · semana 45", s: "Agentes", href: "/agentes" },
+];
+function Palette({ close }: { close: () => void }) {
+  const [q, setQ] = useState("");
+  const router = useRouter();
+  const norm = (x: string) => x.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const items = PALETTE.filter((i) => norm(i.t + " " + i.s).includes(norm(q))).slice(0, 8);
+  const go = (href: string) => { close(); router.push(href); };
+  return (
+    <>
+      <div onClick={close} style={{ position: "fixed", inset: 0, background: "rgba(7,9,12,0.6)", zIndex: 70 }} />
+      <div style={{ position: "fixed", top: 120, left: "50%", transform: "translateX(-50%)", width: 560, background: "rgba(19,23,29,0.9)", backdropFilter: "blur(28px)", border: "1px solid rgba(238,235,228,0.12)", borderRadius: 24, padding: 10, zIndex: 71, animation: "rise .25s ease both" }}>
+        <input autoFocus value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && items[0]) go(items[0].href); }} placeholder="Buscar pantalla, cliente, factura, documento…" style={{ width: "100%", height: 48, padding: "0 18px", borderRadius: 999, background: C.p2, border: `1px solid ${C.borde}`, color: C.papel, fontSize: 14, outline: "none" }} />
+        <div style={{ display: "flex", flexDirection: "column", gap: 2, marginTop: 8 }}>
+          {items.map((i, k) => (
+            <H key={i.href + i.t} as="button" type="button" onClick={() => go(i.href)} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, height: 42, padding: "0 14px", borderRadius: 14, background: k === 0 ? "rgba(238,235,228,0.06)" : "transparent", border: "none", color: C.papel, fontSize: 13.5, cursor: "pointer", textAlign: "left" }} hover={{ background: "rgba(238,235,228,0.08)" }}>
+              <span>{i.t}</span><span style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.12em", color: C.tenue }}>{i.s.toUpperCase()}</span>
+            </H>
+          ))}
+          {items.length === 0 && <div style={{ padding: "12px 14px", fontSize: 13, color: C.tenue }}>Nada con ese nombre. Prueba con una pantalla, un cliente o una factura.</div>}
+        </div>
+        <div style={{ display: "flex", justifyContent: "space-between", padding: "8px 14px 4px", fontFamily: MONO, fontSize: 9, letterSpacing: "0.12em", color: C.tenue }}><span>ENTER ABRE EL PRIMERO</span><span>ESC CIERRA</span></div>
+      </div>
+    </>
   );
 }
 
@@ -85,7 +133,7 @@ function Glows() {
 }
 
 /* ---------- Encabezado ---------- */
-function Header() {
+function Header({ onSearch }: { onSearch: () => void }) {
   const { demo, tray, toggleTray } = useUI();
   const path = usePathname();
   const isActive = (href: string) => (href === "/" ? path === "/" : path.startsWith(href));
@@ -104,13 +152,13 @@ function Header() {
             <span style={{ fontWeight: 900, fontSize: 17, letterSpacing: "-0.02em" }}>MUSASHI</span>
           </span>
         </Link>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, height: 48, width: 180, padding: "0 6px", borderRadius: 999, background: "rgba(22,26,33,0.55)", backdropFilter: "blur(18px)", border: "1px solid rgba(238,235,228,0.09)", flexShrink: 0 }}>
+        <H as="button" type="button" onClick={onSearch} title="Buscar · Ctrl K" style={{ display: "flex", alignItems: "center", gap: 10, height: 48, width: 180, padding: "0 6px", borderRadius: 999, background: "rgba(22,26,33,0.55)", backdropFilter: "blur(18px)", border: "1px solid rgba(238,235,228,0.09)", flexShrink: 0, cursor: "pointer", color: C.papel, textAlign: "left" }} hover={{ borderColor: C.acero }}>
           <span style={{ width: 36, height: 36, borderRadius: "50%", background: C.p3, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
             <span style={{ width: 11, height: 11, border: `1.5px solid ${C.papel}`, borderRadius: "50%" }} />
           </span>
           <span style={{ fontSize: 13, color: C.tenue, flex: 1 }}>Buscar…</span>
           <span style={{ fontFamily: MONO, fontSize: 9, letterSpacing: "0.1em", color: C.tenue, padding: "4px 7px", border: `1px solid ${C.borde}`, borderRadius: 999 }}>CTRL K</span>
-        </div>
+        </H>
         <nav style={{ display: "flex", gap: 4, flex: 1, justifyContent: "center", minWidth: 0 }}>
           {NAV.map(([label, href]) => {
             const a = isActive(href);
@@ -130,7 +178,7 @@ function Header() {
           <span style={{ width: 14, height: 15, border: `1.5px solid ${C.papel}`, borderRadius: "7px 7px 2px 2px" }} />
           <span style={{ position: "absolute", top: -3, right: -3, minWidth: 20, height: 20, padding: "0 5px", borderRadius: 999, background: C.oxido, color: C.papel, fontFamily: MONO, fontSize: 10, fontWeight: 500, display: "flex", alignItems: "center", justifyContent: "center", border: `2px solid ${C.tinta}`, animation: tray.length ? "pulseOx 2.2s infinite" : "none" }}>{tray.length}</span>
         </H>
-        <div style={{ width: 48, height: 48, borderRadius: "50%", background: C.papel, color: C.tinta, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 13, flexShrink: 0 }}>JC</div>
+        <Link href="/configuracion" title="Julio César Ibarra · cuenta" style={{ width: 48, height: 48, borderRadius: "50%", background: C.papel, color: C.tinta, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 13, flexShrink: 0 }}>JC</Link>
       </header>
     </>
   );

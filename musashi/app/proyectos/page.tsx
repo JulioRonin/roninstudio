@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo, useState, type CSSProperties } from "react";
+import React, { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { C, MONO, SANS } from "@/lib/tokens";
 import { H, RGlyph } from "@/components/ui";
 import { useUI } from "@/components/shell";
@@ -95,7 +95,18 @@ function StDot({ c, glow = true }: { c: string; glow?: boolean }) {
 
 export default function Proyectos() {
   const { flash } = useUI();
-  const [tab, setTab] = useState<Tab>("Gantt");
+  const [tab, setTab] = useState<Tab>("Lista por etapa");
+  const [groups, setGroups] = useState(GROUPS);
+  const [modal, setModal] = useState<"nuevo" | "horas" | null>(null);
+  const [nuevo, setNuevo] = useState({ name: "", client: "", sector: "Restaurante con sucursales", next: "" });
+  const [horas, setHoras] = useState({ h: "2", que: "" });
+  useEffect(() => { if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("nuevo") === "1") setModal("nuevo"); }, []);
+  const crearProyecto = () => {
+    if (!nuevo.name.trim() || !nuevo.client.trim()) { flash("Falta el nombre del proyecto o el cliente"); return; }
+    setGroups((g) => g.map(([n, name, rows], i) => (i === 0 ? [n, name, [R(nuevo.name.trim(), (nuevo.client.trim() + " · " + nuevo.sector).toUpperCase(), 0, nuevo.next.trim() ? "Visita · " + nuevo.next.trim() : "Visita por agendar", false, "0 / 16 H", "POR FACTURAR", C.niebla), ...rows]] : [n, name, rows])) as typeof GROUPS);
+    setModal(null); setTab("Lista por etapa"); setNuevo({ name: "", client: "", sector: "Restaurante con sucursales", next: "" });
+    flash("Proyecto creado en 01 · Mapear");
+  };
   const [zoom, setZoom] = useState<"Semana" | "Mes">("Semana");
   const [open, setOpen] = useState<Record<string, boolean>>({ "1": true, "2": true, "3": true });
   const [accepted, setAccepted] = useState<string[]>([]);
@@ -177,10 +188,11 @@ export default function Proyectos() {
           </div>
         </div>
         <div style={{ display: "flex", gap: 8 }}>
-          {inProject && (
+          {inProject && (<>
+            <a href="/proyectos/reporte?p=D2" target="_blank" rel="noreferrer" style={{ height: 48, padding: "0 20px", borderRadius: 999, background: "transparent", color: C.papel, border: `1px solid ${C.oxido}`, fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center" }}>Descargar reporte</a>
             <button type="button" onClick={() => flash("Enlace de solo lectura copiado")} style={{ height: 48, padding: "0 20px", borderRadius: 999, background: "transparent", color: C.papel, border: `1px solid ${C.borde2}`, fontSize: 14, cursor: "pointer" }}>Copiar enlace del cliente</button>
-          )}
-          <H as="button" type="button" onClick={() => flash((inProject ? "Registrar horas" : "Nuevo proyecto") + ": pendiente de conectar")}
+          </>)}
+          <H as="button" type="button" onClick={() => setModal(inProject ? "horas" : "nuevo")}
             style={{ height: 48, padding: "0 22px", borderRadius: 999, background: C.oxido, color: C.papel, border: "none", fontSize: 14, fontWeight: 600, cursor: "pointer", boxShadow: "0 0 28px rgba(176,81,57,.45)" }}
             hover={{ background: C.oxidoHover }}>
             {inProject ? "Registrar horas" : "Nuevo proyecto"}
@@ -204,7 +216,7 @@ export default function Proyectos() {
 
       <section style={{ padding: "22px 32px 56px" }}>
         {/* ---------- Lista por etapa ---------- */}
-        {tab === "Lista por etapa" && GROUPS.map(([num, name, rows], i) => (
+        {tab === "Lista por etapa" && groups.map(([num, name, rows], i) => (
           <div key={num} style={{ marginBottom: 18, animation: "rise .6s ease both", animationDelay: `${0.08 * i}s` }}>
             <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
               <RGlyph active={i} size={22} base={C.papel} />
@@ -477,6 +489,43 @@ export default function Proyectos() {
           </div>
         )}
       </section>
+      {modal && (
+        <>
+          <div onClick={() => setModal(null)} style={{ position: "fixed", inset: 0, background: "rgba(7,9,12,0.6)", zIndex: 60 }} />
+          <div style={{ position: "fixed", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 520, background: "rgba(19,23,29,0.92)", backdropFilter: "blur(28px)", border: "1px solid rgba(238,235,228,0.12)", borderRadius: 28, padding: 26, zIndex: 61, display: "flex", flexDirection: "column", gap: 12, animation: "rise .3s ease both" }}>
+            <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.14em", color: C.tenue }}>{modal === "nuevo" ? "PROYECTOS · ENTRA EN 01 · MAPEAR" : "PLATAFORMA DE OPERACIÓN · NEGOCIO DEMO 2"}</div>
+            <div style={{ fontWeight: 900, fontSize: 24, letterSpacing: "-0.02em" }}>{modal === "nuevo" ? "NUEVO PROYECTO" : "REGISTRAR HORAS"}</div>
+            {modal === "nuevo" ? (
+              <>
+                {([["Proyecto", "name", "Plataforma de operación"], ["Cliente", "client", "Negocio demo 14"], ["Siguiente paso · fecha", "next", "12 nov"]] as [string, keyof typeof nuevo, string][]).map(([l, k, ph]) => (
+                  <label key={k} style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>{l}
+                    <input value={nuevo[k]} onChange={(e) => setNuevo((n) => ({ ...n, [k]: e.target.value }))} placeholder={ph} style={{ height: 44, padding: "0 16px", borderRadius: 999, background: C.p2, border: `1px solid ${C.borde}`, color: C.papel, fontSize: 13, outline: "none" }} />
+                  </label>
+                ))}
+                <div style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>Sector
+                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                    {["Restaurante con sucursales", "Clínica", "Escuela privada", "Gimnasio", "Taller", "Manufactura"].map((o) => { const a = nuevo.sector === o; return <button key={o} type="button" onClick={() => setNuevo((n) => ({ ...n, sector: o }))} style={{ height: 36, padding: "0 14px", borderRadius: 999, border: `1px solid ${a ? C.papel : C.borde}`, background: a ? C.papel : "transparent", color: a ? C.tinta : C.papel, fontSize: 12.5, cursor: "pointer" }}>{o}</button>; })}
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>Horas
+                  <input value={horas.h} onChange={(e) => setHoras((x) => ({ ...x, h: e.target.value }))} inputMode="decimal" style={{ height: 44, padding: "0 16px", borderRadius: 999, background: C.p2, border: `1px solid ${C.borde}`, color: C.papel, fontSize: 13, outline: "none" }} />
+                </label>
+                <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>Qué se hizo
+                  <input value={horas.que} onChange={(e) => setHoras((x) => ({ ...x, que: e.target.value }))} placeholder="Pruebas del módulo POS en sucursal 1" style={{ height: 44, padding: "0 16px", borderRadius: 999, background: C.p2, border: `1px solid ${C.borde}`, color: C.papel, fontSize: 13, outline: "none" }} />
+                </label>
+                <div style={{ fontSize: 12.5, color: C.tenue }}>Se suman a la pestaña Horas y al margen del proyecto en Finanzas.</div>
+              </>
+            )}
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 6 }}>
+              <button type="button" onClick={() => setModal(null)} style={{ height: 44, padding: "0 18px", borderRadius: 999, background: "transparent", color: C.papel, border: `1px solid ${C.borde2}`, fontSize: 13, cursor: "pointer" }}>Cancelar</button>
+              <H as="button" type="button" onClick={() => { if (modal === "nuevo") crearProyecto(); else { setModal(null); flash(`${horas.h || "0"} h registradas`); } }} style={{ height: 44, padding: "0 20px", borderRadius: 999, background: C.oxido, color: C.papel, border: "none", fontSize: 13, fontWeight: 600, cursor: "pointer", boxShadow: "0 0 22px rgba(176,81,57,.4)" }} hover={{ background: C.oxidoHover }}>{modal === "nuevo" ? "Crear proyecto" : "Guardar horas"}</H>
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 }

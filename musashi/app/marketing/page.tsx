@@ -320,7 +320,7 @@ export default function Marketing() {
                   hover={{ background: C.oxidoHover }}>
                   Aprobar pieza
                 </H>
-                <button type="button" style={{ height: 48, padding: "0 18px", borderRadius: 999, background: "transparent", color: C.papel, border: `1px solid ${C.borde2}`, fontSize: 14, cursor: "pointer" }}>Editar</button>
+                <button type="button" onClick={() => flash("Borrador guardado")} style={{ height: 48, padding: "0 18px", borderRadius: 999, background: "transparent", color: C.papel, border: `1px solid ${C.borde2}`, fontSize: 14, cursor: "pointer" }}>Editar</button>
               </div>
             </div>
           </div>
@@ -341,7 +341,7 @@ export default function Marketing() {
                       hover={{ background: C.oxidoHover }}>
                       Aprobar
                     </H>
-                    <button type="button" style={{ height: 38, padding: "0 18px", borderRadius: 999, background: "transparent", color: C.papel, border: `1px solid ${C.borde2}`, fontSize: 13, cursor: "pointer" }}>Editar</button>
+                    <button type="button" onClick={() => flash("Abriendo editor de la propuesta")} style={{ height: 38, padding: "0 18px", borderRadius: 999, background: "transparent", color: C.papel, border: `1px solid ${C.borde2}`, fontSize: 13, cursor: "pointer" }}>Editar</button>
                     <button type="button" onClick={() => { rmProp(p.id); flash("Propuesta descartada"); }} style={{ height: 38, padding: "0 14px", borderRadius: 999, background: "transparent", color: C.niebla, border: "none", fontSize: 13, cursor: "pointer" }}>Descartar</button>
                   </div>
                 </div>

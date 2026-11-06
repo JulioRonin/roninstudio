@@ -5,7 +5,7 @@ import { useUI, PageHead } from "@/components/shell";
 
 /* ---------- Datos demo (idénticos al prototipo; sin claves reales) ---------- */
 const SECS: [string, string][] = [
-  ["Usuarios y roles", "3 USUARIOS"], ["Sectores y guías", "6 SECTORES"], ["Plantillas de documentos", "4 PLANTILLAS"],
+  ["Usuarios y roles", "3 USUARIOS"], ["Sectores y guías", "6 SECTORES"], ["Plantillas de documentos", "6 PLANTILLAS"],
   ["Datos fiscales", "EMISOR CFDI"], ["Integraciones", "10 SERVICIOS"], ["Tope de tokens", "POR AGENTE Y TOTAL"],
 ];
 const USERS = ([
@@ -14,7 +14,14 @@ const USERS = ([
   ["MK", "Contenido", "EQUIPO", "Marketing y contenido", "INVITADO", C.p3, C.papel],
 ] as string[][]).map(([ini, n, role, mods, st, bg, fc]) => ({ ini, n, role, mods, st, bg, fc }));
 const SECTORS = ([["Escuela privada", "V2", 18], ["Restaurante con sucursales", "V3", 22], ["Clínica", "V2", 20], ["Gimnasio", "V1", 14], ["Notaría", "V1", 16], ["Taller", "V2", 19]] as [string, string, number][]).map(([n, g, q]) => ({ n, g, q }));
-const TEMPLATES = ([["Acta de constitución", "V4 · PLANEADOR"], ["Cotización", "V6 · TEMA PAPEL"], ["Reporte semanal", "V3 · REPORTERO"], ["PDF del diagnóstico", "V5 · TEMA PAPEL"]] as string[][]).map(([n, v]) => ({ n, v }));
+const TEMPLATES: { n: string; v: string; href?: string }[] = [
+  { n: "Contrato de servicios", v: "V1 · PLANTILLA EDITABLE", href: "/documentos/contrato" },
+  { n: "Términos y condiciones", v: "V1 · PLANTILLA EDITABLE", href: "/documentos/terminos" },
+  { n: "Reporte para el cliente", v: "V3 · REPORTERO", href: "/proyectos/reporte?p=D2" },
+  { n: "Acta de constitución", v: "V4 · PLANEADOR" },
+  { n: "Cotización", v: "V6 · TEMA PAPEL" },
+  { n: "PDF del diagnóstico", v: "V5 · TEMA PAPEL" },
+];
 /* Datos fiscales: placeholders de ejemplo (RFC genérico del SAT), nada real. */
 const FISCAL = ([["RAZÓN SOCIAL", "Ronin Studio (datos de ejemplo)"], ["RFC", "XAXX010101000"], ["RÉGIMEN FISCAL", "612 · Personas Físicas con Actividades Empresariales"], ["CÓDIGO POSTAL", "32000"], ["SERIE DE FACTURAS", "F"], ["MONEDAS", "MXN · USD"]] as string[][]).map(([k, v]) => ({ k, v }));
 const INTEGRATIONS: [string, string, string][] = [
@@ -103,7 +110,7 @@ export default function Configuracion() {
           {sec === "Plantillas de documentos" && (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4,minmax(0,1fr))", gap: 14 }}>
               {TEMPLATES.map((t) => (
-                <div key={t.n} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                <a key={t.n} href={t.href ?? "#"} target={t.href ? "_blank" : undefined} rel="noreferrer" onClick={(e) => { if (!t.href) { e.preventDefault(); flash("Plantilla pendiente de redactar"); } }} style={{ display: "flex", flexDirection: "column", gap: 10, cursor: "pointer" }}>
                   <div style={{ aspectRatio: "8.5/11", background: C.papel, borderRadius: 6, padding: 16, display: "flex", flexDirection: "column", gap: 6 }}>
                     <span style={{ fontFamily: MONO, fontSize: 7, letterSpacing: "0.16em", color: C.acero }}>RONIN STUDIO</span>
                     <span style={{ fontWeight: 900, fontSize: 15, color: C.tinta, lineHeight: 1, textTransform: "uppercase" }}>{t.n}</span>
@@ -113,7 +120,7 @@ export default function Configuracion() {
                     <span style={{ height: 6, width: "70%", background: "#D6D2C9", borderRadius: 2 }} />
                   </div>
                   <span style={{ ...LBL, color: C.niebla }}>{t.v}</span>
-                </div>
+                </a>
               ))}
             </div>
           )}

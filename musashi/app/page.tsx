@@ -149,7 +149,7 @@ export default function Dashboard() {
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: C.p3, borderRadius: 16, padding: "10px 14px" }}>
               <div><div style={{ fontSize: 11, color: C.tenue }}>Siguiente</div><div style={{ fontSize: 14 }}>Llamada · 11:30</div></div>
-              <span style={{ fontSize: 16 }}>↗</span>
+              <Link href="/tareas" style={{ fontSize: 16 }}>↗</Link>
             </div>
           </div>
         </Glass>
@@ -165,7 +165,7 @@ export default function Dashboard() {
                     <div style={{ fontWeight: 900, fontSize: k.size, letterSpacing: "-0.02em", lineHeight: 1 }}>{k.value}<span style={{ fontWeight: 300, fontSize: 13, marginLeft: 4 }}>{k.unit}</span></div>
                     <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.08em", color: k.label, marginTop: 6 }}>{k.delta}</div>
                   </div>
-                  {k.arrow && <span style={{ width: 52, height: 52, borderRadius: "50%", background: C.tinta, color: C.papel, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0, animation: "pulsePa 2.4s infinite" }}>↗</span>}
+                  {k.arrow && <Link href="/tareas" title="Ver tareas vencidas" style={{ width: 52, height: 52, borderRadius: "50%", background: C.tinta, color: C.papel, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0, animation: "pulsePa 2.4s infinite" }}>↗</Link>}
                   {k.a && (
                     <svg width="60" height="24" viewBox="-2 -2 70 26" style={{ flexShrink: 0, overflow: "visible", filter: `drop-shadow(0 0 4px ${k.stroke})` }}>
                       <polyline points={sp(k.a)} fill="none" stroke={k.stroke} strokeWidth="1.6" strokeDasharray="140" style={{ animation: "draw 1.6s ease-out both", animationDelay: `${0.08 * i}s` }} />
@@ -225,7 +225,7 @@ export default function Dashboard() {
               </div>
             );
           })}
-          <button type="button" title="Nuevo proyecto" onClick={() => flash("Nuevo proyecto: pendiente de conectar")} style={{ position: "absolute", right: 28, top: 10, width: 52, height: 52, borderRadius: "50%", background: C.papel, color: C.tinta, border: "none", fontSize: 22, cursor: "pointer", boxShadow: "0 0 24px rgba(238,235,228,.35)", zIndex: 2 }}>+</button>
+          <Link href="/proyectos?nuevo=1" title="Nuevo proyecto" style={{ position: "absolute", right: 28, top: 10, width: 52, height: 52, borderRadius: "50%", background: C.papel, color: C.tinta, fontSize: 22, boxShadow: "0 0 24px rgba(238,235,228,.35)", zIndex: 2, display: "flex", alignItems: "center", justifyContent: "center" }}>+</Link>
         </div>
 
         {/* Línea de tiempo · 26 semanas · ventana arrastrable */}
