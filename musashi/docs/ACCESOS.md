@@ -46,7 +46,8 @@ Pendiente: crear el proyecto (hoy la cuenta está en el límite de 2 proyectos g
 
 | Servicio | Variable | Dónde |
 |---|---|---|
-| Higgsfield (imagen y video) | `HIGGSFIELD_API_KEY` | Higgsfield → API; el saldo de créditos se consulta por API. |
+| Higgsfield (imagen y video) · **vía MCP, sin API** | Sin llave: autorización OAuth del servidor MCP de Higgsfield desde Hermes (una sola vez) | Usa el plan y los créditos de la cuenta, no la facturación de la API. El agente Productor llama al MCP con los prompts que arma el Estudio y devuelve las URLs a Musashi. |
+| Higgsfield (alternativa) | `HIGGSFIELD_API_KEY` | Sólo si se decide usar la API de desarrolladores, que se cobra aparte del plan. |
 | ElevenLabs (voz clonada, locuciones) | `ELEVENLABS_API_KEY` + `ELEVENLABS_VOICE_ID` | elevenlabs.io → Profile → API Keys; el voice id se crea al clonar la voz. |
 
 ## 6 · Canales (se conectan después, módulo Marketing)

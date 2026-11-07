@@ -5,6 +5,7 @@ import { C, MONO } from "@/lib/tokens";
 import { Glass, Eyebrow, H, Dot, PB, SB } from "@/components/ui";
 import { useUI, PageHead } from "@/components/shell";
 import { COTS, PAGOS, FACTURAS, CLIENTES, mxn, total, PESO, type Cot, type Pago, type Linea, type Estado } from "@/lib/cotizaciones";
+import { load, save } from "@/lib/store";
 
 /* =====================================================================
    COTIZACIONES · la entrada del dinero
@@ -15,7 +16,7 @@ const TABS = ["Cotizaciones", "Nueva cotización", "Cobros y gastos", "Balance"]
 const COLOR: Record<Estado, string> = { Borrador: C.acero, Enviada: C.niebla, Abierta: C.ambar, Aceptada: C.olivo, Vencida: C.oxido, Perdida: C.tenue };
 const mono10: CSSProperties = { fontFamily: MONO, fontSize: 10, letterSpacing: "0.12em", color: C.tenue };
 const input: CSSProperties = { height: 44, padding: "0 16px", borderRadius: 999, background: C.p2, border: `1px solid ${C.borde}`, color: C.papel, fontSize: 13, outline: "none", width: "100%" };
-const KEY = "musashi-demo-cot-v1";
+const KEY = "cotizaciones";
 
 function chip(a: boolean): CSSProperties {
   return { height: 36, padding: "0 14px", borderRadius: 999, border: `1px solid ${a ? C.papel : "rgba(238,235,228,0.12)"}`, background: a ? C.papel : "rgba(22,26,33,0.55)", color: a ? C.tinta : C.papel, fontSize: 12.5, cursor: "pointer", whiteSpace: "nowrap", fontWeight: a ? 600 : 400 };
@@ -32,8 +33,8 @@ export default function Cotizaciones() {
   const [loaded, setLoaded] = useState(false);
 
   // Persistencia local (demo): lo que capturas sobrevive a recargar la página.
-  useEffect(() => { try { const raw = localStorage.getItem(KEY); if (raw) { const d = JSON.parse(raw); if (d.cots) setCots(d.cots); if (d.pagos) setPagos(d.pagos); if (d.tareas) setTareas(d.tareas); } } catch {} setLoaded(true); }, []);
-  useEffect(() => { if (!loaded) return; try { localStorage.setItem(KEY, JSON.stringify({ cots, pagos, tareas })); } catch {} }, [cots, pagos, tareas, loaded]);
+  useEffect(() => { const d = load<{ cots?: Cot[]; pagos?: Pago[]; tareas?: string[] }>(KEY, {}); if (d.cots) setCots(d.cots); if (d.pagos) setPagos(d.pagos); if (d.tareas) setTareas(d.tareas); setLoaded(true); }, []);
+  useEffect(() => { if (loaded) save(KEY, { cots, pagos, tareas }); }, [cots, pagos, tareas, loaded]);
   useEffect(() => { try { const t = new URLSearchParams(window.location.search).get("tab"); if (t) setTab(Math.max(0, TABS.findIndex((x) => x.toLowerCase().startsWith(t.toLowerCase())))); } catch {} }, []);
 
   const cur = cots.find((c) => c.folio === sel) ?? cots[0];
