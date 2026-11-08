@@ -6,7 +6,7 @@ import { Glass, Eyebrow, H, Dot, PB, SB } from "@/components/ui";
 import { useUI } from "@/components/shell";
 import { load, save } from "@/lib/store";
 import { useTarifas, mxn0 } from "@/lib/tarifas";
-import { PROCESOS, CLIENTE_DEMO, minTotal, esperaTotal, minNuevo, ejecSemana, horasSemanaActual, horasSemanaNueva, ahorroHorasSemana, ahorroMesMXN, recapturas, ACCION_COLOR, FASE_COLOR, type Proceso, type Accion, type Fase } from "@/lib/flujos";
+import { MAPA_DEMO, SECTORES, GUIAS, GUIA_VISITA, nuevoMapa, minTotal, esperaTotal, minNuevo, ejecSemana, horasSemanaActual, horasSemanaNueva, ahorroHorasSemana, ahorroMesMXN, recapturas, ACCION_COLOR, FASE_COLOR, type Proceso, type Accion, type Fase, type Mapa } from "@/lib/flujos";
 
 /* =====================================================================
    FLUJOS DE TRABAJO · el bloque central de 01 · Mapear
@@ -21,18 +21,92 @@ const mono10: CSSProperties = { fontFamily: MONO, fontSize: 10, letterSpacing: "
 const chip = (a: boolean, color = C.papel): CSSProperties => ({ height: 34, padding: "0 12px", borderRadius: 999, border: `1px solid ${a ? color : "rgba(238,235,228,0.12)"}`, background: a ? color : "rgba(22,26,33,0.55)", color: a ? C.tinta : C.papel, fontSize: 12, cursor: "pointer", whiteSpace: "nowrap", fontWeight: a ? 600 : 400 });
 const h1 = (n: number) => (Math.round(n * 10) / 10).toLocaleString("en-US");
 
+/* ---------- Lista de mapas + nuevo mapa ---------- */
 export function Flujos() {
   const { flash } = useUI();
   const [tarifas] = useTarifas();
-  const [paso, setPaso] = useState<(typeof PASOS_MOD)[number]>("Inventario");
-  const [procs, setProcs] = useState<Proceso[]>(PROCESOS);
-  const [sel, setSel] = useState("P1");
-  const [costoCliente, setCostoCliente] = useState(tarifas.costoHoraCliente);
+  const [mapas, setMapas] = useState<Mapa[]>([MAPA_DEMO]);
+  const [cur, setCur] = useState<string | null>(null);
+  const [nuevo, setNuevo] = useState(false);
+  const [form, setForm] = useState({ cliente: "", sector: "Restaurante con sucursales", sucursales: 1, visita: "", modo: "Guiado" as "Guiado" | "Desde cero", costoCliente: tarifas.costoHoraCliente });
   const [ready, setReady] = useState(false);
-  useEffect(() => { const d = load<{ procs?: Proceso[]; costoCliente?: number }>("flujos-D2", {}); if (d.procs) setProcs(d.procs); if (d.costoCliente) setCostoCliente(d.costoCliente); else setCostoCliente(tarifas.costoHoraCliente); setReady(true); }, [tarifas.costoHoraCliente]);
-  useEffect(() => { if (ready) save("flujos-D2", { procs, costoCliente }); }, [procs, costoCliente, ready]);
+  useEffect(() => {
+    const d = load<{ mapas?: Mapa[] }>("flujos-mapas", {});
+    if (d.mapas?.length) setMapas(d.mapas);
+    else { const old = load<{ procs?: Proceso[]; costoCliente?: number }>("flujos-D2", {}); if (old.procs) setMapas([{ ...MAPA_DEMO, procs: old.procs, costoCliente: old.costoCliente ?? 95 }]); }
+    setReady(true);
+  }, []);
+  useEffect(() => { if (ready) save("flujos-mapas", { mapas }); }, [mapas, ready]);
+  useEffect(() => { setForm((f) => ({ ...f, costoCliente: tarifas.costoHoraCliente })); }, [tarifas.costoHoraCliente]);
+  const mapa = mapas.find((m) => m.id === cur);
+  const crear = () => {
+    if (!form.cliente.trim()) { flash("Ponle nombre al cliente"); return; }
+    const m = nuevoMapa({ ...form, cliente: form.cliente.trim(), visita: form.visita.trim() || new Date().toLocaleDateString("es-MX", { day: "numeric", month: "long", year: "numeric" }) });
+    setMapas((ms) => [m, ...ms]); setCur(m.id); setNuevo(false);
+    flash(form.modo === "Guiado" ? `Mapa guiado: ${m.procs.length} procesos típicos de ${form.sector} listos para medir` : "Mapa en blanco listo: agrega el primer proceso");
+  };
+  if (mapa) return <MapaView mapa={mapa} onChange={(m) => setMapas((ms) => ms.map((x) => (x.id === m.id ? m : x)))} onBack={() => setCur(null)} />;
+  return (
+    <section style={{ padding: "22px 32px 48px", display: "grid", gridTemplateColumns: nuevo ? "1fr 460px" : "1fr", gap: 16 }}>
+      <Glass pad="4px 22px 10px" radius={24}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 0 6px", gap: 12 }}>
+          <div><div style={{ fontWeight: 900, fontSize: 22, letterSpacing: "-0.02em" }}>MAPAS DE FLUJOS POR CLIENTE</div><div style={{ fontSize: 13, color: C.niebla, marginTop: 2 }}>Un mapa por levantamiento. Ábrelo en la visita y mide ahí mismo; el reporte y la cotización salen de él.</div></div>
+          <PB onClick={() => setNuevo(true)}>Nuevo mapa</PB>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr 110px 110px 110px 120px", gap: 12, padding: "10px 0", borderBottom: "1px solid rgba(238,235,228,0.09)" }}>{["CLIENTE", "SECTOR · VISITA", "PROCESOS", "MEDIDOS", "AHORRO H/SEM", "ESTADO"].map((h) => <div key={h} style={mono10}>{h}</div>)}</div>
+        {mapas.map((m) => {
+          const med = m.procs.filter((p) => p.estado === "Medido" || p.estado === "Propuesto").length, inc = m.procs.filter((p) => p.incluir).length;
+          const est = m.procs.length === 0 ? ["EN BLANCO", C.acero] : med === 0 ? ["POR MEDIR", C.niebla] : inc > 0 ? ["CON PROPUESTA", C.olivo] : ["EN MEDICIÓN", C.ambar];
+          return (
+            <H key={m.id} onClick={() => setCur(m.id)} style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr 110px 110px 110px 120px", gap: 12, padding: "13px 0", alignItems: "center", borderBottom: "1px solid rgba(238,235,228,0.06)", cursor: "pointer" }} hover={{ background: "rgba(238,235,228,0.035)" }}>
+              <div><div style={{ fontSize: 14, fontWeight: 600 }}>{m.cliente}</div><div style={{ ...mono10, fontSize: 9.5, marginTop: 2 }}>{m.id} · {m.modo.toUpperCase()} · {m.sucursales} SUCURSAL{m.sucursales === 1 ? "" : "ES"}</div></div>
+              <div><div style={{ fontSize: 13, color: C.niebla }}>{m.sector}</div><div style={{ ...mono10, fontSize: 9.5, marginTop: 2 }}>VISITA {m.visita.toUpperCase()}</div></div>
+              <div style={{ fontFamily: MONO, fontSize: 12 }}>{m.procs.length}</div>
+              <div style={{ fontFamily: MONO, fontSize: 12 }}>{med} / {m.procs.length}</div>
+              <div style={{ fontFamily: MONO, fontSize: 12 }}>{h1(m.procs.reduce((s2, p) => s2 + ahorroHorasSemana(p), 0))}</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, ...mono10, color: C.papel }}><Dot color={est[1]} />{est[0]}</div>
+            </H>
+          );
+        })}
+        <div style={{ display: "flex", gap: 18, padding: "14px 0 6px", flexWrap: "wrap" }}>
+          {GUIA_VISITA.slice(0, 3).map(([t, d]) => <div key={t} style={{ flex: 1, minWidth: 220 }}><div style={{ ...mono10, color: C.papel }}>{t.toUpperCase()}</div><div style={{ fontSize: 12.5, color: C.niebla, lineHeight: 1.4, marginTop: 3, textWrap: "pretty" }}>{d}</div></div>)}
+        </div>
+      </Glass>
+      {nuevo && (
+        <Glass style={{ display: "flex", flexDirection: "column", gap: 12, alignSelf: "start" }}>
+          <Eyebrow>NUEVO MAPA · LEVANTAMIENTO</Eyebrow>
+          <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>Cliente<input value={form.cliente} onChange={(e) => setForm((f) => ({ ...f, cliente: e.target.value }))} placeholder="Nombre del negocio" style={{ height: 44, padding: "0 16px", borderRadius: 999, background: C.p2, border: `1px solid ${C.borde}`, color: C.papel, fontSize: 13, outline: "none" }} /></label>
+          <div style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>Sector<div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>{SECTORES.map((o) => <button key={o} type="button" onClick={() => setForm((f) => ({ ...f, sector: o }))} style={{ ...chip(form.sector === o), height: 32, padding: "0 11px", fontSize: 11.5 }}>{o}</button>)}</div></div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
+            <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>Sucursales<input value={form.sucursales} inputMode="numeric" onChange={(e) => setForm((f) => ({ ...f, sucursales: Number(e.target.value.replace(/[^0-9]/g, "")) || 1 }))} style={{ height: 44, padding: "0 14px", borderRadius: 999, background: C.p2, border: `1px solid ${C.borde}`, color: C.papel, fontFamily: MONO, fontSize: 13, outline: "none" }} /></label>
+            <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>Fecha de visita<input value={form.visita} onChange={(e) => setForm((f) => ({ ...f, visita: e.target.value }))} placeholder="hoy" style={{ height: 44, padding: "0 14px", borderRadius: 999, background: C.p2, border: `1px solid ${C.borde}`, color: C.papel, fontSize: 13, outline: "none" }} /></label>
+            <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>Costo hora personal<input value={form.costoCliente} inputMode="numeric" onChange={(e) => setForm((f) => ({ ...f, costoCliente: Number(e.target.value.replace(/[^0-9]/g, "")) || 0 }))} style={{ height: 44, padding: "0 14px", borderRadius: 999, background: C.p2, border: `1px solid ${C.borde}`, color: C.papel, fontFamily: MONO, fontSize: 13, outline: "none" }} /></label>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>Cómo empezar
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+              {(["Guiado", "Desde cero"] as const).map((m) => <button key={m} type="button" onClick={() => setForm((f) => ({ ...f, modo: m }))} style={{ textAlign: "left", padding: "12px 14px", borderRadius: 16, border: `1px solid ${form.modo === m ? C.papel : C.borde}`, background: form.modo === m ? "rgba(238,235,228,0.08)" : "transparent", color: C.papel, cursor: "pointer" }}><div style={{ fontSize: 14, fontWeight: 600 }}>{m}</div><div style={{ fontSize: 12, color: C.niebla, marginTop: 3, lineHeight: 1.35 }}>{m === "Guiado" ? `Carga los ${(GUIAS[form.sector] ?? []).length || "—"} procesos típicos de ${form.sector.toLowerCase()} con sus pasos; tú mides y ajustas en la visita.` : "Inventario vacío: agregas cada proceso y paso como lo veas en el piso."}</div></button>)}
+            </div>
+          </div>
+          <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}><SB onClick={() => setNuevo(false)}>Cancelar</SB><PB onClick={crear}>Crear mapa</PB></div>
+        </Glass>
+      )}
+    </section>
+  );
+}
 
-  const cur = procs.find((p) => p.id === sel) ?? procs[0];
+/* ---------- Un mapa: inventario → flujo → impacto → decisión ---------- */
+function MapaView({ mapa, onChange, onBack }: { mapa: Mapa; onChange: (m: Mapa) => void; onBack: () => void }) {
+  const { flash } = useUI();
+  const [tarifas] = useTarifas();
+  const [paso, setPaso] = useState<(typeof PASOS_MOD)[number]>("Inventario");
+  const [sel, setSel] = useState(mapa.procs[0]?.id ?? "P1");
+  const [guia, setGuia] = useState(mapa.modo === "Guiado" && mapa.procs.every((p) => p.estado === "Sin mapear"));
+  const procs = mapa.procs;
+  const setProcs = (f: Proceso[] | ((ps: Proceso[]) => Proceso[])) => onChange({ ...mapa, procs: typeof f === "function" ? f(mapa.procs) : f });
+  const costoCliente = mapa.costoCliente;
+  const setCostoCliente = (n: number) => onChange({ ...mapa, costoCliente: n });
+
+  const cur = procs.find((p) => p.id === sel) ?? procs[0] ?? ({ id: "—", area: "", nombre: "Sin procesos", dueno: "", personas: 0, herramienta: "", frecuencia: 0, porDia: true, dias: 0, dolor: 1, estado: "Sin mapear", pasos: [], hallazgos: [], esfuerzoH: 0, fase: "Fase 2", incluir: false } as Proceso);
   const upd = (id: string, patch: Partial<Proceso>) => setProcs((ps) => ps.map((p) => (p.id === id ? { ...p, ...patch } : p)));
   const updPaso = (id: string, i: number, patch: Partial<Proceso["pasos"][number]>) => setProcs((ps) => ps.map((p) => (p.id === id ? { ...p, pasos: p.pasos.map((x, k) => (k === i ? { ...x, ...patch } : x)) } : p)));
 
@@ -55,7 +129,7 @@ export function Flujos() {
 
   const crearCotizacion = () => {
     const lineas = tot.inc.map((p, i) => ({ c: `Hito ${i + 1} · ${p.nombre}`, etapa: (i === 0 ? "Diseñar" : "Construir") as "Diseñar" | "Construir", horas: p.esfuerzoH, monto: p.esfuerzoH * tarifas.precioHora }));
-    save("cotizacion-borrador", { cliente: `${CLIENTE_DEMO.nombre} · ${CLIENTE_DEMO.sector}`, proyecto: "Plataforma de operación · a partir del mapa de flujos", lineas, credito: 0, notas: `Alcance definido en el reporte de flujos del ${CLIENTE_DEMO.visita}. Ahorro medido: ${h1(tot.inc.reduce((s, p) => s + ahorroHorasSemana(p), 0))} h/semana (${mxn0(tot.ahorroInc)} al mes). Quick wins entregados sin costo en el diagnóstico.` });
+    save("cotizacion-borrador", { cliente: `${mapa.cliente} · ${mapa.sector}`, proyecto: `Plataforma de operación · ${mapa.cliente}`, lineas, credito: 0, notas: `Alcance definido en el reporte de flujos del ${mapa.visita}. Ahorro medido: ${h1(tot.inc.reduce((s, p) => s + ahorroHorasSemana(p), 0))} h/semana (${mxn0(tot.ahorroInc)} al mes). Quick wins entregados sin costo en el diagnóstico.` });
     flash("Borrador de cotización armado con los hitos del mapa");
     window.location.href = "/cotizaciones?tab=nueva";
   };
@@ -66,10 +140,11 @@ export function Flujos() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
         <div style={{ display: "flex", gap: 6 }}>
           {PASOS_MOD.map((p, i) => <H key={p} as="button" type="button" onClick={() => setPaso(p)} style={{ ...chip(paso === p), height: 40, padding: "0 16px", fontSize: 13 }} hover={paso === p ? {} : { borderColor: C.acero }}><span style={{ ...mono10, color: paso === p ? C.tinta : C.tenue, marginRight: 8 }}>0{i + 1}</span>{p}</H>)}
-          <Link href="/flujos/reporte?c=D2" target="_blank" style={{ ...chip(false, C.papel), height: 40, padding: "0 16px", fontSize: 13, display: "flex", alignItems: "center", borderColor: C.oxido }}><span style={{ ...mono10, marginRight: 8 }}>05</span>Reporte al cliente ↗</Link>
+          <Link href={`/flujos/reporte?c=${mapa.id}`} target="_blank" style={{ ...chip(false, C.papel), height: 40, padding: "0 16px", fontSize: 13, display: "flex", alignItems: "center", borderColor: C.oxido }}><span style={{ ...mono10, marginRight: 8 }}>05</span>Reporte al cliente ↗</Link>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 10, ...mono10 }}>
-          {CLIENTE_DEMO.nombre.toUpperCase()} · {CLIENTE_DEMO.sector.toUpperCase()} · VISITA {CLIENTE_DEMO.visita.toUpperCase().replace(" DE 2026", "")}
+          <button type="button" onClick={onBack} style={{ ...chip(false), height: 30, padding: "0 10px", fontSize: 11 }}>← Mapas</button>
+          {mapa.cliente.toUpperCase()} · {mapa.sector.toUpperCase()} · VISITA {mapa.visita.toUpperCase().replace(" DE 2026", "")}
           <label style={{ display: "flex", alignItems: "center", gap: 6, color: C.niebla }}>COSTO HORA DEL PERSONAL<input value={costoCliente} inputMode="numeric" onChange={(e) => setCostoCliente(Number(e.target.value.replace(/[^0-9]/g, "")) || 0)} style={{ width: 64, height: 30, borderRadius: 999, background: C.p2, border: `1px solid ${C.borde}`, color: C.papel, fontFamily: MONO, fontSize: 11, textAlign: "center", outline: "none" }} />MXN</label>
         </div>
       </div>
@@ -81,12 +156,27 @@ export function Flujos() {
         ))}
       </div>
 
+      {/* Guía de visita (modo guiado) */}
+      {guia && (
+        <div style={{ background: "rgba(238,235,228,0.94)", color: C.tinta, borderRadius: 24, padding: "18px 22px", display: "grid", gridTemplateColumns: "1fr auto", gap: 16, alignItems: "start" }}>
+          <div>
+            <div style={{ ...mono10, color: C.acero }}>LEVANTAMIENTO GUIADO · {mapa.sector.toUpperCase()} · {procs.filter((p) => p.estado !== "Sin mapear").length} DE {procs.length} PROCESOS MEDIDOS</div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3,minmax(0,1fr))", gap: "10px 18px", marginTop: 10 }}>
+              {GUIA_VISITA.map(([t, d], i) => <div key={t} style={{ display: "grid", gridTemplateColumns: "20px 1fr", gap: 8 }}><span style={{ fontFamily: MONO, fontSize: 11, color: C.acero }}>0{i + 1}</span><div><div style={{ fontSize: 13, fontWeight: 600 }}>{t}</div><div style={{ fontSize: 12, color: C.acero, lineHeight: 1.4, textWrap: "pretty" }}>{d}</div></div></div>)}
+            </div>
+            <div style={{ fontSize: 12.5, color: C.acero, marginTop: 10 }}>Los procesos cargados son los típicos del sector: quita los que no existan en este negocio, agrega los que falten y mide cada paso en el piso. Al terminar un proceso, márcalo como Medido.</div>
+          </div>
+          <button type="button" onClick={() => setGuia(false)} style={{ height: 34, padding: "0 14px", borderRadius: 999, border: `1px solid ${C.tinta}`, background: "transparent", color: C.tinta, fontSize: 12, cursor: "pointer" }}>Ocultar guía</button>
+        </div>
+      )}
+
       {/* 01 Inventario */}
       {paso === "Inventario" && (
         <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 16 }}>
           <Glass pad="4px 22px 10px" radius={24}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "16px 0 4px" }}><div style={{ fontWeight: 900, fontSize: 22, letterSpacing: "-0.02em" }}>INVENTARIO DE PROCESOS</div><SB small onClick={() => { const id = "P" + (procs.length + 1); setProcs((ps) => [...ps, { id, area: "Por definir", nombre: "Nuevo proceso", dueno: "—", personas: 1, herramienta: "—", frecuencia: 1, porDia: true, dias: 6, dolor: 1, estado: "Sin mapear", pasos: [], hallazgos: [], esfuerzoH: 8, fase: "Fase 2", incluir: false }]); setSel(id); setPaso("Flujo"); }}>+ Proceso</SB></div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "16px 0 4px" }}><div style={{ fontWeight: 900, fontSize: 22, letterSpacing: "-0.02em" }}>INVENTARIO DE PROCESOS</div><SB small onClick={() => { const id = "P" + (Math.max(0, ...procs.map((x) => Number(x.id.replace(/\D/g, "")) || 0)) + 1); setProcs((ps) => [...ps, { id, area: "Por definir", nombre: "Nuevo proceso", dueno: "—", personas: 1, herramienta: "—", frecuencia: 1, porDia: true, dias: 6, dolor: 1, estado: "Sin mapear", pasos: [], hallazgos: [], esfuerzoH: 8, fase: "Fase 2", incluir: false }]); setSel(id); setPaso("Flujo"); }}>+ Proceso</SB></div>
             <div style={{ display: "grid", gridTemplateColumns: "110px 1.6fr 1fr 1fr 90px 110px 110px", gap: 12, padding: "10px 0", borderBottom: "1px solid rgba(238,235,228,0.09)" }}>{["ÁREA", "PROCESO", "DUEÑO · PERSONAS", "HERRAMIENTA HOY", "DOLOR", "H/SEMANA", "ESTADO"].map((h) => <div key={h} style={mono10}>{h}</div>)}</div>
+            {procs.length === 0 && <div style={{ padding: "22px 0", fontSize: 13.5, color: C.niebla }}>Mapa en blanco. Agrega el primer proceso con "+ Proceso": el que más duela primero.</div>}
             {procs.map((p) => (
               <H key={p.id} onClick={() => { setSel(p.id); setPaso("Flujo"); }} style={{ display: "grid", gridTemplateColumns: "110px 1.6fr 1fr 1fr 90px 110px 110px", gap: 12, padding: "12px 0", alignItems: "center", borderBottom: "1px solid rgba(238,235,228,0.06)", cursor: "pointer", background: sel === p.id ? "rgba(238,235,228,0.05)" : "transparent" }} hover={{ background: "rgba(238,235,228,0.035)" }}>
                 <div style={{ ...mono10, color: C.niebla }}>{p.area.toUpperCase()}</div>
@@ -150,6 +240,7 @@ export function Flujos() {
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 10, gap: 10 }}>
                 <SB small onClick={() => setProcs((ps) => ps.map((p) => (p.id === cur.id ? { ...p, pasos: [...p.pasos, { p: "Nuevo paso", quien: "—", herr: "—", min: 5, espera: 0, accion: "Mantener", minNuevo: 5 }] } : p)))}>+ Paso</SB>
                 <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                  <button type="button" onClick={() => { if (procs.length <= 1) return; const rest = procs.filter((p) => p.id !== cur.id); setProcs(rest); setSel(rest[0].id); flash("Proceso quitado del mapa"); }} style={{ ...chip(false), height: 30, padding: "0 10px", fontSize: 11, color: C.niebla, marginRight: 8 }}>Quitar proceso</button>
                   <span style={mono10}>ESTADO</span>
                   {(["Sin mapear", "Mapeado", "Medido", "Propuesto"] as const).map((e) => <button key={e} type="button" onClick={() => upd(cur.id, { estado: e })} style={{ ...chip(cur.estado === e), height: 30, padding: "0 10px", fontSize: 11 }}>{e}</button>)}
                 </div>
@@ -222,7 +313,7 @@ export function Flujos() {
           </Glass>
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <div style={{ background: "rgba(238,235,228,0.94)", color: C.tinta, borderRadius: 28, padding: 24, display: "flex", flexDirection: "column", gap: 10 }}>
-              <div style={{ ...mono10, color: C.acero }}>VEREDICTO DEL MAPA · {CLIENTE_DEMO.nombre.toUpperCase()}</div>
+              <div style={{ ...mono10, color: C.acero }}>VEREDICTO DEL MAPA · {mapa.cliente.toUpperCase()}</div>
               <div style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 900, fontSize: 20, letterSpacing: "-0.02em", lineHeight: 1.1 }}><Dot color={veredicto.c} size={9} />{veredicto.t}</div>
               <div style={{ fontSize: 13, color: C.acero, lineHeight: 1.45, textWrap: "pretty" }}>{veredicto.d}</div>
               <div style={{ borderTop: `1px solid ${C.tinta}`, marginTop: 4 }}>
@@ -230,7 +321,7 @@ export function Flujos() {
               </div>
               <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 4 }}>
                 <PB small onClick={crearCotizacion} disabled={tot.inc.length === 0} style={{ background: C.tinta, boxShadow: "none", opacity: tot.inc.length ? 1 : 0.5 }}>Crear cotización con estos hitos</PB>
-                <Link href="/flujos/reporte?c=D2" target="_blank" style={{ height: 36, padding: "0 14px", borderRadius: 999, border: `1px solid ${C.tinta}`, color: C.tinta, fontSize: 12, display: "flex", alignItems: "center" }}>Reporte al cliente</Link>
+                <Link href={`/flujos/reporte?c=${mapa.id}`} target="_blank" style={{ height: 36, padding: "0 14px", borderRadius: 999, border: `1px solid ${C.tinta}`, color: C.tinta, fontSize: 12, display: "flex", alignItems: "center" }}>Reporte al cliente</Link>
               </div>
             </div>
             <Glass style={{ display: "flex", flexDirection: "column", gap: 8 }}>

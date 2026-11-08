@@ -1,17 +1,20 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { PaperDoc } from "@/components/paper";
 import { load } from "@/lib/store";
 import { TARIFAS_BASE, mxn0, type Tarifas } from "@/lib/tarifas";
-import { PROCESOS, CLIENTE_DEMO, minTotal, esperaTotal, minNuevo, ejecSemana, horasSemanaActual, ahorroHorasSemana, ahorroMesMXN, recapturas, type Proceso } from "@/lib/flujos";
+import { MAPA_DEMO, minTotal, esperaTotal, minNuevo, ejecSemana, horasSemanaActual, ahorroHorasSemana, ahorroMesMXN, recapturas, type Mapa } from "@/lib/flujos";
 
 const h1 = (n: number) => (Math.round(n * 10) / 10).toLocaleString("en-US");
 
-export default function ReporteFlujos() {
-  const [procs, setProcs] = useState<Proceso[]>(PROCESOS);
-  const [costo, setCosto] = useState(TARIFAS_BASE.costoHoraCliente);
+function ReporteFlujos() {
+  const sp = useSearchParams();
+  const [mapa, setMapa] = useState<Mapa>(MAPA_DEMO);
   const [t, setT] = useState<Tarifas>(TARIFAS_BASE);
-  useEffect(() => { const d = load<{ procs?: Proceso[]; costoCliente?: number }>("flujos-D2", {}); if (d.procs) setProcs(d.procs); if (d.costoCliente) setCosto(d.costoCliente); setT({ ...TARIFAS_BASE, ...load<Partial<Tarifas>>("tarifas", {}) }); }, []);
+  useEffect(() => { const id = sp.get("c") ?? "D2"; const d = load<{ mapas?: Mapa[] }>("flujos-mapas", {}); const m = d.mapas?.find((x) => x.id === id); if (m) setMapa(m); setT({ ...TARIFAS_BASE, ...load<Partial<Tarifas>>("tarifas", {}) }); }, [sp]);
+  const procs = mapa.procs, costo = mapa.costoCliente;
+  const CLIENTE_DEMO = { nombre: mapa.cliente, sector: mapa.sector, sucursales: mapa.sucursales, visita: mapa.visita, code: mapa.id };
   const inc = procs.filter((p) => p.incluir);
   const quick = procs.filter((p) => p.fase === "Quick win");
   const fase2 = procs.filter((p) => p.fase === "Fase 2");
@@ -72,4 +75,8 @@ export default function ReporteFlujos() {
       <div className="sign"><div>Julio César Ibarra<br /><span className="mono">FUNDADOR · RONIN STUDIO</span></div><div>Recibido por<br /><span className="mono">{CLIENTE_DEMO.nombre.toUpperCase()}</span></div></div>
     </PaperDoc>
   );
+}
+
+export default function Page() {
+  return <Suspense fallback={null}><ReporteFlujos /></Suspense>;
 }

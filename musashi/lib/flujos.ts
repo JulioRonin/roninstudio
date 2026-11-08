@@ -51,3 +51,83 @@ export const ahorroMesMXN = (p: Proceso, costoHoraCliente: number) => ahorroHora
 export const recapturas = (p: Proceso) => p.pasos.filter((x) => x.atoro).length;
 export const ACCION_COLOR: Record<Accion, string> = { Mantener: "#A9A6A0", Simplificar: "#C98A3C", Automatizar: "#EEEBE4", "Agente IA": "#B05139", Eliminar: "#5B6068" };
 export const FASE_COLOR: Record<Fase, string> = { "Construir ahora": "#B05139", "Fase 2": "#C98A3C", "Quick win": "#4C8141", "No conviene": "#5B6068" };
+
+/* ---------- Mapas por cliente ---------- */
+export type Mapa = { id: string; cliente: string; sector: string; sucursales: number; visita: string; modo: "Guiado" | "Desde cero"; costoCliente: number; procs: Proceso[]; creado: string };
+
+export const SECTORES = ["Restaurante con sucursales", "Clínica", "Escuela privada", "Gimnasio", "Taller", "Notaría", "Manufactura", "Otro"] as const;
+
+/* Plantillas por sector para el arranque guiado: procesos típicos con sus pasos.
+   Los minutos van en cero: se miden en la visita. */
+const T = (area: string, nombre: string, dueno: string, herramienta: string, frecuencia: number, porDia: boolean, dias: number, pasos: [string, string, string][]): Proceso => ({
+  id: "", area, nombre, dueno, personas: 1, herramienta, frecuencia, porDia, dias, dolor: 2, estado: "Sin mapear", esfuerzoH: 16, fase: "Fase 2", incluir: false, hallazgos: [],
+  pasos: pasos.map(([p, quien, herr]) => ({ p, quien, herr, min: 0, espera: 0, accion: "Mantener" as Accion, minNuevo: 0 })),
+});
+export const GUIAS: Record<string, Proceso[]> = {
+  "Restaurante con sucursales": [
+    T("Servicio", "Toma de orden y comanda a cocina", "Gerente de piso", "Libreta · POS", 80, true, 6, [["Mesero toma la orden", "Mesero", "Papel"], ["Entrega a cocina", "Mesero", "A pie"], ["Cocina prepara y avisa", "Cocina", "Voz"], ["Caja captura la cuenta", "Cajero", "POS"]]),
+    T("Caja", "Cierre de caja por turno", "Encargado de turno", "Hoja de cálculo", 2, true, 7, [["Imprime tickets del turno", "Cajero", "POS"], ["Captura ventas por forma de pago", "Cajero", "Excel"], ["Cuenta efectivo y concilia", "Cajero", "Manual"], ["Reporta al dueño", "Cajero", "WhatsApp"]]),
+    T("Compras", "Compras e inventario", "Dueño", "Papel · WhatsApp", 2, false, 1, [["Conteo físico", "Encargado", "Papel"], ["Pasa el conteo a Excel", "Encargado", "Excel"], ["Pide a proveedores", "Dueño", "WhatsApp"]]),
+    T("Dirección", "Reporte semanal al dueño", "Dueño", "Excel · WhatsApp", 1, false, 1, [["Junta cierres de la semana", "Dueño", "WhatsApp"], ["Suma ventas por sucursal", "Dueño", "Excel"], ["Revisa y decide", "Dueño", "—"]]),
+    T("Servicio", "Reservas y eventos", "Gerente de piso", "WhatsApp · libreta", 12, true, 7, [["Contesta mensajes de reservación", "Gerente", "WhatsApp"], ["Anota en la libreta", "Gerente", "Papel"], ["Confirma un día antes", "Gerente", "WhatsApp"]]),
+    T("Administración", "Nómina y propinas", "Dueño", "Excel", 1, false, 1, [["Suma propinas por mesero", "Dueño", "Excel"], ["Calcula nómina", "Dueño", "Excel"], ["Paga y avisa", "Dueño", "Banco"]]),
+  ],
+  "Clínica": [
+    T("Recepción", "Agenda de citas", "Recepción", "WhatsApp · libreta", 30, true, 6, [["Paciente pide cita por WhatsApp o llamada", "Recepción", "WhatsApp"], ["Busca espacio en la agenda", "Recepción", "Libreta"], ["Confirma y recuerda", "Recepción", "WhatsApp"], ["Registra llegada", "Recepción", "Papel"]]),
+    T("Consulta", "Expediente del paciente", "Médico", "Papel · carpeta", 25, true, 6, [["Busca el expediente físico", "Recepción", "Archivo"], ["Médico anota la consulta", "Médico", "Papel"], ["Receta e indicaciones", "Médico", "Papel"], ["Archiva", "Recepción", "Archivo"]]),
+    T("Caja", "Cobro y factura", "Recepción", "Terminal · portal SAT", 25, true, 6, [["Cobra la consulta", "Recepción", "Terminal"], ["Emite factura si la piden", "Recepción", "Portal"], ["Corte del día", "Recepción", "Excel"]]),
+    T("Dirección", "Reporte de consultas e ingresos", "Director", "Excel", 1, false, 1, [["Junta cortes y agendas", "Director", "Papel"], ["Captura en Excel", "Director", "Excel"], ["Revisa", "Director", "—"]]),
+    T("Seguimiento", "Recordatorios y seguimiento a pacientes", "Recepción", "WhatsApp", 15, true, 6, [["Revisa quién toca seguimiento", "Recepción", "Libreta"], ["Escribe uno por uno", "Recepción", "WhatsApp"]]),
+  ],
+  "Escuela privada": [
+    T("Control escolar", "Inscripción y reinscripción", "Control escolar", "Formatos · Excel", 10, true, 5, [["Padre llena formatos", "Padre", "Papel"], ["Captura en Excel", "Control escolar", "Excel"], ["Arma el expediente", "Control escolar", "Carpeta"], ["Entrega lista a dirección", "Control escolar", "Correo"]]),
+    T("Cobranza", "Cobro de colegiaturas", "Administración", "Excel · banco", 1, false, 1, [["Revisa quién debe", "Administración", "Excel"], ["Manda recordatorios", "Administración", "WhatsApp"], ["Concilia pagos del banco", "Administración", "Excel"], ["Emite recibos", "Administración", "Papel"]]),
+    T("Académico", "Reportes de calificaciones", "Coordinación", "Excel", 1, false, 1, [["Maestros entregan listas", "Maestros", "Papel"], ["Captura en Excel", "Coordinación", "Excel"], ["Imprime boletas", "Coordinación", "Impresora"]]),
+    T("Comunicación", "Avisos a padres", "Dirección", "WhatsApp", 3, true, 5, [["Redacta el aviso", "Dirección", "WhatsApp"], ["Manda por grupos", "Dirección", "WhatsApp"], ["Responde dudas", "Dirección", "WhatsApp"]]),
+  ],
+  "Gimnasio": [
+    T("Recepción", "Alta de socio y cobro de membresía", "Recepción", "Excel · terminal", 5, true, 6, [["Llena formato", "Socio", "Papel"], ["Captura en Excel", "Recepción", "Excel"], ["Cobra", "Recepción", "Terminal"], ["Da acceso", "Recepción", "Manual"]]),
+    T("Recepción", "Control de acceso y vigencias", "Recepción", "Lista · memoria", 120, true, 7, [["Socio llega", "Socio", "—"], ["Busca vigencia", "Recepción", "Excel"], ["Deja pasar o cobra", "Recepción", "Terminal"]]),
+    T("Cobranza", "Renovaciones y recordatorios", "Dueño", "WhatsApp", 1, false, 1, [["Revisa quién vence", "Dueño", "Excel"], ["Escribe uno por uno", "Dueño", "WhatsApp"]]),
+    T("Operación", "Clases y reservas", "Coach", "WhatsApp · pizarrón", 6, true, 6, [["Socio reserva por WhatsApp", "Coach", "WhatsApp"], ["Anota en el pizarrón", "Coach", "Pizarrón"], ["Pasa lista", "Coach", "Papel"]]),
+  ],
+  "Taller": [
+    T("Recepción", "Orden de trabajo", "Encargado", "Papel", 6, true, 6, [["Cliente describe el problema", "Cliente", "—"], ["Llena orden de trabajo", "Encargado", "Papel"], ["Asigna a técnico", "Encargado", "Voz"]]),
+    T("Ventas", "Cotización al cliente", "Encargado", "Excel · WhatsApp", 6, true, 6, [["Técnico diagnostica", "Técnico", "—"], ["Encargado cotiza", "Encargado", "Excel"], ["Manda por WhatsApp y espera", "Encargado", "WhatsApp"]]),
+    T("Operación", "Control de horas y avance", "Encargado", "Memoria", 6, true, 6, [["Pregunta a cada técnico", "Encargado", "Voz"], ["Anota en la orden", "Encargado", "Papel"]]),
+    T("Compras", "Refacciones", "Encargado", "WhatsApp", 4, true, 6, [["Pide al proveedor", "Encargado", "WhatsApp"], ["Recibe y revisa", "Encargado", "Papel"], ["Carga al trabajo", "Encargado", "Papel"]]),
+    T("Caja", "Entrega, cobro y factura", "Encargado", "Terminal · portal", 6, true, 6, [["Avisa al cliente", "Encargado", "WhatsApp"], ["Cobra", "Encargado", "Terminal"], ["Factura si la piden", "Encargado", "Portal"]]),
+  ],
+  "Notaría": [
+    T("Recepción", "Alta de trámite y expediente", "Recepción", "Papel · Word", 8, true, 5, [["Cliente trae documentos", "Cliente", "Papel"], ["Revisa requisitos", "Recepción", "Lista"], ["Abre expediente", "Recepción", "Carpeta"], ["Asigna abogado", "Recepción", "Voz"]]),
+    T("Operación", "Seguimiento del trámite", "Abogado", "Word · correo", 8, true, 5, [["Redacta el documento", "Abogado", "Word"], ["Pide faltantes al cliente", "Abogado", "WhatsApp"], ["Programa firma", "Recepción", "Agenda"]]),
+    T("Agenda", "Citas y firmas", "Recepción", "Agenda de papel", 10, true, 5, [["Cliente pide cita", "Recepción", "Llamada"], ["Busca espacio", "Recepción", "Agenda"], ["Confirma", "Recepción", "WhatsApp"]]),
+    T("Caja", "Cobro, honorarios y factura", "Administración", "Excel · portal", 8, true, 5, [["Calcula honorarios y derechos", "Administración", "Excel"], ["Cobra", "Administración", "Terminal"], ["Factura", "Administración", "Portal"]]),
+  ],
+  "Manufactura": [
+    T("Producción", "Programación de la producción", "Supervisor", "Excel · pizarrón", 1, true, 6, [["Recibe pedidos", "Supervisor", "Correo"], ["Arma el programa del día", "Supervisor", "Excel"], ["Asigna estaciones", "Supervisor", "Pizarrón"]]),
+    T("Producción", "Registro de producción por estación", "Operadores", "Hoja de papel", 3, true, 6, [["Operador anota piezas por hora", "Operador", "Papel"], ["Supervisor recoge hojas", "Supervisor", "A pie"], ["Captura en Excel", "Supervisor", "Excel"]]),
+    T("Calidad", "Registro de rechazos y retrabajos", "Calidad", "Papel", 3, true, 6, [["Inspecciona", "Calidad", "—"], ["Anota rechazos", "Calidad", "Papel"], ["Reporta a fin de turno", "Calidad", "Excel"]]),
+    T("Mantenimiento", "Paros y mantenimiento", "Mantenimiento", "WhatsApp · bitácora", 2, true, 6, [["Operador avisa paro", "Operador", "Voz"], ["Mantenimiento atiende", "Mantenimiento", "—"], ["Anota en bitácora", "Mantenimiento", "Papel"]]),
+    T("Dirección", "Indicadores del turno", "Gerente", "Excel", 2, true, 6, [["Junta hojas de producción y calidad", "Gerente", "Papel"], ["Captura y calcula", "Gerente", "Excel"], ["Revisa en la junta", "Gerente", "—"]]),
+  ],
+};
+
+export const MAPA_DEMO: Mapa = { id: "D2", cliente: CLIENTE_DEMO.nombre, sector: CLIENTE_DEMO.sector, sucursales: CLIENTE_DEMO.sucursales, visita: CLIENTE_DEMO.visita, modo: "Guiado", costoCliente: 95, procs: PROCESOS, creado: "22 oct 2026" };
+
+export function nuevoMapa(o: { cliente: string; sector: string; sucursales: number; visita: string; modo: "Guiado" | "Desde cero"; costoCliente: number }): Mapa {
+  const id = "M" + Date.now().toString(36).toUpperCase().slice(-5);
+  const base = o.modo === "Guiado" ? (GUIAS[o.sector] ?? []) : [];
+  const procs = base.map((p, i) => ({ ...p, id: "P" + (i + 1), pasos: p.pasos.map((x) => ({ ...x })), hallazgos: [] }));
+  return { id, ...o, procs, creado: new Date().toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" }) };
+}
+
+/* Guía de visita: lo que se pregunta y observa en el levantamiento. */
+export const GUIA_VISITA: [string, string][] = [
+  ["Antes de llegar", "Confirma quién decide y quién ejecuta cada proceso. Pide 90 minutos con el dueño y acceso al piso en hora de operación."],
+  ["Recorrido", "Camina el flujo real siguiendo a la persona, no al manual. Anota herramienta, papel y pantalla en cada paso."],
+  ["Medición", "Cronometra tres ejecuciones por paso y usa la mediana. Separa trabajo de espera. Pregunta cuántas veces al día pasa."],
+  ["Puntos donde se atora", "Marca cada recaptura (mismo dato escrito dos veces) y cada espera mayor a 10 minutos. Pregunta qué pasa cuando sale mal."],
+  ["Costo de la hora", "Pregunta sueldos promedio por puesto para fijar el costo hora del personal; si no lo dan, usa el de la casa y dilo en el reporte."],
+  ["Cierre de visita", "Lee los hallazgos en voz alta con el dueño antes de irte. Lo que no reconozca como cierto, se quita."],
+];
