@@ -97,6 +97,9 @@ export default function Estudio() {
   const goIdeas = () => { setStep(2); flash("Guionista: 3 ideas listas"); };
   const fabricate = (i: number) => { setIdea(i); setShots(makeShots(brief)); setVoice("pendiente"); setStep(3); };
   const generateAll = () => {
+    // Manda el plan de tomas al Productor (Hermes). En demo responde "pendiente de configurar" y seguimos con la simulación.
+    fetch("/api/hermes/jobs", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ agente: "productor", evento: "producir", pieza: { tema: topic, brief, idea: ideas[idea ?? 0]?.hook }, tomas: shots.map((s) => ({ id: s.id, tipo: s.kind, t: s.t, prompt: s.prompt, modelo: s.model })) }) })
+      .then((r) => r.json()).then((r) => flash(r.enviado ? "Plan de tomas enviado al Productor en Hermes" : "Hermes sin configurar: simulación local")).catch(() => {});
     setShots((ss) => ss.map((s) => (s.kind === "A-ROLL" && brief.face === "Julio en cámara" ? { ...s, status: "listo" } : { ...s, status: "en cola" })));
     shots.forEach((s, i) => {
       if (s.kind === "A-ROLL" && brief.face === "Julio en cámara") return;

@@ -3,11 +3,12 @@ import React, { useEffect, useState, type CSSProperties } from "react";
 import { useTarifas, margenPct, mxn0 } from "@/lib/tarifas";
 import { C, MONO } from "@/lib/tokens";
 import { useUI, PageHead } from "@/components/shell";
+import { AGENTES } from "@/lib/hermes-agentes";
 
 /* ---------- Datos demo (idénticos al prototipo; sin claves reales) ---------- */
 const SECS: [string, string][] = [
   ["Tarifas y costos", "POR HORA · MXN"], ["Usuarios y roles", "3 USUARIOS"], ["Sectores y guías", "6 SECTORES"], ["Plantillas de documentos", "6 PLANTILLAS"],
-  ["Datos fiscales", "EMISOR CFDI"], ["Integraciones", "10 SERVICIOS"], ["Tope de tokens", "POR AGENTE Y TOTAL"],
+  ["Datos fiscales", "EMISOR CFDI"], ["Integraciones", "10 SERVICIOS"], ["Hermes Agent", "13 AGENTES · PUENTE"], ["Tope de tokens", "POR AGENTE Y TOTAL"],
 ];
 const USERS = ([
   ["JC", "Julio César Ibarra", "DUEÑO", "Todos los módulos", "ACTIVO", C.papel, C.tinta],
@@ -55,7 +56,12 @@ export default function Configuracion() {
   const { flash } = useUI();
   const [sec, setSec] = useState("Integraciones");
   const [tarifas, setTarifas, resetTarifas] = useTarifas();
-  useEffect(() => { try { if (new URLSearchParams(window.location.search).get("sec") === "tarifas") setSec("Tarifas y costos"); } catch {} }, []);
+  useEffect(() => { try { const q = new URLSearchParams(window.location.search).get("sec"); if (q === "tarifas") setSec("Tarifas y costos"); if (q === "hermes") setSec("Hermes Agent"); } catch {} }, []);
+  type Estado = { demo: boolean; vars: Record<string, boolean>; hermes: { alcanzable: boolean; detalle: string }; webhook: { alcanzable: boolean; detalle: string }; ahora: string };
+  const [estado, setEstado] = useState<Estado | null>(null);
+  const [probando, setProbando] = useState(false);
+  const probar = async () => { setProbando(true); try { const r = await fetch("/api/hermes/estado", { cache: "no-store" }); setEstado(await r.json()); } catch { flash("No se pudo consultar el estado"); } finally { setProbando(false); } };
+  useEffect(() => { if (sec === "Hermes Agent" && !estado) void probar(); }, [sec]); // eslint-disable-line react-hooks/exhaustive-deps
   const [fixed, setFixed] = useState(false);
   const [cap, setCap] = useState(3000);
 
@@ -185,6 +191,40 @@ export default function Configuracion() {
                   </div>
                 );
               })}
+            </div>
+          )}
+
+          {sec === "Hermes Agent" && (
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 360px", gap: 20 }}>
+              <div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(3,minmax(0,1fr))", gap: 10, marginBottom: 14 }}>
+                  {[["MUSASHI → HERMES", estado?.webhook, "Webhook firmado (HMAC V2) a la ruta musashi"], ["HERMES → MUSASHI", estado ? { alcanzable: estado.vars.MUSASHI_API_KEY, detalle: estado.vars.MUSASHI_API_KEY ? "MUSASHI_API_KEY configurada" : "sin MUSASHI_API_KEY · modo demo" } : undefined, "Contexto y propuestas con llave"], ["API SERVER", estado?.hermes, "/health del servidor de Hermes"]].map(([k, st, d]) => {
+                    const e = st as { alcanzable: boolean; detalle: string } | undefined; const c = !e ? C.acero : e.alcanzable ? C.olivo : C.ambar;
+                    return <div key={k as string} style={{ background: "rgba(12,15,20,0.45)", border: "1px solid rgba(238,235,228,0.08)", borderRadius: 18, padding: 14 }}><div style={{ display: "flex", alignItems: "center", gap: 7, ...LBL, color: C.tenue }}><span style={{ width: 7, height: 7, borderRadius: "50%", background: c, boxShadow: `0 0 8px ${c}` }} />{k as string}</div><div style={{ fontSize: 13, marginTop: 8 }}>{d as string}</div><div style={{ ...LBL, color: C.niebla, marginTop: 6, fontSize: 9.5 }}>{!e ? "CONSULTANDO…" : e.detalle.toUpperCase().slice(0, 60)}</div></div>;
+                  })}
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr 1fr 110px 90px", gap: 12, padding: "10px 0", borderBottom: "1px solid rgba(238,235,228,0.09)" }}>{["AGENTE", "GRUPO · DISPARO", "HORARIO", "DEJA", "APRUEBA"].map((h) => <div key={h} style={{ ...LBL, color: C.tenue }}>{h}</div>)}</div>
+                {AGENTES.map((a) => (
+                  <div key={a.id} style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr 1fr 110px 90px", gap: 12, padding: "10px 0", alignItems: "center", borderBottom: "1px solid rgba(238,235,228,0.05)", fontSize: 13 }}>
+                    <div><div>{a.nombre}</div><div style={{ ...LBL, color: C.tenue, fontSize: 9.5, marginTop: 2 }}>SKILL musashi-{a.id}</div></div>
+                    <div style={{ color: C.niebla, fontSize: 12.5 }}>{a.grupo} · {a.disparo}</div>
+                    <div style={{ fontFamily: MONO, fontSize: 11, color: a.cron === "webhook" ? C.oxido : a.cron === "manual" ? C.ambar : C.papel }}>{a.cron}</div>
+                    <div style={{ ...LBL, color: C.papel }}>{a.salida}</div>
+                    <div style={{ ...LBL, color: a.aprobacion ? C.olivo : C.ambar }}>{a.aprobacion ? "HUMANO" : "AUTO"}</div>
+                  </div>
+                ))}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 14, gap: 10 }}>
+                  <span style={{ fontSize: 12.5, color: C.tenue }}>Skills, horarios y configuración en <span style={{ fontFamily: MONO }}>musashi/hermes/</span> del repositorio. Higgsfield y ElevenLabs entran por MCP con la cuenta.</span>
+                  <button type="button" onClick={probar} disabled={probando} style={{ height: 36, padding: "0 14px", borderRadius: 999, background: "transparent", border: `1px solid ${C.borde2}`, color: C.papel, fontSize: 12, cursor: "pointer", opacity: probando ? 0.6 : 1 }}>{probando ? "Probando…" : "Probar conexión"}</button>
+                </div>
+              </div>
+              <div style={{ background: "rgba(238,235,228,0.94)", color: C.tinta, borderRadius: 24, padding: 22, display: "flex", flexDirection: "column", gap: 10, alignSelf: "start" }}>
+                <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.14em", color: C.acero }}>VARIABLES EN VERCEL</div>
+                {[["MUSASHI_API_KEY", "Llave que usan los agentes"], ["HERMES_WEBHOOK_URL", "Plataforma de webhooks · puerto 8644"], ["HERMES_WEBHOOK_SECRET", "Mismo secreto de la ruta musashi"], ["HERMES_API_URL", "API server · puerto 8642"], ["HERMES_API_KEY", "API_SERVER_KEY de Hermes"]].map(([k, d]) => { const on = estado?.vars?.[k]; return <div key={k} style={{ borderTop: "1px solid #D6D2C9", padding: "8px 0", display: "grid", gridTemplateColumns: "1fr auto", gap: 8 }}><div><div style={{ fontFamily: MONO, fontSize: 11 }}>{k}</div><div style={{ fontSize: 12, color: C.acero }}>{d}</div></div><span style={{ ...LBL, color: on ? C.olivo : C.oxido, alignSelf: "center" }}>{estado ? (on ? "OK" : "FALTA") : "…"}</span></div>; })}
+                <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.14em", color: C.acero, marginTop: 6 }}>EN EL SERVIDOR DE HERMES</div>
+                {["curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash", "cp -r musashi/hermes/skills/* ~/.hermes/skills/musashi/", "hermes mcp login higgsfield", "hermes gateway install && ./cron.sh"].map((c) => <code key={c} style={{ display: "block", fontFamily: MONO, fontSize: 10.5, background: "#FBF9F4", border: "1px solid #D6D2C9", borderRadius: 8, padding: "6px 8px", whiteSpace: "pre-wrap", wordBreak: "break-all" }}>{c}</code>)}
+                <div style={{ fontSize: 12, color: C.acero, lineHeight: 1.4 }}>Sin variables, Musashi corre en modo demo: acepta propuestas y acusa recibo, pero no las guarda hasta que entre Supabase.</div>
+              </div>
             </div>
           )}
 

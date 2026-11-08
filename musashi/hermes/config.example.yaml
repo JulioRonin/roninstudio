@@ -1,0 +1,48 @@
+# Fragmentos para ~/.hermes/config.yaml (únelos con tu config existente).
+# Documentación: https://hermes-agent.nousresearch.com/docs
+
+# 1) Servidores MCP: Higgsfield y ElevenLabs con la cuenta (OAuth), no con API de pago.
+mcp_servers:
+  higgsfield:
+    url: "https://mcp.higgsfield.ai/mcp"      # confirma la URL en tu cuenta de Higgsfield
+    auth: oauth
+    tools:
+      include: ["generate_image", "generate_image_batch", "generate_video", "generate_video_batch", "jobs_wait", "balance", "models_explore", "media_*"]
+  elevenlabs:
+    url: "https://mcp.elevenlabs.io/mcp"       # confirma la URL en tu cuenta de ElevenLabs
+    auth: oauth
+
+# 2) Plataforma de webhooks: Musashi dispara al Productor, Mapeador y Planeador.
+platforms:
+  webhook:
+    enabled: true
+    extra:
+      port: 8644
+      secret: "${HERMES_WEBHOOK_SECRET}"
+      routes:
+        musashi:
+          events: []                              # acepta musashi.productor.producir, musashi.mapeador.visita, musashi.planeador.cotizacion_aceptada
+          secret: "${HERMES_WEBHOOK_SECRET}"
+          prompt: "Evento de Musashi {event_type} para el agente {agente}. Carga la skill musashi-{agente} y ejecútala con este payload: {__raw__}"
+          skills: [musashi-base, musashi-productor, musashi-mapeador, musashi-planeador]
+          deliver: "log"
+          coalesce:
+            key: "{agente}"
+            window_seconds: 10
+
+# 3) API server: Musashi lo usa para /health y, más adelante, para correr agentes bajo demanda.
+gateway:
+  api_server:
+    enabled: true
+    port: 8642
+    host: 127.0.0.1                             # detrás de un túnel o proxy con TLS si Musashi está en Vercel
+    key: "${HERMES_API_KEY}"
+    max_concurrent_runs: 4
+
+# 4) Skills de Musashi siempre disponibles
+skills:
+  auto_load: [musashi-base]
+  write_approval: true
+
+# 5) Modelo por defecto para los agentes (ajusta a tu proveedor)
+# hermes config set model anthropic/claude-sonnet-4-5
