@@ -1,5 +1,6 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Flujos } from "@/components/flujos";
 import { C, MONO } from "@/lib/tokens";
 import { H, PB } from "@/components/ui";
 import { useUI, PageHead } from "@/components/shell";
@@ -16,7 +17,7 @@ const STEPS: Step[] = [
 ];
 const LANES = ["MESERO", "COCINA", "CAJA"];
 
-const TABS = ["Bandeja exprés", "Diagnóstico completo"] as const;
+const TABS = ["Bandeja exprés", "Flujos de trabajo", "Diagnóstico completo"] as const;
 type Tab = (typeof TABS)[number];
 const SUBTABS = ["Guía de visita", "Mapa de flujo", "Hallazgos", "Plan", "PDF"] as const;
 type Sub = (typeof SUBTABS)[number];
@@ -77,13 +78,14 @@ function Pill({ label, active, onClick }: { label: string; active: boolean; onCl
 
 export default function Diagnosticos() {
   const { flash } = useUI();
-  const [tab, setTab] = useState<Tab>("Diagnóstico completo");
+  const [tab, setTab] = useState<Tab>("Flujos de trabajo");
+  useEffect(() => { try { const t = new URLSearchParams(window.location.search).get("tab"); if (t === "flujos") setTab("Flujos de trabajo"); else if (t === "expres") setTab("Bandeja exprés"); else if (t === "completo") setTab("Diagnóstico completo"); } catch {} }, []);
   const [sub, setSub] = useState<Sub>("Mapa de flujo");
   const [sel, setSel] = useState("s3");
   const [created, setCreated] = useState<number[]>([]);
 
   const isFull = tab === "Diagnóstico completo";
-  const subtitle = isFull ? "Negocio demo 2 · visita del 22 de octubre · en redacción" : "4 diagnósticos exprés esta semana · 2 sin contactar";
+  const subtitle = isFull ? "Negocio demo 2 · visita del 22 de octubre · en redacción" : tab === "Flujos de trabajo" ? "Negocio demo 2 · 7 procesos mapeados · de aquí salen el reporte, el filtro y la cotización" : "4 diagnósticos exprés esta semana · 2 sin contactar";
   const toQuote = () => flash("Cotización creada en Facturación · borrador");
   const openFull = () => { setTab("Diagnóstico completo"); setSub("Mapa de flujo"); };
 
@@ -116,9 +118,11 @@ export default function Diagnosticos() {
         )}
       </nav>
 
+      {tab === "Flujos de trabajo" && <Flujos />}
+
       <section style={{ padding: "22px 32px 56px" }}>
         {/* ---------- BANDEJA EXPRÉS ---------- */}
-        {!isFull && (
+        {tab === "Bandeja exprés" && (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(2,minmax(0,1fr))", gap: 16 }}>
             {INB.map((d, i) => {
               const hot = d.dot === C.oxido;

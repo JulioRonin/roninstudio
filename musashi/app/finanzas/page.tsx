@@ -24,7 +24,7 @@ const L = (k: string, a: number, b: number, o: LOpts = {}) => {
 };
 const ER = [
   L("Ingresos cobrados", 40000, 30000, { total: true }),
-  L("Horas al costo", 14000, 12000, { sub: true, cost: true }),
+  L("Horas al costo · 540 MXN/h", 14040, 11880, { sub: true, cost: true }),
   L("Subcontratos", 5000, 4000, { sub: true, cost: true }),
   L("Herramientas por proyecto", 3000, 2000, { sub: true, cost: true }),
   L("Margen bruto", 18000, 12000, { total: true }),
@@ -44,12 +44,12 @@ const MONTHS = MS.map((n, i) => ({
 
 /* Margen por proyecto */
 const PROJ: [string, string, number, number, number][] = [
-  ["Plataforma de operación", "NEGOCIO DEMO 2", 60000, 90, 22000],
-  ["Membresías y accesos", "NEGOCIO DEMO 5", 50000, 96, 28000],
-  ["Órdenes de trabajo", "NEGOCIO DEMO 6", 45000, 88, 26000],
-  ["Agenda y expediente", "NEGOCIO DEMO 4", 30000, 42, 14000],
-  ["Acompañamiento mensual", "NEGOCIO DEMO 3", 20000, 6, 2000],
-  ["Diagnóstico completo", "NEGOCIO DEMO 7", 10000, 6, 2500],
+  ["Plataforma de operación", "NEGOCIO DEMO 2", 60000, 90, 48600],
+  ["Membresías y accesos", "NEGOCIO DEMO 5", 50000, 96, 51840],
+  ["Órdenes de trabajo", "NEGOCIO DEMO 6", 45000, 88, 47520],
+  ["Agenda y expediente", "NEGOCIO DEMO 4", 30000, 42, 22680],
+  ["Acompañamiento mensual", "NEGOCIO DEMO 3", 20000, 6, 3240],
+  ["Diagnóstico completo", "NEGOCIO DEMO 7", 10000, 6, 3240],
 ];
 type PRow = { p: string; c: string; i: number; h: number; k: number; m: number; pct: number };
 const KEYS: (keyof PRow)[] = ["p", "i", "h", "k", "m", "pct"];

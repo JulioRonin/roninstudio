@@ -1,11 +1,12 @@
 "use client";
-import React, { useState, type CSSProperties } from "react";
+import React, { useEffect, useState, type CSSProperties } from "react";
+import { useTarifas, margenPct, mxn0 } from "@/lib/tarifas";
 import { C, MONO } from "@/lib/tokens";
 import { useUI, PageHead } from "@/components/shell";
 
 /* ---------- Datos demo (idénticos al prototipo; sin claves reales) ---------- */
 const SECS: [string, string][] = [
-  ["Usuarios y roles", "3 USUARIOS"], ["Sectores y guías", "6 SECTORES"], ["Plantillas de documentos", "6 PLANTILLAS"],
+  ["Tarifas y costos", "POR HORA · MXN"], ["Usuarios y roles", "3 USUARIOS"], ["Sectores y guías", "6 SECTORES"], ["Plantillas de documentos", "6 PLANTILLAS"],
   ["Datos fiscales", "EMISOR CFDI"], ["Integraciones", "10 SERVICIOS"], ["Tope de tokens", "POR AGENTE Y TOTAL"],
 ];
 const USERS = ([
@@ -53,6 +54,8 @@ function FiscalField({ k, v }: { k: string; v: string }) {
 export default function Configuracion() {
   const { flash } = useUI();
   const [sec, setSec] = useState("Integraciones");
+  const [tarifas, setTarifas, resetTarifas] = useTarifas();
+  useEffect(() => { try { if (new URLSearchParams(window.location.search).get("sec") === "tarifas") setSec("Tarifas y costos"); } catch {} }, []);
   const [fixed, setFixed] = useState(false);
   const [cap, setCap] = useState(3000);
 
@@ -85,6 +88,41 @@ export default function Configuracion() {
             <span style={{ fontWeight: 900, fontSize: 24, letterSpacing: "-0.02em", textTransform: "uppercase" }}>{sec}</span>
             <span style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.14em", color: C.tenue }}>{note}</span>
           </div>
+
+          {sec === "Tarifas y costos" && (
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: 20 }}>
+              <div>
+                {([
+                  ["costoHora", "Costo por hora", "Lo que nos cuesta una hora de trabajo: sueldo, herramientas y tokens prorrateados.", "MXN"],
+                  ["precioHora", "Precio por hora", "Lo que cobramos. Las cotizaciones por hitos salen de horas × este precio.", "MXN"],
+                  ["diagnosticoHoras", "Horas del diagnóstico completo", "Visita, mapa de flujos, medición y reporte. Se cobra a precio por hora y se acredita si el proyecto se acepta.", "h"],
+                  ["acompanamientoHoras", "Horas al mes de acompañamiento", "Etapa Evolucionar: reportes, ajustes y mejoras.", "h"],
+                  ["costoHoraCliente", "Costo hora del personal del cliente (por defecto)", "Para valuar en pesos las horas que libera un flujo. Se ajusta por cliente en el mapa.", "MXN"],
+                  ["paybackMaxMeses", "Retorno máximo para proponer", "Si la inversión no se recupera en este plazo con el ahorro medido, el mapa dice que no conviene.", "meses"],
+                  ["anticipoPct", "Anticipo", "Porcentaje al aceptar la cotización.", "%"],
+                  ["ivaPct", "IVA", "Se agrega a los montos sin IVA de cotizaciones y facturas.", "%"],
+                ] as [keyof typeof tarifas, string, string, string][]).map(([k, t, d, u]) => (
+                  <div key={k} style={{ display: "grid", gridTemplateColumns: "1fr 170px", gap: 16, alignItems: "center", padding: "14px 0", borderBottom: "1px solid rgba(238,235,228,0.06)" }}>
+                    <div><div style={{ fontSize: 14 }}>{t}</div><div style={{ fontSize: 12.5, color: C.niebla, marginTop: 3, lineHeight: 1.4, textWrap: "pretty" }}>{d}</div></div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: "flex-end" }}>
+                      <input value={tarifas[k]} inputMode="numeric" onChange={(e) => setTarifas({ [k]: Number(e.target.value.replace(/[^0-9]/g, "")) || 0 })} style={{ width: 110, height: 44, borderRadius: 999, background: C.p2, border: `1px solid ${C.borde}`, color: C.papel, fontFamily: MONO, fontSize: 13, textAlign: "right", padding: "0 14px", outline: "none" }} />
+                      <span style={{ ...LBL, width: 40 }}>{u}</span>
+                    </div>
+                  </div>
+                ))}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 14 }}>
+                  <span style={{ fontSize: 12.5, color: C.tenue }}>Se guardan al instante y los usan Flujos de trabajo, Cotizaciones, Proyectos y Finanzas.</span>
+                  <button type="button" onClick={() => { resetTarifas(); flash("Tarifas restablecidas"); }} style={{ height: 36, padding: "0 14px", borderRadius: 999, background: "transparent", border: `1px solid ${C.borde2}`, color: C.papel, fontSize: 12, cursor: "pointer" }}>Restablecer</button>
+                </div>
+              </div>
+              <div style={{ background: "rgba(238,235,228,0.94)", color: C.tinta, borderRadius: 24, padding: 22, display: "flex", flexDirection: "column", gap: 10, alignSelf: "start" }}>
+                <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.14em", color: C.acero }}>LO QUE IMPLICA</div>
+                {[["Margen por hora", `${margenPct(tarifas)} %`, `${mxn0(tarifas.precioHora - tarifas.costoHora)} por hora`], ["Diagnóstico completo", mxn0(tarifas.diagnosticoHoras * tarifas.precioHora), `${tarifas.diagnosticoHoras} h · costo ${mxn0(tarifas.diagnosticoHoras * tarifas.costoHora)}`], ["Acompañamiento mensual", mxn0(tarifas.acompanamientoHoras * tarifas.precioHora), `${tarifas.acompanamientoHoras} h al mes`], ["Proyecto típico de 120 h", mxn0(120 * tarifas.precioHora), `+ IVA ${mxn0(120 * tarifas.precioHora * tarifas.ivaPct / 100)} · anticipo ${mxn0(120 * tarifas.precioHora * tarifas.anticipoPct / 100)}`], ["Punto de equilibrio del mes", `${Math.ceil(8000 / (tarifas.precioHora - tarifas.costoHora))} h facturables`, "para cubrir $8,000 de gastos generales"]].map(([k, v, d]) => (
+                  <div key={k} style={{ borderTop: "1px solid #D6D2C9", padding: "9px 0" }}><div style={{ display: "flex", justifyContent: "space-between", gap: 10 }}><span style={{ fontSize: 13, color: C.acero }}>{k}</span><span style={{ fontWeight: 900, fontSize: 16, letterSpacing: "-0.02em" }}>{v}</span></div><div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.08em", color: C.acero, marginTop: 2 }}>{d}</div></div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {sec === "Usuarios y roles" && USERS.map((u) => (
             <div key={u.ini} style={{ display: "grid", gridTemplateColumns: "44px 1fr 1.6fr 120px", gap: 14, alignItems: "center", padding: "12px 0", borderBottom: "1px solid rgba(238,235,228,0.06)" }}>

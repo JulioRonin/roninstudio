@@ -5,7 +5,8 @@ import { C, MONO } from "@/lib/tokens";
 import { Glass, Eyebrow, H, Dot, PB, SB } from "@/components/ui";
 import { useUI, PageHead } from "@/components/shell";
 import { COTS, PAGOS, FACTURAS, CLIENTES, mxn, total, PESO, type Cot, type Pago, type Linea, type Estado } from "@/lib/cotizaciones";
-import { load, save } from "@/lib/store";
+import { load, save, reset } from "@/lib/store";
+import { useTarifas } from "@/lib/tarifas";
 
 /* =====================================================================
    COTIZACIONES · la entrada del dinero
@@ -156,7 +157,16 @@ function Nueva({ onSave, next }: { onSave: (c: Cot, enviar: boolean) => void; ne
   const [anticipo, setAnticipo] = useState(30);
   const [credito, setCredito] = useState(0);
   const [notas, setNotas] = useState("");
-  const [lineas, setLineas] = useState<Linea[]>([{ c: "Hito 1 · Visita, mapa de flujo y propuesta", etapa: "Mapear", monto: 20000 }, { c: "Hito 2 · Plan y prototipo", etapa: "Diseñar", monto: 30000 }, { c: "Hito 3 · Construcción y arranque", etapa: "Construir", monto: 40000 }]);
+  const [tarifas] = useTarifas();
+  const [lineas, setLineas] = useState<Linea[]>([{ c: "Hito 1 · Visita, mapa de flujo y propuesta", etapa: "Mapear", horas: 20, monto: 20000 }, { c: "Hito 2 · Plan y prototipo", etapa: "Diseñar", horas: 30, monto: 30000 }, { c: "Hito 3 · Construcción y arranque", etapa: "Construir", horas: 40, monto: 40000 }]);
+  // Borrador que manda Flujos de trabajo ("Crear cotización con estos hitos")
+  useEffect(() => {
+    const d = load<{ cliente?: string; proyecto?: string; lineas?: Linea[]; credito?: number; notas?: string } | null>("cotizacion-borrador", null);
+    if (!d) return;
+    if (d.cliente && CLIENTES.includes(d.cliente)) setCliente(d.cliente);
+    if (d.proyecto) setProyecto(d.proyecto); if (d.lineas?.length) setLineas(d.lineas); if (d.credito != null) setCredito(d.credito); if (d.notas) setNotas(d.notas);
+    reset("cotizacion-borrador"); flash("Hitos cargados desde el mapa de flujos");
+  }, [flash]);
   const tot = lineas.reduce((s, l) => s + (Number(l.monto) || 0), 0) - (Number(credito) || 0);
   const build = (): Cot | null => {
     if (!proyecto.trim()) { flash("Ponle nombre al proyecto"); return null; }
@@ -182,17 +192,18 @@ function Nueva({ onSave, next }: { onSave: (c: Cot, enviar: boolean) => void; ne
           </div>
         </div>
         <div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 150px 140px 36px", gap: 10, padding: "8px 0", borderBottom: "1px solid rgba(238,235,228,0.09)" }}>{["CONCEPTO · HITO", "ETAPA", "MONTO MXN", ""].map((h) => <div key={h} style={mono10}>{h}</div>)}</div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 150px 90px 140px 36px", gap: 10, padding: "8px 0", borderBottom: "1px solid rgba(238,235,228,0.09)" }}>{["CONCEPTO · HITO", "ETAPA", `HORAS · ${tarifas.precioHora}/H`, "MONTO MXN", ""].map((h) => <div key={h} style={mono10}>{h}</div>)}</div>
           {lineas.map((l, i) => (
-            <div key={i} style={{ display: "grid", gridTemplateColumns: "1fr 150px 140px 36px", gap: 10, padding: "8px 0", alignItems: "center", borderBottom: "1px solid rgba(238,235,228,0.06)" }}>
+            <div key={i} style={{ display: "grid", gridTemplateColumns: "1fr 150px 90px 140px 36px", gap: 10, padding: "8px 0", alignItems: "center", borderBottom: "1px solid rgba(238,235,228,0.06)" }}>
               <input value={l.c} onChange={(e) => setLineas((ls) => ls.map((x, k) => (k === i ? { ...x, c: e.target.value } : x)))} style={{ ...input, height: 40 }} />
               <select value={l.etapa} onChange={(e) => setLineas((ls) => ls.map((x, k) => (k === i ? { ...x, etapa: e.target.value as Linea["etapa"] } : x)))} style={{ ...input, height: 40, appearance: "none" }}>{["Mapear", "Diseñar", "Construir", "Evolucionar"].map((o) => <option key={o}>{o}</option>)}</select>
+              <input value={l.horas ?? ""} placeholder="h" inputMode="numeric" title="Horas estimadas: el monto se calcula con el precio por hora" onChange={(e) => { const h = Number(e.target.value.replace(/[^0-9]/g, "")) || 0; setLineas((ls) => ls.map((x, k) => (k === i ? { ...x, horas: h, monto: h * tarifas.precioHora } : x))); }} style={{ ...input, height: 40, fontFamily: MONO, textAlign: "right" }} />
               <input value={l.monto} inputMode="numeric" onChange={(e) => setLineas((ls) => ls.map((x, k) => (k === i ? { ...x, monto: Number(e.target.value.replace(/[^0-9]/g, "")) } : x)))} style={{ ...input, height: 40, fontFamily: MONO, textAlign: "right" }} />
               <button type="button" onClick={() => setLineas((ls) => ls.filter((_, k) => k !== i))} title="Quitar" style={{ width: 36, height: 36, borderRadius: "50%", background: "transparent", border: `1px solid ${C.borde}`, color: C.niebla, cursor: "pointer" }}>✕</button>
             </div>
           ))}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 10 }}>
-            <SB small onClick={() => setLineas((ls) => [...ls, { c: `Hito ${ls.length + 1} · `, etapa: "Evolucionar", monto: 0 }])}>+ Agregar hito</SB>
+            <SB small onClick={() => setLineas((ls) => [...ls, { c: `Hito ${ls.length + 1} · `, etapa: "Evolucionar", horas: 8, monto: 8 * tarifas.precioHora }])}>+ Agregar hito</SB>
             <label style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 12.5, color: C.niebla }}>Crédito del diagnóstico exprés<input value={credito} inputMode="numeric" onChange={(e) => setCredito(Number(e.target.value.replace(/[^0-9]/g, "")))} style={{ ...input, width: 140, height: 40, fontFamily: MONO, textAlign: "right" }} /></label>
           </div>
         </div>

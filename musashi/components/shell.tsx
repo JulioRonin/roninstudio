@@ -28,7 +28,7 @@ export const NAV: [string, string][] = [
   ["Cotizaciones", "/cotizaciones"], ["Proyectos", "/proyectos"], ["Tareas", "/tareas"], ["Finanzas", "/finanzas"], ["Facturación", "/facturacion"], ["Agentes", "/agentes"],
 ];
 
-const BARE = ["/documentos", "/proyectos/reporte"];
+const BARE = ["/documentos", "/proyectos/reporte", "/flujos/reporte"];
 
 export function Shell({ children, demo = true }: { children: ReactNode; demo?: boolean }) {
   const path = usePathname();
@@ -86,6 +86,9 @@ const PALETTE: { t: string; s: string; href: string }[] = [
   ...NAV.map(([t, href]) => ({ t, s: "Pantalla", href })),
   { t: "Configuración", s: "Pantalla", href: "/configuracion" },
   { t: "Nueva pieza de contenido", s: "Estudio", href: "/estudio" },
+  { t: "Flujos de trabajo · mapa del cliente", s: "Diagnósticos", href: "/diagnosticos?tab=flujos" },
+  { t: "Reporte de flujos al cliente", s: "Documento", href: "/flujos/reporte?c=D2" },
+  { t: "Tarifas y costos", s: "Configuración", href: "/configuracion?sec=tarifas" },
   { t: "Nuevo proyecto", s: "Proyectos", href: "/proyectos?nuevo=1" },
   { t: "Nueva cotización", s: "Cotizaciones", href: "/cotizaciones?tab=nueva" },
   { t: "Registrar cobro o gasto", s: "Cotizaciones", href: "/cotizaciones?tab=cobros" },

@@ -1,6 +1,6 @@
 // Cotizaciones, facturas, cobros y gastos (demo). Es la entrada del dinero de Musashi.
 export type Estado = "Borrador" | "Enviada" | "Abierta" | "Aceptada" | "Vencida" | "Perdida";
-export type Linea = { c: string; etapa: "Mapear" | "Diseñar" | "Construir" | "Evolucionar"; monto: number };
+export type Linea = { c: string; etapa: "Mapear" | "Diseñar" | "Construir" | "Evolucionar"; monto: number; horas?: number };
 export type Cot = {
   folio: string; cliente: string; sector: string; proyecto: string; estado: Estado; fecha: string; vigencia: string;
   lineas: Linea[]; credito: number; anticipo: number; notas?: string; abierta?: string; razon?: string; proyectoCode?: string;
