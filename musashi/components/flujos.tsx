@@ -7,6 +7,7 @@ import { useUI } from "@/components/shell";
 import { load, save } from "@/lib/store";
 import { datos, eq, hoyISO, fechaLarga } from "@/lib/datos";
 import { useTarifas, mxn0 } from "@/lib/tarifas";
+import { AbordajeCard } from "@/components/abordaje";
 import { MAPA_DEMO, SECTORES, GUIAS, GUIA_VISITA, nuevoMapa, deFilaMapa, aFilaMapa, minTotal, esperaTotal, minNuevo, ejecSemana, horasSemanaActual, horasSemanaNueva, ahorroHorasSemana, ahorroMesMXN, recapturas, ACCION_COLOR, FASE_COLOR, type Proceso, type Accion, type Fase, type Mapa, type FilaMapa } from "@/lib/flujos";
 
 /* =====================================================================
@@ -45,6 +46,14 @@ export function Flujos() {
     });
   }, []);
   useEffect(() => { if (modo === "local") save("flujos-mapas", { mapas }); }, [mapas, modo]);
+  useEffect(() => {
+    if (modo === "cargando") return;
+    try {
+      const n = new URLSearchParams(window.location.search).get("cliente"); if (!n) return;
+      const c = clientes.find((x) => x.nombre === n);
+      setNuevo(true); setForm((f) => ({ ...f, cliente: n, ...(c && (SECTORES as readonly string[]).includes(c.sector) ? { sector: c.sector } : {}) }));
+    } catch {}
+  }, [modo, clientes]);
   useEffect(() => { setForm((f) => ({ ...f, costoCliente: tarifas.costoHoraCliente })); }, [tarifas.costoHoraCliente]);
   // En Supabase cada mapa se guarda solo, un momento después del último cambio.
   const guardar = (m: Mapa, inmediato = false) => {
@@ -104,6 +113,7 @@ export function Flujos() {
               {(["Guiado", "Desde cero"] as const).map((m) => <button key={m} type="button" onClick={() => setForm((f) => ({ ...f, modo: m }))} style={{ textAlign: "left", padding: "12px 14px", borderRadius: 16, border: `1px solid ${form.modo === m ? C.papel : C.borde}`, background: form.modo === m ? "rgba(238,235,228,0.08)" : "transparent", color: C.papel, cursor: "pointer" }}><div style={{ fontSize: 14, fontWeight: 600 }}>{m}</div><div style={{ fontSize: 12, color: C.niebla, marginTop: 3, lineHeight: 1.35 }}>{m === "Guiado" ? `Carga los ${(GUIAS[form.sector] ?? []).length || "—"} procesos típicos de ${form.sector.toLowerCase()} con sus pasos; tú mides y ajustas en la visita.` : "Inventario vacío: agregas cada proceso y paso como lo veas en el piso."}</div></button>)}
             </div>
           </div>
+          <Link href={`/documentos/abordaje?s=${encodeURIComponent(form.sector)}${form.cliente ? `&c=${encodeURIComponent(form.cliente)}` : ""}`} target="_blank" style={{ fontSize: 12.5, color: C.niebla, textDecoration: "underline", textDecorationColor: C.oxido }}>Ver la guía de primer acercamiento para {form.sector.toLowerCase()} ↗</Link>
           <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}><SB onClick={() => setNuevo(false)}>Cancelar</SB><PB onClick={crear}>Crear mapa</PB></div>
         </Glass>
       )}
@@ -118,6 +128,7 @@ function MapaView({ mapa, onChange, onBack }: { mapa: Mapa; onChange: (m: Mapa) 
   const [paso, setPaso] = useState<(typeof PASOS_MOD)[number]>("Inventario");
   const [sel, setSel] = useState(mapa.procs[0]?.id ?? "P1");
   const [guia, setGuia] = useState(mapa.modo === "Guiado" && mapa.procs.every((p) => p.estado === "Sin mapear"));
+  const [abordar, setAbordar] = useState(mapa.procs.every((p) => p.estado === "Sin mapear"));
   const procs = mapa.procs;
   const setProcs = (f: Proceso[] | ((ps: Proceso[]) => Proceso[])) => onChange({ ...mapa, procs: typeof f === "function" ? f(mapa.procs) : f });
   const costoCliente = mapa.costoCliente;
@@ -161,6 +172,7 @@ function MapaView({ mapa, onChange, onBack }: { mapa: Mapa; onChange: (m: Mapa) 
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 10, ...mono10 }}>
           <button type="button" onClick={onBack} style={{ ...chip(false), height: 30, padding: "0 10px", fontSize: 11 }}>← Mapas</button>
+          <button type="button" onClick={() => setAbordar((x) => !x)} style={{ ...chip(abordar), height: 30, padding: "0 10px", fontSize: 11 }}>Cómo abordarlo</button>
           {mapa.cliente.toUpperCase()} · {mapa.sector.toUpperCase()} · VISITA {mapa.visita.toUpperCase().replace(" DE 2026", "")}
           <label style={{ display: "flex", alignItems: "center", gap: 6, color: C.niebla }}>COSTO HORA DEL PERSONAL<input value={costoCliente} inputMode="numeric" onChange={(e) => setCostoCliente(Number(e.target.value.replace(/[^0-9]/g, "")) || 0)} style={{ width: 64, height: 30, borderRadius: 999, background: C.p2, border: `1px solid ${C.borde}`, color: C.papel, fontFamily: MONO, fontSize: 11, textAlign: "center", outline: "none" }} />MXN</label>
         </div>
@@ -172,6 +184,9 @@ function MapaView({ mapa, onChange, onBack }: { mapa: Mapa; onChange: (m: Mapa) 
           <Glass key={k} pad={18} radius={22} delay={`${i * 0.05}s`}><div style={mono10}>{k}</div><div style={{ fontWeight: 900, fontSize: 24, letterSpacing: "-0.02em", marginTop: 8 }}>{v}</div><div style={{ fontSize: 12, color: C.niebla, marginTop: 4 }}>{s}</div></Glass>
         ))}
       </div>
+
+      {/* Cómo abordar a este perfil de cliente */}
+      {abordar && <AbordajeCard sector={mapa.sector} cliente={mapa.cliente} onClose={() => setAbordar(false)} />}
 
       {/* Guía de visita (modo guiado) */}
       {guia && (

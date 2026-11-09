@@ -40,6 +40,7 @@ export default function Cotizaciones() {
   const [filtro, setFiltro] = useState<"Todas" | Estado>("Todas");
   const [tareas, setTareas] = useState<string[]>([]);
   const [perdiendo, setPerdiendo] = useState(false);
+  const [editando, setEditando] = useState<string | null>(null);
   const [loaded, setLoaded] = useState(false);
 
   const cargarTareas = () => datos.lista<{ titulo: string; fecha: string }>("tareas", `select=titulo,fecha&${eq("origen", "Cotización")}&${eq("estado", "Pendiente")}&order=fecha.asc&limit=8`).then((r) => setTareas(r.filas.map((t) => `${t.titulo} · ${fechaCorta(t.fecha)}`)));
@@ -134,6 +135,26 @@ export default function Cotizaciones() {
     if (enviarla) { await nuevaTarea(`Seguimiento ${nueva.folio} · ${nueva.cliente}`, nueva, 3); await etapaCliente(nueva, "Propuesta"); }
     flash(enviarla ? `${nueva.folio} enviada · tarea de seguimiento creada` : `${nueva.folio} guardada como borrador`);
   };
+  const guardarEdicion = async (c: Cot, enviarla: boolean) => {
+    const previa = cots.find((x) => x.folio === c.folio); if (!previa) return;
+    const estado: Estado = enviarla ? "Enviada" : previa.estado;
+    if (db && previa.id) {
+      try {
+        await datos.cambia("cotizaciones", eq("id", previa.id), { cliente_id: c.clienteId, proyecto_nombre: c.proyecto, vigencia: c.vigenciaISO ?? null, anticipo_pct: c.anticipo, credito: c.credito, notas: c.notas || null, estado });
+        await datos.borra("cotizacion_lineas", eq("cotizacion_id", previa.id));
+        if (c.lineas.length) await datos.crea("cotizacion_lineas", c.lineas.map((l, i) => ({ cotizacion_id: previa.id, orden: i + 1, concepto: l.c, etapa: l.etapa, monto: l.monto, horas: l.horas ?? null })));
+      } catch (e) { falla(e); return; }
+    }
+    const nueva: Cot = { ...previa, ...c, id: previa.id, estado, fecha: previa.fecha, abierta: previa.abierta };
+    setCots((cs) => cs.map((x) => (x.folio === c.folio ? nueva : x))); setSel(c.folio); setEditando(null); setTab(0);
+    if (enviarla && previa.estado === "Borrador") { await nuevaTarea(`Seguimiento ${nueva.folio} · ${nueva.cliente}`, nueva, 3); await etapaCliente(nueva, "Propuesta"); }
+    flash(enviarla ? `${c.folio} actualizada y enviada · tarea de seguimiento creada` : `${c.folio} actualizada`);
+  };
+  const eliminar = async (c: Cot) => {
+    if (!window.confirm(`¿Eliminar la cotización ${c.folio} de ${c.cliente}? No se puede deshacer.`)) return;
+    if (db && c.id) { try { await datos.borra("cotizaciones", eq("id", c.id)); } catch (e) { falla(e); return; } }
+    setCots((cs) => cs.filter((x) => x.folio !== c.folio)); setSel(""); flash(`${c.folio} eliminada`);
+  };
   const registrar = async (p: Pago, facturaId?: string) => {
     let nuevo = p;
     if (db) {
@@ -156,11 +177,11 @@ export default function Cotizaciones() {
         sub={cargando ? "Cargando…" : `${enJuego.length} en juego por ${mxn(pipeline)} · ${aceptadas.length} aceptadas · ${mxn(porCobrar)} por cobrar`}
         style={{ paddingTop: 34, gap: 24, animation: "rise .6s cubic-bezier(.2,.7,.2,1) both" }}
         right={
-          <H as="button" type="button" onClick={() => setTab(1)} style={{ height: 48, padding: "0 22px", borderRadius: 999, background: C.oxido, color: C.papel, border: "none", fontSize: 14, fontWeight: 600, cursor: "pointer", boxShadow: "0 0 28px rgba(176,81,57,.45)" }} hover={{ background: C.oxidoHover }}>Nueva cotización</H>
+          <H as="button" type="button" onClick={() => { setEditando(null); setTab(1); }} style={{ height: 48, padding: "0 22px", borderRadius: 999, background: C.oxido, color: C.papel, border: "none", fontSize: 14, fontWeight: 600, cursor: "pointer", boxShadow: "0 0 28px rgba(176,81,57,.45)" }} hover={{ background: C.oxidoHover }}>Nueva cotización</H>
         }
       />
       <nav style={{ display: "flex", gap: 6, padding: "22px 32px 0" }}>
-        {TABS.map((l, i) => { const a = i === tab; return <H key={l} as="button" type="button" onClick={() => setTab(i)} style={{ ...chip(a), height: 44, padding: "0 18px", fontSize: 13 }} hover={a ? {} : { borderColor: C.acero }}>{l}</H>; })}
+        {TABS.map((l, i) => { const a = i === tab; return <H key={l} as="button" type="button" onClick={() => { setEditando(null); setTab(i); }} style={{ ...chip(a), height: 44, padding: "0 18px", fontSize: 13 }} hover={a ? {} : { borderColor: C.acero }}>{i === 1 && editando ? `Editando ${editando}` : l}</H>; })}
       </nav>
 
       {cargando && <section style={{ padding: "40px 32px", fontFamily: MONO, fontSize: 11, letterSpacing: "0.12em", color: C.tenue }}>CARGANDO…</section>}
@@ -215,7 +236,9 @@ export default function Cotizaciones() {
                 {(cur.estado === "Enviada" || cur.estado === "Abierta") && <><PB small onClick={() => void aceptar(cur)} style={{ background: C.tinta, boxShadow: "none" }}>Marcar aceptada</PB><button type="button" onClick={() => { void nuevaTarea(`Seguimiento ${cur.folio} · ${cur.cliente}`, cur, 1).then(() => flash("Tarea de seguimiento creada para mañana")); }} style={{ height: 36, padding: "0 14px", borderRadius: 999, background: "transparent", border: `1px solid ${C.tinta}`, color: C.tinta, fontSize: 12, cursor: "pointer" }}>Dar seguimiento</button><button type="button" onClick={() => setPerdiendo((x) => !x)} style={{ height: 36, padding: "0 14px", borderRadius: 999, background: "transparent", border: "none", color: C.acero, fontSize: 12, cursor: "pointer" }}>Perdida</button></>}
                 {cur.estado === "Aceptada" && <><Link href="/proyectos" style={{ height: 36, padding: "0 14px", borderRadius: 999, background: C.tinta, color: C.papel, fontSize: 12, fontWeight: 600, display: "flex", alignItems: "center" }}>Ver proyecto {cur.proyectoCode ?? ""}</Link><Link href="/facturacion" style={{ height: 36, padding: "0 14px", borderRadius: 999, border: `1px solid ${C.tinta}`, color: C.tinta, fontSize: 12, display: "flex", alignItems: "center" }}>Facturas</Link></>}
                 {(cur.estado === "Perdida" || cur.estado === "Vencida") && <PB small onClick={() => void reabrir(cur)} style={{ background: C.tinta, boxShadow: "none" }}>Reabrir</PB>}
-                <button type="button" onClick={() => window.print()} title="Imprime o guarda como PDF" style={{ height: 36, padding: "0 14px", borderRadius: 999, background: "transparent", border: `1px solid ${C.acero}`, color: C.tinta, fontSize: 12, cursor: "pointer" }}>PDF</button>
+                {cur.estado !== "Aceptada" && <button type="button" onClick={() => { setEditando(cur.folio); setTab(1); }} style={{ height: 36, padding: "0 14px", borderRadius: 999, background: "transparent", border: `1px solid ${C.tinta}`, color: C.tinta, fontSize: 12, cursor: "pointer" }}>Editar</button>}
+                <Link href={`/documentos/cotizacion?f=${encodeURIComponent(cur.folio)}`} target="_blank" title="Documento formal para el cliente: se imprime o se guarda como PDF" style={{ height: 36, padding: "0 14px", borderRadius: 999, border: `1px solid ${C.acero}`, color: C.tinta, fontSize: 12, display: "flex", alignItems: "center" }}>Cotización formal · PDF ↗</Link>
+                {cur.estado !== "Aceptada" && <button type="button" onClick={() => void eliminar(cur)} style={{ height: 36, padding: "0 14px", borderRadius: 999, background: "transparent", border: "none", color: C.acero, fontSize: 12, cursor: "pointer" }}>Eliminar</button>}
               </div>
               {perdiendo && <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}><span style={{ ...mono10, color: C.acero }}>¿POR QUÉ?</span>{RAZONES.map((r) => <button key={r} type="button" onClick={() => void perder(cur, r)} style={{ height: 32, padding: "0 12px", borderRadius: 999, background: "transparent", border: `1px solid ${C.tinta}`, color: C.tinta, fontSize: 12, cursor: "pointer" }}>{r}</button>)}</div>}
               <div style={{ borderTop: "1px solid #D6D2C9", paddingTop: 10, marginTop: 4 }}>
@@ -238,7 +261,8 @@ export default function Cotizaciones() {
         </section>
       )}
 
-      {!cargando && tab === 1 && <Nueva clientes={clientes} onSave={(c, enviarla) => void guardarNueva(c, enviarla)} next={siguienteFolio("C-", cots.map((c) => c.folio))} />}
+      {!cargando && tab === 1 && <Nueva key={editando ?? "nueva"} clientes={clientes} inicial={editando ? cots.find((c) => c.folio === editando) : undefined} onCancel={() => { setEditando(null); setTab(0); }}
+        onSave={(c, enviarla) => void (editando ? guardarEdicion(c, enviarla) : guardarNueva(c, enviarla))} next={editando ?? siguienteFolio("C-", cots.map((c) => c.folio))} />}
 
       {!cargando && tab === 2 && <CobrosGastos pagos={pagos} facturas={facturas} clientes={clientes} mesDe={(iso) => (db ? iso.slice(0, 7) : "NOV")} onAdd={(p, f) => void registrar(p, f)} />}
 
@@ -248,20 +272,21 @@ export default function Cotizaciones() {
 }
 
 /* ---------- Nueva cotización ---------- */
-function Nueva({ clientes, onSave, next }: { clientes: OpcionCliente[]; onSave: (c: Cot, enviar: boolean) => void; next: string }) {
+function Nueva({ clientes, inicial, onCancel, onSave, next }: { clientes: OpcionCliente[]; inicial?: Cot; onCancel: () => void; onSave: (c: Cot, enviar: boolean) => void; next: string }) {
   const { flash } = useUI();
-  const [cliente, setCliente] = useState(clientes[0]?.value ?? "");
-  const [proyecto, setProyecto] = useState("");
-  const [vigencia, setVigencia] = useState(sumaDias(hoyISO(), 15));
+  const [cliente, setCliente] = useState(inicial ? (inicial.clienteId ?? clientes.find((c) => c.nombre === inicial.cliente)?.value ?? "") : clientes[0]?.value ?? "");
+  const [proyecto, setProyecto] = useState(inicial?.proyecto ?? "");
+  const [vigencia, setVigencia] = useState(inicial?.vigenciaISO ?? sumaDias(hoyISO(), 15));
   const opt = clientes.find((c) => c.value === cliente);
   useEffect(() => { if (!opt && clientes[0]) setCliente(clientes[0].value); }, [opt, clientes]);
-  const [anticipo, setAnticipo] = useState(30);
-  const [credito, setCredito] = useState(0);
-  const [notas, setNotas] = useState("");
+  const [anticipo, setAnticipo] = useState(inicial?.anticipo ?? 30);
+  const [credito, setCredito] = useState(inicial?.credito ?? 0);
+  const [notas, setNotas] = useState(inicial?.notas ?? "");
   const [tarifas] = useTarifas();
-  const [lineas, setLineas] = useState<Linea[]>([{ c: "Hito 1 · Visita, mapa de flujo y propuesta", etapa: "Mapear", horas: 20, monto: 20000 }, { c: "Hito 2 · Plan y prototipo", etapa: "Diseñar", horas: 30, monto: 30000 }, { c: "Hito 3 · Construcción y arranque", etapa: "Construir", horas: 40, monto: 40000 }]);
+  const [lineas, setLineas] = useState<Linea[]>(inicial ? inicial.lineas.map((l) => ({ ...l })) : [{ c: "Hito 1 · Visita, mapa de flujo y propuesta", etapa: "Mapear", horas: 20, monto: 20000 }, { c: "Hito 2 · Plan y prototipo", etapa: "Diseñar", horas: 30, monto: 30000 }, { c: "Hito 3 · Construcción y arranque", etapa: "Construir", horas: 40, monto: 40000 }]);
   // Borrador que manda Flujos de trabajo ("Crear cotización con estos hitos")
   useEffect(() => {
+    if (inicial) return;
     const d = load<{ cliente?: string; proyecto?: string; lineas?: Linea[]; credito?: number; notas?: string } | null>("cotizacion-borrador", null);
     if (!d) return;
     if (d.cliente) { const o = clientes.find((c) => c.label === d.cliente) ?? clientes.find((c) => c.nombre.toLowerCase() === d.cliente!.split(" · ")[0].toLowerCase()); if (o) setCliente(o.value); else flash(`Da de alta a ${d.cliente.split(" · ")[0]} en Clientes para ligar la cotización`); }
@@ -277,7 +302,7 @@ function Nueva({ clientes, onSave, next }: { clientes: OpcionCliente[]; onSave: 
   return (
     <section style={{ padding: "22px 32px 48px", display: "grid", gridTemplateColumns: "1fr 380px", gap: 16 }}>
       <Glass style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-        <Eyebrow>NUEVA COTIZACIÓN · {next}</Eyebrow>
+        <Eyebrow>{inicial ? `EDITAR COTIZACIÓN · ${next} · ${inicial.estado.toUpperCase()}` : `NUEVA COTIZACIÓN · ${next}`}</Eyebrow>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
           <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>Cliente
             {clientes.length ? <select value={cliente} onChange={(e) => setCliente(e.target.value)} style={{ ...input, appearance: "none" }}>{clientes.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}</select> : <Link href="/clientes" style={{ ...input, display: "flex", alignItems: "center", color: C.ambar }}>Primero da de alta un cliente ↗</Link>}
@@ -312,8 +337,9 @@ function Nueva({ clientes, onSave, next }: { clientes: OpcionCliente[]; onSave: 
           <textarea value={notas} onChange={(e) => setNotas(e.target.value)} rows={3} placeholder="Incluye capacitación de 40 minutos y 30 días de garantía. No incluye hardware." style={{ ...input, height: "auto", padding: "12px 16px", borderRadius: 16, resize: "vertical", fontFamily: "inherit" }} />
         </label>
         <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
-          <SB onClick={() => { const c = build(); if (c) onSave(c, false); }}>Guardar borrador</SB>
-          <PB onClick={() => { const c = build(); if (c) onSave({ ...c, estado: "Enviada" }, true); }}>Enviar al cliente</PB>
+          {inicial && <SB onClick={onCancel}>Cancelar</SB>}
+          <SB onClick={() => { const c = build(); if (c) onSave(c, false); }}>{inicial ? "Guardar cambios" : "Guardar borrador"}</SB>
+          {(!inicial || inicial.estado === "Borrador") && <PB onClick={() => { const c = build(); if (c) onSave({ ...c, estado: "Enviada" }, true); }}>{inicial ? "Guardar y enviar" : "Enviar al cliente"}</PB>}
         </div>
       </Glass>
       <div style={{ background: "rgba(238,235,228,0.94)", color: C.tinta, borderRadius: 28, padding: 24, display: "flex", flexDirection: "column", gap: 10, alignSelf: "start" }}>

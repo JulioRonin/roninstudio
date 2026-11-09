@@ -61,7 +61,7 @@ const fmtLarga = (iso?: string | null) => (iso ? new Date(iso.slice(0, 10) + "T1
 export const deFilaMapa = (f: FilaMapa): Mapa => ({ id: f.codigo, cliente: f.cliente_nombre, sector: f.sector, sucursales: f.sucursales, visita: fmtLarga(f.visita), visitaISO: f.visita, modo: f.modo === "Desde cero" ? "Desde cero" : "Guiado", costoCliente: Number(f.costo_hora_cliente), procs: Array.isArray(f.procesos) ? f.procesos : [], creado: f.creado_en ? new Date(f.creado_en).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" }) : "" });
 export const aFilaMapa = (m: Mapa, clienteId?: string | null): FilaMapa => ({ codigo: m.id, ...(clienteId !== undefined ? { cliente_id: clienteId } : {}), cliente_nombre: m.cliente, sector: m.sector, sucursales: m.sucursales, visita: m.visitaISO ?? null, modo: m.modo, costo_hora_cliente: m.costoCliente, procesos: m.procs });
 
-export const SECTORES = ["Restaurante con sucursales", "Clínica", "Escuela privada", "Gimnasio", "Taller", "Notaría", "Manufactura", "Otro"] as const;
+export const SECTORES = ["Restaurante con sucursales", "Clínica", "Escuela privada", "Gimnasio", "Taller", "Notaría", "Manufactura", "Tienda de ropa y comercio local", "Otro"] as const;
 
 /* Plantillas por sector para el arranque guiado: procesos típicos con sus pasos.
    Los minutos van en cero: se miden en la visita. */
@@ -109,6 +109,16 @@ export const GUIAS: Record<string, Proceso[]> = {
     T("Operación", "Seguimiento del trámite", "Abogado", "Word · correo", 8, true, 5, [["Redacta el documento", "Abogado", "Word"], ["Pide faltantes al cliente", "Abogado", "WhatsApp"], ["Programa firma", "Recepción", "Agenda"]]),
     T("Agenda", "Citas y firmas", "Recepción", "Agenda de papel", 10, true, 5, [["Cliente pide cita", "Recepción", "Llamada"], ["Busca espacio", "Recepción", "Agenda"], ["Confirma", "Recepción", "WhatsApp"]]),
     T("Caja", "Cobro, honorarios y factura", "Administración", "Excel · portal", 8, true, 5, [["Calcula honorarios y derechos", "Administración", "Excel"], ["Cobra", "Administración", "Terminal"], ["Factura", "Administración", "Portal"]]),
+  ],
+  "Tienda de ropa y comercio local": [
+    T("Venta en línea", "Pedidos por WhatsApp e Instagram", "Dueña", "WhatsApp · Instagram", 15, true, 6, [["Cliente pregunta precio, talla o color por mensaje", "Cliente", "WhatsApp"], ["Revisa en piso o bodega si hay existencia", "Vendedora", "A pie"], ["Manda fotos, precio y forma de pago", "Dueña", "WhatsApp"], ["Aparta la prenda o recibe la transferencia", "Dueña", "Banco"], ["Anota el pedido", "Dueña", "Libreta"], ["Entrega en tienda o envía", "Vendedora", "Paquetería"]]),
+    T("Venta en tienda", "Venta en mostrador", "Vendedora", "Libreta · terminal", 20, true, 6, [["Cliente elige y se prueba", "Cliente", "—"], ["Busca otra talla o color en bodega", "Vendedora", "A pie"], ["Cobra", "Vendedora", "Terminal"], ["Anota la venta", "Vendedora", "Libreta"]]),
+    T("Inventario", "Existencias por talla y color", "Dueña", "Memoria · libreta", 1, false, 1, [["Cuenta lo que hay en piso y bodega", "Vendedora", "Papel"], ["Pasa el conteo a la libreta o Excel", "Dueña", "Excel"], ["Detecta faltantes y lo que no se mueve", "Dueña", "—"]]),
+    T("Inventario", "Entrada de mercancía y etiquetado", "Dueña", "Nota del proveedor", 1, false, 1, [["Recibe y cuenta contra la nota", "Dueña", "Papel"], ["Define precio y etiqueta", "Dueña", "Etiquetas"], ["Acomoda en piso y bodega", "Vendedora", "—"], ["Avisa de lo nuevo a clientas", "Dueña", "WhatsApp"]]),
+    T("Contenido", "Fotos y publicación de producto", "Dueña", "Teléfono · Instagram", 3, false, 1, [["Toma fotos de cada prenda", "Dueña", "Teléfono"], ["Escribe precio, tallas y colores", "Dueña", "Instagram"], ["Publica en historias y catálogo", "Dueña", "Instagram"], ["Contesta comentarios y mensajes", "Dueña", "Instagram"]]),
+    T("Caja", "Apartados y pagos en abonos", "Dueña", "Libreta", 4, true, 6, [["Anota el apartado y el anticipo", "Vendedora", "Libreta"], ["Recibe abonos", "Vendedora", "Efectivo"], ["Avisa cuando vence", "Dueña", "WhatsApp"], ["Entrega o regresa la prenda a piso", "Vendedora", "—"]]),
+    T("Caja", "Cierre de caja", "Dueña", "Libreta · terminal", 1, true, 6, [["Suma ventas de la libreta", "Vendedora", "Papel"], ["Cuenta efectivo, terminal y transferencias", "Dueña", "Manual"], ["Cuadra contra lo vendido", "Dueña", "—"]]),
+    T("Compras", "Resurtido y compra a proveedores", "Dueña", "WhatsApp · viaje", 2, false, 1, [["Revisa qué se vendió y qué falta", "Dueña", "Libreta"], ["Decide qué pedir y cuánto", "Dueña", "—"], ["Pide o va con el proveedor", "Dueña", "WhatsApp"], ["Paga y guarda la nota", "Dueña", "Banco"]]),
   ],
   "Manufactura": [
     T("Producción", "Programación de la producción", "Supervisor", "Excel · pizarrón", 1, true, 6, [["Recibe pedidos", "Supervisor", "Correo"], ["Arma el programa del día", "Supervisor", "Excel"], ["Asigna estaciones", "Supervisor", "Pizarrón"]]),

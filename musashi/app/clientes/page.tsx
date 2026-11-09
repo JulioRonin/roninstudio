@@ -5,6 +5,8 @@ import { H, PB } from "@/components/ui";
 import { useUI, PageHead } from "@/components/shell";
 import { datos, eq, fechaCorta, hoyISO } from "@/lib/datos";
 import { SECTORES } from "@/lib/flujos";
+import { AbordajeCard } from "@/components/abordaje";
+import Link from "next/link";
 
 /* ---------- Datos demo (idénticos al prototipo) ---------- */
 type Stage = "LEAD" | "CONTACTADO" | "LLAMADA" | "DIAGNÓSTICO" | "PROPUESTA" | "CLIENTE" | "PERDIDO";
@@ -103,7 +105,7 @@ export default function Clientes() {
   const openFicha = (id?: string) => { if (id) setSel(id); setTab("Ficha del cliente"); };
   const ficha = clients.find((c) => c.id === sel) ?? (db ? clients[0] : undefined);
 
-  const patch = async (id: string, cambios: Partial<FilaCliente>) => {
+  const patch = async (id: string, cambios: Partial<Omit<FilaCliente, "id">>) => {
     if (!db) return true;
     try { const r = await datos.cambia<FilaCliente>("clientes", eq("id", id), cambios); if (r.filas[0]) setClients((x) => x.map((c) => (c.id === id ? deFila(r.filas[0]) : c))); return true; }
     catch (e) { flash("No se guardó: " + (e as Error).message); return false; }
@@ -161,7 +163,7 @@ export default function Clientes() {
         {/* ---------- LISTA ---------- */}
         {tab === "Lista" && (
           <>
-            <div style={{ display: "flex", gap: 6, alignItems: "center", marginBottom: 14 }}>
+            <div style={{ display: "flex", gap: 6, alignItems: "center", marginBottom: 14, flexWrap: "wrap" }}>
               <span style={{ ...MONO10, marginRight: 6 }}>SECTOR</span>
               {SECTORS.map((l) => <Pill key={l} label={l} active={sector === l} onClick={() => setSector(l)} h={36} px={14} fs={12} hover={false} />)}
             </div>
@@ -228,6 +230,7 @@ export default function Clientes() {
         {/* ---------- FICHA DEL CLIENTE ---------- */}
         {tab === "Ficha del cliente" && db && (
           <FichaReal cliente={ficha} clientes={clients} contactos={contactos} onSelect={setSel} onLoss={openLoss}
+            onDatos={async (d) => { if (ficha && await patch(ficha.id, d)) flash("Datos del cliente guardados"); }}
             onPaso={async (paso, fecha) => { if (ficha && await patch(ficha.id, { siguiente_paso: paso, siguiente_fecha: fecha || null })) flash("Siguiente paso guardado"); }}
             onContacto={async (c) => { if (!ficha) return; try { const r = await datos.crea<Contacto>("contactos", { ...c, cliente_id: ficha.id }); setContactos((x) => [...x, ...r.filas]); flash("Contacto agregado"); } catch (e) { flash("No se guardó: " + (e as Error).message); } }} />
         )}
@@ -349,9 +352,11 @@ export default function Clientes() {
 const INP: React.CSSProperties = { height: 42, padding: "0 14px", borderRadius: 999, background: C.p2, border: `1px solid ${C.borde}`, color: C.papel, fontSize: 13, outline: "none", width: "100%", colorScheme: "dark" };
 const WA = (n: string) => "https://wa.me/" + n.replace(/\D/g, "").replace(/^(\d{10})$/, "52$1");
 
-function FichaReal({ cliente, clientes, contactos, onSelect, onLoss, onPaso, onContacto }: { cliente?: Client; clientes: Client[]; contactos: Contacto[]; onSelect: (id: string) => void; onLoss: () => void; onPaso: (paso: string, fecha: string) => void; onContacto: (c: Omit<Contacto, "id" | "cliente_id">) => void }) {
+function FichaReal({ cliente, clientes, contactos, onSelect, onLoss, onPaso, onContacto, onDatos }: { cliente?: Client; clientes: Client[]; contactos: Contacto[]; onSelect: (id: string) => void; onLoss: () => void; onPaso: (paso: string, fecha: string) => void; onContacto: (c: Omit<Contacto, "id" | "cliente_id">) => void; onDatos: (d: { nombre?: string; sector?: string; ciudad?: string | null; origen?: string | null }) => void }) {
   const [paso, setPaso] = useState(""); const [fecha, setFecha] = useState("");
   const [nc, setNc] = useState({ nombre: "", puesto: "", whatsapp: "", correo: "", decide: false }); const [abrir, setAbrir] = useState(false);
+  const [editar, setEditar] = useState(false); const [ed, setEd] = useState({ nombre: "", sector: "", ciudad: "", origen: "" });
+  useEffect(() => { setEditar(false); setEd({ nombre: cliente?.name ?? "", sector: cliente?.sector ?? "", ciudad: cliente?.city === "—" ? "" : cliente?.city ?? "", origen: cliente?.origin === "—" ? "" : cliente?.origin ?? "" }); }, [cliente?.id, cliente?.name, cliente?.sector, cliente?.city, cliente?.origin]);
   useEffect(() => { setPaso(cliente?.nextStep ?? ""); setFecha(cliente?.nextDate ?? ""); }, [cliente?.id, cliente?.nextStep, cliente?.nextDate]);
   if (!cliente) return <div style={{ ...GLASS, borderRadius: 28, padding: 26, fontSize: 13.5, color: C.niebla }}>Todavía no hay clientes. Da de alta el primero con <strong style={{ color: C.papel }}>Nuevo cliente</strong>.</div>;
   const perfil = (cliente.perfil ?? "").split(/\n+/).map((x) => x.trim()).filter(Boolean);
@@ -368,9 +373,19 @@ function FichaReal({ cliente, clientes, contactos, onSelect, onLoss, onPaso, onC
             <span style={{ display: "flex", alignItems: "center", gap: 6, fontFamily: MONO, fontSize: 10, letterSpacing: "0.12em", padding: "10px 14px", borderRadius: 999, border: `1px solid ${STC[cliente.stage]}` }}>
               <span style={{ width: 6, height: 6, borderRadius: "50%", background: STC[cliente.stage] }} />{cliente.stage}
             </span>
+            <button type="button" onClick={() => setEditar((x) => !x)} style={{ height: 40, padding: "0 16px", borderRadius: 999, background: editar ? C.papel : "transparent", color: editar ? C.tinta : C.papel, border: `1px solid ${C.borde2}`, fontSize: 13, cursor: "pointer" }}>Editar datos</button>
             {cliente.stage !== "PERDIDO" && <button type="button" onClick={onLoss} style={{ height: 40, padding: "0 16px", borderRadius: 999, background: "transparent", color: C.niebla, border: `1px solid ${C.borde2}`, fontSize: 13, cursor: "pointer" }}>Marcar como perdido</button>}
           </div>
         </div>
+        {editar && (
+          <div style={{ display: "grid", gridTemplateColumns: "1.3fr 1.3fr 1fr 1fr auto", gap: 8, marginTop: 16, alignItems: "end" }}>
+            <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>Negocio<input value={ed.nombre} onChange={(e) => setEd({ ...ed, nombre: e.target.value })} style={INP} /></label>
+            <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>Sector<select value={ed.sector} onChange={(e) => setEd({ ...ed, sector: e.target.value })} style={{ ...INP, appearance: "none" }}>{[...new Set([...SECTORES, ed.sector].filter(Boolean))].map((x) => <option key={x}>{x}</option>)}</select></label>
+            <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>Ciudad<input value={ed.ciudad} onChange={(e) => setEd({ ...ed, ciudad: e.target.value })} style={INP} /></label>
+            <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>Llegó por<select value={ed.origen} onChange={(e) => setEd({ ...ed, origen: e.target.value })} style={{ ...INP, appearance: "none" }}>{[...new Set(["", ...ORIGENES, ed.origen])].map((x) => <option key={x} value={x}>{x || "—"}</option>)}</select></label>
+            <PB small disabled={!ed.nombre.trim()} onClick={() => { onDatos({ nombre: ed.nombre.trim(), sector: ed.sector, ciudad: ed.ciudad.trim() || null, origen: ed.origen || null }); setEditar(false); }} style={{ height: 42 }}>Guardar</PB>
+          </div>
+        )}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3,minmax(0,1fr))", gap: 10, marginTop: 20 }}>
           {contactos.map((c) => (
             <div key={c.id} style={{ background: "rgba(12,15,20,0.45)", border: "1px solid rgba(238,235,228,0.08)", borderRadius: 18, padding: 14, display: "flex", alignItems: "center", gap: 12 }}>
@@ -407,7 +422,7 @@ function FichaReal({ cliente, clientes, contactos, onSelect, onLoss, onPaso, onC
 
       <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) 400px", gap: 16, marginTop: 16 }}>
         <div style={{ ...GLASS, borderRadius: 28, padding: 26, display: "flex", flexDirection: "column", gap: 12 }}>
-          <div style={{ fontWeight: 900, fontSize: 22, letterSpacing: "-0.02em" }}>SIGUIENTE PASO</div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}><div style={{ fontWeight: 900, fontSize: 22, letterSpacing: "-0.02em" }}>SIGUIENTE PASO</div><div style={{ display: "flex", gap: 6 }}><Link href={`/diagnosticos?tab=flujos&cliente=${encodeURIComponent(cliente.name)}`} style={{ height: 36, padding: "0 14px", borderRadius: 999, border: `1px solid ${C.borde2}`, color: C.papel, fontSize: 12, display: "flex", alignItems: "center" }}>Mapear sus flujos ↗</Link><Link href="/cotizaciones?tab=nueva" style={{ height: 36, padding: "0 14px", borderRadius: 999, border: `1px solid ${C.borde2}`, color: C.papel, fontSize: 12, display: "flex", alignItems: "center" }}>Cotizar ↗</Link></div></div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 170px auto", gap: 8 }}>
             <input value={paso} onChange={(e) => setPaso(e.target.value)} placeholder="Llamada de 15 minutos, visita, enviar cotización…" style={INP} />
             <input type="date" value={fecha ?? ""} onChange={(e) => setFecha(e.target.value)} style={INP} />
@@ -419,7 +434,7 @@ function FichaReal({ cliente, clientes, contactos, onSelect, onLoss, onPaso, onC
           </div>
           <div style={{ fontSize: 12.5, color: C.tenue }}>Las llamadas, mensajes y diagnósticos de este cliente aparecerán aquí conforme se conecten Tareas y el diagnóstico exprés.</div>
         </div>
-        <div style={{ background: "rgba(238,235,228,0.92)", color: C.tinta, borderRadius: 28, padding: 22 }}>
+        <div style={{ background: "rgba(238,235,228,0.92)", color: C.tinta, borderRadius: 28, padding: 22, alignSelf: "start" }}>
           <span style={{ display: "flex", alignItems: "center", gap: 8, fontFamily: MONO, fontSize: 10, letterSpacing: "0.14em", color: C.acero }}>
             <span style={{ width: 3, height: 12, background: C.oxido, transform: "skewY(-14deg)" }} />PERFIL · PERFILADOR
           </span>
@@ -427,6 +442,7 @@ function FichaReal({ cliente, clientes, contactos, onSelect, onLoss, onPaso, onC
             : <div style={{ fontSize: 13, lineHeight: 1.5, paddingTop: 10, color: C.acero }}>El Perfilador todavía no genera el perfil de este cliente. Cuando corra, dejará aquí cinco líneas: quién es, su dolor, intentos previos, quién decide y el siguiente paso sugerido.</div>}
         </div>
       </div>
+      <div style={{ marginTop: 16 }}><AbordajeCard sector={cliente.sector} cliente={cliente.name} /></div>
     </>
   );
 }
