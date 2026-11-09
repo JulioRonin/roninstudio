@@ -86,6 +86,7 @@ export default function Configuracion() {
               </button>
             );
           })}
+          <a href="/api/logout" style={{ height: 44, borderRadius: 14, color: C.tenue, fontSize: 13, display: "flex", alignItems: "center", padding: "0 14px", borderTop: `1px solid ${C.borde}`, marginTop: 6 }}>Cerrar sesión</a>
         </nav>
 
         {/* Panel de sección */}

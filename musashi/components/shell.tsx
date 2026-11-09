@@ -28,7 +28,7 @@ export const NAV: [string, string][] = [
   ["Cotizaciones", "/cotizaciones"], ["Proyectos", "/proyectos"], ["Tareas", "/tareas"], ["Finanzas", "/finanzas"], ["Facturación", "/facturacion"], ["Agentes", "/agentes"],
 ];
 
-const BARE = ["/documentos", "/proyectos/reporte", "/flujos/reporte"];
+const BARE = ["/login", "/documentos", "/proyectos/reporte", "/flujos/reporte"];
 
 export function Shell({ children, demo = true }: { children: ReactNode; demo?: boolean }) {
   const path = usePathname();
@@ -100,13 +100,14 @@ const PALETTE: { t: string; s: string; href: string }[] = [
   { t: "Negocio demo 4 · Clínica", s: "Cliente", href: "/clientes" },
   { t: "Factura F-0112 · vencida", s: "Facturación", href: "/facturacion" },
   { t: "Informe del Investigador · semana 45", s: "Agentes", href: "/agentes" },
+  { t: "Cerrar sesión", s: "Cuenta", href: "/api/logout" },
 ];
 function Palette({ close }: { close: () => void }) {
   const [q, setQ] = useState("");
   const router = useRouter();
   const norm = (x: string) => x.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   const items = PALETTE.filter((i) => norm(i.t + " " + i.s).includes(norm(q))).slice(0, 8);
-  const go = (href: string) => { close(); router.push(href); };
+  const go = (href: string) => { close(); if (href.startsWith("/api/")) window.location.href = href; else router.push(href); };
   return (
     <>
       <div onClick={close} style={{ position: "fixed", inset: 0, background: "rgba(7,9,12,0.6)", zIndex: 70 }} />

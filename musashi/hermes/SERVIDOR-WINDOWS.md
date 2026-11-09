@@ -107,6 +107,16 @@ Luego en Musashi: Configuración → Hermes Agent → **Probar conexión**.
 
 ## Si algo falla
 - `hermes doctor` primero.
+- El webhook responde `Unknown route: musashi`: la ruta del `config.yaml` no se cargó. Créala como suscripción dinámica con el mismo secreto (se recarga sola, sin reiniciar):
+  ```powershell
+  $s = (Select-String -Path $HOME\.hermes\.env -Pattern '^WEBHOOK_SECRET=').Line.Split('=',2)[1].Trim()
+  hermes webhook subscribe musashi --prompt "Evento de Musashi {event_type} para el agente {agente}. Carga la skill musashi-{agente} y ejecutala con este payload: {__raw__}" --deliver log --secret $s
+  Remove-Variable s
+  hermes webhook test musashi    # debe responder 202
+  ```
+  Ojo: el comando imprime el secreto; no compartas esa captura.
+- `hermes gateway restart` dice "already running" o el puerto sigue ocupado: `hermes gateway stop`, luego `Get-NetTCPConnection -LocalPort 8642,8644 -State Listen | Select LocalPort, OwningProcess`, `Stop-Process -Id <PID> -Force` a cada uno y `hermes gateway start`.
+- Los valores del `.env` van sin `< >` ni comillas.
 - Ubuntu "se apagó": revisa que la tarea `WSL Hermes` esté corriendo en el Programador de tareas.
 - `localhost:8644` responde en Ubuntu pero no en Windows: `wsl --shutdown` y abre Ubuntu de nuevo (reinicia el reenvío de puertos).
 - Funnel no responde: `tailscale funnel status` y confirma que Funnel está habilitado para tu cuenta en el panel.

@@ -38,9 +38,19 @@ Pendiente: crear el proyecto (hoy la cuenta está en el límite de 2 proyectos g
 |---|---|---|
 | `ANTHROPIC_API_KEY` | console.anthropic.com | Modelo principal de los agentes (Claude). |
 | `OPENAI_API_KEY` (opcional) | platform.openai.com | Sólo si algún agente usa un modelo de OpenAI en la prueba de modelos. |
-| `HERMES_API_URL` / `HERMES_API_KEY` | Instalación de Hermes (servidor propio o nube) | Que Musashi lea el estado de los agentes, dispare corridas y reciba propuestas. |
-| `MUSASHI_WEBHOOK_SECRET` | La generamos nosotros | Firmar los mensajes que Hermes manda a la bandeja de aprobación. |
+| `HERMES_WEBHOOK_URL` / `HERMES_WEBHOOK_SECRET` | Instalación de Hermes (puerto 8644 vía túnel) · el secreto lo generamos nosotros | Musashi manda trabajo firmado a la ruta `musashi` (Estudio → Productor, etc.). |
+| `HERMES_API_URL` / `HERMES_API_KEY` | Instalación de Hermes (puerto 8642 vía túnel) · `API_SERVER_KEY` | Que Musashi lea el estado de Hermes y, después, dispare corridas. |
+| `MUSASHI_API_KEY` | La generamos nosotros | Los agentes la usan para leer contexto y dejar propuestas en la bandeja. |
 | Tope mensual de tokens | Configuración de Hermes | Límite de gasto por agente (hoy: 3,000 MXN al mes en el plan). |
+
+### Acceso a Musashi (login)
+
+| Variable | Dónde se obtiene | Para qué |
+|---|---|---|
+| `MUSASHI_PASSWORD` | La eliges tú (16+ caracteres) | Contraseña de la pantalla de acceso. |
+| `MUSASHI_SESSION_SECRET` | La generamos nosotros (48 caracteres hex) | Firma la cookie de sesión. Cambiarla cierra todas las sesiones abiertas. |
+
+Sin estas dos variables en Vercel nadie puede entrar a Musashi. Las rutas que usan los agentes (`/api/hermes/propuestas` y `/api/hermes/contexto`) no piden sesión: piden `MUSASHI_API_KEY`.
 
 ## 5 · Contenido y voz
 
