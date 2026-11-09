@@ -12,19 +12,16 @@ export async function GET() {
     HERMES_API_URL: !!ENV.hermesApiUrl,
     HERMES_API_KEY: !!ENV.hermesApiKey,
   };
-  let hermes: { alcanzable: boolean; detalle: string } = { alcanzable: false, detalle: "HERMES_API_URL sin configurar" };
-  if (ENV.hermesApiUrl) {
+  // El host de las URLs públicas no es secreto; ayuda a diagnosticar. Nunca se devuelven llaves.
+  const host = (u: string) => { try { const x = new URL(u.trim()); return `${x.protocol}//${x.host}${x.pathname !== "/" ? x.pathname : ""}`; } catch { return "URL inválida"; } };
+  const causa = (e: unknown) => { const c = (e as { cause?: { code?: string; message?: string } })?.cause; return c?.code || c?.message || (e instanceof Error ? e.message : "sin respuesta"); };
+  const probar = async (base: string, falta: string) => {
+    if (!base) return { alcanzable: false, detalle: falta, host: "" };
     try {
-      const r = await fetch(ENV.hermesApiUrl.replace(/\/$/, "") + "/health", { signal: AbortSignal.timeout(5000) });
-      hermes = { alcanzable: r.ok, detalle: `${r.status} ${await r.text().then((t) => t.slice(0, 120)).catch(() => "")}` };
-    } catch (e) { hermes = { alcanzable: false, detalle: e instanceof Error ? e.message : "sin respuesta" }; }
-  }
-  let webhook: { alcanzable: boolean; detalle: string } = { alcanzable: false, detalle: "HERMES_WEBHOOK_URL sin configurar" };
-  if (ENV.hermesWebhookUrl) {
-    try {
-      const r = await fetch(ENV.hermesWebhookUrl.replace(/\/$/, "") + "/health", { signal: AbortSignal.timeout(5000) });
-      webhook = { alcanzable: r.ok, detalle: `${r.status} ${await r.text().then((t) => t.slice(0, 120)).catch(() => "")}` };
-    } catch (e) { webhook = { alcanzable: false, detalle: e instanceof Error ? e.message : "sin respuesta" }; }
-  }
+      const r = await fetch(base.trim().replace(/\/$/, "") + "/health", { signal: AbortSignal.timeout(6000) });
+      return { alcanzable: r.ok, detalle: `${r.status} ${await r.text().then((t) => t.slice(0, 120)).catch(() => "")}`, host: host(base) };
+    } catch (e) { return { alcanzable: false, detalle: causa(e), host: host(base) }; }
+  };
+  const [hermes, webhook] = await Promise.all([probar(ENV.hermesApiUrl, "HERMES_API_URL sin configurar"), probar(ENV.hermesWebhookUrl, "HERMES_WEBHOOK_URL sin configurar")]);
   return NextResponse.json({ demo: DEMO, vars, hermes, webhook, agentes: AGENTES.length, ahora: new Date().toISOString() });
 }
