@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { C, MONO } from "@/lib/tokens";
 import { H, RGlyph, Dot } from "@/components/ui";
 import { TRAY, type TrayItem } from "@/lib/demo";
+import { datos, eq } from "@/lib/datos";
 
 /* ---------- Contexto de UI: toast + bandeja de aprobación ---------- */
 type UI = {
@@ -15,6 +16,7 @@ type UI = {
   approve: (id: string) => void;
   discard: (id: string) => void;
   demo: boolean;
+  db: boolean;
 };
 const UICtx = createContext<UI | null>(null);
 export const useUI = () => {
@@ -34,7 +36,8 @@ export function Shell({ children, demo = true }: { children: ReactNode; demo?: b
   const path = usePathname();
   const [toast, setToast] = useState<string | null>(null);
   const [palette, setPalette] = useState(false);
-  const [trayIds, setTrayIds] = useState<string[]>(() => TRAY.map((t) => t.id));
+  const [items, setItems] = useState<TrayItem[]>([]);
+  const [db, setDb] = useState(false);
   const [trayOpen, setTrayOpen] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -43,11 +46,23 @@ export function Shell({ children, demo = true }: { children: ReactNode; demo?: b
     if (timer.current) clearTimeout(timer.current);
     timer.current = setTimeout(() => setToast(null), 2400);
   }, []);
-  const tray = useMemo(() => TRAY.filter((t) => trayIds.includes(t.id)), [trayIds]);
-  const rm = useCallback((id: string, m: string) => { setTrayIds((s) => s.filter((x) => x !== id)); flash(m); }, [flash]);
-  const approve = useCallback((id: string) => { const t = TRAY.find((x) => x.id === id); rm(id, "Aprobado · " + (t?.agent.toLowerCase() ?? "")); }, [rm]);
-  const discard = useCallback((id: string) => rm(id, "Propuesta descartada"), [rm]);
-  const toggleTray = useCallback(() => setTrayOpen((o) => !o), []);
+  const tray = items;
+  // Bandeja: con Supabase, las propuestas pendientes que dejaron los agentes en propuestas_ia.
+  const enLogin = path.startsWith("/login");
+  const cargarBandeja = useCallback(() => {
+    if (enLogin) return;
+    datos.lista<{ id: string; agente: string; modelo: string | null; tipo: string; titulo: string; cuerpo: string }>("propuestas_ia", `select=id,agente,modelo,tipo,titulo,cuerpo&${eq("estado", "Pendiente")}&order=creado_en.desc&limit=30`)
+      .then((r) => { if (!r.db) { setItems(TRAY); return; } setDb(true); setItems(r.filas.map((f) => ({ id: f.id, agent: f.agente.toUpperCase(), model: (f.modelo ?? "IA").toUpperCase(), kind: f.tipo.toUpperCase(), title: f.titulo, body: f.cuerpo }))); })
+      .catch(() => {});
+  }, [enLogin]);
+  useEffect(() => { cargarBandeja(); }, [cargarBandeja]);
+  const rm = useCallback((id: string, m: string, estado: "Aprobada" | "Descartada") => {
+    setItems((s) => s.filter((x) => x.id !== id)); flash(m);
+    if (db) void datos.cambia("propuestas_ia", eq("id", id), { estado, resuelta_en: new Date().toISOString() }).catch(() => flash("No se guardó la decisión"));
+  }, [flash, db]);
+  const approve = useCallback((id: string) => { const t = items.find((x) => x.id === id); rm(id, "Aprobado · " + (t?.agent.toLowerCase() ?? ""), "Aprobada"); }, [rm, items]);
+  const discard = useCallback((id: string) => rm(id, "Propuesta descartada", "Descartada"), [rm]);
+  const toggleTray = useCallback(() => { if (!trayOpen) cargarBandeja(); setTrayOpen((o) => !o); }, [trayOpen, cargarBandeja]);
 
   useEffect(() => {
     const k = (e: KeyboardEvent) => {
@@ -63,7 +78,7 @@ export function Shell({ children, demo = true }: { children: ReactNode; demo?: b
     return () => window.removeEventListener("keydown", k);
   }, [trayOpen, tray, approve, discard, flash, palette]);
 
-  const value = useMemo<UI>(() => ({ flash, tray, trayOpen, toggleTray, approve, discard, demo }), [flash, tray, trayOpen, toggleTray, approve, discard, demo]);
+  const value = useMemo<UI>(() => ({ flash, tray, trayOpen, toggleTray, approve, discard, demo: demo && !db, db }), [flash, tray, trayOpen, toggleTray, approve, discard, demo, db]);
 
   if (BARE.some((b) => path.startsWith(b))) return <UICtx.Provider value={value}>{children}</UICtx.Provider>;
 
@@ -141,15 +156,15 @@ function Glows() {
 
 /* ---------- Encabezado ---------- */
 function Header({ onSearch }: { onSearch: () => void }) {
-  const { demo, tray, toggleTray } = useUI();
+  const { demo, db, tray, toggleTray } = useUI();
   const path = usePathname();
   const isActive = (href: string) => (href === "/" ? path === "/" : path.startsWith(href));
   const cfg = path.startsWith("/configuracion");
   return (
     <>
-      {demo && (
+      {(demo || db) && (
         <div style={{ height: 26, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, borderBottom: `1px solid ${C.borde}`, fontFamily: MONO, fontSize: 10, letterSpacing: "0.16em", color: C.niebla, background: "rgba(16,19,24,0.8)" }}>
-          <Dot color={C.oxido} />MODO DEMO · DATOS DE EJEMPLO
+          {db ? <><Dot color={C.olivo} />DATOS REALES EN CLIENTES, COTIZACIONES, FLUJOS, TARIFAS Y BANDEJA · EL RESTO AÚN ES DEMO</> : <><Dot color={C.oxido} />MODO DEMO · DATOS DE EJEMPLO</>}
         </div>
       )}
       <header style={{ display: "flex", alignItems: "center", gap: 12, padding: "22px 32px 0" }}>
@@ -202,7 +217,7 @@ function Tray() {
           <div>
             <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.14em", color: C.tenue }}>A APROBAR · E EDITAR · D DESCARTAR</div>
             <div style={{ fontWeight: 900, fontSize: 24, letterSpacing: "-0.02em", marginTop: 6 }}>BANDEJA DE APROBACIÓN</div>
-            <div style={{ fontWeight: 300, fontSize: 14, color: C.niebla }}>{tray.length} propuestas de hoy</div>
+            <div style={{ fontWeight: 300, fontSize: 14, color: C.niebla }}>{tray.length} {tray.length === 1 ? "propuesta pendiente" : "propuestas pendientes"}</div>
           </div>
           <button type="button" onClick={toggleTray} style={{ width: 44, height: 44, borderRadius: "50%", background: C.papel, color: C.tinta, border: "none", fontSize: 16, cursor: "pointer" }}>✕</button>
         </div>

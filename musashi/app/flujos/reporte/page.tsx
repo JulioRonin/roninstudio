@@ -3,8 +3,9 @@ import React, { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { PaperDoc } from "@/components/paper";
 import { load } from "@/lib/store";
+import { datos, eq } from "@/lib/datos";
 import { TARIFAS_BASE, mxn0, type Tarifas } from "@/lib/tarifas";
-import { MAPA_DEMO, minTotal, esperaTotal, minNuevo, ejecSemana, horasSemanaActual, ahorroHorasSemana, ahorroMesMXN, recapturas, type Mapa } from "@/lib/flujos";
+import { MAPA_DEMO, deFilaMapa, type FilaMapa, minTotal, esperaTotal, minNuevo, ejecSemana, horasSemanaActual, ahorroHorasSemana, ahorroMesMXN, recapturas, type Mapa } from "@/lib/flujos";
 
 const h1 = (n: number) => (Math.round(n * 10) / 10).toLocaleString("en-US");
 
@@ -12,7 +13,14 @@ function ReporteFlujos() {
   const sp = useSearchParams();
   const [mapa, setMapa] = useState<Mapa>(MAPA_DEMO);
   const [t, setT] = useState<Tarifas>(TARIFAS_BASE);
-  useEffect(() => { const id = sp.get("c") ?? "D2"; const d = load<{ mapas?: Mapa[] }>("flujos-mapas", {}); const m = d.mapas?.find((x) => x.id === id); if (m) setMapa(m); setT({ ...TARIFAS_BASE, ...load<Partial<Tarifas>>("tarifas", {}) }); }, [sp]);
+  const [falta, setFalta] = useState(false);
+  useEffect(() => {
+    const id = sp.get("c") ?? "D2";
+    const local = () => { const d = load<{ mapas?: Mapa[] }>("flujos-mapas", {}); const m = d.mapas?.find((x) => x.id === id); if (m) setMapa(m); setT({ ...TARIFAS_BASE, ...load<Partial<Tarifas>>("tarifas", {}) }); };
+    Promise.all([datos.lista<FilaMapa>("mapas_flujo", `select=*&${eq("codigo", id)}`), datos.lista<{ valor: Partial<Tarifas> }>("configuracion", `select=valor&${eq("clave", "tarifas")}`)])
+      .then(([m, t]) => { if (!m.db) return local(); if (m.filas[0]) setMapa(deFilaMapa(m.filas[0])); else setFalta(true); if (t.filas[0]) setT({ ...TARIFAS_BASE, ...t.filas[0].valor }); })
+      .catch(local);
+  }, [sp]);
   const procs = mapa.procs, costo = mapa.costoCliente;
   const CLIENTE_DEMO = { nombre: mapa.cliente, sector: mapa.sector, sucursales: mapa.sucursales, visita: mapa.visita, code: mapa.id };
   const inc = procs.filter((p) => p.incluir);
@@ -25,6 +33,7 @@ function ReporteFlujos() {
   const inversion = horas * t.precioHora;
   const payback = ahorroInc ? inversion / ahorroInc : 0;
   const top = [...procs].flatMap((p) => p.hallazgos.map((h) => ({ h, p: p.nombre, d: p.dolor }))).sort((a, b) => b.d - a.d).slice(0, 6);
+  if (falta) return <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#EEEBE4", color: "#0C0F14", fontSize: 15 }}>No encontramos ese mapa. Vuelve a Diagnósticos → Flujos de trabajo y ábrelo desde ahí.</div>;
   return (
     <PaperDoc title="Mapa de flujos y propuesta" kicker={`DIAGNÓSTICO COMPLETO · ${CLIENTE_DEMO.nombre.toUpperCase()} · ${CLIENTE_DEMO.sector.toUpperCase()} · VISITA ${CLIENTE_DEMO.visita.toUpperCase()}`} file={`mapa-de-flujos-${CLIENTE_DEMO.code}.html`} back="/diagnosticos">
       <h2>En una página</h2>

@@ -53,7 +53,13 @@ export const ACCION_COLOR: Record<Accion, string> = { Mantener: "#A9A6A0", Simpl
 export const FASE_COLOR: Record<Fase, string> = { "Construir ahora": "#B05139", "Fase 2": "#C98A3C", "Quick win": "#4C8141", "No conviene": "#5B6068" };
 
 /* ---------- Mapas por cliente ---------- */
-export type Mapa = { id: string; cliente: string; sector: string; sucursales: number; visita: string; modo: "Guiado" | "Desde cero"; costoCliente: number; procs: Proceso[]; creado: string };
+export type Mapa = { id: string; cliente: string; sector: string; sucursales: number; visita: string; visitaISO?: string | null; modo: "Guiado" | "Desde cero"; costoCliente: number; procs: Proceso[]; creado: string };
+
+/* Fila de mapas_flujo en Supabase ⇄ Mapa de la pantalla */
+export type FilaMapa = { codigo: string; cliente_id?: string | null; cliente_nombre: string; sector: string; sucursales: number; visita: string | null; modo: string; costo_hora_cliente: number; procesos: Proceso[]; creado_en?: string };
+const fmtLarga = (iso?: string | null) => (iso ? new Date(iso.slice(0, 10) + "T12:00:00").toLocaleDateString("es-MX", { day: "numeric", month: "long", year: "numeric" }) : "sin fecha");
+export const deFilaMapa = (f: FilaMapa): Mapa => ({ id: f.codigo, cliente: f.cliente_nombre, sector: f.sector, sucursales: f.sucursales, visita: fmtLarga(f.visita), visitaISO: f.visita, modo: f.modo === "Desde cero" ? "Desde cero" : "Guiado", costoCliente: Number(f.costo_hora_cliente), procs: Array.isArray(f.procesos) ? f.procesos : [], creado: f.creado_en ? new Date(f.creado_en).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" }) : "" });
+export const aFilaMapa = (m: Mapa, clienteId?: string | null): FilaMapa => ({ codigo: m.id, ...(clienteId !== undefined ? { cliente_id: clienteId } : {}), cliente_nombre: m.cliente, sector: m.sector, sucursales: m.sucursales, visita: m.visitaISO ?? null, modo: m.modo, costo_hora_cliente: m.costoCliente, procesos: m.procs });
 
 export const SECTORES = ["Restaurante con sucursales", "Clínica", "Escuela privada", "Gimnasio", "Taller", "Notaría", "Manufactura", "Otro"] as const;
 
@@ -115,7 +121,7 @@ export const GUIAS: Record<string, Proceso[]> = {
 
 export const MAPA_DEMO: Mapa = { id: "D2", cliente: CLIENTE_DEMO.nombre, sector: CLIENTE_DEMO.sector, sucursales: CLIENTE_DEMO.sucursales, visita: CLIENTE_DEMO.visita, modo: "Guiado", costoCliente: 95, procs: PROCESOS, creado: "22 oct 2026" };
 
-export function nuevoMapa(o: { cliente: string; sector: string; sucursales: number; visita: string; modo: "Guiado" | "Desde cero"; costoCliente: number }): Mapa {
+export function nuevoMapa(o: { cliente: string; sector: string; sucursales: number; visita: string; visitaISO?: string | null; modo: "Guiado" | "Desde cero"; costoCliente: number }): Mapa {
   const id = "M" + Date.now().toString(36).toUpperCase().slice(-5);
   const base = o.modo === "Guiado" ? (GUIAS[o.sector] ?? []) : [];
   const procs = base.map((p, i) => ({ ...p, id: "P" + (i + 1), pasos: p.pasos.map((x) => ({ ...x })), hallazgos: [] }));

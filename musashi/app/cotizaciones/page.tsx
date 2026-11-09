@@ -4,9 +4,10 @@ import Link from "next/link";
 import { C, MONO } from "@/lib/tokens";
 import { Glass, Eyebrow, H, Dot, PB, SB } from "@/components/ui";
 import { useUI, PageHead } from "@/components/shell";
-import { COTS, PAGOS, FACTURAS, CLIENTES, mxn, total, PESO, type Cot, type Pago, type Linea, type Estado } from "@/lib/cotizaciones";
+import { COTS, PAGOS, FACTURAS, CLIENTES, mxn, total, PESO, SELECT_COT, SELECT_MOV, SELECT_FAC, deFilaCot, deFilaMov, deFilaFactura, type Cot, type Pago, type Linea, type Estado, type Factura, type OpcionCliente, type FilaCot, type FilaMov, type FilaFactura } from "@/lib/cotizaciones";
 import { load, save, reset } from "@/lib/store";
 import { useTarifas } from "@/lib/tarifas";
+import { datos, eq, hoyISO, sumaDias, fechaCorta, mesCorto, siguienteFolio } from "@/lib/datos";
 
 /* =====================================================================
    COTIZACIONES · la entrada del dinero
@@ -18,6 +19,9 @@ const COLOR: Record<Estado, string> = { Borrador: C.acero, Enviada: C.niebla, Ab
 const mono10: CSSProperties = { fontFamily: MONO, fontSize: 10, letterSpacing: "0.12em", color: C.tenue };
 const input: CSSProperties = { height: 44, padding: "0 16px", borderRadius: 999, background: C.p2, border: `1px solid ${C.borde}`, color: C.papel, fontSize: 13, outline: "none", width: "100%" };
 const KEY = "cotizaciones";
+const RAZONES = ["Precio", "Tiempo del equipo", "Ya tienen un sistema", "No es prioridad", "Sin respuesta"];
+const OPC_DEMO: OpcionCliente[] = CLIENTES.map((c) => { const [n, s] = c.split(" · "); return { value: c, label: c, nombre: n, sector: s ?? "" }; });
+const ANTES_DE_PROPUESTA = encodeURIComponent("(Lead,Contactado,Llamada,Diagnóstico)");
 
 function chip(a: boolean): CSSProperties {
   return { height: 36, padding: "0 14px", borderRadius: 999, border: `1px solid ${a ? C.papel : "rgba(238,235,228,0.12)"}`, background: a ? C.papel : "rgba(22,26,33,0.55)", color: a ? C.tinta : C.papel, fontSize: 12.5, cursor: "pointer", whiteSpace: "nowrap", fontWeight: a ? 600 : 400 };
@@ -26,19 +30,44 @@ function chip(a: boolean): CSSProperties {
 export default function Cotizaciones() {
   const { flash } = useUI();
   const [tab, setTab] = useState(0);
-  const [cots, setCots] = useState<Cot[]>(COTS);
-  const [pagos, setPagos] = useState<Pago[]>(PAGOS);
-  const [sel, setSel] = useState<string>("C-0034");
+  const [db, setDb] = useState(false);
+  const [cargando, setCargando] = useState(true);
+  const [cots, setCots] = useState<Cot[]>([]);
+  const [pagos, setPagos] = useState<Pago[]>([]);
+  const [facturas, setFacturas] = useState<Factura[]>([]);
+  const [clientes, setClientes] = useState<OpcionCliente[]>([]);
+  const [sel, setSel] = useState<string>("");
   const [filtro, setFiltro] = useState<"Todas" | Estado>("Todas");
-  const [tareas, setTareas] = useState<string[]>(["Seguimiento C-0033 · llamar a Negocio demo 1 · 7 nov", "Seguimiento C-0032 · confirmar recepción · 6 nov"]);
+  const [tareas, setTareas] = useState<string[]>([]);
+  const [perdiendo, setPerdiendo] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
-  // Persistencia local (demo): lo que capturas sobrevive a recargar la página.
-  useEffect(() => { const d = load<{ cots?: Cot[]; pagos?: Pago[]; tareas?: string[] }>(KEY, {}); if (d.cots) setCots(d.cots); if (d.pagos) setPagos(d.pagos); if (d.tareas) setTareas(d.tareas); setLoaded(true); }, []);
+  const cargarTareas = () => datos.lista<{ titulo: string; fecha: string }>("tareas", `select=titulo,fecha&${eq("origen", "Cotización")}&${eq("estado", "Pendiente")}&order=fecha.asc&limit=8`).then((r) => setTareas(r.filas.map((t) => `${t.titulo} · ${fechaCorta(t.fecha)}`)));
+  // Con Supabase: todo sale de la base (vacío al inicio). Sin Supabase: demo guardado en el navegador.
+  useEffect(() => {
+    (async () => {
+      try {
+        const c = await datos.lista<FilaCot>("cotizaciones", SELECT_COT);
+        if (!c.db) throw new Error("local");
+        const [m, f, cl] = await Promise.all([datos.lista<FilaMov>("movimientos", SELECT_MOV), datos.lista<FilaFactura>("facturas", SELECT_FAC), datos.lista<{ id: string; nombre: string; sector: string }>("clientes", "select=id,nombre,sector&order=nombre")]);
+        setDb(true); setCots(c.filas.map(deFilaCot)); setPagos(m.filas.map(deFilaMov)); setFacturas(f.filas.map(deFilaFactura));
+        setClientes(cl.filas.map((x) => ({ value: x.id, label: `${x.nombre} · ${x.sector}`, nombre: x.nombre, sector: x.sector })));
+        setSel(c.filas[0]?.folio ?? "");
+        await cargarTareas();
+      } catch (e) {
+        if ((e as Error).message !== "local") { flash("No se pudo leer la base: " + (e as Error).message); setDb(true); setCots([]); setPagos([]); setFacturas([]); setClientes([]); setTareas([]); return; }
+        const d = load<{ cots?: Cot[]; pagos?: Pago[]; tareas?: string[] }>(KEY, {});
+        setCots(d.cots ?? COTS); setPagos(d.pagos ?? PAGOS); setFacturas(FACTURAS); setClientes(OPC_DEMO); setSel("C-0034");
+        setTareas(d.tareas ?? ["Seguimiento C-0033 · llamar a Negocio demo 1 · 7 nov", "Seguimiento C-0032 · confirmar recepción · 6 nov"]); setLoaded(true);
+      } finally { setCargando(false); }
+    })();
+  }, [flash]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { if (loaded) save(KEY, { cots, pagos, tareas }); }, [cots, pagos, tareas, loaded]);
   useEffect(() => { try { const t = new URLSearchParams(window.location.search).get("tab"); if (t) setTab(Math.max(0, TABS.findIndex((x) => x.toLowerCase().startsWith(t.toLowerCase())))); } catch {} }, []);
+  useEffect(() => setPerdiendo(false), [sel]);
 
-  const cur = cots.find((c) => c.folio === sel) ?? cots[0];
+  const mesActual = db ? hoyISO().slice(0, 7) : "NOV";
+  const cur: Cot | undefined = cots.find((c) => c.folio === sel) ?? cots[0];
   const lista = cots.filter((c) => filtro === "Todas" || c.estado === filtro);
   const enJuego = cots.filter((c) => ["Borrador", "Enviada", "Abierta"].includes(c.estado));
   const pipeline = enJuego.reduce((s, c) => s + total(c), 0);
@@ -46,14 +75,77 @@ export default function Cotizaciones() {
   const aceptadas = cots.filter((c) => c.estado === "Aceptada");
   const cerradas = cots.filter((c) => ["Aceptada", "Perdida", "Vencida"].includes(c.estado));
   const tasa = cerradas.length ? Math.round((aceptadas.length / cerradas.length) * 100) : 0;
-  const porCobrar = FACTURAS.filter((f) => f.estado === "Vencida" || f.estado === "Vigente").reduce((s, f) => s + f.monto, 0);
-  const cobradoMes = pagos.filter((p) => p.tipo === "Cobro" && p.mes === "NOV").reduce((s, p) => s + p.monto, 0);
-  const gastoMes = pagos.filter((p) => p.tipo === "Gasto" && p.mes === "NOV").reduce((s, p) => s + p.monto, 0);
+  const pendientes = facturas.filter((f) => f.estado === "Vencida" || f.estado === "Vigente");
+  const porCobrar = pendientes.reduce((s, f) => s + f.monto, 0);
+  const vencidas = pendientes.filter((f) => f.estado === "Vencida").length;
+  const objecion = (() => { const r: Record<string, number> = {}; cots.forEach((c) => { if (c.estado === "Perdida" && c.razon) r[c.razon] = (r[c.razon] ?? 0) + 1; }); const top = Object.entries(r).sort((a, b) => b[1] - a[1])[0]; return top ? `objeción: ${top[0].toLowerCase()}` : "sin pérdidas registradas"; })();
+  const cobradoMes = pagos.filter((p) => p.tipo === "Cobro" && p.mes === mesActual).reduce((s, p) => s + p.monto, 0);
+  const gastoMes = pagos.filter((p) => p.tipo === "Gasto" && p.mes === mesActual).reduce((s, p) => s + p.monto, 0);
 
+  const falla = (e: unknown) => { flash("No se guardó: " + (e instanceof Error ? e.message : "error")); return false; };
   const setEstado = (folio: string, estado: Estado, extra: Partial<Cot> = {}) => setCots((cs) => cs.map((c) => (c.folio === folio ? { ...c, estado, ...extra } : c)));
-  const enviar = (c: Cot) => { setEstado(c.folio, "Enviada"); setTareas((t) => [`Seguimiento ${c.folio} · ${c.cliente} · en 3 días`, ...t]); flash(`${c.folio} enviada · tarea de seguimiento creada`); };
-  const aceptar = (c: Cot) => { setEstado(c.folio, "Aceptada", { proyectoCode: "D" + (14 + cots.filter((x) => x.estado === "Aceptada").length) }); setTareas((t) => [`Crear proyecto y facturar anticipo · ${c.folio} · ${c.cliente}`, ...t]); flash(`${c.folio} aceptada · proyecto en Mapear y anticipo por facturar`); };
-  const perder = (c: Cot) => { setEstado(c.folio, "Perdida", { razon: "Precio" }); flash(`${c.folio} marcada como perdida`); };
+  const patchCot = async (c: Cot, cambios: Record<string, unknown>) => { if (!db || !c.id) return true; try { await datos.cambia("cotizaciones", eq("id", c.id), cambios); return true; } catch (e) { return falla(e); } };
+  const nuevaTarea = async (titulo: string, c: Cot, dias: number, canal = "WhatsApp") => {
+    const fecha = sumaDias(hoyISO(), dias);
+    setTareas((t) => [`${titulo} · ${fechaCorta(fecha)}`, ...t]);
+    if (db) await datos.crea("tareas", { titulo, cliente_id: c.clienteId ?? null, cotizacion_id: c.id ?? null, origen: "Cotización", canal, fecha }).catch(falla);
+  };
+  const etapaCliente = async (c: Cot, etapa: "Propuesta" | "Cliente") => {
+    if (!db || !c.clienteId) return;
+    const filtro = etapa === "Propuesta" ? `${eq("id", c.clienteId)}&etapa_embudo=in.${ANTES_DE_PROPUESTA}` : eq("id", c.clienteId);
+    await datos.cambia("clientes", filtro, { etapa_embudo: etapa }).catch(() => {});
+  };
+  const enviar = async (c: Cot) => {
+    if (!(await patchCot(c, { estado: "Enviada" }))) return;
+    setEstado(c.folio, "Enviada"); await nuevaTarea(`Seguimiento ${c.folio} · ${c.cliente}`, c, 3); await etapaCliente(c, "Propuesta");
+    flash(`${c.folio} enviada · tarea de seguimiento creada`);
+  };
+  const aceptar = async (c: Cot) => {
+    let codigo = "D" + (14 + cots.filter((x) => x.estado === "Aceptada").length);
+    if (db) {
+      try {
+        const pr = await datos.lista<{ codigo: string }>("proyectos", "select=codigo");
+        codigo = siguienteFolio("P", pr.filas.map((x) => x.codigo), 2);
+        const horas = c.lineas.reduce((s, l) => s + (l.horas ?? 0), 0);
+        const p = await datos.crea<{ id: string }>("proyectos", { codigo, cliente_id: c.clienteId, cotizacion_id: c.id, nombre: c.proyecto, etapa: "Mapear", inicio: hoyISO(), horas_estimadas: horas, presupuesto: total(c) });
+        const pid = p.filas[0]?.id;
+        if (pid && c.lineas.length) await datos.crea("hitos", c.lineas.map((l, i) => ({ proyecto_id: pid, orden: i + 1, nombre: l.c, etapa: l.etapa, monto: l.monto })));
+      } catch (e) { falla(e); return; }
+      if (!(await patchCot(c, { estado: "Aceptada" }))) return;
+      await etapaCliente(c, "Cliente");
+    }
+    setEstado(c.folio, "Aceptada", { proyectoCode: codigo });
+    await nuevaTarea(`Facturar anticipo ${c.folio} · ${c.cliente}`, c, 0, "Interno");
+    flash(`${c.folio} aceptada · proyecto ${codigo} en Mapear y anticipo por facturar`);
+  };
+  const perder = async (c: Cot, razon: string) => { if (!(await patchCot(c, { estado: "Perdida", razon_perdida: razon }))) return; setEstado(c.folio, "Perdida", { razon }); setPerdiendo(false); flash(`${c.folio} marcada como perdida · ${razon.toLowerCase()}`); };
+  const reabrir = async (c: Cot) => { const v = sumaDias(hoyISO(), 15); if (!(await patchCot(c, { estado: "Borrador", razon_perdida: null, vigencia: v }))) return; setEstado(c.folio, "Borrador", { razon: undefined, vigencia: fechaCorta(v), vigenciaISO: v }); flash("Cotización reabierta como borrador"); };
+  const guardarNueva = async (c: Cot, enviarla: boolean) => {
+    let nueva = c;
+    if (db) {
+      try {
+        const r = await datos.crea<FilaCot>("cotizaciones", { folio: c.folio, cliente_id: c.clienteId, proyecto_nombre: c.proyecto, estado: c.estado, vigencia: c.vigenciaISO ?? null, anticipo_pct: c.anticipo, credito: c.credito, notas: c.notas || null });
+        const id = r.filas[0]?.id;
+        if (id && c.lineas.length) await datos.crea("cotizacion_lineas", c.lineas.map((l, i) => ({ cotizacion_id: id, orden: i + 1, concepto: l.c, etapa: l.etapa, monto: l.monto, horas: l.horas ?? null })));
+        nueva = { ...c, id };
+      } catch (e) { falla(e); return; }
+    }
+    setCots((cs) => [nueva, ...cs]); setSel(nueva.folio); setTab(0);
+    if (enviarla) { await nuevaTarea(`Seguimiento ${nueva.folio} · ${nueva.cliente}`, nueva, 3); await etapaCliente(nueva, "Propuesta"); }
+    flash(enviarla ? `${nueva.folio} enviada · tarea de seguimiento creada` : `${nueva.folio} guardada como borrador`);
+  };
+  const registrar = async (p: Pago, facturaId?: string) => {
+    let nuevo = p;
+    if (db) {
+      try {
+        const r = await datos.crea<FilaMov>("movimientos", { tipo: p.tipo, fecha: p.fechaISO, cliente_id: p.clienteId ?? null, factura_id: facturaId ?? null, concepto: p.concepto, metodo: p.metodo, referencia: p.tipo === "Cobro" && p.ref !== "—" ? p.ref : null, monto: p.monto });
+        if (r.filas[0]) nuevo = deFilaMov({ ...r.filas[0], cliente: { nombre: p.cliente } });
+        if (facturaId) { await datos.cambia("facturas", eq("id", facturaId), { estado: "Pagada" }); setFacturas((fs) => fs.map((f) => (f.id === facturaId ? { ...f, estado: "Pagada" } : f))); }
+      } catch (e) { falla(e); return; }
+    }
+    setPagos((ps) => [nuevo, ...ps]);
+    flash(p.tipo === "Cobro" ? `Cobro de ${mxn(p.monto)} registrado${p.ref !== "—" ? " · " + p.ref : ""}` : `Gasto de ${mxn(p.monto)} registrado`);
+  };
 
   return (
     <>
@@ -61,7 +153,7 @@ export default function Cotizaciones() {
         stage={0}
         eyebrow="05 · COTIZACIONES · ENTRADA DEL DINERO"
         title="COTIZACIONES"
-        sub={`${enJuego.length} en juego por ${mxn(pipeline)} · ${aceptadas.length} aceptadas · ${mxn(porCobrar)} por cobrar`}
+        sub={cargando ? "Cargando…" : `${enJuego.length} en juego por ${mxn(pipeline)} · ${aceptadas.length} aceptadas · ${mxn(porCobrar)} por cobrar`}
         style={{ paddingTop: 34, gap: 24, animation: "rise .6s cubic-bezier(.2,.7,.2,1) both" }}
         right={
           <H as="button" type="button" onClick={() => setTab(1)} style={{ height: 48, padding: "0 22px", borderRadius: 999, background: C.oxido, color: C.papel, border: "none", fontSize: 14, fontWeight: 600, cursor: "pointer", boxShadow: "0 0 28px rgba(176,81,57,.45)" }} hover={{ background: C.oxidoHover }}>Nueva cotización</H>
@@ -71,11 +163,13 @@ export default function Cotizaciones() {
         {TABS.map((l, i) => { const a = i === tab; return <H key={l} as="button" type="button" onClick={() => setTab(i)} style={{ ...chip(a), height: 44, padding: "0 18px", fontSize: 13 }} hover={a ? {} : { borderColor: C.acero }}>{l}</H>; })}
       </nav>
 
+      {cargando && <section style={{ padding: "40px 32px", fontFamily: MONO, fontSize: 11, letterSpacing: "0.12em", color: C.tenue }}>CARGANDO…</section>}
+
       {/* ---------- Lista + detalle ---------- */}
-      {tab === 0 && (
+      {!cargando && tab === 0 && (
         <section style={{ padding: "22px 32px 48px", display: "flex", flexDirection: "column", gap: 16 }}>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4,minmax(0,1fr))", gap: 12 }}>
-            {[["EN JUEGO", mxn(pipeline), `${enJuego.length} cotizaciones · ponderado ${mxn(ponderado)}`], ["ACEPTADAS · 90 DÍAS", mxn(aceptadas.reduce((s, c) => s + total(c), 0)), `${aceptadas.length} proyectos`], ["TASA DE ACEPTACIÓN", `${tasa} %`, `${aceptadas.length} de ${cerradas.length} cerradas · objeción: precio`], ["POR COBRAR", mxn(porCobrar), "3 facturas · 1 vencida"]].map(([k, v, s], i) => (
+            {[["EN JUEGO", mxn(pipeline), `${enJuego.length} cotizaciones · ponderado ${mxn(ponderado)}`], ["ACEPTADAS", mxn(aceptadas.reduce((s, c) => s + total(c), 0)), `${aceptadas.length} ${aceptadas.length === 1 ? "proyecto" : "proyectos"}`], ["TASA DE ACEPTACIÓN", `${tasa} %`, `${aceptadas.length} de ${cerradas.length} cerradas · ${objecion}`], ["POR COBRAR", mxn(porCobrar), `${pendientes.length} ${pendientes.length === 1 ? "factura" : "facturas"} · ${vencidas} ${vencidas === 1 ? "vencida" : "vencidas"}`]].map(([k, v, s], i) => (
               <Glass key={k} pad={18} radius={22} delay={`${i * 0.05}s`}><div style={mono10}>{k}</div><div style={{ fontWeight: 900, fontSize: 26, letterSpacing: "-0.02em", marginTop: 8 }}>{v}</div><div style={{ fontSize: 12, color: C.niebla, marginTop: 4 }}>{s}</div></Glass>
             ))}
           </div>
@@ -90,6 +184,7 @@ export default function Cotizaciones() {
               <div style={{ display: "grid", gridTemplateColumns: "70px 1.4fr 1.2fr 110px 110px 90px", gap: 14, padding: "10px 0", borderBottom: "1px solid rgba(238,235,228,0.09)" }}>
                 {["FOLIO", "CLIENTE · PROYECTO", "ESTADO", "VIGENCIA", "TOTAL", "ABIERTA"].map((h) => <div key={h} style={mono10}>{h}</div>)}
               </div>
+              {!cargando && lista.length === 0 && <div style={{ padding: "22px 0", fontSize: 13.5, color: C.niebla }}>{cots.length === 0 ? <>Todavía no hay cotizaciones. Crea la primera en <strong style={{ color: C.papel }}>Nueva cotización</strong> o desde un mapa de flujos.</> : "Ninguna con ese estado."}</div>}
               {lista.map((c) => (
                 <H key={c.folio} onClick={() => setSel(c.folio)} style={{ display: "grid", gridTemplateColumns: "70px 1.4fr 1.2fr 110px 110px 90px", gap: 14, padding: "12px 0", alignItems: "center", borderBottom: "1px solid rgba(238,235,228,0.06)", cursor: "pointer", background: sel === c.folio ? "rgba(238,235,228,0.05)" : "transparent" }} hover={{ background: "rgba(238,235,228,0.035)" }}>
                   <div style={{ fontFamily: MONO, fontSize: 11 }}>{c.folio}</div>
@@ -102,6 +197,7 @@ export default function Cotizaciones() {
               ))}
             </Glass>
             {/* Detalle en papel */}
+            {cur ? (
             <div style={{ background: "rgba(238,235,228,0.94)", color: C.tinta, borderRadius: 28, padding: 24, display: "flex", flexDirection: "column", gap: 10, animation: "rise .5s both" }}>
               <div style={{ ...mono10, color: C.acero }}>RONIN STUDIO · COTIZACIÓN {cur.folio} · {cur.estado.toUpperCase()}{cur.vigencia !== "—" ? ` · VIGENTE AL ${cur.vigencia.toUpperCase()}` : ""}</div>
               <div style={{ fontWeight: 900, fontSize: 24, letterSpacing: "-0.02em", lineHeight: 1 }}>{cur.cliente.toUpperCase()}</div>
@@ -115,12 +211,13 @@ export default function Cotizaciones() {
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}><span style={{ ...mono10, color: C.acero }}>TOTAL MXN · ANTICIPO {cur.anticipo} %</span><span style={{ fontWeight: 900, fontSize: 26, letterSpacing: "-0.02em" }}>{mxn(total(cur))}</span></div>
               <div style={{ fontSize: 12, color: C.acero }}>Anticipo de {mxn(Math.round(total(cur) * cur.anticipo / 100))} al aceptar; el resto contra aceptación de cada hito. CFDI por cada pago.</div>
               <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 4 }}>
-                {cur.estado === "Borrador" && <PB small onClick={() => enviar(cur)} style={{ background: C.tinta, boxShadow: "none" }}>Enviar al cliente</PB>}
-                {(cur.estado === "Enviada" || cur.estado === "Abierta") && <><PB small onClick={() => aceptar(cur)} style={{ background: C.tinta, boxShadow: "none" }}>Marcar aceptada</PB><button type="button" onClick={() => { setTareas((t) => [`Seguimiento ${cur.folio} · ${cur.cliente} · mañana`, ...t]); flash("Tarea de seguimiento creada"); }} style={{ height: 36, padding: "0 14px", borderRadius: 999, background: "transparent", border: `1px solid ${C.tinta}`, color: C.tinta, fontSize: 12, cursor: "pointer" }}>Dar seguimiento</button><button type="button" onClick={() => perder(cur)} style={{ height: 36, padding: "0 14px", borderRadius: 999, background: "transparent", border: "none", color: C.acero, fontSize: 12, cursor: "pointer" }}>Perdida</button></>}
+                {cur.estado === "Borrador" && <PB small onClick={() => void enviar(cur)} style={{ background: C.tinta, boxShadow: "none" }}>Enviar al cliente</PB>}
+                {(cur.estado === "Enviada" || cur.estado === "Abierta") && <><PB small onClick={() => void aceptar(cur)} style={{ background: C.tinta, boxShadow: "none" }}>Marcar aceptada</PB><button type="button" onClick={() => { void nuevaTarea(`Seguimiento ${cur.folio} · ${cur.cliente}`, cur, 1).then(() => flash("Tarea de seguimiento creada para mañana")); }} style={{ height: 36, padding: "0 14px", borderRadius: 999, background: "transparent", border: `1px solid ${C.tinta}`, color: C.tinta, fontSize: 12, cursor: "pointer" }}>Dar seguimiento</button><button type="button" onClick={() => setPerdiendo((x) => !x)} style={{ height: 36, padding: "0 14px", borderRadius: 999, background: "transparent", border: "none", color: C.acero, fontSize: 12, cursor: "pointer" }}>Perdida</button></>}
                 {cur.estado === "Aceptada" && <><Link href="/proyectos" style={{ height: 36, padding: "0 14px", borderRadius: 999, background: C.tinta, color: C.papel, fontSize: 12, fontWeight: 600, display: "flex", alignItems: "center" }}>Ver proyecto {cur.proyectoCode ?? ""}</Link><Link href="/facturacion" style={{ height: 36, padding: "0 14px", borderRadius: 999, border: `1px solid ${C.tinta}`, color: C.tinta, fontSize: 12, display: "flex", alignItems: "center" }}>Facturas</Link></>}
-                {(cur.estado === "Perdida" || cur.estado === "Vencida") && <PB small onClick={() => { setEstado(cur.folio, "Borrador", { razon: undefined, vigencia: "30 nov" }); flash("Cotización reabierta como borrador"); }} style={{ background: C.tinta, boxShadow: "none" }}>Reabrir</PB>}
-                <button type="button" onClick={() => flash("PDF de la cotización descargado")} style={{ height: 36, padding: "0 14px", borderRadius: 999, background: "transparent", border: `1px solid ${C.acero}`, color: C.tinta, fontSize: 12, cursor: "pointer" }}>PDF</button>
+                {(cur.estado === "Perdida" || cur.estado === "Vencida") && <PB small onClick={() => void reabrir(cur)} style={{ background: C.tinta, boxShadow: "none" }}>Reabrir</PB>}
+                <button type="button" onClick={() => window.print()} title="Imprime o guarda como PDF" style={{ height: 36, padding: "0 14px", borderRadius: 999, background: "transparent", border: `1px solid ${C.acero}`, color: C.tinta, fontSize: 12, cursor: "pointer" }}>PDF</button>
               </div>
+              {perdiendo && <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}><span style={{ ...mono10, color: C.acero }}>¿POR QUÉ?</span>{RAZONES.map((r) => <button key={r} type="button" onClick={() => void perder(cur, r)} style={{ height: 32, padding: "0 12px", borderRadius: 999, background: "transparent", border: `1px solid ${C.tinta}`, color: C.tinta, fontSize: 12, cursor: "pointer" }}>{r}</button>)}</div>}
               <div style={{ borderTop: "1px solid #D6D2C9", paddingTop: 10, marginTop: 4 }}>
                 <div style={{ ...mono10, color: C.acero, marginBottom: 6 }}>LIGADO A</div>
                 <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
@@ -128,32 +225,36 @@ export default function Cotizaciones() {
                 </div>
               </div>
             </div>
+            ) : <Glass style={{ fontSize: 13.5, color: C.niebla }}>El detalle aparece aquí cuando selecciones una cotización.</Glass>}
           </div>
           <Glass>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
               <div><Eyebrow>TAREAS GENERADAS POR COTIZACIONES</Eyebrow><div style={{ fontWeight: 900, fontSize: 20, letterSpacing: "-0.02em", marginTop: 6 }}>SEGUIMIENTO</div></div>
               <Link href="/tareas" style={{ ...mono10, color: C.papel }}>VER EN TAREAS ↗</Link>
             </div>
+            {tareas.length === 0 && <div style={{ borderTop: `1px solid ${C.borde}`, padding: "12px 0", fontSize: 13, color: C.niebla }}>Sin seguimientos pendientes.</div>}
             {tareas.map((t, i) => <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, borderTop: `1px solid ${C.borde}`, padding: "10px 0", fontSize: 13.5 }}><Dot color={i === 0 ? C.oxido : C.acero} />{t}</div>)}
           </Glass>
         </section>
       )}
 
-      {tab === 1 && <Nueva onSave={(c, enviar) => { setCots((cs) => [c, ...cs]); setSel(c.folio); if (enviar) setTareas((t) => [`Seguimiento ${c.folio} · ${c.cliente} · en 3 días`, ...t]); setTab(0); flash(enviar ? `${c.folio} enviada · tarea de seguimiento creada` : `${c.folio} guardada como borrador`); }} next={`C-00${35 + (cots.length - COTS.length)}`} />}
+      {!cargando && tab === 1 && <Nueva clientes={clientes} onSave={(c, enviarla) => void guardarNueva(c, enviarla)} next={siguienteFolio("C-", cots.map((c) => c.folio))} />}
 
-      {tab === 2 && <CobrosGastos pagos={pagos} onAdd={(p) => { setPagos((ps) => [p, ...ps]); flash(p.tipo === "Cobro" ? `Cobro de ${mxn(p.monto)} registrado · ${p.ref}` : `Gasto de ${mxn(p.monto)} registrado`); }} />}
+      {!cargando && tab === 2 && <CobrosGastos pagos={pagos} facturas={facturas} clientes={clientes} mesDe={(iso) => (db ? iso.slice(0, 7) : "NOV")} onAdd={(p, f) => void registrar(p, f)} />}
 
-      {tab === 3 && <Balance pagos={pagos} cobradoMes={cobradoMes} gastoMes={gastoMes} porCobrar={porCobrar} pipeline={pipeline} ponderado={ponderado} />}
+      {!cargando && tab === 3 && <Balance db={db} pagos={pagos} cobradoMes={cobradoMes} gastoMes={gastoMes} porCobrar={porCobrar} pipeline={pipeline} ponderado={ponderado} />}
     </>
   );
 }
 
 /* ---------- Nueva cotización ---------- */
-function Nueva({ onSave, next }: { onSave: (c: Cot, enviar: boolean) => void; next: string }) {
+function Nueva({ clientes, onSave, next }: { clientes: OpcionCliente[]; onSave: (c: Cot, enviar: boolean) => void; next: string }) {
   const { flash } = useUI();
-  const [cliente, setCliente] = useState(CLIENTES[6]);
+  const [cliente, setCliente] = useState(clientes[0]?.value ?? "");
   const [proyecto, setProyecto] = useState("");
-  const [vigencia, setVigencia] = useState("20 nov");
+  const [vigencia, setVigencia] = useState(sumaDias(hoyISO(), 15));
+  const opt = clientes.find((c) => c.value === cliente);
+  useEffect(() => { if (!opt && clientes[0]) setCliente(clientes[0].value); }, [opt, clientes]);
   const [anticipo, setAnticipo] = useState(30);
   const [credito, setCredito] = useState(0);
   const [notas, setNotas] = useState("");
@@ -163,15 +264,15 @@ function Nueva({ onSave, next }: { onSave: (c: Cot, enviar: boolean) => void; ne
   useEffect(() => {
     const d = load<{ cliente?: string; proyecto?: string; lineas?: Linea[]; credito?: number; notas?: string } | null>("cotizacion-borrador", null);
     if (!d) return;
-    if (d.cliente && CLIENTES.includes(d.cliente)) setCliente(d.cliente);
+    if (d.cliente) { const o = clientes.find((c) => c.label === d.cliente) ?? clientes.find((c) => c.nombre.toLowerCase() === d.cliente!.split(" · ")[0].toLowerCase()); if (o) setCliente(o.value); else flash(`Da de alta a ${d.cliente.split(" · ")[0]} en Clientes para ligar la cotización`); }
     if (d.proyecto) setProyecto(d.proyecto); if (d.lineas?.length) setLineas(d.lineas); if (d.credito != null) setCredito(d.credito); if (d.notas) setNotas(d.notas);
     reset("cotizacion-borrador"); flash("Hitos cargados desde el mapa de flujos");
-  }, [flash]);
+  }, [flash]); // eslint-disable-line react-hooks/exhaustive-deps
   const tot = lineas.reduce((s, l) => s + (Number(l.monto) || 0), 0) - (Number(credito) || 0);
   const build = (): Cot | null => {
+    if (!opt) { flash("Elige un cliente; si es nuevo, dalo de alta en Clientes"); return null; }
     if (!proyecto.trim()) { flash("Ponle nombre al proyecto"); return null; }
-    const [cli, sec] = cliente.split(" · ");
-    return { folio: next, cliente: cli, sector: sec ?? "", proyecto: proyecto.trim(), estado: "Borrador", fecha: "6 nov", vigencia, lineas: lineas.map((l) => ({ ...l, monto: Number(l.monto) || 0 })), credito: Number(credito) || 0, anticipo, notas };
+    return { folio: next, cliente: opt.nombre, sector: opt.sector, clienteId: opt.value, proyecto: proyecto.trim(), estado: "Borrador", fecha: fechaCorta(hoyISO()), vigencia: fechaCorta(vigencia), vigenciaISO: vigencia, lineas: lineas.map((l) => ({ ...l, monto: Number(l.monto) || 0 })), credito: Number(credito) || 0, anticipo, notas };
   };
   return (
     <section style={{ padding: "22px 32px 48px", display: "grid", gridTemplateColumns: "1fr 380px", gap: 16 }}>
@@ -179,13 +280,13 @@ function Nueva({ onSave, next }: { onSave: (c: Cot, enviar: boolean) => void; ne
         <Eyebrow>NUEVA COTIZACIÓN · {next}</Eyebrow>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
           <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>Cliente
-            <select value={cliente} onChange={(e) => setCliente(e.target.value)} style={{ ...input, appearance: "none" }}>{CLIENTES.map((c) => <option key={c} value={c}>{c}</option>)}</select>
+            {clientes.length ? <select value={cliente} onChange={(e) => setCliente(e.target.value)} style={{ ...input, appearance: "none" }}>{clientes.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}</select> : <Link href="/clientes" style={{ ...input, display: "flex", alignItems: "center", color: C.ambar }}>Primero da de alta un cliente ↗</Link>}
           </label>
           <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>Proyecto
             <input value={proyecto} onChange={(e) => setProyecto(e.target.value)} placeholder="Plataforma de expedientes y citas" style={input} />
           </label>
           <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>Vigencia
-            <input value={vigencia} onChange={(e) => setVigencia(e.target.value)} style={input} />
+            <input type="date" value={vigencia} onChange={(e) => setVigencia(e.target.value)} style={{ ...input, colorScheme: "dark" }} />
           </label>
           <div style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>Anticipo
             <div style={{ display: "flex", gap: 6 }}>{[20, 30, 50, 100].map((n) => <button key={n} type="button" onClick={() => setAnticipo(n)} style={{ ...chip(anticipo === n), flex: 1, height: 44 }}>{n} %</button>)}</div>
@@ -217,14 +318,14 @@ function Nueva({ onSave, next }: { onSave: (c: Cot, enviar: boolean) => void; ne
       </Glass>
       <div style={{ background: "rgba(238,235,228,0.94)", color: C.tinta, borderRadius: 28, padding: 24, display: "flex", flexDirection: "column", gap: 10, alignSelf: "start" }}>
         <div style={{ ...mono10, color: C.acero }}>VISTA PREVIA · {next}</div>
-        <div style={{ fontWeight: 900, fontSize: 22, letterSpacing: "-0.02em", lineHeight: 1 }}>{cliente.split(" · ")[0].toUpperCase()}</div>
-        <div style={{ fontSize: 13, color: C.acero }}>{proyecto || "Nombre del proyecto"} · {cliente.split(" · ")[1]}</div>
+        <div style={{ fontWeight: 900, fontSize: 22, letterSpacing: "-0.02em", lineHeight: 1 }}>{(opt?.nombre ?? "Cliente").toUpperCase()}</div>
+        <div style={{ fontSize: 13, color: C.acero }}>{proyecto || "Nombre del proyecto"} · {opt?.sector ?? ""}</div>
         <div style={{ borderTop: `1px solid ${C.tinta}` }}>
           {lineas.map((l, i) => <div key={i} style={{ display: "flex", justifyContent: "space-between", gap: 10, padding: "8px 0", borderBottom: "1px solid #D6D2C9", fontSize: 13 }}><span>{l.c || "—"}</span><span style={{ fontFamily: MONO, fontSize: 12 }}>{mxn(Number(l.monto) || 0)}</span></div>)}
           {Number(credito) > 0 && <div style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: "1px solid #D6D2C9", fontSize: 13, color: C.acero }}><span>Crédito del diagnóstico</span><span style={{ fontFamily: MONO, fontSize: 12 }}>-{mxn(Number(credito))}</span></div>}
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}><span style={{ ...mono10, color: C.acero }}>TOTAL MXN</span><span style={{ fontWeight: 900, fontSize: 26, letterSpacing: "-0.02em" }}>{mxn(tot)}</span></div>
-        <div style={{ fontSize: 12, color: C.acero }}>Anticipo {anticipo} % · {mxn(Math.round(tot * anticipo / 100))} al aceptar. Vigente al {vigencia}.</div>
+        <div style={{ fontSize: 12, color: C.acero }}>Anticipo {anticipo} % · {mxn(Math.round(tot * anticipo / 100))} al aceptar. Vigente al {fechaCorta(vigencia)}.</div>
         <div style={{ ...mono10, color: C.acero, borderTop: "1px solid #D6D2C9", paddingTop: 10 }}>AL ENVIAR: TAREA DE SEGUIMIENTO EN 3 DÍAS · AL ACEPTAR: PROYECTO EN MAPEAR + CFDI DEL ANTICIPO</div>
       </div>
     </section>
@@ -232,27 +333,32 @@ function Nueva({ onSave, next }: { onSave: (c: Cot, enviar: boolean) => void; ne
 }
 
 /* ---------- Cobros y gastos ---------- */
-function CobrosGastos({ pagos, onAdd }: { pagos: Pago[]; onAdd: (p: Pago) => void }) {
+function CobrosGastos({ pagos, facturas, clientes, mesDe, onAdd }: { pagos: Pago[]; facturas: Factura[]; clientes: OpcionCliente[]; mesDe: (iso: string) => string; onAdd: (p: Pago, facturaId?: string) => void }) {
+  const pend = facturas.filter((f) => f.estado !== "Pagada" && f.estado !== "Borrador");
   const [tipo, setTipo] = useState<"Cobro" | "Gasto">("Cobro");
-  const [ref, setRef] = useState("F-0112");
-  const [monto, setMonto] = useState("25000");
-  const [fecha, setFecha] = useState("6 nov");
+  const [ref, setRef] = useState(pend[0]?.folio ?? "");
+  const [monto, setMonto] = useState(pend[0] ? String(pend[0].monto) : "");
+  const [fecha, setFecha] = useState(hoyISO());
   const [metodo, setMetodo] = useState("Transferencia");
   const [concepto, setConcepto] = useState("");
-  const [cliente, setCliente] = useState("Negocio demo 2");
+  const [cliente, setCliente] = useState(clientes[0]?.value ?? "");
   const [verTipo, setVerTipo] = useState<"Todo" | "Cobro" | "Gasto">("Todo");
-  const fac = FACTURAS.find((f) => f.folio === ref);
+  const fac = facturas.find((f) => f.folio === ref);
   const lista = pagos.filter((p) => verTipo === "Todo" || p.tipo === verTipo);
-  const n = pagos.length;
   const save = () => {
     const m = Number(monto.replace(/[^0-9.]/g, ""));
     if (!m) return;
-    onAdd({ id: (tipo === "Cobro" ? "P-" : "G-") + String(45 + n).padStart(4, "0"), tipo, fecha, mes: "NOV", cliente: tipo === "Cobro" ? cliente : "Ronin Studio", concepto: concepto || (tipo === "Cobro" ? (fac ? `Pago de ${fac.folio}` : "Pago") : "Gasto"), ref: tipo === "Cobro" ? ref : metodo, metodo, monto: m });
+    const opt = clientes.find((c) => c.value === cliente);
+    const esCobro = tipo === "Cobro";
+    onAdd({ id: (esCobro ? "P-" : "G-") + String(pagos.length + 1).padStart(4, "0"), tipo, fecha: fechaCorta(fecha), fechaISO: fecha, mes: mesDe(fecha),
+      cliente: esCobro ? (fac?.cliente ?? opt?.nombre ?? "—") : "Ronin Studio", clienteId: esCobro ? (fac?.clienteId ?? opt?.value ?? null) : null,
+      concepto: concepto || (esCobro ? (fac ? `Pago de ${fac.folio}` : "Pago") : "Gasto"), ref: esCobro ? (ref || "—") : metodo, metodo, monto: m }, esCobro ? fac?.id : undefined);
     setConcepto("");
   };
   // saldos por cliente (facturado − pagado)
-  const saldos = CLIENTES.map((c) => c.split(" · ")[0]).map((cl) => {
-    const fact = FACTURAS.filter((f) => f.cliente === cl && f.estado !== "Borrador").reduce((s, f) => s + f.monto, 0);
+  const nombres = [...new Set([...facturas.map((f) => f.cliente), ...pagos.filter((p) => p.tipo === "Cobro").map((p) => p.cliente)])];
+  const saldos = nombres.map((cl) => {
+    const fact = facturas.filter((f) => f.cliente === cl && f.estado !== "Borrador").reduce((s, f) => s + f.monto, 0);
     const pag = pagos.filter((p) => p.tipo === "Cobro" && p.cliente === cl).reduce((s, p) => s + p.monto, 0);
     return { cl, fact, pag, saldo: fact - pag };
   }).filter((x) => x.fact > 0 || x.pag > 0);
@@ -265,9 +371,15 @@ function CobrosGastos({ pagos, onAdd }: { pagos: Pago[]; onAdd: (p: Pago) => voi
           {tipo === "Cobro" ? (
             <>
               <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>Factura o cotización
-                <select value={ref} onChange={(e) => { setRef(e.target.value); const f = FACTURAS.find((x) => x.folio === e.target.value); if (f) { setMonto(String(f.monto)); setCliente(f.cliente); } }} style={{ ...input, appearance: "none" }}>{FACTURAS.filter((f) => f.estado !== "Pagada").map((f) => <option key={f.folio} value={f.folio}>{f.folio} · {f.cliente} · {mxn(f.monto)} · {f.estado}</option>)}</select>
+                <select value={ref} onChange={(e) => { setRef(e.target.value); const f = facturas.find((x) => x.folio === e.target.value); if (f) setMonto(String(f.monto)); }} style={{ ...input, appearance: "none" }}>
+                  <option value="">Sin factura (anticipo o pago directo)</option>
+                  {pend.map((f) => <option key={f.folio} value={f.folio}>{f.folio} · {f.cliente} · {mxn(f.monto)} · {f.estado}</option>)}
+                </select>
               </label>
-              {fac && <div style={{ fontSize: 12.5, color: C.niebla }}>{fac.cliente} · {fac.estado.toLowerCase()} · vence {fac.vence}</div>}
+              {fac ? <div style={{ fontSize: 12.5, color: C.niebla }}>{fac.cliente} · {fac.estado.toLowerCase()} · vence {fac.vence}</div>
+                : <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>Cliente
+                    <select value={cliente} onChange={(e) => setCliente(e.target.value)} style={{ ...input, appearance: "none" }}>{clientes.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}</select>
+                  </label>}
             </>
           ) : (
             <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>Concepto
@@ -276,7 +388,7 @@ function CobrosGastos({ pagos, onAdd }: { pagos: Pago[]; onAdd: (p: Pago) => voi
           )}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
             <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>Monto MXN<input value={monto} inputMode="decimal" onChange={(e) => setMonto(e.target.value)} style={{ ...input, fontFamily: MONO }} /></label>
-            <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>Fecha<input value={fecha} onChange={(e) => setFecha(e.target.value)} style={input} /></label>
+            <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>Fecha<input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} style={{ ...input, colorScheme: "dark" }} /></label>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>Método
             <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>{["Transferencia", "Efectivo", "Tarjeta", "Stripe"].map((m) => <button key={m} type="button" onClick={() => setMetodo(m)} style={{ ...chip(metodo === m), height: 36 }}>{m}</button>)}</div>
@@ -288,6 +400,7 @@ function CobrosGastos({ pagos, onAdd }: { pagos: Pago[]; onAdd: (p: Pago) => voi
         <Glass style={{ display: "flex", flexDirection: "column", gap: 4 }}>
           <Eyebrow>SALDOS POR CLIENTE</Eyebrow>
           <div style={{ display: "grid", gridTemplateColumns: "1fr auto auto", gap: 12, padding: "10px 0 6px", borderBottom: "1px solid rgba(238,235,228,0.09)" }}>{["CLIENTE", "PAGADO", "SALDO"].map((h) => <div key={h} style={{ ...mono10, textAlign: h === "CLIENTE" ? "left" : "right" }}>{h}</div>)}</div>
+          {saldos.length === 0 && <div style={{ padding: "10px 0", fontSize: 13, color: C.niebla }}>Sin facturas ni cobros todavía.</div>}
           {saldos.map((s) => <div key={s.cl} style={{ display: "grid", gridTemplateColumns: "1fr auto auto", gap: 12, padding: "9px 0", borderBottom: "1px solid rgba(238,235,228,0.06)", fontSize: 13 }}><span>{s.cl}</span><span style={{ fontFamily: MONO, fontSize: 11, color: C.niebla }}>{mxn(s.pag)}</span><span style={{ fontFamily: MONO, fontSize: 11, color: s.saldo > 0 ? C.ambar : C.olivo }}>{mxn(Math.max(0, s.saldo))}</span></div>)}
         </Glass>
       </div>
@@ -297,6 +410,7 @@ function CobrosGastos({ pagos, onAdd }: { pagos: Pago[]; onAdd: (p: Pago) => voi
           <div style={{ display: "flex", gap: 6 }}>{(["Todo", "Cobro", "Gasto"] as const).map((t) => <button key={t} type="button" onClick={() => setVerTipo(t)} style={{ ...chip(verTipo === t), height: 32, padding: "0 12px", fontSize: 12 }}>{t === "Todo" ? "Todo" : t + "s"}</button>)}</div>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "70px 70px 1.3fr 1.4fr 90px 110px 120px", gap: 12, padding: "10px 0", borderBottom: "1px solid rgba(238,235,228,0.09)" }}>{["ID", "FECHA", "QUIÉN", "CONCEPTO", "REF.", "MÉTODO", "MONTO"].map((h) => <div key={h} style={{ ...mono10, textAlign: h === "MONTO" ? "right" : "left" }}>{h}</div>)}</div>
+        {lista.length === 0 && <div style={{ padding: "22px 0", fontSize: 13.5, color: C.niebla }}>Sin movimientos. Registra el primer cobro o gasto a la izquierda.</div>}
         {lista.map((p) => (
           <div key={p.id} style={{ display: "grid", gridTemplateColumns: "70px 70px 1.3fr 1.4fr 90px 110px 120px", gap: 12, padding: "11px 0", alignItems: "center", borderBottom: "1px solid rgba(238,235,228,0.06)" }}>
             <div style={{ fontFamily: MONO, fontSize: 11 }}>{p.id}</div>
@@ -314,15 +428,18 @@ function CobrosGastos({ pagos, onAdd }: { pagos: Pago[]; onAdd: (p: Pago) => voi
 }
 
 /* ---------- Balance (nuestro) ---------- */
-function Balance({ pagos, cobradoMes, gastoMes, porCobrar, pipeline, ponderado }: { pagos: Pago[]; cobradoMes: number; gastoMes: number; porCobrar: number; pipeline: number; ponderado: number }) {
-  const meses = ["SEP", "OCT", "NOV"];
-  const serie = meses.map((m) => ({ m, cobro: pagos.filter((p) => p.tipo === "Cobro" && p.mes === m).reduce((s, p) => s + p.monto, 0) + (m === "SEP" ? 45000 : 0), gasto: pagos.filter((p) => p.tipo === "Gasto" && p.mes === m).reduce((s, p) => s + p.monto, 0) + (m === "SEP" ? 7500 : 0) }));
-  const max = Math.max(...serie.map((s) => s.cobro));
+function Balance({ db, pagos, cobradoMes, gastoMes, porCobrar, pipeline, ponderado }: { db: boolean; pagos: Pago[]; cobradoMes: number; gastoMes: number; porCobrar: number; pipeline: number; ponderado: number }) {
+  // Con Supabase: los últimos tres meses reales. En demo: SEP–NOV con la base del prototipo.
+  const hoy = hoyISO();
+  const meses = db ? [2, 1, 0].map((k) => { const d = new Date(hoy.slice(0, 7) + "-15T12:00:00"); d.setMonth(d.getMonth() - k); const iso = d.toISOString().slice(0, 10); return { clave: iso.slice(0, 7), m: mesCorto(iso) }; }) : ["SEP", "OCT", "NOV"].map((m) => ({ clave: m, m }));
+  const serie = meses.map(({ clave, m }) => ({ m, cobro: pagos.filter((p) => p.tipo === "Cobro" && p.mes === clave).reduce((s, p) => s + p.monto, 0) + (!db && m === "SEP" ? 45000 : 0), gasto: pagos.filter((p) => p.tipo === "Gasto" && p.mes === clave).reduce((s, p) => s + p.monto, 0) + (!db && m === "SEP" ? 7500 : 0) }));
+  const max = Math.max(1, ...serie.map((s) => Math.max(s.cobro, s.gasto)));
+  const nombreMes = db ? new Date(hoy + "T12:00:00").toLocaleDateString("es-MX", { month: "long" }).toUpperCase() : "NOVIEMBRE";
   const util = cobradoMes - gastoMes;
   return (
     <section style={{ padding: "22px 32px 48px", display: "flex", flexDirection: "column", gap: 16 }}>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(5,minmax(0,1fr))", gap: 12 }}>
-        {[["COBRADO · NOVIEMBRE", mxn(cobradoMes), "pagos registrados", C.olivo], ["GASTOS · NOVIEMBRE", mxn(gastoMes), "herramientas, IA, oficina", C.oxido], ["UTILIDAD DEL MES", mxn(util), `${cobradoMes ? Math.round((util / cobradoMes) * 100) : 0} % de margen`, C.papel], ["POR COBRAR", mxn(porCobrar), "facturas vigentes y vencidas", C.ambar], ["PIPELINE PONDERADO", mxn(ponderado), `de ${mxn(pipeline)} en juego`, C.niebla]].map(([k, v, s, c], i) => (
+        {[[`COBRADO · ${nombreMes}`, mxn(cobradoMes), "pagos registrados", C.olivo], [`GASTOS · ${nombreMes}`, mxn(gastoMes), "herramientas, IA, oficina", C.oxido], ["UTILIDAD DEL MES", mxn(util), `${cobradoMes ? Math.round((util / cobradoMes) * 100) : 0} % de margen`, C.papel], ["POR COBRAR", mxn(porCobrar), "facturas vigentes y vencidas", C.ambar], ["PIPELINE PONDERADO", mxn(ponderado), `de ${mxn(pipeline)} en juego`, C.niebla]].map(([k, v, s, c], i) => (
           <Glass key={k} pad={18} radius={22} delay={`${i * 0.05}s`}><div style={{ display: "flex", alignItems: "center", gap: 7, ...mono10 }}><Dot color={c} />{k}</div><div style={{ fontWeight: 900, fontSize: 24, letterSpacing: "-0.02em", marginTop: 8 }}>{v}</div><div style={{ fontSize: 12, color: C.niebla, marginTop: 4 }}>{s}</div></Glass>
         ))}
       </div>

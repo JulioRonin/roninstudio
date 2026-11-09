@@ -57,11 +57,20 @@ export default function Configuracion() {
   const [sec, setSec] = useState("Integraciones");
   const [tarifas, setTarifas, resetTarifas] = useTarifas();
   useEffect(() => { try { const q = new URLSearchParams(window.location.search).get("sec"); if (q === "tarifas") setSec("Tarifas y costos"); if (q === "hermes") setSec("Hermes Agent"); } catch {} }, []);
-  type Estado = { demo: boolean; vars: Record<string, boolean>; hermes: { alcanzable: boolean; detalle: string }; webhook: { alcanzable: boolean; detalle: string }; ahora: string };
+  type Estado = { demo: boolean; vars: Record<string, boolean>; hermes: { alcanzable: boolean; detalle: string }; webhook: { alcanzable: boolean; detalle: string }; supabase?: { alcanzable: boolean; detalle: string }; ahora: string };
   const [estado, setEstado] = useState<Estado | null>(null);
   const [probando, setProbando] = useState(false);
   const probar = async () => { setProbando(true); try { const r = await fetch("/api/hermes/estado", { cache: "no-store" }); setEstado(await r.json()); } catch { flash("No se pudo consultar el estado"); } finally { setProbando(false); } };
-  useEffect(() => { if (sec === "Hermes Agent" && !estado) void probar(); }, [sec]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (sec === "Hermes Agent" && !estado) void probar(); }, [sec]);
+  const [ping, setPing] = useState<string | null>(null);
+  const evento = async () => {
+    setPing("Enviando…");
+    try {
+      const r = await fetch("/api/hermes/jobs", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ agente: "prueba", evento: "ping", nota: "Prueba de conexión desde Configuración. No ejecutes ninguna acción: sólo registra que llegó." }) });
+      const d = await r.json().catch(() => ({}));
+      setPing(d.enviado ? `Hermes aceptó el evento (${d.status}) · firma correcta` : `No llegó: ${d.status ?? ""} ${String(d.respuesta ?? d.motivo ?? "").slice(0, 120)}`);
+    } catch { setPing("No se pudo enviar"); }
+  }; // eslint-disable-line react-hooks/exhaustive-deps
   const [fixed, setFixed] = useState(false);
   const [cap, setCap] = useState(3000);
 
@@ -198,8 +207,8 @@ export default function Configuracion() {
           {sec === "Hermes Agent" && (
             <div style={{ display: "grid", gridTemplateColumns: "1fr 360px", gap: 20 }}>
               <div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(3,minmax(0,1fr))", gap: 10, marginBottom: 14 }}>
-                  {[["MUSASHI → HERMES", estado?.webhook, "Webhook firmado (HMAC V2) a la ruta musashi"], ["HERMES → MUSASHI", estado ? { alcanzable: estado.vars.MUSASHI_API_KEY, detalle: estado.vars.MUSASHI_API_KEY ? "MUSASHI_API_KEY configurada" : "sin MUSASHI_API_KEY · modo demo" } : undefined, "Contexto y propuestas con llave"], ["API SERVER", estado?.hermes, "/health del servidor de Hermes"]].map(([k, st, d]) => {
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(4,minmax(0,1fr))", gap: 10, marginBottom: 14 }}>
+                  {[["MUSASHI → HERMES", estado?.webhook, "Webhook firmado (HMAC V2) a la ruta musashi"], ["HERMES → MUSASHI", estado ? { alcanzable: estado.vars.MUSASHI_API_KEY, detalle: estado.vars.MUSASHI_API_KEY ? "MUSASHI_API_KEY configurada" : "sin MUSASHI_API_KEY · modo demo" } : undefined, "Contexto y propuestas con llave"], ["API SERVER", estado?.hermes, "/health del servidor de Hermes"], ["BASE DE DATOS", estado?.supabase, "Supabase desde el servidor"]].map(([k, st, d]) => {
                     const e = st as { alcanzable: boolean; detalle: string } | undefined; const c = !e ? C.acero : e.alcanzable ? C.olivo : C.ambar;
                     return <div key={k as string} style={{ background: "rgba(12,15,20,0.45)", border: "1px solid rgba(238,235,228,0.08)", borderRadius: 18, padding: 14 }}><div style={{ display: "flex", alignItems: "center", gap: 7, ...LBL, color: C.tenue }}><span style={{ width: 7, height: 7, borderRadius: "50%", background: c, boxShadow: `0 0 8px ${c}` }} />{k as string}</div><div style={{ fontSize: 13, marginTop: 8 }}>{d as string}</div><div style={{ ...LBL, color: C.niebla, marginTop: 6, fontSize: 9.5 }}>{!e ? "CONSULTANDO…" : e.detalle.toUpperCase().slice(0, 60)}</div></div>;
                   })}
@@ -215,7 +224,8 @@ export default function Configuracion() {
                   </div>
                 ))}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 14, gap: 10 }}>
-                  <span style={{ fontSize: 12.5, color: C.tenue }}>Skills, horarios y configuración en <span style={{ fontFamily: MONO }}>musashi/hermes/</span> del repositorio. Higgsfield y ElevenLabs entran por MCP con la cuenta.</span>
+                  <span style={{ fontSize: 12.5, color: C.tenue }}>{ping && <span style={{ display: "block", color: ping.startsWith("Hermes aceptó") ? C.olivo : C.ambar, marginBottom: 4 }}>{ping}</span>}Skills, horarios y configuración en <span style={{ fontFamily: MONO }}>musashi/hermes/</span> del repositorio. Higgsfield y ElevenLabs entran por MCP con la cuenta.</span>
+                  <button type="button" onClick={() => void evento()} title="Manda un evento firmado a la ruta musashi de Hermes" style={{ height: 36, padding: "0 14px", borderRadius: 999, background: "transparent", border: `1px solid ${C.borde2}`, color: C.papel, fontSize: 12, cursor: "pointer", whiteSpace: "nowrap" }}>Enviar evento de prueba</button>
                   <button type="button" onClick={probar} disabled={probando} style={{ height: 36, padding: "0 14px", borderRadius: 999, background: "transparent", border: `1px solid ${C.borde2}`, color: C.papel, fontSize: 12, cursor: "pointer", opacity: probando ? 0.6 : 1 }}>{probando ? "Probando…" : "Probar conexión"}</button>
                 </div>
               </div>

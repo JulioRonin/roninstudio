@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { ENV, DEMO, AGENTES } from "@/lib/hermes";
+import { hayDB, sb } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
@@ -22,6 +23,11 @@ export async function GET() {
       return { alcanzable: r.ok, detalle: `${r.status} ${await r.text().then((t) => t.slice(0, 120)).catch(() => "")}`, host: host(base) };
     } catch (e) { return { alcanzable: false, detalle: causa(e), host: host(base) }; }
   };
-  const [hermes, webhook] = await Promise.all([probar(ENV.hermesApiUrl, "HERMES_API_URL sin configurar"), probar(ENV.hermesWebhookUrl, "HERMES_WEBHOOK_URL sin configurar")]);
-  return NextResponse.json({ demo: DEMO, vars, hermes, webhook, agentes: AGENTES.length, ahora: new Date().toISOString() });
+  const base = async () => {
+    if (!hayDB()) return { alcanzable: false, detalle: "SUPABASE_URL o SUPABASE_SECRET_KEY sin configurar" };
+    try { const r = await sb<{ clave: string }[]>("configuracion?select=clave"); return { alcanzable: true, detalle: `conectada · ${r.length} ${r.length === 1 ? "ajuste" : "ajustes"} guardados` }; }
+    catch (e) { return { alcanzable: false, detalle: e instanceof Error ? e.message : "error" }; }
+  };
+  const [hermes, webhook, supabase] = await Promise.all([probar(ENV.hermesApiUrl, "HERMES_API_URL sin configurar"), probar(ENV.hermesWebhookUrl, "HERMES_WEBHOOK_URL sin configurar"), base()]);
+  return NextResponse.json({ demo: DEMO, vars, hermes, webhook, supabase, agentes: AGENTES.length, ahora: new Date().toISOString() });
 }

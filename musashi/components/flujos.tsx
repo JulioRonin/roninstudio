@@ -1,12 +1,13 @@
 "use client";
-import React, { useEffect, useMemo, useState, type CSSProperties } from "react";
+import React, { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import Link from "next/link";
 import { C, MONO } from "@/lib/tokens";
 import { Glass, Eyebrow, H, Dot, PB, SB } from "@/components/ui";
 import { useUI } from "@/components/shell";
 import { load, save } from "@/lib/store";
+import { datos, eq, hoyISO, fechaLarga } from "@/lib/datos";
 import { useTarifas, mxn0 } from "@/lib/tarifas";
-import { MAPA_DEMO, SECTORES, GUIAS, GUIA_VISITA, nuevoMapa, minTotal, esperaTotal, minNuevo, ejecSemana, horasSemanaActual, horasSemanaNueva, ahorroHorasSemana, ahorroMesMXN, recapturas, ACCION_COLOR, FASE_COLOR, type Proceso, type Accion, type Fase, type Mapa } from "@/lib/flujos";
+import { MAPA_DEMO, SECTORES, GUIAS, GUIA_VISITA, nuevoMapa, deFilaMapa, aFilaMapa, minTotal, esperaTotal, minNuevo, ejecSemana, horasSemanaActual, horasSemanaNueva, ahorroHorasSemana, ahorroMesMXN, recapturas, ACCION_COLOR, FASE_COLOR, type Proceso, type Accion, type Fase, type Mapa, type FilaMapa } from "@/lib/flujos";
 
 /* =====================================================================
    FLUJOS DE TRABAJO · el bloque central de 01 · Mapear
@@ -25,27 +26,42 @@ const h1 = (n: number) => (Math.round(n * 10) / 10).toLocaleString("en-US");
 export function Flujos() {
   const { flash } = useUI();
   const [tarifas] = useTarifas();
-  const [mapas, setMapas] = useState<Mapa[]>([MAPA_DEMO]);
+  const [mapas, setMapas] = useState<Mapa[]>([]);
   const [cur, setCur] = useState<string | null>(null);
   const [nuevo, setNuevo] = useState(false);
-  const [form, setForm] = useState({ cliente: "", sector: "Restaurante con sucursales", sucursales: 1, visita: "", modo: "Guiado" as "Guiado" | "Desde cero", costoCliente: tarifas.costoHoraCliente });
-  const [ready, setReady] = useState(false);
+  const [form, setForm] = useState({ cliente: "", sector: "Restaurante con sucursales", sucursales: 1, visita: hoyISO(), modo: "Guiado" as "Guiado" | "Desde cero", costoCliente: tarifas.costoHoraCliente });
+  const [modo, setModo] = useState<"cargando" | "db" | "local">("cargando");
+  const [clientes, setClientes] = useState<{ id: string; nombre: string; sector: string }[]>([]);
+  const timers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
   useEffect(() => {
-    const d = load<{ mapas?: Mapa[] }>("flujos-mapas", {});
-    if (d.mapas?.length) setMapas(d.mapas);
-    else { const old = load<{ procs?: Proceso[]; costoCliente?: number }>("flujos-D2", {}); if (old.procs) setMapas([{ ...MAPA_DEMO, procs: old.procs, costoCliente: old.costoCliente ?? 95 }]); }
-    setReady(true);
+    datos.lista<FilaMapa>("mapas_flujo", "select=*&order=creado_en.desc").then((r) => {
+      if (r.db) { setMapas(r.filas.map(deFilaMapa)); setModo("db"); void datos.lista<{ id: string; nombre: string; sector: string }>("clientes", "select=id,nombre,sector&order=nombre").then((c) => setClientes(c.filas)).catch(() => {}); return; }
+      throw new Error("local");
+    }).catch(() => {
+      const d = load<{ mapas?: Mapa[] }>("flujos-mapas", {});
+      if (d.mapas?.length) setMapas(d.mapas);
+      else { const old = load<{ procs?: Proceso[]; costoCliente?: number }>("flujos-D2", {}); setMapas([old.procs ? { ...MAPA_DEMO, procs: old.procs, costoCliente: old.costoCliente ?? 95 } : MAPA_DEMO]); }
+      setModo("local");
+    });
   }, []);
-  useEffect(() => { if (ready) save("flujos-mapas", { mapas }); }, [mapas, ready]);
+  useEffect(() => { if (modo === "local") save("flujos-mapas", { mapas }); }, [mapas, modo]);
   useEffect(() => { setForm((f) => ({ ...f, costoCliente: tarifas.costoHoraCliente })); }, [tarifas.costoHoraCliente]);
+  // En Supabase cada mapa se guarda solo, un momento después del último cambio.
+  const guardar = (m: Mapa, inmediato = false) => {
+    if (modo !== "db") return;
+    clearTimeout(timers.current[m.id]);
+    const ir = () => { const cli = clientes.find((c) => c.nombre.toLowerCase() === m.cliente.toLowerCase()); void datos.crea("mapas_flujo", aFilaMapa(m, cli?.id ?? null), "codigo").catch((e) => flash("No se guardó el mapa: " + (e as Error).message)); };
+    if (inmediato) ir(); else timers.current[m.id] = setTimeout(ir, 900);
+  };
   const mapa = mapas.find((m) => m.id === cur);
   const crear = () => {
     if (!form.cliente.trim()) { flash("Ponle nombre al cliente"); return; }
-    const m = nuevoMapa({ ...form, cliente: form.cliente.trim(), visita: form.visita.trim() || new Date().toLocaleDateString("es-MX", { day: "numeric", month: "long", year: "numeric" }) });
-    setMapas((ms) => [m, ...ms]); setCur(m.id); setNuevo(false);
+    const m = nuevoMapa({ ...form, cliente: form.cliente.trim(), visita: form.visita ? fechaLarga(form.visita) : fechaLarga(hoyISO()), visitaISO: form.visita || hoyISO() });
+    setMapas((ms) => [m, ...ms]); setCur(m.id); setNuevo(false); guardar(m, true);
     flash(form.modo === "Guiado" ? `Mapa guiado: ${m.procs.length} procesos típicos de ${form.sector} listos para medir` : "Mapa en blanco listo: agrega el primer proceso");
   };
-  if (mapa) return <MapaView mapa={mapa} onChange={(m) => setMapas((ms) => ms.map((x) => (x.id === m.id ? m : x)))} onBack={() => setCur(null)} />;
+  if (modo === "cargando") return <section style={{ padding: "40px 32px", color: C.tenue, fontFamily: MONO, fontSize: 11, letterSpacing: "0.12em" }}>CARGANDO MAPAS…</section>;
+  if (mapa) return <MapaView mapa={mapa} onChange={(m) => { setMapas((ms) => ms.map((x) => (x.id === m.id ? m : x))); guardar(m); }} onBack={() => setCur(null)} />;
   return (
     <section style={{ padding: "22px 32px 48px", display: "grid", gridTemplateColumns: nuevo ? "1fr 460px" : "1fr", gap: 16 }}>
       <Glass pad="4px 22px 10px" radius={24}>
@@ -68,6 +84,7 @@ export function Flujos() {
             </H>
           );
         })}
+        {mapas.length === 0 && <div style={{ padding: "26px 0", fontSize: 13.5, color: C.niebla }}>Todavía no hay mapas. Crea el primero con <strong style={{ color: C.papel }}>Nuevo mapa</strong>: guiado con los procesos típicos del sector o desde cero.</div>}
         <div style={{ display: "flex", gap: 18, padding: "14px 0 6px", flexWrap: "wrap" }}>
           {GUIA_VISITA.slice(0, 3).map(([t, d]) => <div key={t} style={{ flex: 1, minWidth: 220 }}><div style={{ ...mono10, color: C.papel }}>{t.toUpperCase()}</div><div style={{ fontSize: 12.5, color: C.niebla, lineHeight: 1.4, marginTop: 3, textWrap: "pretty" }}>{d}</div></div>)}
         </div>
@@ -75,11 +92,11 @@ export function Flujos() {
       {nuevo && (
         <Glass style={{ display: "flex", flexDirection: "column", gap: 12, alignSelf: "start" }}>
           <Eyebrow>NUEVO MAPA · LEVANTAMIENTO</Eyebrow>
-          <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>Cliente<input value={form.cliente} onChange={(e) => setForm((f) => ({ ...f, cliente: e.target.value }))} placeholder="Nombre del negocio" style={{ height: 44, padding: "0 16px", borderRadius: 999, background: C.p2, border: `1px solid ${C.borde}`, color: C.papel, fontSize: 13, outline: "none" }} /></label>
+          <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>Cliente<input list="clientes-musashi" value={form.cliente} onChange={(e) => { const v = e.target.value; const c = clientes.find((x) => x.nombre === v); setForm((f) => ({ ...f, cliente: v, ...(c && (SECTORES as readonly string[]).includes(c.sector) ? { sector: c.sector } : {}) })); }} placeholder="Nombre del negocio" style={{ height: 44, padding: "0 16px", borderRadius: 999, background: C.p2, border: `1px solid ${C.borde}`, color: C.papel, fontSize: 13, outline: "none" }} /><datalist id="clientes-musashi">{clientes.map((c) => <option key={c.id} value={c.nombre}>{c.sector}</option>)}</datalist></label>
           <div style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>Sector<div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>{SECTORES.map((o) => <button key={o} type="button" onClick={() => setForm((f) => ({ ...f, sector: o }))} style={{ ...chip(form.sector === o), height: 32, padding: "0 11px", fontSize: 11.5 }}>{o}</button>)}</div></div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
             <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>Sucursales<input value={form.sucursales} inputMode="numeric" onChange={(e) => setForm((f) => ({ ...f, sucursales: Number(e.target.value.replace(/[^0-9]/g, "")) || 1 }))} style={{ height: 44, padding: "0 14px", borderRadius: 999, background: C.p2, border: `1px solid ${C.borde}`, color: C.papel, fontFamily: MONO, fontSize: 13, outline: "none" }} /></label>
-            <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>Fecha de visita<input value={form.visita} onChange={(e) => setForm((f) => ({ ...f, visita: e.target.value }))} placeholder="hoy" style={{ height: 44, padding: "0 14px", borderRadius: 999, background: C.p2, border: `1px solid ${C.borde}`, color: C.papel, fontSize: 13, outline: "none" }} /></label>
+            <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>Fecha de visita<input type="date" value={form.visita} onChange={(e) => setForm((f) => ({ ...f, visita: e.target.value }))} style={{ colorScheme: "dark",  height: 44, padding: "0 14px", borderRadius: 999, background: C.p2, border: `1px solid ${C.borde}`, color: C.papel, fontSize: 13, outline: "none" }} /></label>
             <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>Costo hora personal<input value={form.costoCliente} inputMode="numeric" onChange={(e) => setForm((f) => ({ ...f, costoCliente: Number(e.target.value.replace(/[^0-9]/g, "")) || 0 }))} style={{ height: 44, padding: "0 14px", borderRadius: 999, background: C.p2, border: `1px solid ${C.borde}`, color: C.papel, fontFamily: MONO, fontSize: 13, outline: "none" }} /></label>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>Cómo empezar

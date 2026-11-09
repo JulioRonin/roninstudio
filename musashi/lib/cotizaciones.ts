@@ -4,9 +4,34 @@ export type Linea = { c: string; etapa: "Mapear" | "Diseñar" | "Construir" | "E
 export type Cot = {
   folio: string; cliente: string; sector: string; proyecto: string; estado: Estado; fecha: string; vigencia: string;
   lineas: Linea[]; credito: number; anticipo: number; notas?: string; abierta?: string; razon?: string; proyectoCode?: string;
+  id?: string; clienteId?: string; vigenciaISO?: string | null;   // sólo con Supabase
 };
-export type Pago = { id: string; tipo: "Cobro" | "Gasto"; fecha: string; mes: string; cliente: string; concepto: string; ref: string; metodo: string; monto: number };
-export type Factura = { folio: string; cliente: string; cot: string; monto: number; estado: "Pagada" | "Vencida" | "Vigente" | "Borrador"; vence: string };
+export type Pago = { id: string; tipo: "Cobro" | "Gasto"; fecha: string; mes: string; cliente: string; concepto: string; ref: string; metodo: string; monto: number; fechaISO?: string; clienteId?: string | null };
+export type Factura = { folio: string; cliente: string; cot: string; monto: number; estado: "Pagada" | "Vencida" | "Vigente" | "Borrador"; vence: string; id?: string; clienteId?: string };
+export type OpcionCliente = { value: string; label: string; nombre: string; sector: string };
+
+/* ---------- Filas de Supabase ⇄ objetos de pantalla ---------- */
+const corta = (iso?: string | null) => (iso ? new Date(iso.slice(0, 10) + "T12:00:00").toLocaleDateString("es-MX", { day: "numeric", month: "short" }).replace(".", "") : "—");
+const mesDe = (iso?: string | null) => (iso ? iso.slice(0, 7) : "");
+
+export const SELECT_COT = "select=*,cliente:clientes(nombre,sector),cotizacion_lineas(*),proyectos(codigo)&order=creado_en.desc";
+export type FilaCot = { id: string; folio: string; cliente_id: string; proyecto_nombre: string; estado: Estado; vigencia: string | null; anticipo_pct: number; credito: number; notas: string | null; abierta_veces: number; abierta_ultima: string | null; razon_perdida: string | null; creado_en: string; cliente?: { nombre: string; sector: string } | null; cotizacion_lineas?: { orden: number; concepto: string; etapa: Linea["etapa"]; monto: number; horas: number | null }[]; proyectos?: { codigo: string }[] };
+export const deFilaCot = (f: FilaCot): Cot => ({
+  id: f.id, clienteId: f.cliente_id, folio: f.folio, cliente: f.cliente?.nombre ?? "—", sector: f.cliente?.sector ?? "", proyecto: f.proyecto_nombre, estado: f.estado,
+  fecha: corta(f.creado_en), vigencia: corta(f.vigencia), vigenciaISO: f.vigencia,
+  lineas: [...(f.cotizacion_lineas ?? [])].sort((a, b) => a.orden - b.orden).map((l) => ({ c: l.concepto, etapa: l.etapa, monto: Number(l.monto), ...(l.horas != null ? { horas: Number(l.horas) } : {}) })),
+  credito: Number(f.credito), anticipo: f.anticipo_pct, notas: f.notas ?? undefined, razon: f.razon_perdida ?? undefined,
+  abierta: f.abierta_veces ? `${corta(f.abierta_ultima).toUpperCase()} · ${f.abierta_veces} ${f.abierta_veces === 1 ? "VEZ" : "VECES"}` : undefined,
+  proyectoCode: f.proyectos?.[0]?.codigo,
+});
+
+export const SELECT_MOV = "select=*,cliente:clientes(nombre)&order=fecha.desc,creado_en.desc";
+export type FilaMov = { id: string; tipo: "Cobro" | "Gasto"; fecha: string; cliente_id: string | null; factura_id: string | null; concepto: string; metodo: string | null; referencia: string | null; monto: number; cliente?: { nombre: string } | null };
+export const deFilaMov = (f: FilaMov): Pago => ({ id: (f.tipo === "Cobro" ? "P-" : "G-") + f.id.slice(0, 4).toUpperCase(), tipo: f.tipo, fecha: corta(f.fecha), fechaISO: f.fecha, mes: mesDe(f.fecha), cliente: f.cliente?.nombre ?? (f.tipo === "Gasto" ? "Ronin Studio" : "—"), clienteId: f.cliente_id, concepto: f.concepto, ref: f.referencia ?? "—", metodo: f.metodo ?? "—", monto: Number(f.monto) });
+
+export const SELECT_FAC = "select=*,cliente:clientes(nombre),cotizacion:cotizaciones(folio)&order=creado_en.desc";
+export type FilaFactura = { id: string; folio: string; cliente_id: string; monto: number; estado: Factura["estado"] | "Cancelada"; vence: string | null; cliente?: { nombre: string } | null; cotizacion?: { folio: string } | null };
+export const deFilaFactura = (f: FilaFactura): Factura => ({ id: f.id, clienteId: f.cliente_id, folio: f.folio, cliente: f.cliente?.nombre ?? "—", cot: f.cotizacion?.folio ?? "—", monto: Number(f.monto), estado: f.estado === "Cancelada" ? "Borrador" : f.estado, vence: corta(f.vence) });
 
 export const CLIENTES = ["Negocio demo 1 · Escuela privada", "Negocio demo 2 · Restaurante con sucursales", "Negocio demo 3 · Clínica", "Negocio demo 4 · Clínica", "Negocio demo 5 · Gimnasio", "Negocio demo 6 · Taller", "Negocio demo 7 · Notaría", "Negocio demo 8 · Taller", "Negocio demo 13 · Clínica"];
 
