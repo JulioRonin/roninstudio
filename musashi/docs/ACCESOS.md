@@ -2,17 +2,17 @@
 
 Lista de referencia, sin valores. Las llaves nunca van al repositorio: se guardan como variables de entorno en Vercel (producción y preview) y en el entorno de Hermes Agent. Este archivo sólo dice qué es cada una, dónde se obtiene y para qué sirve.
 
-## 1 · Supabase (base de datos, autenticación, archivos)
+## 1 · Supabase (base de datos)
+
+Musashi habla con Supabase sólo desde el servidor (route handlers en Vercel). El navegador nunca recibe llaves de Supabase y los agentes de Hermes tampoco: ellos pasan por la API de Musashi con `MUSASHI_API_KEY`. La base tiene RLS activo y sin políticas, así que la llave pública no lee ni escribe nada.
 
 | Variable | Dónde se obtiene | Para qué |
 |---|---|---|
-| `NEXT_PUBLIC_SUPABASE_URL` | Proyecto → Settings → API | URL del proyecto; la usa el navegador. |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` (publishable) | Settings → API | Llave pública del navegador; limitada por las políticas RLS. |
-| `SUPABASE_SERVICE_ROLE_KEY` | Settings → API | Llave de servidor con todos los permisos: sólo en Vercel (server) y en Hermes, nunca en el navegador. |
-| `SUPABASE_DB_URL` (connection string, pooler) | Settings → Database | Migraciones y scripts; Hermes lee y escribe por aquí o por la API. |
-| `SUPABASE_JWT_SECRET` | Settings → API | Validar sesiones desde servicios externos (Hermes, webhooks). |
+| `SUPABASE_URL` | Supabase → Project Settings → Data API (Project URL), o el botón **Connect** | Dirección del proyecto: `https://<ref>.supabase.co`. |
+| `SUPABASE_SECRET_KEY` | Supabase → Project Settings → API Keys → Secret keys (`sb_secret_…`) | Llave de servidor con todos los permisos. Sólo en Vercel, marcada como Sensitive. Si se filtra, se revoca ahí mismo y se crea otra. |
 
-Pendiente: crear el proyecto (hoy la cuenta está en el límite de 2 proyectos gratuitos; hay que pausar o borrar otro, o pasar a Pro). Región sugerida: us-east-2.
+Esquema: `supabase/migrations/0001_musashi_base.sql`, se corre una vez en el SQL Editor.
+Más adelante, si se usa Supabase Storage para archivos o el sitio público envía el diagnóstico exprés, se hará a través de rutas de Musashi, sin abrir la base.
 
 ## 2 · Vercel (despliegue de Musashi y del sitio público)
 

@@ -1,5 +1,10 @@
--- Musashi · esquema base (F0 + F1). Se aplica cuando exista el proyecto de Supabase.
--- Convenciones: tablas en español, ids uuid, timestamps con zona, RLS activo en todo.
+-- Musashi · esquema base. Se corre una sola vez en el SQL Editor de un proyecto nuevo de Supabase.
+-- Convenciones: tablas en español, ids uuid, timestamps con zona.
+-- Acceso: sólo el servidor de Musashi (Vercel) con la llave secreta. RLS activo y sin políticas:
+-- la llave pública y cualquier usuario de Supabase Auth no pueden leer ni escribir nada.
+-- Los agentes de Hermes no entran a la base: pasan por la API de Musashi con MUSASHI_API_KEY.
+begin;
+
 create extension if not exists "pgcrypto";
 
 -- ---------- Catálogos ----------
@@ -75,6 +80,7 @@ create table cotizacion_lineas (
   orden int not null,
   concepto text not null,
   etapa etapa_metodo not null,
+  horas numeric(6,1),                                   -- horas Ronin estimadas (horas × precio por hora)
   monto numeric(12,2) not null
 );
 
@@ -170,6 +176,30 @@ create table movimientos (
   creado_en timestamptz not null default now()
 );
 
+-- ---------- Flujos de trabajo (mapa del cliente) ----------
+create table mapas_flujo (
+  id uuid primary key default gen_random_uuid(),
+  codigo text unique not null,                          -- D2, M-0001…
+  cliente_id uuid references clientes(id) on delete set null,
+  cliente_nombre text not null,
+  sector text not null,
+  sucursales int not null default 1,
+  visita date,
+  modo text not null default 'Guiado',                  -- Guiado · Desde cero
+  costo_hora_cliente numeric(10,2) not null default 95,
+  procesos jsonb not null default '[]'::jsonb,          -- procesos con pasos, minutos, hallazgos y fase
+  creado_en timestamptz not null default now(),
+  actualizado_en timestamptz not null default now()
+);
+
+-- ---------- Configuración (tarifas y ajustes) ----------
+create table configuracion (
+  clave text primary key,                               -- tarifas, hermes, …
+  valor jsonb not null,
+  actualizado_en timestamptz not null default now()
+);
+insert into configuracion (clave, valor) values ('tarifas', '{"costoHora":540,"precioHora":1000,"ivaPct":16,"anticipoPct":30,"diagnosticoHoras":20,"acompanamientoHoras":8,"costoHoraCliente":95,"paybackMaxMeses":12}'::jsonb);
+
 -- ---------- Marketing y contenido ----------
 create table piezas (
   id uuid primary key default gen_random_uuid(),
@@ -197,6 +227,7 @@ create table propuestas_ia (
   titulo text not null,
   cuerpo text not null,
   datos jsonb,                                          -- payload para ejecutar al aprobar
+  referencia text,                                      -- folio, cliente o pieza a la que se refiere
   estado estado_propuesta not null default 'Pendiente',
   resuelta_en timestamptz,
   creado_en timestamptz not null default now()
@@ -214,14 +245,14 @@ create table corridas_agente (
 );
 
 -- ---------- Vistas de balance ----------
-create view balance_mensual as
+create view balance_mensual with (security_invoker = true) as
 select date_trunc('month', fecha)::date as mes,
   sum(case when tipo = 'Cobro' then monto else 0 end) as cobrado,
   sum(case when tipo = 'Gasto' then monto else 0 end) as gastos,
   sum(case when tipo = 'Cobro' then monto else -monto end) as utilidad
 from movimientos group by 1 order by 1;
 
-create view saldos_cliente as
+create view saldos_cliente with (security_invoker = true) as
 select c.id as cliente_id, c.nombre,
   coalesce(sum(f.monto) filter (where f.estado in ('Vigente','Vencida','Pagada')), 0) as facturado,
   coalesce((select sum(m.monto) from movimientos m where m.cliente_id = c.id and m.tipo = 'Cobro'), 0) as pagado
@@ -229,17 +260,34 @@ from clientes c left join facturas f on f.cliente_id = c.id
 group by c.id, c.nombre;
 
 -- ---------- Seguridad ----------
--- Un solo equipo (Ronin Studio). Los usuarios autenticados ven y editan todo;
--- el sitio público sólo puede insertar diagnósticos exprés con la llave anónima.
+-- RLS activo en todas las tablas y SIN políticas: anon y authenticated no ven nada.
+-- El servidor de Musashi usa la llave secreta (rol service_role), que no pasa por RLS.
 do $$ declare t text; begin
-  for t in select unnest(array['clientes','contactos','diagnosticos_expres','cotizaciones','cotizacion_lineas','proyectos','hitos','horas','riesgos','tareas','facturas','movimientos','piezas','propuestas_ia','corridas_agente']) loop
+  for t in select unnest(array['clientes','contactos','diagnosticos_expres','cotizaciones','cotizacion_lineas','proyectos','hitos','horas','riesgos','tareas','facturas','movimientos','mapas_flujo','configuracion','piezas','propuestas_ia','corridas_agente']) loop
     execute format('alter table %I enable row level security', t);
-    execute format('create policy "equipo lee %1$s" on %1$I for select to authenticated using (true)', t);
-    execute format('create policy "equipo escribe %1$s" on %1$I for all to authenticated using (true) with check (true)', t);
   end loop;
 end $$;
-create policy "sitio publico inserta diagnosticos" on diagnosticos_expres for insert to anon with check (true);
+-- Además, sin permisos para los roles públicos (también sobre las vistas).
+revoke all on all tables in schema public from anon, authenticated;
+revoke all on all sequences in schema public from anon, authenticated;
+alter default privileges in schema public revoke all on tables from anon, authenticated;
+alter default privileges in schema public revoke all on sequences from anon, authenticated;
 
 -- Triggers de actualizado_en
-create or replace function set_actualizado() returns trigger language plpgsql as $$ begin new.actualizado_en = now(); return new; end $$;
+create or replace function set_actualizado() returns trigger language plpgsql set search_path = '' as $$ begin new.actualizado_en = now(); return new; end $$;
 create trigger clientes_actualizado before update on clientes for each row execute function set_actualizado();
+create trigger mapas_actualizado before update on mapas_flujo for each row execute function set_actualizado();
+create trigger configuracion_actualizado before update on configuracion for each row execute function set_actualizado();
+
+-- Índices para las búsquedas más comunes
+create index on cotizaciones (cliente_id);
+create index on proyectos (cliente_id);
+create index on hitos (proyecto_id);
+create index on horas (proyecto_id);
+create index on tareas (fecha, estado);
+create index on facturas (cliente_id, estado);
+create index on movimientos (fecha);
+create index on movimientos (cliente_id);
+create index on propuestas_ia (estado, creado_en desc);
+
+commit;
