@@ -109,15 +109,19 @@ Luego en Musashi: Configuración → Hermes Agent → **Probar conexión**.
 ```powershell
 cd $HOME\roninstudio          # la carpeta donde clonaste el repositorio
 git pull
-# Reemplaza el SKILL.md de cada agente donde Hermes lo tenga instalado y avisa si falta alguno
+# Reemplaza los archivos de cada agente donde Hermes lo tenga instalado y avisa si falta alguno
 Get-ChildItem musashi\hermes\skills -Directory | ForEach-Object {
   $n = $_.Name
   $d = Get-ChildItem $HOME\.hermes\skills -Recurse -Directory -Filter $n -ErrorAction SilentlyContinue | Select-Object -First 1
-  if ($d) { Copy-Item "$($_.FullName)\SKILL.md" "$($d.FullName)\SKILL.md" -Force; "actualizada: $($d.FullName)" }
+  if ($d) { Copy-Item "$($_.FullName)\*" $d.FullName -Force; "actualizada: $($d.FullName)" }
   else { "NO ENCONTRADA: $n" }
 }
+# El puente que usan los agentes para hablar con Musashi: debe decir CONEXION OK
+python $HOME\.hermes\skills\musashi-base\musashi.py prueba
 ```
-Deben salir 14 líneas `actualizada:`. Las skills se leen del disco en cada corrida; sólo hay que reiniciar el gateway (stop, revisar puertos, start) si cambiaste el `.env`.
+Deben salir 14 líneas `actualizada:` y `CONEXION OK · datos reales`. Si `python` no existe en tu terminal, usa el de Hermes: `& (Get-ChildItem $env:LOCALAPPDATA\hermes\tools -Recurse -Filter python.exe | Select-Object -First 1).FullName $HOME\.hermes\skills\musashi-base\musashi.py prueba`.
+
+Cuando un agente corre de verdad, su respuesta termina con las líneas `PROPUESTA GUARDADA id=…` y `CORRIDA GUARDADA id=…`. Si en su lugar explica lo que haría o da ejemplos, no ejecutó nada. Las skills se leen del disco en cada corrida; sólo hay que reiniciar el gateway (stop, revisar puertos, start) si cambiaste el `.env`.
 El archivo `$HOME\.hermes\.env` debe tener `MUSASHI_URL=https://musashi-three.vercel.app` (sin diagonal final) y `MUSASHI_API_KEY`. Prueba que un agente lee datos reales:
 ```powershell
 $k = (Select-String -Path $HOME\.hermes\.env -Pattern '^MUSASHI_API_KEY=').Line.Split('=',2)[1].Trim()

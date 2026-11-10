@@ -15,6 +15,14 @@ export async function POST(req: Request) {
   if (!v.ok) return NextResponse.json({ error: v.error }, { status: 400 });
   if (hayDB()) {
     try {
+      // Candado contra datos inventados: lo que el agente referencie debe existir en la base.
+      const d = v.p.datos ?? {}, uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      for (const [campo, tabla] of [["cliente_id", "clientes"], ["proyecto_id", "proyectos"], ["factura_id", "facturas"], ["tarea_id", "tareas"]] as const) {
+        const id = d[campo]; if (id == null || id === "") continue;
+        if (typeof id !== "string" || !uuid.test(id) || (await sb<{ id: string }[]>(`${tabla}?select=id&id=eq.${id}`)).length === 0)
+          return NextResponse.json({ error: `${campo} no existe en Musashi. Copia el id tal cual del contexto (GET /api/hermes/contexto); no lo inventes.` }, { status: 400 });
+      }
+      if (/PERFIL/.test(v.p.tipo) && !d.cliente_id) return NextResponse.json({ error: "Un PERFIL necesita datos.cliente_id del cliente que describe, tomado del contexto." }, { status: 400 });
       const r = await sb<{ id: string }[]>("propuestas_ia?select=id", { method: "POST", prefer: "return=representation", body: { agente: v.p.agente, tipo: v.p.tipo, titulo: v.p.titulo, cuerpo: v.p.cuerpo, datos: v.p.datos ?? null, modelo: v.p.modelo ?? null, referencia: v.p.referencia ?? null } });
       return NextResponse.json({ ok: true, id: r[0]?.id, estado: "en la bandeja de aprobación", propuesta: v.p }, { status: 201 });
     } catch (e) { return NextResponse.json({ error: "no se pudo guardar: " + (e instanceof Error ? e.message : "error") }, { status: 502 }); }
