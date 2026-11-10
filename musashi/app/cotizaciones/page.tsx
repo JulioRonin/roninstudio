@@ -99,7 +99,7 @@ export default function Cotizaciones() {
   const enviar = async (c: Cot) => {
     if (!(await patchCot(c, { estado: "Enviada" }))) return;
     setEstado(c.folio, "Enviada"); await nuevaTarea(`Seguimiento ${c.folio} · ${c.cliente}`, c, 3); await etapaCliente(c, "Propuesta");
-    flash(`${c.folio} enviada · tarea de seguimiento creada`);
+    flash(`${c.folio} marcada como enviada · Musashi no la manda: compártele tú el PDF · seguimiento en 3 días`);
   };
   const aceptar = async (c: Cot) => {
     let codigo = "D" + (14 + cots.filter((x) => x.estado === "Aceptada").length);
@@ -120,6 +120,7 @@ export default function Cotizaciones() {
     flash(`${c.folio} aceptada · proyecto ${codigo} en Mapear y anticipo por facturar`);
   };
   const perder = async (c: Cot, razon: string) => { if (!(await patchCot(c, { estado: "Perdida", razon_perdida: razon }))) return; setEstado(c.folio, "Perdida", { razon }); setPerdiendo(false); flash(`${c.folio} marcada como perdida · ${razon.toLowerCase()}`); };
+  const aBorrador = async (c: Cot) => { if (!(await patchCot(c, { estado: "Borrador" }))) return; setEstado(c.folio, "Borrador"); flash(`${c.folio} regresó a borrador`); };
   const reabrir = async (c: Cot) => { const v = sumaDias(hoyISO(), 15); if (!(await patchCot(c, { estado: "Borrador", razon_perdida: null, vigencia: v }))) return; setEstado(c.folio, "Borrador", { razon: undefined, vigencia: fechaCorta(v), vigenciaISO: v }); flash("Cotización reabierta como borrador"); };
   const guardarNueva = async (c: Cot, enviarla: boolean) => {
     let nueva = c;
@@ -133,7 +134,7 @@ export default function Cotizaciones() {
     }
     setCots((cs) => [nueva, ...cs]); setSel(nueva.folio); setTab(0);
     if (enviarla) { await nuevaTarea(`Seguimiento ${nueva.folio} · ${nueva.cliente}`, nueva, 3); await etapaCliente(nueva, "Propuesta"); }
-    flash(enviarla ? `${nueva.folio} enviada · tarea de seguimiento creada` : `${nueva.folio} guardada como borrador`);
+    flash(enviarla ? `${nueva.folio} marcada como enviada · Musashi no la manda: compártele tú el PDF · seguimiento en 3 días` : `${nueva.folio} guardada como borrador`);
   };
   const guardarEdicion = async (c: Cot, enviarla: boolean) => {
     const previa = cots.find((x) => x.folio === c.folio); if (!previa) return;
@@ -148,7 +149,7 @@ export default function Cotizaciones() {
     const nueva: Cot = { ...previa, ...c, id: previa.id, estado, fecha: previa.fecha, abierta: previa.abierta };
     setCots((cs) => cs.map((x) => (x.folio === c.folio ? nueva : x))); setSel(c.folio); setEditando(null); setTab(0);
     if (enviarla && previa.estado === "Borrador") { await nuevaTarea(`Seguimiento ${nueva.folio} · ${nueva.cliente}`, nueva, 3); await etapaCliente(nueva, "Propuesta"); }
-    flash(enviarla ? `${c.folio} actualizada y enviada · tarea de seguimiento creada` : `${c.folio} actualizada`);
+    flash(enviarla ? `${c.folio} actualizada y marcada como enviada · Musashi no la manda: compártele tú el PDF` : `${c.folio} actualizada`);
   };
   const eliminar = async (c: Cot) => {
     if (!window.confirm(`¿Eliminar la cotización ${c.folio} de ${c.cliente}? No se puede deshacer.`)) return;
@@ -232,8 +233,8 @@ export default function Cotizaciones() {
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}><span style={{ ...mono10, color: C.acero }}>TOTAL MXN · ANTICIPO {cur.anticipo} %</span><span style={{ fontWeight: 900, fontSize: 26, letterSpacing: "-0.02em" }}>{mxn(total(cur))}</span></div>
               <div style={{ fontSize: 12, color: C.acero }}>Anticipo de {mxn(Math.round(total(cur) * cur.anticipo / 100))} al aceptar; el resto contra aceptación de cada hito. CFDI por cada pago.</div>
               <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 4 }}>
-                {cur.estado === "Borrador" && <PB small onClick={() => void enviar(cur)} style={{ background: C.tinta, boxShadow: "none" }}>Enviar al cliente</PB>}
-                {(cur.estado === "Enviada" || cur.estado === "Abierta") && <><PB small onClick={() => void aceptar(cur)} style={{ background: C.tinta, boxShadow: "none" }}>Marcar aceptada</PB><button type="button" onClick={() => { void nuevaTarea(`Seguimiento ${cur.folio} · ${cur.cliente}`, cur, 1).then(() => flash("Tarea de seguimiento creada para mañana")); }} style={{ height: 36, padding: "0 14px", borderRadius: 999, background: "transparent", border: `1px solid ${C.tinta}`, color: C.tinta, fontSize: 12, cursor: "pointer" }}>Dar seguimiento</button><button type="button" onClick={() => setPerdiendo((x) => !x)} style={{ height: 36, padding: "0 14px", borderRadius: 999, background: "transparent", border: "none", color: C.acero, fontSize: 12, cursor: "pointer" }}>Perdida</button></>}
+                {cur.estado === "Borrador" && <PB small onClick={() => void enviar(cur)} style={{ background: C.tinta, boxShadow: "none" }} title="Sólo cambia el estado y crea el seguimiento. El PDF se lo mandas tú.">Marcar como enviada</PB>}
+                {(cur.estado === "Enviada" || cur.estado === "Abierta") && <><PB small onClick={() => void aceptar(cur)} style={{ background: C.tinta, boxShadow: "none" }}>Marcar aceptada</PB><button type="button" onClick={() => { void nuevaTarea(`Seguimiento ${cur.folio} · ${cur.cliente}`, cur, 1).then(() => flash("Tarea de seguimiento creada para mañana")); }} style={{ height: 36, padding: "0 14px", borderRadius: 999, background: "transparent", border: `1px solid ${C.tinta}`, color: C.tinta, fontSize: 12, cursor: "pointer" }}>Dar seguimiento</button><button type="button" onClick={() => setPerdiendo((x) => !x)} style={{ height: 36, padding: "0 14px", borderRadius: 999, background: "transparent", border: "none", color: C.acero, fontSize: 12, cursor: "pointer" }}>Perdida</button><button type="button" onClick={() => void aBorrador(cur)} title="Si la marcaste como enviada por error" style={{ height: 36, padding: "0 14px", borderRadius: 999, background: "transparent", border: "none", color: C.acero, fontSize: 12, cursor: "pointer" }}>Regresar a borrador</button></>}
                 {cur.estado === "Aceptada" && <><Link href="/proyectos" style={{ height: 36, padding: "0 14px", borderRadius: 999, background: C.tinta, color: C.papel, fontSize: 12, fontWeight: 600, display: "flex", alignItems: "center" }}>Ver proyecto {cur.proyectoCode ?? ""}</Link><Link href="/facturacion" style={{ height: 36, padding: "0 14px", borderRadius: 999, border: `1px solid ${C.tinta}`, color: C.tinta, fontSize: 12, display: "flex", alignItems: "center" }}>Facturas</Link></>}
                 {(cur.estado === "Perdida" || cur.estado === "Vencida") && <PB small onClick={() => void reabrir(cur)} style={{ background: C.tinta, boxShadow: "none" }}>Reabrir</PB>}
                 {cur.estado !== "Aceptada" && <button type="button" onClick={() => { setEditando(cur.folio); setTab(1); }} style={{ height: 36, padding: "0 14px", borderRadius: 999, background: "transparent", border: `1px solid ${C.tinta}`, color: C.tinta, fontSize: 12, cursor: "pointer" }}>Editar</button>}
@@ -339,7 +340,7 @@ function Nueva({ clientes, inicial, onCancel, onSave, next }: { clientes: Opcion
         <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
           {inicial && <SB onClick={onCancel}>Cancelar</SB>}
           <SB onClick={() => { const c = build(); if (c) onSave(c, false); }}>{inicial ? "Guardar cambios" : "Guardar borrador"}</SB>
-          {(!inicial || inicial.estado === "Borrador") && <PB onClick={() => { const c = build(); if (c) onSave({ ...c, estado: "Enviada" }, true); }}>{inicial ? "Guardar y enviar" : "Enviar al cliente"}</PB>}
+          {(!inicial || inicial.estado === "Borrador") && <PB onClick={() => { const c = build(); if (c) onSave({ ...c, estado: "Enviada" }, true); }}>{inicial ? "Guardar y marcar enviada" : "Guardar y marcar enviada"}</PB>}
         </div>
       </Glass>
       <div style={{ background: "rgba(238,235,228,0.94)", color: C.tinta, borderRadius: 28, padding: 24, display: "flex", flexDirection: "column", gap: 10, alignSelf: "start" }}>
@@ -352,7 +353,7 @@ function Nueva({ clientes, inicial, onCancel, onSave, next }: { clientes: Opcion
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}><span style={{ ...mono10, color: C.acero }}>TOTAL MXN</span><span style={{ fontWeight: 900, fontSize: 26, letterSpacing: "-0.02em" }}>{mxn(tot)}</span></div>
         <div style={{ fontSize: 12, color: C.acero }}>Anticipo {anticipo} % · {mxn(Math.round(tot * anticipo / 100))} al aceptar. Vigente al {fechaCorta(vigencia)}.</div>
-        <div style={{ ...mono10, color: C.acero, borderTop: "1px solid #D6D2C9", paddingTop: 10 }}>AL ENVIAR: TAREA DE SEGUIMIENTO EN 3 DÍAS · AL ACEPTAR: PROYECTO EN MAPEAR + CFDI DEL ANTICIPO</div>
+        <div style={{ ...mono10, color: C.acero, borderTop: "1px solid #D6D2C9", paddingTop: 10 }}>MARCAR ENVIADA NO MANDA NADA: CREA EL SEGUIMIENTO EN 3 DÍAS · AL ACEPTAR: PROYECTO EN MAPEAR Y TAREA DE FACTURAR ANTICIPO</div>
       </div>
     </section>
   );
