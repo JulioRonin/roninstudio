@@ -6,7 +6,7 @@ import { RGlyph } from "@/components/ui";
 
 /* Documento en papel: reportes para el cliente, contrato, términos.
    Fondo Papel, tipografía del sistema, listo para imprimir o guardar como PDF. */
-export function PaperDoc({ title, kicker, children, file, editable = true, back = "/" }: { title: string; kicker: string; children: ReactNode; file: string; editable?: boolean; back?: string }) {
+export function PaperDoc({ title, kicker, children, file, editable = true, back = "/", publico = false }: { title: string; kicker: string; children: ReactNode; file: string; editable?: boolean; back?: string; publico?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const download = () => {
     const body = ref.current?.innerHTML ?? "";
@@ -18,10 +18,10 @@ export function PaperDoc({ title, kicker, children, file, editable = true, back 
     <div style={{ minHeight: "100vh", background: "#D9D5CD", padding: "32px 16px 64px" }}>
       <style>{CSS}</style>
       <div className="paper-actions" style={{ maxWidth: 816, margin: "0 auto 14px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}>
-        <Link href={back} style={{ color: C.tinta, fontSize: 13, textDecoration: "underline", textDecorationColor: C.oxido }}>← Volver a Musashi</Link>
+        {publico ? <span style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.12em", color: C.acero }}>RONIN STUDIO · DOCUMENTO PRIVADO</span> : <Link href={back} style={{ color: C.tinta, fontSize: 13, textDecoration: "underline", textDecorationColor: C.oxido }}>← Volver a Musashi</Link>}
         <div style={{ display: "flex", gap: 8 }}>
           {editable && <span style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.12em", color: C.acero, alignSelf: "center" }}>HAZ CLIC EN EL TEXTO PARA EDITARLO</span>}
-          <button type="button" onClick={download} style={{ height: 40, padding: "0 16px", borderRadius: 999, background: "transparent", border: `1px solid ${C.acero}`, color: C.tinta, fontSize: 13, cursor: "pointer" }}>Descargar HTML</button>
+          {!publico && <button type="button" onClick={download} style={{ height: 40, padding: "0 16px", borderRadius: 999, background: "transparent", border: `1px solid ${C.acero}`, color: C.tinta, fontSize: 13, cursor: "pointer" }}>Descargar HTML</button>}
           <button type="button" onClick={() => window.print()} style={{ height: 40, padding: "0 18px", borderRadius: 999, background: C.oxido, border: "none", color: C.papel, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Imprimir · Guardar PDF</button>
         </div>
       </div>

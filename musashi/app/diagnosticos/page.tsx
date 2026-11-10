@@ -1,7 +1,7 @@
 "use client";
-import { useModo, Vacio } from "@/components/real";
-import { datos, eq, fechaCorta } from "@/lib/datos";
-import React, { useEffect, useState } from "react";
+import { useModo } from "@/components/real";
+import { BandejaExpres } from "./expres";
+import React, { useCallback, useEffect, useState } from "react";
 import { Flujos } from "@/components/flujos";
 import { C, MONO } from "@/lib/tokens";
 import { H, PB } from "@/components/ui";
@@ -87,13 +87,11 @@ export default function Diagnosticos() {
   const [created, setCreated] = useState<number[]>([]);
 
   const db = useModo() === "db";
-  type Expres = { id: string; nombre: string; negocio: string; sector: string | null; whatsapp: string | null; correo: string | null; hallazgos: unknown; contactado: boolean; creado_en: string };
-  const [expres, setExpres] = useState<Expres[]>([]);
-  useEffect(() => { if (db) void datos.lista<Expres>("diagnosticos_expres", "select=*&order=creado_en.desc").then((r) => setExpres(r.filas)).catch(() => {}); }, [db]);
-  const contactar = (x: Expres) => { setExpres((l) => l.map((y) => (y.id === x.id ? { ...y, contactado: true } : y))); void datos.cambia("diagnosticos_expres", eq("id", x.id), { contactado: true }).then(() => flash("Marcado como contactado")).catch(() => flash("No se guardó")); };
+  const [cuenta, setCuenta] = useState<[number, number] | null>(null);
+  const onCuenta = useCallback((t: number, n: number) => setCuenta([t, n]), []);
   useEffect(() => { if (db && tab === "Diagnóstico completo") setTab("Flujos de trabajo"); }, [db, tab]);
   const isFull = tab === "Diagnóstico completo";
-  const subtitle = db ? (tab === "Flujos de trabajo" ? "Un mapa por cliente · de aquí salen el reporte, el filtro y la cotización" : `${expres.length} diagnósticos exprés recibidos · ${expres.filter((x) => !x.contactado).length} sin contactar`) : isFull ? "Negocio demo 2 · visita del 22 de octubre · en redacción" : tab === "Flujos de trabajo" ? "Negocio demo 2 · 7 procesos mapeados · de aquí salen el reporte, el filtro y la cotización" : "4 diagnósticos exprés esta semana · 2 sin contactar";
+  const subtitle = db ? (tab === "Flujos de trabajo" ? "Un mapa por cliente · de aquí salen el reporte, el filtro y la cotización" : cuenta ? `${cuenta[0]} diagnósticos exprés recibidos · ${cuenta[1]} sin contactar` : "Lo que llega del diagnóstico del sitio público") : isFull ? "Negocio demo 2 · visita del 22 de octubre · en redacción" : tab === "Flujos de trabajo" ? "Negocio demo 2 · 7 procesos mapeados · de aquí salen el reporte, el filtro y la cotización" : "4 diagnósticos exprés esta semana · 2 sin contactar";
   const toQuote = () => flash("Cotización creada en Facturación · borrador");
   const openFull = () => { setTab("Diagnóstico completo"); setSub("Mapa de flujo"); };
 
@@ -130,20 +128,7 @@ export default function Diagnosticos() {
 
       <section style={{ padding: "22px 32px 56px" }}>
         {/* ---------- BANDEJA EXPRÉS ---------- */}
-        {tab === "Bandeja exprés" && db && (
-          <div style={{ ...GLASS, borderRadius: 24, padding: "8px 22px 12px" }}>
-            {expres.length === 0 && <Vacio>Todavía no llega ningún diagnóstico exprés. Cuando el formulario del sitio público se conecte a Musashi, cada respuesta caerá aquí con sus hallazgos y un botón para darla de alta como cliente. Mientras tanto, da de alta al cliente en Clientes y mapea sus flujos en la pestaña de al lado.</Vacio>}
-            {expres.map((x) => (
-              <div key={x.id} style={{ display: "grid", gridTemplateColumns: "90px 1.4fr 1fr 1fr auto", gap: 14, alignItems: "center", padding: "12px 0", borderBottom: "1px solid rgba(238,235,228,0.06)", fontSize: 13.5 }}>
-                <span style={{ ...MONO10 }}>{fechaCorta(x.creado_en).toUpperCase()}</span>
-                <div><div>{x.negocio}</div><div style={{ ...MONO10, marginTop: 2 }}>{(x.sector ?? "").toUpperCase()}</div></div>
-                <span style={{ color: C.niebla }}>{x.nombre}</span>
-                <span style={{ color: C.niebla }}>{x.whatsapp ?? x.correo ?? "—"}</span>
-                {x.contactado ? <span style={{ ...MONO10, color: C.olivo }}>CONTACTADO</span> : <button type="button" onClick={() => contactar(x)} style={{ height: 34, padding: "0 12px", borderRadius: 999, background: "transparent", border: `1px solid ${C.borde2}`, color: C.papel, fontSize: 12, cursor: "pointer" }}>Marcar contactado</button>}
-              </div>
-            ))}
-          </div>
-        )}
+        {tab === "Bandeja exprés" && db && <BandejaExpres onCuenta={onCuenta} />}
         {tab === "Bandeja exprés" && !db && (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(2,minmax(0,1fr))", gap: 16 }}>
             {INB.map((d, i) => {

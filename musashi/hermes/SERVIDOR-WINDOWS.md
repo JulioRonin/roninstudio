@@ -105,6 +105,21 @@ Te dará `https://<pc>.<tailnet>.ts.net` (webhooks) y `https://<pc>.<tailnet>.ts
 
 Luego en Musashi: Configuración → Hermes Agent → **Probar conexión**.
 
+## Actualizar las skills cuando cambien en el repositorio (PowerShell)
+```powershell
+cd $HOME\roninstudio          # la carpeta donde clonaste el repositorio
+git pull
+Copy-Item -Recurse -Force musashi\hermes\skills\* $HOME\.hermes\skills\musashi\
+hermes gateway restart
+```
+El archivo `$HOME\.hermes\.env` debe tener `MUSASHI_URL=https://musashi-three.vercel.app` (sin diagonal final) y `MUSASHI_API_KEY`. Prueba que un agente lee datos reales:
+```powershell
+$k = (Select-String -Path $HOME\.hermes\.env -Pattern '^MUSASHI_API_KEY=').Line.Split('=',2)[1].Trim()
+Invoke-RestMethod -Uri "https://musashi-three.vercel.app/api/hermes/contexto?para=general" -Headers @{Authorization="Bearer $k"} | Select-Object demo, hoy, resumen
+Remove-Variable k
+```
+Debe decir `demo: False`.
+
 ## Si algo falla
 - `hermes doctor` primero.
 - El webhook responde `Unknown route: musashi`: la ruta del `config.yaml` no se cargó. Créala como suscripción dinámica con el mismo secreto (se recarga sola, sin reiniciar):

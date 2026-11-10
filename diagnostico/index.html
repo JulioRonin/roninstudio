@@ -348,6 +348,14 @@
       lectura_interna: LEVELS[r.level] + ' (' + r.total + '/' + r.max + ')',
       respuestas: answers
     };
+    // Copia a Musashi (bandeja exprés). No bloquea el envío por correo ni cambia lo que ve la persona.
+    try {
+      fetch('/api/diagnostico', { method: 'POST', headers: { 'Content-Type': 'application/json' }, keepalive: true, body: JSON.stringify({
+        nombre: c.nombre, negocio: c.negocio, sector: sec.name, sector_clave: state.sector, whatsapp: c.whatsapp, correo: c.email,
+        hallazgos: r.findings.map(function (f) { return f.t; }), horas: ht ? ht.wk + ' (' + ht.yr + ')' : '',
+        contexto_otro: otros, lectura_interna: LEVELS[r.level] + ' (' + r.total + '/' + r.max + ')', respuestas: answers.split('\n')
+      }) }).catch(function () {});
+    } catch (e) {}
     post(payload, 3)
       .then(function () { var s = $('r-status'); if (s) { s.className = 'status'; s.textContent = 'Listo. Te enviamos una copia a ' + c.email + ' y Julio te escribe en menos de 24 horas hábiles.'; } clearSaved(); })
       .catch(function () {

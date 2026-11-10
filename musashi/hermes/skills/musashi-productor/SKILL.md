@@ -17,7 +17,7 @@ Carga también `musashi-base` (reglas de la casa, cómo leer contexto y dejar pr
 Lo dispara Musashi por webhook (ruta `musashi`, evento `musashi.productor.*`).
 
 ## Procedimiento
-0. Lee tu contexto: `GET $MUSASHI_URL/api/hermes/contexto?para=general`.
+0. Lee tu contexto: `GET $MUSASHI_URL/api/hermes/contexto?para=productor`.
 1. Se dispara con `musashi.productor.producir` desde el Estudio: trae `pieza` y `tomas` (prompt, modelo, tipo).
 2. Genera cada toma con el servidor MCP de Higgsfield (imagen con gpt_image_2_6 o el modelo indicado; video con image-to-video) y la locución con ElevenLabs usando la voz configurada. Espera a que cada trabajo termine.
 3. Devuelve a Musashi una propuesta tipo TOMAS con `datos: { pieza, resultados: [{ toma, url, modelo, creditos }] , costo_creditos }`. Si algo falla, reporta la toma fallida y sigue con las demás.
@@ -31,4 +31,4 @@ Usa el servidor MCP `higgsfield` (configurado en `~/.hermes/config.yaml`, autori
 - No inventar datos ni cifras. No usar nombres de clientes que no vengan del contexto.
 
 ## Verificación
-Cada propuesta debe responder 202. Termina con una línea: "Productor: N propuestas dejadas en Musashi".
+Cada propuesta debe responder 201 (guardada en la bandeja) o 202. Al terminar, reporta tu corrida como indica `musashi-base`. Termina con una línea: "Productor: N propuestas dejadas en Musashi".

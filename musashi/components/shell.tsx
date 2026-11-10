@@ -6,6 +6,7 @@ import { C, MONO } from "@/lib/tokens";
 import { H, RGlyph, Dot } from "@/components/ui";
 import { TRAY, type TrayItem } from "@/lib/demo";
 import { datos, eq } from "@/lib/datos";
+import { accionDe, resolver } from "@/lib/propuestas";
 
 /* ---------- Contexto de UI: toast + bandeja de aprobación ---------- */
 type UI = {
@@ -13,7 +14,7 @@ type UI = {
   tray: TrayItem[];
   trayOpen: boolean;
   toggleTray: () => void;
-  approve: (id: string) => void;
+  approve: (id: string, cuerpo?: string) => void;
   discard: (id: string) => void;
   demo: boolean;
   db: boolean;
@@ -30,7 +31,7 @@ export const NAV: [string, string][] = [
   ["Cotizaciones", "/cotizaciones"], ["Proyectos", "/proyectos"], ["Tareas", "/tareas"], ["Finanzas", "/finanzas"], ["Facturación", "/facturacion"], ["Agentes", "/agentes"],
 ];
 
-const BARE = ["/login", "/documentos", "/proyectos/reporte", "/flujos/reporte"];
+const BARE = ["/login", "/c/", "/documentos", "/proyectos/reporte", "/flujos/reporte"];
 
 export function Shell({ children, demo = true }: { children: ReactNode; demo?: boolean }) {
   const path = usePathname();
@@ -48,20 +49,26 @@ export function Shell({ children, demo = true }: { children: ReactNode; demo?: b
   }, []);
   const tray = items;
   // Bandeja: con Supabase, las propuestas pendientes que dejaron los agentes en propuestas_ia.
-  const enLogin = path.startsWith("/login");
+  const enLogin = path.startsWith("/login") || path.startsWith("/c/");
   const cargarBandeja = useCallback(() => {
     if (enLogin) return;
-    datos.lista<{ id: string; agente: string; modelo: string | null; tipo: string; titulo: string; cuerpo: string }>("propuestas_ia", `select=id,agente,modelo,tipo,titulo,cuerpo&${eq("estado", "Pendiente")}&order=creado_en.desc&limit=30`)
-      .then((r) => { if (!r.db) { setItems(TRAY); return; } setDb(true); setItems(r.filas.map((f) => ({ id: f.id, agent: f.agente.toUpperCase(), model: (f.modelo ?? "IA").toUpperCase(), kind: f.tipo.toUpperCase(), title: f.titulo, body: f.cuerpo }))); })
+    datos.lista<{ id: string; agente: string; modelo: string | null; tipo: string; titulo: string; cuerpo: string; datos: Record<string, unknown> | null; referencia: string | null }>("propuestas_ia", `select=id,agente,modelo,tipo,titulo,cuerpo,datos,referencia&${eq("estado", "Pendiente")}&order=creado_en.desc&limit=30`)
+      .then((r) => { if (!r.db) { setItems(TRAY); return; } setDb(true); setItems(r.filas.map((f) => ({ id: f.id, agent: f.agente.toUpperCase(), model: (f.modelo ?? "IA").toUpperCase(), kind: f.tipo.toUpperCase(), title: f.titulo, body: f.cuerpo, agente: f.agente, datos: f.datos, referencia: f.referencia }))); })
       .catch(() => {});
   }, [enLogin]);
   useEffect(() => { cargarBandeja(); }, [cargarBandeja]);
-  const rm = useCallback((id: string, m: string, estado: "Aprobada" | "Descartada") => {
-    setItems((s) => s.filter((x) => x.id !== id)); flash(m);
-    if (db) void datos.cambia("propuestas_ia", eq("id", id), { estado, resuelta_en: new Date().toISOString() }).catch(() => flash("No se guardó la decisión"));
-  }, [flash, db]);
-  const approve = useCallback((id: string) => { const t = items.find((x) => x.id === id); rm(id, "Aprobado · " + (t?.agent.toLowerCase() ?? ""), "Aprobada"); }, [rm, items]);
-  const discard = useCallback((id: string) => rm(id, "Propuesta descartada", "Descartada"), [rm]);
+  // Aprobar ejecuta la acción de la propuesta (abrir WhatsApp, crear tarea, guardar perfil, crear pieza) y deja registro.
+  const decidir = useCallback((id: string, decision: "Aprobada" | "Descartada", cuerpo?: string) => {
+    const t = items.find((x) => x.id === id); if (!t) return;
+    setItems((s) => s.filter((x) => x.id !== id));
+    if (!db) { flash(decision === "Aprobada" ? "Aprobado · " + t.agent.toLowerCase() : "Propuesta descartada"); return; }
+    const p = { id, agente: t.agente ?? t.agent.toLowerCase(), tipo: t.kind, titulo: t.title, cuerpo: t.body, datos: t.datos, referencia: t.referencia };
+    // La pestaña de WhatsApp se abre en el mismo clic; si se abre después, el navegador la bloquea.
+    const ventana = decision === "Aprobada" && accionDe(p).clave === "whatsapp" ? window.open("", "_blank") : null;
+    resolver(p, decision, cuerpo, ventana).then(flash).catch((e) => { ventana?.close(); setItems((s) => [t, ...s]); flash("No se pudo completar: " + (e as Error).message); });
+  }, [flash, db, items]);
+  const approve = useCallback((id: string, cuerpo?: string) => decidir(id, "Aprobada", cuerpo), [decidir]);
+  const discard = useCallback((id: string) => decidir(id, "Descartada"), [decidir]);
   const toggleTray = useCallback(() => { if (!trayOpen) cargarBandeja(); setTrayOpen((o) => !o); }, [trayOpen, cargarBandeja]);
 
   useEffect(() => {
@@ -72,7 +79,7 @@ export function Shell({ children, demo = true }: { children: ReactNode; demo?: b
       const f = tray[0];
       if (e.key === "Escape") return setTrayOpen(false);
       if (!f) return;
-      if (e.key === "a") approve(f.id); else if (e.key === "d") discard(f.id); else if (e.key === "e") flash("Abriendo editor del borrador");
+      if (e.key === "a") approve(f.id); else if (e.key === "d") discard(f.id);
     };
     window.addEventListener("keydown", k);
     return () => window.removeEventListener("keydown", k);
@@ -215,14 +222,15 @@ function Header({ onSearch }: { onSearch: () => void }) {
 
 /* ---------- Bandeja de aprobación ---------- */
 function Tray() {
-  const { tray, toggleTray, approve, discard, flash } = useUI();
+  const { tray, toggleTray, approve, discard, db } = useUI();
+  const [edit, setEdit] = useState<{ id: string; texto: string } | null>(null);
   return (
     <>
       <div onClick={toggleTray} style={{ position: "fixed", inset: 0, background: "rgba(7,9,12,0.6)", zIndex: 50 }} />
       <aside style={{ position: "fixed", top: 16, right: 16, bottom: 16, width: 440, background: "rgba(19,23,29,0.78)", backdropFilter: "blur(28px)", WebkitBackdropFilter: "blur(28px)", border: "1px solid rgba(238,235,228,0.1)", borderRadius: 28, padding: 24, display: "flex", flexDirection: "column", gap: 14, overflow: "auto", zIndex: 51, animation: "rise .35s ease both" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <div>
-            <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.14em", color: C.tenue }}>A APROBAR · E EDITAR · D DESCARTAR</div>
+            <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.14em", color: C.tenue }}>A APROBAR · D DESCARTAR</div>
             <div style={{ fontWeight: 900, fontSize: 24, letterSpacing: "-0.02em", marginTop: 6 }}>BANDEJA DE APROBACIÓN</div>
             <div style={{ fontWeight: 300, fontSize: 14, color: C.niebla }}>{tray.length} {tray.length === 1 ? "propuesta pendiente" : "propuestas pendientes"}</div>
           </div>
@@ -232,10 +240,12 @@ function Tray() {
           <div key={p.id} style={{ background: "rgba(12,15,20,0.5)", border: `1px solid ${i === 0 ? C.oxido : "rgba(238,235,228,0.09)"}`, boxShadow: i === 0 ? "0 0 26px rgba(176,81,57,0.3)" : "none", borderRadius: 20, padding: 16, display: "flex", flexDirection: "column", gap: 10 }}>
             <div style={{ display: "flex", justifyContent: "space-between", fontFamily: MONO, fontSize: 10, letterSpacing: "0.12em", color: C.tenue }}><span>BORRADOR DE IA · {p.agent} · {p.model}</span><span>{p.kind}</span></div>
             <div style={{ fontSize: 14, fontWeight: 600 }}>{p.title}</div>
-            <div style={{ fontSize: 13, color: C.niebla, lineHeight: 1.45, textWrap: "pretty" }}>{p.body}</div>
-            <div style={{ display: "flex", gap: 6 }}>
-              <H as="button" type="button" onClick={() => approve(p.id)} style={{ height: 36, padding: "0 16px", borderRadius: 999, background: C.oxido, color: C.papel, border: "none", fontSize: 12, fontWeight: 600, cursor: "pointer", boxShadow: "0 0 18px rgba(176,81,57,.45)" }} hover={{ background: C.oxidoHover }}>Aprobar</H>
-              <button type="button" onClick={() => flash("Abriendo editor del borrador")} style={{ height: 36, padding: "0 16px", borderRadius: 999, background: "transparent", color: C.papel, border: `1px solid ${C.borde2}`, fontSize: 12, cursor: "pointer" }}>Editar</button>
+            {edit?.id === p.id
+              ? <textarea autoFocus value={edit.texto} onChange={(e) => setEdit({ id: p.id, texto: e.target.value })} rows={6} style={{ borderRadius: 14, background: C.p2, border: `1px solid ${C.oxido}`, color: C.papel, padding: 12, fontSize: 13, lineHeight: 1.45, resize: "vertical", outline: "none", fontFamily: "inherit" }} />
+              : <div style={{ fontSize: 13, color: C.niebla, lineHeight: 1.45, textWrap: "pretty", whiteSpace: "pre-wrap" }}>{p.body}</div>}
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+              <H as="button" type="button" onClick={() => { approve(p.id, edit?.id === p.id ? edit.texto : undefined); setEdit(null); }} style={{ height: 36, padding: "0 16px", borderRadius: 999, background: C.oxido, color: C.papel, border: "none", fontSize: 12, fontWeight: 600, cursor: "pointer", boxShadow: "0 0 18px rgba(176,81,57,.45)" }} hover={{ background: C.oxidoHover }}>{db ? accionDe({ tipo: p.kind, agente: p.agent }).etiqueta : "Aprobar"}</H>
+              <button type="button" onClick={() => setEdit(edit?.id === p.id ? null : { id: p.id, texto: p.body })} style={{ height: 36, padding: "0 16px", borderRadius: 999, background: "transparent", color: C.papel, border: `1px solid ${C.borde2}`, fontSize: 12, cursor: "pointer" }}>{edit?.id === p.id ? "Cancelar edición" : "Editar"}</button>
               <H as="button" type="button" onClick={() => discard(p.id)} style={{ height: 36, padding: "0 16px", borderRadius: 999, background: "transparent", color: C.niebla, border: "none", fontSize: 12, cursor: "pointer" }} hover={{ color: C.papel }}>Descartar</H>
             </div>
           </div>

@@ -8,6 +8,7 @@ import { COTS, PAGOS, FACTURAS, CLIENTES, mxn, total, PESO, SELECT_COT, SELECT_M
 import { load, save, reset } from "@/lib/store";
 import { useTarifas } from "@/lib/tarifas";
 import { datos, eq, hoyISO, sumaDias, fechaCorta, mesCorto, siguienteFolio } from "@/lib/datos";
+import { Modal, Campo } from "@/components/real";
 
 /* =====================================================================
    COTIZACIONES · la entrada del dinero
@@ -41,6 +42,7 @@ export default function Cotizaciones() {
   const [tareas, setTareas] = useState<string[]>([]);
   const [perdiendo, setPerdiendo] = useState(false);
   const [editando, setEditando] = useState<string | null>(null);
+  const [liga, setLiga] = useState<{ folio: string; url: string; contacto: string | null; whatsapp: string | null; mensaje: string } | null>(null);
   const [loaded, setLoaded] = useState(false);
 
   const cargarTareas = () => datos.lista<{ titulo: string; fecha: string }>("tareas", `select=titulo,fecha&${eq("origen", "Cotización")}&${eq("estado", "Pendiente")}&order=fecha.asc&limit=8`).then((r) => setTareas(r.filas.map((t) => `${t.titulo} · ${fechaCorta(t.fecha)}`)));
@@ -120,6 +122,17 @@ export default function Cotizaciones() {
     flash(`${c.folio} aceptada · proyecto ${codigo} en Mapear y anticipo por facturar`);
   };
   const perder = async (c: Cot, razon: string) => { if (!(await patchCot(c, { estado: "Perdida", razon_perdida: razon }))) return; setEstado(c.folio, "Perdida", { razon }); setPerdiendo(false); flash(`${c.folio} marcada como perdida · ${razon.toLowerCase()}`); };
+  // Liga privada para el cliente. Un borrador no se comparte: al compartir pasa a Enviada.
+  const compartir = async (c: Cot) => {
+    if (!db) { flash("La liga para el cliente funciona con la base de datos conectada"); return; }
+    try {
+      if (c.estado === "Borrador") { if (!(await patchCot(c, { estado: "Enviada" }))) return; setEstado(c.folio, "Enviada"); await nuevaTarea(`Seguimiento ${c.folio} · ${c.cliente}`, c, 3); await etapaCliente(c, "Propuesta"); }
+      const r = await fetch(`/api/cotizaciones/liga?f=${encodeURIComponent(c.folio)}`, { cache: "no-store" }); const d = await r.json();
+      if (!r.ok) throw new Error(d.error ?? "error");
+      setLiga({ folio: c.folio, ...d });
+    } catch (e) { falla(e); }
+  };
+  const copiar = (t: string, msg: string) => { void navigator.clipboard.writeText(t).then(() => flash(msg)).catch(() => flash("No se pudo copiar; selecciona el texto y cópialo")); };
   const aBorrador = async (c: Cot) => { if (!(await patchCot(c, { estado: "Borrador" }))) return; setEstado(c.folio, "Borrador"); flash(`${c.folio} regresó a borrador`); };
   const reabrir = async (c: Cot) => { const v = sumaDias(hoyISO(), 15); if (!(await patchCot(c, { estado: "Borrador", razon_perdida: null, vigencia: v }))) return; setEstado(c.folio, "Borrador", { razon: undefined, vigencia: fechaCorta(v), vigenciaISO: v }); flash("Cotización reabierta como borrador"); };
   const guardarNueva = async (c: Cot, enviarla: boolean) => {
@@ -233,7 +246,8 @@ export default function Cotizaciones() {
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}><span style={{ ...mono10, color: C.acero }}>TOTAL MXN · ANTICIPO {cur.anticipo} %</span><span style={{ fontWeight: 900, fontSize: 26, letterSpacing: "-0.02em" }}>{mxn(total(cur))}</span></div>
               <div style={{ fontSize: 12, color: C.acero }}>Anticipo de {mxn(Math.round(total(cur) * cur.anticipo / 100))} al aceptar; el resto contra aceptación de cada hito. CFDI por cada pago.</div>
               <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 4 }}>
-                {cur.estado === "Borrador" && <PB small onClick={() => void enviar(cur)} style={{ background: C.tinta, boxShadow: "none" }} title="Sólo cambia el estado y crea el seguimiento. El PDF se lo mandas tú.">Marcar como enviada</PB>}
+                {cur.estado === "Borrador" && <><PB small onClick={() => void compartir(cur)} style={{ background: C.tinta, boxShadow: "none" }} title="Crea la liga privada, la marca como enviada y prepara el mensaje de WhatsApp">Compartir con el cliente</PB><button type="button" onClick={() => void enviar(cur)} title="Sólo cambia el estado y crea el seguimiento, sin liga" style={{ height: 36, padding: "0 14px", borderRadius: 999, background: "transparent", border: `1px solid ${C.tinta}`, color: C.tinta, fontSize: 12, cursor: "pointer" }}>Sólo marcar enviada</button></>}
+                {(cur.estado === "Enviada" || cur.estado === "Abierta") && <PB small onClick={() => void compartir(cur)} style={{ background: C.oxido, boxShadow: "none" }}>Compartir liga</PB>}
                 {(cur.estado === "Enviada" || cur.estado === "Abierta") && <><PB small onClick={() => void aceptar(cur)} style={{ background: C.tinta, boxShadow: "none" }}>Marcar aceptada</PB><button type="button" onClick={() => { void nuevaTarea(`Seguimiento ${cur.folio} · ${cur.cliente}`, cur, 1).then(() => flash("Tarea de seguimiento creada para mañana")); }} style={{ height: 36, padding: "0 14px", borderRadius: 999, background: "transparent", border: `1px solid ${C.tinta}`, color: C.tinta, fontSize: 12, cursor: "pointer" }}>Dar seguimiento</button><button type="button" onClick={() => setPerdiendo((x) => !x)} style={{ height: 36, padding: "0 14px", borderRadius: 999, background: "transparent", border: "none", color: C.acero, fontSize: 12, cursor: "pointer" }}>Perdida</button><button type="button" onClick={() => void aBorrador(cur)} title="Si la marcaste como enviada por error" style={{ height: 36, padding: "0 14px", borderRadius: 999, background: "transparent", border: "none", color: C.acero, fontSize: 12, cursor: "pointer" }}>Regresar a borrador</button></>}
                 {cur.estado === "Aceptada" && <><Link href="/proyectos" style={{ height: 36, padding: "0 14px", borderRadius: 999, background: C.tinta, color: C.papel, fontSize: 12, fontWeight: 600, display: "flex", alignItems: "center" }}>Ver proyecto {cur.proyectoCode ?? ""}</Link><Link href="/facturacion" style={{ height: 36, padding: "0 14px", borderRadius: 999, border: `1px solid ${C.tinta}`, color: C.tinta, fontSize: 12, display: "flex", alignItems: "center" }}>Facturas</Link></>}
                 {(cur.estado === "Perdida" || cur.estado === "Vencida") && <PB small onClick={() => void reabrir(cur)} style={{ background: C.tinta, boxShadow: "none" }}>Reabrir</PB>}
@@ -260,6 +274,26 @@ export default function Cotizaciones() {
             {tareas.map((t, i) => <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, borderTop: `1px solid ${C.borde}`, padding: "10px 0", fontSize: 13.5 }}><Dot color={i === 0 ? C.oxido : C.acero} />{t}</div>)}
           </Glass>
         </section>
+      )}
+
+      {liga && (
+        <Modal titulo="COMPARTIR CON EL CLIENTE" kicker={`COTIZACIÓN ${liga.folio} · LIGA PRIVADA, SIN CONTRASEÑA`} onClose={() => setLiga(null)} ancho={600}>
+          <Campo t="Liga para el cliente">
+            <div style={{ display: "flex", gap: 8 }}>
+              <input readOnly value={liga.url} onFocus={(e) => e.target.select()} style={{ ...input, fontFamily: MONO, fontSize: 12 }} />
+              <SB small onClick={() => copiar(liga.url, "Liga copiada")}>Copiar</SB>
+            </div>
+          </Campo>
+          <Campo t={`Mensaje${liga.contacto ? ` para ${liga.contacto}` : ""} · puedes editarlo`}>
+            <textarea value={liga.mensaje} onChange={(e) => setLiga({ ...liga, mensaje: e.target.value })} rows={5} style={{ ...input, height: "auto", padding: "12px 16px", borderRadius: 16, resize: "vertical", fontFamily: "inherit", lineHeight: 1.45 }} />
+          </Campo>
+          <div style={{ fontSize: 12.5, color: C.tenue, lineHeight: 1.5 }}>Musashi no manda nada por su cuenta: el botón abre WhatsApp con el mensaje listo y tú das enviar. Cuando el cliente abra la liga, la cotización pasa a "Abierta" y verás cuántas veces la vio.{!liga.whatsapp && " Este cliente no tiene WhatsApp registrado en su contacto: se abrirá WhatsApp para que elijas a quién mandarlo."}</div>
+          <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", flexWrap: "wrap" }}>
+            <a href={liga.url} target="_blank" rel="noreferrer" style={{ height: 44, padding: "0 16px", borderRadius: 999, border: `1px solid ${C.borde2}`, color: C.papel, fontSize: 13, display: "flex", alignItems: "center" }}>Ver como la ve el cliente ↗</a>
+            <SB onClick={() => copiar(liga.mensaje, "Mensaje copiado")}>Copiar mensaje</SB>
+            <a href={`https://wa.me/${liga.whatsapp ?? ""}?text=${encodeURIComponent(liga.mensaje)}`} target="_blank" rel="noreferrer" style={{ height: 44, padding: "0 20px", borderRadius: 999, background: "#25D366", color: C.tinta, fontSize: 14, fontWeight: 600, display: "flex", alignItems: "center" }}>Abrir WhatsApp</a>
+          </div>
+        </Modal>
       )}
 
       {!cargando && tab === 1 && <Nueva key={editando ?? "nueva"} clientes={clientes} inicial={editando ? cots.find((c) => c.folio === editando) : undefined} onCancel={() => { setEditando(null); setTab(0); }}

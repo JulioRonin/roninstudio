@@ -4,9 +4,24 @@
   "buildCommand": "echo skip-build",
   "outputDirectory": ".",
   "routes": [
-    { "src": "/(musashi|research_notes)(/.*)?", "status": 404 },
-    { "handle": "filesystem" },
-    { "src": "/vertice/demo", "dest": "https://vertice-demo-kappa.vercel.app/vertice/demo" },
-    { "src": "/vertice/demo/(.*)", "dest": "https://vertice-demo-kappa.vercel.app/vertice/demo/$1" }
+    {
+      "src": "/(musashi|research_notes)(/.*)?",
+      "status": 404
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/api/diagnostico",
+      "dest": "https://musashi-three.vercel.app/api/publico/diagnostico"
+    },
+    {
+      "src": "/vertice/demo",
+      "dest": "https://vertice-demo-kappa.vercel.app/vertice/demo"
+    },
+    {
+      "src": "/vertice/demo/(.*)",
+      "dest": "https://vertice-demo-kappa.vercel.app/vertice/demo/$1"
+    }
   ]
 }

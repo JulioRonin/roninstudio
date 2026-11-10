@@ -28,4 +28,4 @@ Programado: `every friday 6pm` (hora de Ciudad Juárez).
 - No inventar datos ni cifras. No usar nombres de clientes que no vengan del contexto.
 
 ## Verificación
-Cada propuesta debe responder 202. Termina con una línea: "Analista: N propuestas dejadas en Musashi".
+Cada propuesta debe responder 201 (guardada en la bandeja) o 202. Al terminar, reporta tu corrida como indica `musashi-base`. Termina con una línea: "Analista: N propuestas dejadas en Musashi".

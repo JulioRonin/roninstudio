@@ -1,5 +1,5 @@
 // Datos de ejemplo (MODO DEMO). Nada aquí es un cliente real.
-export type TrayItem = { id: string; agent: string; model: string; kind: string; title: string; body: string };
+export type TrayItem = { id: string; agent: string; model: string; kind: string; title: string; body: string; agente?: string; datos?: Record<string, unknown> | null; referencia?: string | null };
 
 export const TRAY: TrayItem[] = [
   { id: "a", agent: "COBRADOR", model: "CLAUDE", kind: "MENSAJE", title: "Recordatorio F-0112 · Negocio demo 2", body: "Primer aviso por WhatsApp. Factura vencida hace 3 días, $25,000.00 MXN." },

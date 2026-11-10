@@ -27,10 +27,4 @@ export function useAjuste<T extends object>(clave: string, base: T): [T, (patch:
   return [v, (p) => { tocado.current = true; setV((x) => ({ ...x, ...p })); }, listo];
 }
 
-/* Datos del emisor: salen en la cotización formal y, más adelante, en el CFDI. */
-export type Fiscales = { nombreComercial: string; razonSocial: string; rfc: string; regimen: string; cp: string; domicilio: string; serie: string; monedas: string; correo: string; telefono: string; banco: string; titular: string; clabe: string };
-export const FISCALES_BASE: Fiscales = { nombreComercial: "Ronin Studio", razonSocial: "", rfc: "", regimen: "", cp: "", domicilio: "", serie: "F", monedas: "MXN", correo: "project@roninstudio.com.mx", telefono: "", banco: "", titular: "", clabe: "" };
-
-/* Tope mensual de gasto en tokens de IA (MXN). */
-export type Tope = { total: number };
-export const TOPE_BASE: Tope = { total: 3000 };
+export { FISCALES_BASE, TOPE_BASE, type Fiscales, type Tope } from "@/lib/ajustes-base";

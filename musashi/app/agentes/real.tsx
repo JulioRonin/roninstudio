@@ -5,12 +5,13 @@ import { C, MONO } from "@/lib/tokens";
 import { Glass, Dot } from "@/components/ui";
 import { useUI, PageHead } from "@/components/shell";
 import { AGENTES } from "@/lib/hermes-agentes";
-import { datos, eq, fechaCorta } from "@/lib/datos";
+import { datos, fechaCorta } from "@/lib/datos";
+import { accionDe, resolver as resolverPropuesta } from "@/lib/propuestas";
 import { Cargando, Vacio, Tabla, Kpis, fila, mono10, chip, btn, mxn0 } from "@/components/real";
 
 /* Agentes con datos reales: el catálogo de 13 agentes de Hermes, lo que han propuesto
    (propuestas_ia) y lo que han corrido (corridas_agente). */
-type Prop = { id: string; agente: string; tipo: string; titulo: string; cuerpo: string; estado: "Pendiente" | "Aprobada" | "Editada" | "Descartada"; creado_en: string; resuelta_en: string | null };
+type Prop = { id: string; agente: string; tipo: string; titulo: string; cuerpo: string; datos: Record<string, unknown> | null; referencia: string | null; estado: "Pendiente" | "Aprobada" | "Editada" | "Descartada"; creado_en: string; resuelta_en: string | null };
 type Corrida = { agente: string; inicio: string; costo_mxn: number | null; resultado: string | null };
 type Estado = { hermes: { alcanzable: boolean }; webhook: { alcanzable: boolean } };
 const COLOR: Record<string, string> = { Pendiente: C.ambar, Aprobada: C.olivo, Editada: C.olivo, Descartada: C.acero };
@@ -24,7 +25,7 @@ export default function AgentesReal() {
   const [filtro, setFiltro] = useState("Todas");
 
   const cargar = useCallback(() => {
-    datos.lista<Prop>("propuestas_ia", "select=id,agente,tipo,titulo,cuerpo,estado,creado_en,resuelta_en&order=creado_en.desc&limit=200").then((r) => setProps(r.filas)).catch((e) => { flash("No se pudieron cargar las propuestas: " + (e as Error).message); setProps([]); });
+    datos.lista<Prop>("propuestas_ia", "select=id,agente,tipo,titulo,cuerpo,datos,referencia,estado,creado_en,resuelta_en&order=creado_en.desc&limit=200").then((r) => setProps(r.filas)).catch((e) => { flash("No se pudieron cargar las propuestas: " + (e as Error).message); setProps([]); });
     datos.lista<Corrida>("corridas_agente", "select=agente,inicio,costo_mxn,resultado&order=inicio.desc&limit=300").then((r) => setCorridas(r.filas)).catch(() => {});
   }, [flash]);
   useEffect(() => { cargar(); fetch("/api/hermes/estado", { cache: "no-store" }).then((r) => r.json()).then(setEstado).catch(() => {}); }, [cargar]);
@@ -38,7 +39,7 @@ export default function AgentesReal() {
   const gasto = corridas.filter((c) => c.inicio.slice(0, 7) === mes).reduce((s, c) => s + Number(c.costo_mxn ?? 0), 0);
   const grupos = [...new Set(AGENTES.map((a) => a.grupo))];
   const lista = props.filter((p) => filtro === "Todas" || p.estado === filtro.replace(/s$/, ""));
-  const resolver = async (p: Prop, e: "Aprobada" | "Descartada") => { try { await datos.cambia("propuestas_ia", eq("id", p.id), { estado: e, resuelta_en: new Date().toISOString() }); flash(e === "Aprobada" ? "Propuesta aprobada" : "Propuesta descartada"); cargar(); } catch (x) { flash("No se guardó: " + (x as Error).message); } };
+  const resolver = (p: Prop, e: "Aprobada" | "Descartada") => { const v = e === "Aprobada" && accionDe(p).clave === "whatsapp" ? window.open("", "_blank") : null; resolverPropuesta(p, e, undefined, v).then((m) => { flash(m); cargar(); }).catch((x) => { v?.close(); flash("No se pudo completar: " + (x as Error).message); }); };
   const W = "90px 130px 110px 1fr 120px auto";
 
   return (
@@ -83,7 +84,7 @@ export default function AgentesReal() {
                 <span style={mono10}>{p.tipo.toUpperCase()}</span>
                 <div style={{ minWidth: 0 }}><div>{p.titulo}</div><div style={{ fontSize: 12.5, color: C.niebla, marginTop: 3, lineHeight: 1.4, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{p.cuerpo}</div></div>
                 <span style={{ display: "flex", alignItems: "center", gap: 6, ...mono10, color: C.papel }}><Dot color={COLOR[p.estado]} />{p.estado.toUpperCase()}</span>
-                <span style={{ display: "flex", gap: 6, justifyContent: "flex-end", minWidth: 160 }}>{p.estado === "Pendiente" && <><button type="button" onClick={() => void resolver(p, "Aprobada")} style={{ ...btn, background: C.papel, color: C.tinta, borderColor: C.papel, fontWeight: 600 }}>Aprobar</button><button type="button" onClick={() => void resolver(p, "Descartada")} style={{ ...btn, border: "none", color: C.tenue }}>Descartar</button></>}</span>
+                <span style={{ display: "flex", gap: 6, justifyContent: "flex-end", minWidth: 230 }}>{p.estado === "Pendiente" && <><button type="button" onClick={() => void resolver(p, "Aprobada")} style={{ ...btn, background: C.papel, color: C.tinta, borderColor: C.papel, fontWeight: 600 }}>{accionDe(p).etiqueta}</button><button type="button" onClick={() => void resolver(p, "Descartada")} style={{ ...btn, border: "none", color: C.tenue }}>Descartar</button></>}</span>
               </div>
             ))}
           </Tabla>
