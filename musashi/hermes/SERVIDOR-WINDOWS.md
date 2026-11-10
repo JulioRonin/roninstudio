@@ -109,17 +109,17 @@ Luego en Musashi: Configuración → Hermes Agent → **Probar conexión**.
 ```powershell
 cd $HOME\roninstudio          # la carpeta donde clonaste el repositorio
 git pull
-# Reemplaza los archivos de cada agente donde Hermes lo tenga instalado y avisa si falta alguno
-Get-ChildItem musashi\hermes\skills -Directory | ForEach-Object {
-  $n = $_.Name
-  $d = Get-ChildItem $HOME\.hermes\skills -Recurse -Directory -Filter $n -ErrorAction SilentlyContinue | Select-Object -First 1
-  if ($d) { Copy-Item "$($_.FullName)\*" $d.FullName -Force; "actualizada: $($d.FullName)" }
-  else { "NO ENCONTRADA: $n" }
+# Hermes guarda las skills en dos lugares; se actualizan los dos y avisa si falta alguna
+$raices = "$HOME\.hermes\skills", "$env:LOCALAPPDATA\hermes\skills"
+foreach ($s in Get-ChildItem musashi\hermes\skills -Directory) {
+  $dest = foreach ($r in $raices) { Get-ChildItem $r -Recurse -Directory -Filter $s.Name -ErrorAction SilentlyContinue }
+  if (-not $dest) { "NO ENCONTRADA: $($s.Name)"; continue }
+  foreach ($d in $dest) { Copy-Item "$($s.FullName)\*" $d.FullName -Force; "actualizada: $($d.FullName)" }
 }
 # El puente que usan los agentes para hablar con Musashi: debe decir CONEXION OK
 python $HOME\.hermes\skills\musashi-base\musashi.py prueba
 ```
-Deben salir 14 líneas `actualizada:` y `CONEXION OK · datos reales`. Si `python` no existe en tu terminal, usa el de Hermes: `& (Get-ChildItem $env:LOCALAPPDATA\hermes\tools -Recurse -Filter python.exe | Select-Object -First 1).FullName $HOME\.hermes\skills\musashi-base\musashi.py prueba`.
+Debe salir al menos una línea `actualizada:` por cada una de las 14 skills (normalmente 28, una por cada lugar), ninguna `NO ENCONTRADA`, y `CONEXION OK · datos reales`. Después abre una sesión nueva en Hermes para que cargue la versión nueva. Si `python` no existe en tu terminal, usa el de Hermes: `& (Get-ChildItem $env:LOCALAPPDATA\hermes\tools -Recurse -Filter python.exe | Select-Object -First 1).FullName $HOME\.hermes\skills\musashi-base\musashi.py prueba`.
 
 Cuando un agente corre de verdad, su respuesta termina con las líneas `PROPUESTA GUARDADA id=…` y `CORRIDA GUARDADA id=…`. Si en su lugar explica lo que haría o da ejemplos, no ejecutó nada. Las skills se leen del disco en cada corrida; sólo hay que reiniciar el gateway (stop, revisar puertos, start) si cambiaste el `.env`.
 El archivo `$HOME\.hermes\.env` debe tener `MUSASHI_URL=https://musashi-three.vercel.app` (sin diagonal final) y `MUSASHI_API_KEY`. Prueba que un agente lee datos reales:

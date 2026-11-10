@@ -40,7 +40,7 @@ Si un comando falla o no tienes herramienta de terminal, detente y responde sól
 ## El puente: `musashi.py`
 En la carpeta de esta skill hay un programa que habla con Musashi desde cualquier sistema (Windows, macOS, Linux). Lee `MUSASHI_URL` y `MUSASHI_API_KEY` del entorno o de `~/.hermes/.env`; no necesitas escribir la llave ni armar el `curl`.
 
-Ruta: `~/.hermes/skills/musashi-base/musashi.py` (en Windows: `%USERPROFILE%\.hermes\skills\musashi-base\musashi.py`). Usa el Python que tengas: `python`, `python3` o `py`.
+Ruta: `~/.hermes/skills/musashi-base/musashi.py`. Si no existe ahí, está en la misma carpeta que este SKILL.md (en Windows suele ser `%LOCALAPPDATA%\hermes\skills\musashi\musashi-base\musashi.py`); búscalo antes de concluir que no hay puente. Usa el Python que tengas: `python`, `python3` o `py`. Si tu SKILL.md no menciona `musashi.py`, tienes una versión vieja de las skills: responde `NO EJECUTADO: skills desactualizadas`.
 
 ### 0 · Prueba de conexión (siempre primero)
 ```
