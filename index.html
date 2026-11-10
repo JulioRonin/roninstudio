@@ -6,6 +6,9 @@
 <title>Primero el flujo, después la IA | Ronin Studio · Juárez y El Paso</title>
 <meta name="description" content="Ronin Studio ordena cómo trabaja tu negocio y después lo automatiza, con software propio que ya opera en escuelas, restaurantes, talleres y comercializadoras de Juárez y El Paso.">
 <link rel="canonical" href="https://www.roninstudio.com.mx/">
+<link rel="alternate" hreflang="es" href="https://www.roninstudio.com.mx/">
+<link rel="alternate" hreflang="en" href="https://www.roninstudio.com.mx/en/">
+<link rel="alternate" hreflang="x-default" href="https://www.roninstudio.com.mx/">
 <meta name="theme-color" content="#0C0F14">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Ronin Studio">
@@ -22,7 +25,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,300..900&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="preload" as="image" href="assets/hero-cto.webp" imagesrcset="assets/hero-cto-900.webp 900w, assets/hero-cto.webp 1344w" imagesizes="100vw" fetchpriority="high">
+<link rel="preload" as="image" href="/assets/hero-cto.webp" imagesrcset="/assets/hero-cto-900.webp 900w, /assets/hero-cto.webp 1344w" imagesizes="100vw" fetchpriority="high">
 <style>
   :root{
     /* Paleta Planta (assets/brand/BRANDING.md) */
@@ -67,7 +70,7 @@
   .navright{display:flex;align-items:center;gap:18px}
   .langbtn{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;
     color:rgba(238,235,228,.75);background:transparent;border:1px solid rgba(238,235,228,.24);border-radius:3px;
-    padding:6px 12px;cursor:pointer}
+    padding:6px 12px;cursor:pointer;text-decoration:none;display:inline-block}
   .langbtn:hover{color:var(--ink);border-color:rgba(238,235,228,.5)}
   .navlink-cta{font-size:14px;color:var(--ink);text-decoration:none;border-bottom:2px solid var(--oxido);padding-bottom:1px;white-space:nowrap}
   @media (max-width:420px){ .navright{gap:10px} .navlink-cta{font-size:12.5px} .brand .wm{font-size:14px} .langbtn{padding:5px 9px} }
@@ -369,7 +372,7 @@
 
 <!-- ============ HERO ============ -->
 <section class="hero" id="hero">
-  <img class="heroimg" id="heroImg" src="assets/hero-cto.webp" srcset="assets/hero-cto-900.webp 900w, assets/hero-cto.webp 1344w" sizes="100vw" width="1344" height="752" alt="" aria-hidden="true" fetchpriority="high" decoding="async">
+  <img class="heroimg" id="heroImg" src="/assets/hero-cto.webp" srcset="/assets/hero-cto-900.webp 900w, /assets/hero-cto.webp 1344w" sizes="100vw" width="1344" height="752" alt="" aria-hidden="true" fetchpriority="high" decoding="async">
   <svg class="hero-mark" viewBox="-14 0 228 220" aria-hidden="true" focusable="false"><defs><clipPath id="hm0"><polygon points="0,0 200,0 200,15.4 0,68.2"/></clipPath><clipPath id="hm1"><polygon points="0,72.6 200,19.8 200,68.2 0,121"/></clipPath><clipPath id="hm2"><polygon points="0,125.4 200,72.6 200,121 0,173.8"/></clipPath><clipPath id="hm3"><polygon points="0,178.2 200,125.4 200,220 0,220"/></clipPath><path id="hmR" fill-rule="evenodd" d="M0 0H122C170 0 198 28 198 66C198 98 180 120 152 128L200 220H128L88 134H64V220H0Z M64 50H116C131 50 138 57 138 67C138 78 131 85 116 85H64Z"/></defs><g transform="translate(-12 0)"><use href="#hmR" class="band" clip-path="url(#hm0)"/></g><g transform="translate(-4 0)"><use href="#hmR" class="band" clip-path="url(#hm1)"/></g><g transform="translate(4 0)"><use href="#hmR" class="band" clip-path="url(#hm2)"/></g><g transform="translate(12 0)"><use href="#hmR" class="band on" clip-path="url(#hm3)"/></g></svg>
     <div class="veil"></div>
   <div class="grain"></div>
@@ -384,7 +387,7 @@
         <a href="#portafolio" data-i18n="navPort">Portafolio</a>
       </nav>
       <div class="navright">
-        <button class="langbtn" id="langToggle" type="button">EN</button>
+        <a class="langbtn" id="langToggle" href="/en/" hreflang="en" lang="en" aria-label="English version">EN</a>
         <a class="navlink-cta" href="/diagnostico/" data-i18n="ctaShort">Diagnóstico exprés</a>
       </div>
     </div>
@@ -743,7 +746,7 @@
         <h2 data-i18n="cH2">Diagnosticamos tu flujo de trabajo. Lo rediseñamos. Lo automatizamos con IA.</h2>
         <p data-i18n="cLead">Empieza por el diagnóstico exprés de 5 minutos o déjanos tus datos. El diagnóstico completo es una visita a tu negocio, un mapa de tu flujo actual y un plan priorizado con presupuesto cerrado; es un servicio pagado que se acredita al proyecto.</p>
         <div class="founder-mini">
-          <img src="assets/julio-cesar-ibarra-sq.webp" width="56" height="56" alt="Julio César Ibarra" loading="lazy">
+          <img src="/assets/julio-cesar-ibarra-sq.webp" width="56" height="56" alt="Julio César Ibarra" loading="lazy">
           <div><b>Julio César Ibarra</b><span data-i18n="cWho">Fundador · te contesta él en menos de 24 horas hábiles</span></div>
         </div>
         <a class="wa-btn" href="https://wa.me/5216565736505?text=Hola%20Ronin%20Studio%2C%20quiero%20agendar%20un%20diagn%C3%B3stico%20de%20mi%20flujo%20de%20trabajo." target="_blank" rel="noopener">
@@ -916,15 +919,15 @@
       footTag:"Workflows y agentes de IA para operaciones que quieren avanzar mejor.", footLine:"Diseñado para hacer avanzar el trabajo."
     },
     en: {
-      navMethod:"Method", navWorkflows:"Workflows", navPort:"Portfolio", navCasos:"Cases", navAgents:"Agents", ctaShort:"Quick diagnostic", catBill:"Invoicing",
-      secEsc:"Schools", secRes:"Restaurants", secCli:"Clinics", secGym:"Gyms", secNot:"Notaries", secMan:"Workshops and plants", secInd:"Manufacturing industry",
+      navMethod:"Method", navWorkflows:"Workflows", navPort:"Portfolio", navCasos:"Cases", navAgents:"Agents", ctaShort:"Request a diagnostic", catBill:"Invoicing",
+      secEsc:"Schools", secRes:"Restaurants", secCli:"Clinics", secGym:"Gyms", secNot:"Notary offices", secMan:"Workshops and plants", secInd:"Manufacturing industry",
       kTag:"Case · Kanri for IMC Design", kTitle:"From processes defined on paper to a workshop managed end to end.",
       kDescCase:"IMC Design, a design and fabrication workshop in Juárez, had clear processes but none of them lived in a platform: quoting, purchasing, production and collections were tracked in sheets and messages. We built Kanri on those processes, and today the workshop runs there from quote to payment.",
       ks1b:"6", ks1s:"connected stages, from quote to payment", ks2b:"1", ks2s:"platform for the whole workshop", ks3b:"SaaS", ks3s:"now available to other workshops",
       kst1:"Quotes with inventory and margin in view, ready to send.", kst2:"Purchasing and warehouse tied to each order.", kst3:"Shop floor and quality per part, with evidence.", kst4:"Deliveries, CFDI invoicing and collections in the same flow.",
       pUse:"In use", pDev:"In development", rName:"Multi-location operations", stBuilt:"Built", rSec:"Restaurant chains",
       rDesc:"Food-safety audits with photos and per-location scoring, AI reports, camera monitoring and reservations with a voice assistant.",
-      cWho:"Founder · he answers you within 24 business hours",
+      cWho:"Founder · replies personally within 24 business hours",
       ev2b:"Quoting and follow-up · Mono Atelier",
       aEyebrow:"04 — AI agents", aH2:"Agents that work inside your operation.",
       aIntro:"An agent isn't a loose chatbot. It's part of the workflow: it reads your data, does tasks with your tools and lets a person approve what matters. These two are already running.",
@@ -935,8 +938,8 @@
       mCanal:"Channel", mData:"Connected to", mMotor:"Engine", ag1data:"Mono Atelier ERP",
       ag2tag:"In production · Lana", ag2title:"Personal finance assistant",
       ag2desc:"It analyzes each user's income, fixed expenses and cash flow, and answers what they can afford and how to organize their money.",
-      ag2q:"Can I afford an $18,000 laptop this month?",
-      ag2a:"With this month's income and fixed expenses you'd have $4,200 left. Better to wait for your next paycheck.",
+      ag2q:"Can I afford an 18,000-peso laptop this month?",
+      ag2a:"With this month's income and fixed expenses you'd have 4,200 pesos left. Better to wait for your next paycheck.",
       ag2chan:"Web app", ag2data:"The user's income and expenses",
       pr1t:"Connected to your real data", pr1d:"It reads your ERP, CRM or database, not a loose copy.",
       pr2t:"In the channel you already use", pr2d:"Discord, the web or wherever your team already works.",
@@ -949,8 +952,8 @@
       microLeft:"Juárez · El Paso · Consulting and custom software", microRight:"Ronin Method: Map → Design → Build → Evolve",
       heroH1:"Flow<br>first.<br><span class=\"thin\">AI second.</span>",
       heroSub:"We map how your team works, turn it into a system everyone uses, and add AI only where there is already order. Our own software runs in schools, restaurants, workshops and distributors along the border.",
-      ctaPrimary:"Take the quick diagnostic", ctaSecondary:"See how Ronin works", heroMicro:"12 questions · 5 minutes · instant result · free",
-      credLine:"We work with service businesses in Juárez and El Paso. Pick yours:",
+      ctaPrimary:"Request a diagnostic", ctaSecondary:"See how Ronin works", heroMicro:"Tell us how your operation runs today · reply within 24 business hours",
+      credLine:"We work with service businesses in Juárez and El Paso. Sector pages are in Spanish:",
       catOps:"Operations", catMsg:"Messaging", catDocs:"Documents", catRep:"Reports",
       wfEyebrow:"02 — Cases and workflows", wfH2:"Real operations. Results that hold.",
       wfIntro:"Before we propose a workflow, we show you where we already made one work.",
@@ -988,15 +991,15 @@
       sc1:"We document how your operation moves today.", sc2:"We define the flow, the role of AI and who approves.", sc3:"A workflow in production, tested with real cases.", sc4:"We measure, adjust and keep it useful.", scLive:"In production",
       pEyebrow:"05 — Portfolio", pH2:"Software we've already built and that's in use.",
       pIntro:"The same method, turned into product. Our own platforms for different sectors, each born from a real operational problem.",
-      stProd:"In production", stLive:"Client 1 live", stTrial:"Free trial", stNew:"New", stSoon:"Coming soon", pSee:"See platform →",
+      stProd:"In production", stLive:"First client live", stTrial:"Free trial", stNew:"New", stSoon:"Coming soon", pSee:"See platform (in Spanish) →",
       kSec:"Manufacturing · CNC shops", kDesc:"Built for IMC Design, which now runs on it from quote to payment. Available as SaaS to other shops and maquilas.",
-      sSec:"Restaurants", sDesc:"Register, inventory, food cost and daily operations of a restaurant in one app.",
+      sSec:"Restaurants", sDesc:"Point of sale, inventory, food cost and daily operations of a restaurant in one app.",
       gSec:"Industrial engineering", gDesc:"Time studies, line balancing and capacity generated with AI from a video.",
       vSec:"Education", vDesc:"School management: enrollment, grades, payments and parent communication.",
       aSec:"Staff transportation", aDesc:"Three-way audit of the transport service: staff, maquiladora and carrier.",
       dSec:"Gyms", dDesc:"Memberships, classes, access control and payments under one roof.",
       cEyebrow:"Next step", cH2:"We diagnose your workflow. We redesign it. We automate it with AI.",
-      cLead:"Start with the 5-minute quick diagnostic or leave your details. The full diagnostic is a visit to your business, a map of your current workflow and a prioritized plan with a fixed-price quote; it is a paid service credited toward the project.",
+      cLead:"Leave your details or message us on WhatsApp. The full diagnostic is a visit to your business, a map of your current workflow and a prioritized plan with a fixed-price quote; it is a paid service credited toward the project.",
       waBtn:"Message us on WhatsApp", cOr:"Or email us at",
       fName:"Name", fCompany:"Company", fEmail:"Email", fPhone:"WhatsApp or phone", fOpt:"(optional)",
       fArea:"Which workflow do you want to improve?", fAreaPick:"Choose one", fA1:"Operations", fA2:"Sales & CRM",
@@ -1009,23 +1012,9 @@
     }
   };
 
-  var state = { lang:'es' };
-  try{ var saved = localStorage.getItem('rs_lang'); if(saved==='en'||saved==='es') state.lang = saved; }catch(e){}
-  function render(){
-    var d = dict[state.lang];
-    document.querySelectorAll('[data-i18n]').forEach(function(el){
-      var k = el.getAttribute('data-i18n');
-      if(d[k]!=null) el.innerHTML = d[k];
-    });
-    document.getElementById('langToggle').textContent = state.lang==='es' ? 'EN' : 'ES';
-    document.documentElement.setAttribute('lang', state.lang);
-  }
-  document.getElementById('langToggle').addEventListener('click', function(){
-    state.lang = state.lang==='es' ? 'en' : 'es';
-    try{ localStorage.setItem('rs_lang', state.lang); }catch(e){}
-    render();
-  });
-  render();
+  // El idioma lo define la URL: "/" en español y "/en/" en inglés (en/index.html se genera con tools/build-en.py).
+  // El texto ya viene escrito en el HTML; el diccionario sólo se usa para los mensajes del formulario.
+  var state = { lang: document.documentElement.lang === 'en' ? 'en' : 'es' };
 
   // Hero photo: show it once it loads, keep the light beam as fallback
   var img = document.getElementById('heroImg'), hero = document.getElementById('hero');
