@@ -1,4 +1,6 @@
 "use client";
+import AgentesReal from "./real";
+import { useModo, Cargando } from "@/components/real";
 import React, { useMemo, useState } from "react";
 import { C, MONO } from "@/lib/tokens";
 import { H } from "@/components/ui";
@@ -56,7 +58,7 @@ const GLASS_EDGE = "rgba(238,235,228,0.09)";
 const glass = { background: "rgba(22,26,33,0.5)", backdropFilter: "blur(22px)", WebkitBackdropFilter: "blur(22px)" } as const;
 const lbl = (extra?: React.CSSProperties): React.CSSProperties => ({ fontFamily: MONO, fontSize: 10, letterSpacing: "0.14em", color: C.tenue, ...extra });
 
-export default function Agentes() {
+function AgentesDemo() {
   const { flash } = useUI();
   const [tab, setTab] = useState("Panel");
   const [off, setOff] = useState<string[]>(["Analista"]);
@@ -281,4 +283,10 @@ export default function Agentes() {
       </section>
     </>
   );
+}
+
+export default function Agentes() {
+  const modo = useModo();
+  if (modo === "cargando") return <Cargando />;
+  return modo === "db" ? <AgentesReal /> : <AgentesDemo />;
 }

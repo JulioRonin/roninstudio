@@ -1,4 +1,6 @@
 "use client";
+import TareasReal from "./real";
+import { useModo, Cargando } from "@/components/real";
 import React, { useMemo, useState } from "react";
 import { C, MONO } from "@/lib/tokens";
 import { H } from "@/components/ui";
@@ -42,7 +44,7 @@ function FInput({ placeholder }: { placeholder: string }) {
   );
 }
 
-export default function Tareas() {
+function TareasDemo() {
   const { flash } = useUI();
   const [tab, setTab] = useState("Hoy");
   const [tasks, setTasks] = useState<Task[]>(TASKS);
@@ -218,4 +220,11 @@ export default function Tareas() {
       )}
     </>
   );
+}
+
+/* Con Supabase se muestran los datos reales; sin base, la versión de ejemplo del prototipo. */
+export default function Tareas() {
+  const modo = useModo();
+  if (modo === "cargando") return <Cargando />;
+  return modo === "db" ? <TareasReal /> : <TareasDemo />;
 }

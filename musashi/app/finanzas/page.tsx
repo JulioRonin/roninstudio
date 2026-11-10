@@ -1,4 +1,6 @@
 "use client";
+import FinanzasReal from "./real";
+import { useModo, Cargando } from "@/components/real";
 import React, { useMemo, useState } from "react";
 import { C, MONO } from "@/lib/tokens";
 import { H } from "@/components/ui";
@@ -75,7 +77,7 @@ const RP: [number, string, string, string, string, string][] = [
   [4, "VIERNES 17:00", "CORREO", "Costo de IA por agente", "Tokens y costo de la semana contra el tope.", "Julio"],
 ];
 
-export default function Finanzas() {
+function FinanzasDemo() {
   const [tab, setTab] = useState(TABS[0]);
   const [sort, setSort] = useState(5);
   const [dir, setDir] = useState(-1);
@@ -267,4 +269,11 @@ export default function Finanzas() {
       </section>
     </div>
   );
+}
+
+/* Con Supabase se muestran los datos reales; sin base, la versión de ejemplo del prototipo. */
+export default function Finanzas() {
+  const modo = useModo();
+  if (modo === "cargando") return <Cargando />;
+  return modo === "db" ? <FinanzasReal /> : <FinanzasDemo />;
 }

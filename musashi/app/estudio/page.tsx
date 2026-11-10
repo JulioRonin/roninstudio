@@ -3,6 +3,8 @@ import React, { useEffect, useMemo, useRef, useState, type CSSProperties } from 
 import { C, MONO } from "@/lib/tokens";
 import { Glass, Eyebrow, H, Dot, PB, SB, RGlyph } from "@/components/ui";
 import { useUI, PageHead } from "@/components/shell";
+import { useModo, Vacio } from "@/components/real";
+import { datos, fechaCorta } from "@/lib/datos";
 
 /* =====================================================================
    ESTUDIO DE CONTENIDO · la fábrica de piezas de Ronin Studio
@@ -36,8 +38,14 @@ const QUESTIONS: Q[] = [
 const DEFAULT_BRIEF: Record<string, string> = { goal: "Leads", who: "Restaurantes", fmt: "Video 9:16", angle: "El dolor", face: "Julio en cámara", len: "60 s", cta: "Diagnóstico exprés" };
 
 type Idea = { n: string; hook: string; premise: string; beats: string[]; why: string };
-function makeIdeas(topic: string, b: Record<string, string>): Idea[] {
+function makeIdeas(topic: string, b: Record<string, string>, real = false): Idea[] {
   const who = b.who === "Todos" ? "un negocio" : `un ${b.who.toLowerCase().replace(/s$/, "")}`;
+  // Con datos reales, los tres ángulos son estructura: el Guionista de Hermes redacta el texto final.
+  if (real) return [
+    { n: "01", hook: `${topic}.`, premise: "Desde el dolor: una escena concreta del día a día y lo que cuesta dejarla como está.", beats: ["Escena del dolor (3 s)", "Qué pasa cada día por eso", "Qué cambia cuando se ordena", "Llamado a la acción"], why: "Nombra el problema con las palabras del cliente." },
+    { n: "02", hook: `Antes de comprar la herramienta, mira cómo se hace hoy en ${who}.`, premise: `${topic}, contado desde el método: primero el flujo, después la tecnología.`, beats: ["La herramienta que todos piden", "Cómo se ve el flujo real", "Qué conviene hacer primero", "Llamado a la acción"], why: "Diferencia a Ronin de quien sólo vende software." },
+    { n: "03", hook: `Lo que encontramos al mapear ${who}.`, premise: `${topic} como mini caso. Sólo con hallazgos reales y sin nombrar al cliente.`, beats: ["Llegada y primera señal", "Los hallazgos del mapa", "El cambio que se hizo", "Qué sigue"], why: "La prueba convence más que la promesa; si no hay caso real, no se usa." },
+  ];
   return [
     { n: "01", hook: `Esto le cuesta a ${who} más que la renta.`, premise: `${topic}: nombrar el dolor con una escena concreta y ponerle número solo si el número es real.`, beats: ["Escena del dolor (3 s)", "Qué pasa cada día por esa fuga", "Qué cambia cuando el flujo se ordena", "Un solo siguiente paso"], why: "Abre con consecuencia, no con tecnología. Es el ángulo que más leads trajo en octubre." },
     { n: "02", hook: "Nadie necesita un chatbot. Necesita que la orden llegue una sola vez.", premise: `${topic} contado desde el método: primero el flujo, después la IA.`, beats: ["Contraste chatbot vs. flujo", "Cómo lo mapeamos en una mañana", "Qué automatizamos y qué no", "Invitación al diagnóstico"], why: "Refuerza la promesa de marca y se diferencia de la oferta genérica de IA." },
@@ -47,7 +55,18 @@ function makeIdeas(topic: string, b: Record<string, string>): Idea[] {
 
 type Shot = { id: number; kind: "A-ROLL" | "B-ROLL FOTO" | "B-ROLL VIDEO" | "PORTADA"; t: string; prompt: string; model: string; status: "pendiente" | "en cola" | "generando" | "listo"; img?: string };
 const SAMPLE = ["/estudio/portada-01.webp", "/estudio/portada-02.webp"];
-function makeShots(b: Record<string, string>): Shot[] {
+function makeShots(b: Record<string, string>, real = false, topic = ""): Shot[] {
+  if (real) {
+    const f = b.face === "Clon de IA" ? "Clon de Julio (Soul) · voz ElevenLabs" : b.face === "Julio en cámara" ? "Grabación en oficina · teleprompter" : "Sin presentador";
+    const esc = b.who === "Todos" ? "un negocio local en operación" : `${b.who.toLowerCase()} en operación`;
+    return [
+      { id: 1, kind: "A-ROLL", t: `Presentador · 0:00–0:${b.len.replace(/\D/g, "") || "60"}`, prompt: f, model: b.face === "Clon de IA" ? "soul_2 + lipsync" : "cámara", status: "pendiente" },
+      { id: 2, kind: "PORTADA", t: `Portada ${b.fmt.includes("9:16") ? "9:16" : "1:1"}`, prompt: `B/N documental, ${esc}, manos trabajando, un solo elemento en Óxido (#B05139), sin texto, sin rostros. Tema: ${topic}.`, model: "gpt_image_2_6", status: "pendiente" },
+      { id: 3, kind: "B-ROLL FOTO", t: "Plano del dolor · 0:03", prompt: `B/N, detalle del problema en ${esc}: papel, libreta o teléfono con mensajes sin contestar, grano de película, alto contraste, sin texto legible.`, model: "gpt_image_2_6", status: "pendiente" },
+      { id: 4, kind: "B-ROLL VIDEO", t: "Mapa de flujo · 0:20", prompt: "Clip de 5 s: mano dibujando un diagrama de flujo con marcador negro sobre papel crema, cámara fija, luz de ventana, un trazo en Óxido.", model: "video · image-to-video", status: "pendiente" },
+      { id: 5, kind: "B-ROLL VIDEO", t: "El cambio · 0:40", prompt: `Clip de 5 s: pantalla de teléfono o tablet con el proceso ya ordenado en ${esc}, B/N salvo un botón en Óxido, sin marcas, sin texto legible.`, model: "video · image-to-video", status: "pendiente" },
+    ];
+  }
   const face = b.face === "Clon de IA" ? "Clon de Julio (Soul) · voz ElevenLabs" : b.face === "Julio en cámara" ? "Grabación en oficina · teleprompter" : "Sin presentador";
   return [
     { id: 1, kind: "A-ROLL", t: "Presentador · 0:00–0:60", prompt: face, model: b.face === "Clon de IA" ? "soul_2 + lipsync" : "cámara", status: "pendiente" },
@@ -58,8 +77,15 @@ function makeShots(b: Record<string, string>): Shot[] {
   ];
 }
 
-function script(topic: string, b: Record<string, string>) {
+function script(topic: string, b: Record<string, string>, real = false) {
   const cta = { "Diagnóstico exprés": "Haz el diagnóstico exprés en roninstudio.com.mx; son cinco minutos y te decimos dónde se está yendo el tiempo.", "Escribir por WhatsApp": "Escríbenos por WhatsApp y te decimos en una llamada de 15 minutos si tiene sentido.", "Comentar": "Cuéntame en comentarios cómo lo resuelven hoy.", "Guardar": "Guarda este video para la próxima vez que pase." }[b.cta] ?? "";
+  if (real) return [
+    { t: "0:00–0:03", k: "GANCHO", s: `${topic}.` },
+    { t: "0:03–0:15", k: "EL DOLOR", s: "[Escena concreta del problema, con las palabras que usa el cliente.]" },
+    { t: "0:15–0:35", k: "QUÉ HACEMOS", s: "Nosotros primero vamos al negocio y mapeamos el flujo real, no el del manual. Ahí aparece dónde se atora. Y sólo después decidimos qué parte conviene automatizar." },
+    { t: "0:35–0:50", k: "LA PRUEBA", s: "[Un caso o dato real y verificable. Si no lo hay, este bloque se quita.]" },
+    { t: "0:50–0:60", k: "CIERRE", s: cta },
+  ];
   return [
     { t: "0:00–0:03", k: "GANCHO", s: `${topic}. Y no, no se arregla con un chatbot.` },
     { t: "0:03–0:15", k: "EL DOLOR", s: "Mesero anota en libreta. Cocina reescribe en el tablero. Caja captura en el POS. Tres veces la misma orden, y en una de las tres se equivoca alguien." },
@@ -88,18 +114,28 @@ export default function Estudio() {
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   useEffect(() => () => timers.current.forEach(clearTimeout), []);
 
+  const db = useModo() === "db";
+  const [reales, setReales] = useState<Signal[]>([]);
+  const [propio, setPropio] = useState("");
+  useEffect(() => {
+    if (!db) return;
+    datos.lista<{ id: string; agente: string; tipo: string; titulo: string; cuerpo: string; creado_en: string }>("propuestas_ia", "select=id,agente,tipo,titulo,cuerpo,creado_en&agente=in.(investigador,estratega,analista-canal,seguimiento)&order=creado_en.desc&limit=8")
+      .then((r) => setReales(r.filas.map((x) => ({ id: x.id, agent: x.agente.toUpperCase(), kind: x.tipo.toUpperCase(), title: x.titulo, why: x.cuerpo.length > 200 ? x.cuerpo.slice(0, 199) + "…" : x.cuerpo, data: fechaCorta(x.creado_en).toUpperCase(), topic: x.titulo, sector: "Todos" })))).catch(() => {});
+  }, [db]);
+  const SEN = db ? reales : SIGNALS;
   const topic = signal?.topic ?? "Tema libre";
-  const ideas = useMemo(() => makeIdeas(topic, brief), [topic, brief]);
-  const lines = useMemo(() => script(topic, brief), [topic, brief]);
-  const done = shots.length > 0 && shots.every((s) => s.status === "listo") && voice === "lista";
+  const ideas = useMemo(() => makeIdeas(topic, brief, db), [topic, brief, db]);
+  const lines = useMemo(() => script(topic, brief, db), [topic, brief, db]);
+  const done = db ? shots.length > 0 && shots.every((s) => s.status !== "pendiente") : shots.length > 0 && shots.every((s) => s.status === "listo") && voice === "lista";
 
   const pick = (s: Signal) => { setSignal(s); setBrief((b) => ({ ...b, who: s.sector === "Todos" ? b.who : s.sector })); setStep(1); };
-  const goIdeas = () => { setStep(2); flash("Guionista: 3 ideas listas"); };
-  const fabricate = (i: number) => { setIdea(i); setShots(makeShots(brief)); setVoice("pendiente"); setStep(3); };
+  const goIdeas = () => { setStep(2); flash(db ? "Tres ángulos listos para elegir" : "Guionista: 3 ideas listas"); };
+  const fabricate = (i: number) => { setIdea(i); setShots(makeShots(brief, db, topic)); setVoice("pendiente"); setStep(3); };
   const generateAll = () => {
     // Manda el plan de tomas al Productor (Hermes). En demo responde "pendiente de configurar" y seguimos con la simulación.
     fetch("/api/hermes/jobs", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ agente: "productor", evento: "producir", pieza: { tema: topic, brief, idea: ideas[idea ?? 0]?.hook }, tomas: shots.map((s) => ({ id: s.id, tipo: s.kind, t: s.t, prompt: s.prompt, modelo: s.model })) }) })
-      .then((r) => r.json()).then((r) => flash(r.enviado ? "Plan de tomas enviado al Productor en Hermes" : "Hermes sin configurar: simulación local")).catch(() => {});
+      .then((r) => r.json()).then((r) => flash(r.enviado ? "Plan de tomas enviado al Productor en Hermes" : db ? "Hermes no respondió: revisa que tu PC esté encendida. El plan queda guardado en la pieza." : "Hermes sin configurar: simulación local")).catch(() => {});
+    if (db) { setShots((ss) => ss.map((s) => (s.kind === "A-ROLL" && brief.face === "Julio en cámara" ? { ...s, status: "listo" } : { ...s, status: "en cola" }))); setVoice("generando"); return; } // sin simulación: los archivos los entrega el Productor
     setShots((ss) => ss.map((s) => (s.kind === "A-ROLL" && brief.face === "Julio en cámara" ? { ...s, status: "listo" } : { ...s, status: "en cola" })));
     shots.forEach((s, i) => {
       if (s.kind === "A-ROLL" && brief.face === "Julio en cámara") return;
@@ -121,7 +157,7 @@ export default function Estudio() {
         right={
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <div style={{ ...mono10, padding: "0 16px", height: 48, display: "flex", alignItems: "center", gap: 10, borderRadius: 999, border: `1px solid ${C.borde}`, background: "rgba(22,26,33,0.55)" }}>
-              <Dot color={C.olivo} />HIGGSFIELD · 951 CRÉDITOS<span style={{ color: C.borde2 }}>·</span>ELEVENLABS · OK
+              {db ? <><Dot color={C.ambar} />IMAGEN, VIDEO Y VOZ · VÍA HERMES</> : <><Dot color={C.olivo} />HIGGSFIELD · 951 CRÉDITOS<span style={{ color: C.borde2 }}>·</span>ELEVENLABS · OK</>}
             </div>
             <H as="button" type="button" onClick={() => { setTab(0); setStep(0); setSignal(null); setIdea(null); setShots([]); setSent(false); }}
               style={{ height: 48, padding: "0 22px", borderRadius: 999, background: C.oxido, color: C.papel, border: "none", fontSize: 14, fontWeight: 600, cursor: "pointer", boxShadow: "0 0 28px rgba(176,81,57,.45)" }} hover={{ background: C.oxidoHover }}>
@@ -157,9 +193,10 @@ export default function Estudio() {
           {step === 0 && (
             <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 16 }}>
               <Glass>
-                <Eyebrow>LO QUE LOS AGENTES VIERON ESTA SEMANA · {SIGNALS.length} SEÑALES</Eyebrow>
+                <Eyebrow>LO QUE LOS AGENTES VIERON · {SEN.length} SEÑALES</Eyebrow>
                 <div style={{ fontWeight: 900, fontSize: 24, letterSpacing: "-0.02em", marginTop: 6, marginBottom: 14 }}>¿DE QUÉ HACEMOS CONTENIDO?</div>
-                {SIGNALS.map((s, i) => (
+                {db && SEN.length === 0 && <div style={{ borderTop: `1px solid ${C.borde}` }}><Vacio>Los agentes todavía no dejan señales. Cuando el Investigador, el Estratega o el Analista de canal corran en Hermes, sus hallazgos aparecerán aquí. Mientras tanto, empieza con un tema propio.</Vacio></div>}
+                {SEN.map((s, i) => (
                   <div key={s.id} style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 16, alignItems: "center", borderTop: `1px solid ${C.borde}`, padding: "14px 0", animation: "rise .5s both", animationDelay: `${i * 0.06}s` }}>
                     <div style={{ minWidth: 0 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 8, ...mono10 }}><Dot color={s.hot ? C.oxido : C.acero} anim={s.hot ? "pulseOx 2s infinite" : undefined} />{s.agent} · {s.kind}</div>
@@ -171,8 +208,8 @@ export default function Estudio() {
                   </div>
                 ))}
                 <div style={{ borderTop: `1px solid ${C.borde}`, paddingTop: 14, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span style={{ fontSize: 13, color: C.niebla }}>¿Tienes un tema propio? Empieza sin señal.</span>
-                  <SB small onClick={() => { setSignal({ id: "x", agent: "JULIO", kind: "TEMA LIBRE", title: "Tema libre", why: "", data: "", topic: "Tema libre", sector: "Todos" }); setStep(1); }}>Tema libre</SB>
+                  <input value={propio} onChange={(e) => setPropio(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && propio.trim()) { setSignal({ id: "x", agent: "JULIO", kind: "TEMA PROPIO", title: propio.trim(), why: "", data: "", topic: propio.trim(), sector: "Todos" }); setStep(1); } }} placeholder="¿Tienes un tema propio? Escríbelo aquí" style={{ flex: 1, height: 40, padding: "0 16px", borderRadius: 999, background: C.p2, border: `1px solid ${C.borde}`, color: C.papel, fontSize: 13, outline: "none", marginRight: 10 }} />
+                  <SB small onClick={() => { const t = propio.trim() || "Tema libre"; setSignal({ id: "x", agent: "JULIO", kind: "TEMA PROPIO", title: t, why: "", data: "", topic: t, sector: "Todos" }); setStep(1); }}>Usar mi tema</SB>
                 </div>
               </Glass>
               <Glass style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -306,7 +343,7 @@ export default function Estudio() {
                   </div>
                 </div>
                 <div style={{ marginTop: "auto", display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 12 }}>
-                  <span style={{ fontSize: 12.5, color: C.tenue }}>En producción, estos prompts salen tal cual al Productor.</span>
+                  <span style={{ fontSize: 12.5, color: C.tenue }}>{db ? "Al generar, el plan sale al Productor en Hermes; las imágenes y clips quedan en tu cuenta de Higgsfield." : "En producción, estos prompts salen tal cual al Productor."}</span>
                   <PB onClick={() => setStep(4)} disabled={!done} style={!done ? { opacity: 0.5, cursor: "default", boxShadow: "none" } : undefined}>Armar paquete</PB>
                 </div>
               </Glass>
@@ -317,8 +354,8 @@ export default function Estudio() {
           {step === 4 && (
             <div style={{ display: "grid", gridTemplateColumns: "300px 1fr", gap: 16 }}>
               <Glass style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                <Eyebrow>PIEZA LISTA · {brief.fmt.toUpperCase()}</Eyebrow>
-                <div style={{ width: "100%", aspectRatio: "9/16", borderRadius: 18, background: `url(${SAMPLE[0]}) center/cover`, border: `1px solid ${C.borde}`, position: "relative", overflow: "hidden" }}>
+                <Eyebrow>{db ? "PIEZA PLANEADA" : "PIEZA LISTA"} · {brief.fmt.toUpperCase()}</Eyebrow>
+                <div style={{ width: "100%", aspectRatio: "9/16", borderRadius: 18, background: db ? "linear-gradient(180deg,#1B2027,#101318)" : `url(${SAMPLE[0]}) center/cover`, border: `1px solid ${C.borde}`, position: "relative", overflow: "hidden" }}>
                   <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg,rgba(12,15,20,0) 40%,rgba(12,15,20,.85))" }} />
                   <div style={{ position: "absolute", left: 14, right: 14, bottom: 16 }}>
                     <div style={{ ...mono10, color: C.papel }}>RONIN STUDIO</div>
@@ -326,7 +363,8 @@ export default function Estudio() {
                   </div>
                   <span style={{ position: "absolute", top: 12, left: 12, width: 6, height: 24, background: C.oxido, transform: "skewY(-14deg)", boxShadow: `0 0 10px ${C.oxido}` }} />
                 </div>
-                <div style={{ display: "flex", gap: 6 }}>
+                {db && <div style={{ fontSize: 12, color: C.tenue, lineHeight: 1.4 }}>La portada y los clips se ven aquí cuando el Productor los entregue; hoy quedan en Higgsfield.</div>}
+                <div style={{ display: db ? "none" : "flex", gap: 6 }}>
                   <SB small onClick={() => flash("Reproduciendo vista previa")}>Ver</SB>
                   <SB small onClick={() => flash("Descargando MP4 1080×1920")}>MP4</SB>
                   <SB small onClick={() => flash("Portada descargada")}>Portada</SB>
@@ -335,20 +373,25 @@ export default function Estudio() {
               <Glass style={{ display: "flex", flexDirection: "column", gap: 0 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 6 }}>
                   <div>
-                    <Eyebrow>PAQUETE COMPLETO · LISTO PARA APROBAR</Eyebrow>
+                    <Eyebrow>{db ? "PAQUETE · GUION, TEXTOS Y PLAN DE TOMAS" : "PAQUETE COMPLETO · LISTO PARA APROBAR"}</Eyebrow>
                     <div style={{ fontWeight: 900, fontSize: 24, letterSpacing: "-0.02em", marginTop: 6 }}>{topic.toUpperCase()}</div>
                   </div>
                   <div style={{ display: "flex", gap: 8 }}>
                     <SB onClick={() => setStep(3)}>Volver a tomas</SB>
-                    <PB onClick={() => { setSent(true); flash("Enviado a la bandeja de aprobación"); }} disabled={sent} style={sent ? { opacity: 0.5, boxShadow: "none" } : undefined}>{sent ? "En aprobación" : "Enviar a aprobación"}</PB>
+                    <PB onClick={() => { setSent(true); if (!db) { flash("Enviado a la bandeja de aprobación"); return; } void datos.crea("piezas", { titulo: topic, gancho: ideas[idea ?? 0].hook, formato: brief.fmt, canal: "IG", estado: "Aprobación", senal: signal?.agent ?? null, brief, guion: lines, tomas: shots.map((x) => ({ tipo: x.kind, t: x.t, prompt: x.prompt, modelo: x.model })) }).then(() => flash("Pieza guardada en Marketing · en aprobación")).catch((e) => { setSent(false); flash("No se guardó: " + (e as Error).message); }); }} disabled={sent} style={sent ? { opacity: 0.5, boxShadow: "none" } : undefined}>{sent ? (db ? "Guardada en Marketing" : "En aprobación") : db ? "Guardar pieza" : "Enviar a aprobación"}</PB>
                   </div>
                 </div>
-                {[
+                {(db ? [
+                  ["INSTAGRAM · REEL", `${ideas[idea ?? 0].hook}\n\n[Dos líneas con el dolor y lo que cambia.]\n\nDiagnóstico exprés en el enlace del perfil.`, "#juarez #elpaso #negocios #primeroelflujo"],
+                  ["LINKEDIN · POST", `${ideas[idea ?? 0].hook}\n\n[Párrafo con el hallazgo y por qué importa a quien dirige un negocio.]\n\nEl diagnóstico exprés toma cinco minutos.`, ""],
+                  ["TIKTOK · VIDEO", `${ideas[idea ?? 0].hook} #negocios #juarez`, ""],
+                  ["YOUTUBE · SHORT", `Título: ${ideas[idea ?? 0].hook}\nDescripción: Primero el flujo. Después la IA. Diagnóstico exprés en roninstudio.com.mx${brief.face === "Clon de IA" ? "\nImagen y voz generadas con IA a partir de Julio César Ibarra." : ""}`, ""],
+                ] : [
                   ["INSTAGRAM · REEL", `${ideas[idea ?? 0].hook}\n\nTres veces la misma orden: libreta, tablero, POS. Primero ordenamos el flujo; después decidimos qué automatizar.\n\nDiagnóstico exprés en el enlace del perfil.`, "#restaurantes #juarez #elpaso #operacion #primeroelflujo"],
                   ["LINKEDIN · POST", `${ideas[idea ?? 0].hook}\n\nEn restaurantes con sucursales la fuga no está en el sistema: está en que la orden se captura tres veces. Mapear el flujo real toma una mañana; automatizar sin mapear toma meses.\n\nSi diriges un negocio de servicios, el diagnóstico exprés toma cinco minutos.`, ""],
                   ["TIKTOK · VIDEO", `${ideas[idea ?? 0].hook} #restaurantes #negocios #ia`, ""],
                   ["YOUTUBE · SHORT", `Título: ${ideas[idea ?? 0].hook}\nDescripción: Primero el flujo. Después la IA. Diagnóstico exprés en roninstudio.com.mx${brief.face === "Clon de IA" ? "\nImagen y voz generadas con IA a partir de Julio César Ibarra." : ""}`, ""],
-                ].map(([ch, txt, tags]) => (
+                ]).map(([ch, txt, tags]) => (
                   <div key={ch} style={{ display: "grid", gridTemplateColumns: "140px 1fr auto", gap: 14, borderTop: `1px solid ${C.borde}`, padding: "12px 0", alignItems: "start" }}>
                     <div style={mono10}>{ch}</div>
                     <div style={{ fontSize: 13, lineHeight: 1.45, whiteSpace: "pre-wrap", textWrap: "pretty" }}>{txt}{tags && <div style={{ ...mono10, marginTop: 6, color: C.niebla }}>{tags}</div>}</div>
@@ -356,7 +399,7 @@ export default function Estudio() {
                   </div>
                 ))}
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(4,minmax(0,1fr))", gap: 10, borderTop: `1px solid ${C.borde}`, paddingTop: 14, marginTop: 2 }}>
-                  {[["PUBLICACIÓN", "Sáb 7 nov · 19:00", "hueco del calendario"], ["CANALES", "IG · TT · YT · LI", "4 salidas, 1 pieza"], ["ORIGEN", signal?.agent ?? "—", "señal usada"], ["COSTO", "≈ 38 créditos", "Higgsfield + voz"]].map(([k, v, s]) => (
+                  {(db ? [["PUBLICACIÓN", "Por programar", "ponle fecha en Marketing"], ["CANALES", "IG · TT · YT · LI", "4 salidas, 1 pieza"], ["ORIGEN", signal?.agent ?? "—", "señal usada"], ["TOMAS", `${shots.length} + locución`, "se generan en Higgsfield"]] : [["PUBLICACIÓN", "Sáb 7 nov · 19:00", "hueco del calendario"], ["CANALES", "IG · TT · YT · LI", "4 salidas, 1 pieza"], ["ORIGEN", signal?.agent ?? "—", "señal usada"], ["COSTO", "≈ 38 créditos", "Higgsfield + voz"]]).map(([k, v, s]) => (
                     <div key={k} style={{ background: C.p2, borderRadius: 14, padding: "10px 12px" }}><div style={mono10}>{k}</div><div style={{ fontSize: 14, marginTop: 4 }}>{v}</div><div style={{ fontSize: 11.5, color: C.tenue }}>{s}</div></div>
                   ))}
                 </div>
@@ -459,23 +502,28 @@ function AvatarVoz() {
 
 /* ---------- Biblioteca ---------- */
 function Biblioteca() {
-  const rows: [string, string, string, string, string, string][] = [
+  const db = useModo() === "db";
+  const [reales, setReales] = useState<[string, string, string, string, string, string][]>([]);
+  useEffect(() => { if (db) void datos.lista<{ titulo: string; formato: string; canal: string; senal: string | null; estado: string; publicar_en: string | null }>("piezas", "select=titulo,formato,canal,senal,estado,publicar_en&order=creado_en.desc").then((r) => setReales(r.filas.map((p) => [p.titulo, `${p.formato} · ${p.canal}`, p.senal ?? "Tema propio", p.estado, "—", p.publicar_en ? fechaCorta(p.publicar_en).toUpperCase() : "—"]))).catch(() => {}); }, [db]);
+  const demo: [string, string, string, string, string, string][] = [
     ["El chatbot que nadie usa", "Carrusel · IG", "Investigador", "Publicada", "4,000 · 2 leads", "LUN 2"],
     ["Primero el flujo. Después la IA.", "Post · LI", "Estratega", "Publicada", "1,500 · 1 lead", "MAR 3"],
     ["Lo que pierdes copiando la misma orden tres veces", "Video 9:16 · TT", "Investigador", "Aprobación", "—", "JUE 5"],
     ["Cómo mapeamos una cocina en una mañana", "Video 90 s · YT", "Estratega", "Producción", "—", "VIE 6"],
     ["Cuatro señales de que tu operación vive en WhatsApp", "Carrusel · IG", "Analista de canal", "Guion", "—", "SÁB 7"],
   ];
-  const colr: Record<string, string> = { Publicada: C.olivo, Aprobación: C.oxido, Producción: C.ambar, Guion: C.niebla };
+  const rows = db ? reales : demo;
+  const colr: Record<string, string> = { Publicada: C.olivo, Programada: C.olivo, Aprobación: C.oxido, Producción: C.ambar, Guion: C.niebla, Idea: C.acero };
   return (
     <section style={{ padding: "22px 32px 48px" }}>
       <Glass pad="4px 22px 10px" radius={24}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "18px 0 4px" }}><div style={{ fontWeight: 900, fontSize: 22, letterSpacing: "-0.02em", textTransform: "uppercase" }}>Piezas fabricadas</div><div style={mono10}>SEMANA 45 · 5 PIEZAS</div></div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "18px 0 4px" }}><div style={{ fontWeight: 900, fontSize: 22, letterSpacing: "-0.02em", textTransform: "uppercase" }}>Piezas fabricadas</div><div style={mono10}>{db ? `${rows.length} PIEZAS` : "SEMANA 45 · 5 PIEZAS"}</div></div>
         <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr 70px", gap: 16, padding: "14px 0 10px", borderBottom: "1px solid rgba(238,235,228,0.09)" }}>
           {["PIEZA", "FORMATO", "SEÑAL", "ESTADO", "RESULTADO", "DÍA"].map((h) => <div key={h} style={mono10}>{h}</div>)}
         </div>
-        {rows.map((r) => (
-          <H key={r[0]} style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr 70px", gap: 16, padding: "12px 0", alignItems: "center", borderBottom: "1px solid rgba(238,235,228,0.06)", cursor: "pointer" }} hover={{ background: "rgba(238,235,228,0.035)" }}>
+        {db && rows.length === 0 && <Vacio>Todavía no hay piezas. Las que guardes desde la Fábrica o agregues en Marketing aparecen aquí.</Vacio>}
+        {rows.map((r, i) => (
+          <H key={r[0] + i} style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr 70px", gap: 16, padding: "12px 0", alignItems: "center", borderBottom: "1px solid rgba(238,235,228,0.06)", cursor: "pointer" }} hover={{ background: "rgba(238,235,228,0.035)" }}>
             <div style={{ fontSize: 13.5 }}>{r[0]}</div>
             <div style={{ fontSize: 13, color: "#D9D5CD" }}>{r[1]}</div>
             <div style={{ fontSize: 13, color: "#D9D5CD" }}>{r[2]}</div>

@@ -1,4 +1,6 @@
 "use client";
+import MarketingReal from "./real";
+import { useModo, Cargando } from "@/components/real";
 import React, { useMemo, useState, type CSSProperties } from "react";
 import Link from "next/link";
 import { C, MONO, SANS } from "@/lib/tokens";
@@ -112,7 +114,7 @@ function PTable({ table }: { table: { cols: string; head: string[]; rows: { cols
   );
 }
 
-export default function Marketing() {
+function MarketingDemo() {
   const { flash } = useUI();
   const [tab, setTab] = useState("Calendario");
   const [view, setView] = useState("Semana");
@@ -381,4 +383,10 @@ export default function Marketing() {
       </section>
     </>
   );
+}
+
+export default function Marketing() {
+  const modo = useModo();
+  if (modo === "cargando") return <Cargando />;
+  return modo === "db" ? <MarketingReal /> : <MarketingDemo />;
 }

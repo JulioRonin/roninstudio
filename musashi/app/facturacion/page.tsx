@@ -1,4 +1,6 @@
 "use client";
+import FacturacionReal from "./real";
+import { useModo, Cargando } from "@/components/real";
 import React, { useState } from "react";
 import { C, MONO, SANS } from "@/lib/tokens";
 import { H } from "@/components/ui";
@@ -49,7 +51,7 @@ const P: [string, string, string, string, string, string, string, boolean][] = [
 ];
 const CFDI: [string, string][] = [["CLIENTE", "Negocio demo 2"], ["RFC", "XAXX010101000"], ["RÉGIMEN FISCAL", "601 · General de Ley Personas Morales"], ["USO DE CFDI", "G03 · Gastos en general"], ["FORMA DE PAGO", "03 · Transferencia electrónica"], ["MÉTODO DE PAGO", "PPD · Pago en parcialidades o diferido"], ["CONCEPTO", "Hito 3 · Módulo POS y caja · $40,000.00 + IVA"]];
 
-export default function Facturacion() {
+function FacturacionDemo() {
   const { flash } = useUI();
   const [tab, setTab] = useState(TABS[0]);
   const [cfdi, setCfdi] = useState(false);
@@ -223,4 +225,11 @@ export default function Facturacion() {
       )}
     </div>
   );
+}
+
+/* Con Supabase se muestran los datos reales; sin base, la versión de ejemplo del prototipo. */
+export default function Facturacion() {
+  const modo = useModo();
+  if (modo === "cargando") return <Cargando />;
+  return modo === "db" ? <FacturacionReal /> : <FacturacionDemo />;
 }

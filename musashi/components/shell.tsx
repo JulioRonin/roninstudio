@@ -97,31 +97,38 @@ export function Shell({ children, demo = true }: { children: ReactNode; demo?: b
 }
 
 /* ---------- Paleta de búsqueda (Ctrl K) ---------- */
-const PALETTE: { t: string; s: string; href: string }[] = [
+const PALETTE: { t: string; s: string; href: string; demo?: boolean }[] = [
   ...NAV.map(([t, href]) => ({ t, s: "Pantalla", href })),
   { t: "Configuración", s: "Pantalla", href: "/configuracion" },
   { t: "Nueva pieza de contenido", s: "Estudio", href: "/estudio" },
   { t: "Flujos de trabajo · mapa del cliente", s: "Diagnósticos", href: "/diagnosticos?tab=flujos" },
-  { t: "Reporte de flujos al cliente", s: "Documento", href: "/flujos/reporte?c=D2" },
+  { t: "Reporte de flujos al cliente", s: "Documento", href: "/flujos/reporte?c=D2", demo: true },
   { t: "Tarifas y costos", s: "Configuración", href: "/configuracion?sec=tarifas" },
   { t: "Nuevo proyecto", s: "Proyectos", href: "/proyectos?nuevo=1" },
   { t: "Nueva cotización", s: "Cotizaciones", href: "/cotizaciones?tab=nueva" },
   { t: "Registrar cobro o gasto", s: "Cotizaciones", href: "/cotizaciones?tab=cobros" },
   { t: "Balance del mes", s: "Cotizaciones", href: "/cotizaciones?tab=balance" },
-  { t: "Reporte para el cliente · Negocio demo 2", s: "Documento", href: "/proyectos/reporte?p=D2" },
+  { t: "Reporte para el cliente · Negocio demo 2", s: "Documento", href: "/proyectos/reporte?p=D2", demo: true },
   { t: "Contrato de servicios", s: "Plantilla", href: "/documentos/contrato" },
   { t: "Términos y condiciones", s: "Plantilla", href: "/documentos/terminos" },
-  { t: "Negocio demo 2 · Restaurante con sucursales", s: "Cliente", href: "/clientes" },
-  { t: "Negocio demo 4 · Clínica", s: "Cliente", href: "/clientes" },
-  { t: "Factura F-0112 · vencida", s: "Facturación", href: "/facturacion" },
-  { t: "Informe del Investigador · semana 45", s: "Agentes", href: "/agentes" },
+  { t: "Negocio demo 2 · Restaurante con sucursales", s: "Cliente", href: "/clientes", demo: true },
+  { t: "Negocio demo 4 · Clínica", s: "Cliente", href: "/clientes", demo: true },
+  { t: "Factura F-0112 · vencida", s: "Facturación", href: "/facturacion", demo: true },
+  { t: "Informe del Investigador · semana 45", s: "Agentes", href: "/agentes", demo: true },
   { t: "Cerrar sesión", s: "Cuenta", href: "/api/logout" },
 ];
 function Palette({ close }: { close: () => void }) {
   const [q, setQ] = useState("");
   const router = useRouter();
   const norm = (x: string) => x.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  const items = PALETTE.filter((i) => norm(i.t + " " + i.s).includes(norm(q))).slice(0, 8);
+  const { db } = useUI();
+  const [extra, setExtra] = useState<{ t: string; s: string; href: string }[]>([]);
+  useEffect(() => {
+    if (!db) return;
+    Promise.all([datos.lista<{ nombre: string; sector: string }>("clientes", "select=nombre,sector&order=nombre"), datos.lista<{ folio: string; proyecto_nombre: string }>("cotizaciones", "select=folio,proyecto_nombre&order=creado_en.desc&limit=30"), datos.lista<{ codigo: string; nombre: string }>("proyectos", "select=codigo,nombre&order=creado_en.desc&limit=30")])
+      .then(([c, q2, p]) => setExtra([...c.filas.map((x) => ({ t: `${x.nombre} · ${x.sector}`, s: "Cliente", href: "/clientes" })), ...q2.filas.map((x) => ({ t: `${x.folio} · ${x.proyecto_nombre}`, s: "Cotización", href: `/documentos/cotizacion?f=${encodeURIComponent(x.folio)}` })), ...p.filas.map((x) => ({ t: `${x.codigo} · ${x.nombre}`, s: "Proyecto", href: "/proyectos" }))])).catch(() => {});
+  }, [db]);
+  const items = [...PALETTE.filter((i) => !db || !i.demo), ...extra].filter((i) => norm(i.t + " " + i.s).includes(norm(q))).slice(0, 8);
   const go = (href: string) => { close(); if (href.startsWith("/api/")) window.location.href = href; else router.push(href); };
   return (
     <>
@@ -164,7 +171,7 @@ function Header({ onSearch }: { onSearch: () => void }) {
     <>
       {(demo || db) && (
         <div style={{ height: 26, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, borderBottom: `1px solid ${C.borde}`, fontFamily: MONO, fontSize: 10, letterSpacing: "0.16em", color: C.niebla, background: "rgba(16,19,24,0.8)" }}>
-          {db ? <><Dot color={C.olivo} />DATOS REALES EN CLIENTES, COTIZACIONES, FLUJOS, TARIFAS Y BANDEJA · EL RESTO AÚN ES DEMO</> : <><Dot color={C.oxido} />MODO DEMO · DATOS DE EJEMPLO</>}
+          {db ? <><Dot color={C.olivo} />DATOS REALES · GUARDADOS EN TU BASE</> : <><Dot color={C.oxido} />MODO DEMO · DATOS DE EJEMPLO</>}
         </div>
       )}
       <header style={{ display: "flex", alignItems: "center", gap: 12, padding: "22px 32px 0" }}>

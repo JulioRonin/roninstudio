@@ -1,4 +1,6 @@
 "use client";
+import ProyectosReal from "./real";
+import { useModo, Cargando } from "@/components/real";
 import React, { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { C, MONO, SANS } from "@/lib/tokens";
 import { H, RGlyph } from "@/components/ui";
@@ -93,7 +95,7 @@ function StDot({ c, glow = true }: { c: string; glow?: boolean }) {
   return <span style={{ width: 6, height: 6, borderRadius: "50%", background: c, boxShadow: glow ? `0 0 8px ${c}` : undefined, flexShrink: 0 }} />;
 }
 
-export default function Proyectos() {
+function ProyectosDemo() {
   const { flash } = useUI();
   const [tab, setTab] = useState<Tab>("Lista por etapa");
   const [groups, setGroups] = useState(GROUPS);
@@ -528,4 +530,11 @@ export default function Proyectos() {
       )}
     </>
   );
+}
+
+/* Con Supabase se muestran los datos reales; sin base, la versión de ejemplo del prototipo. */
+export default function Proyectos() {
+  const modo = useModo();
+  if (modo === "cargando") return <Cargando />;
+  return modo === "db" ? <ProyectosReal /> : <ProyectosDemo />;
 }
