@@ -109,9 +109,15 @@ Luego en Musashi: Configuración → Hermes Agent → **Probar conexión**.
 ```powershell
 cd $HOME\roninstudio          # la carpeta donde clonaste el repositorio
 git pull
-Copy-Item -Recurse -Force musashi\hermes\skills\* $HOME\.hermes\skills\musashi\
-hermes gateway restart
+# Reemplaza el SKILL.md de cada agente donde Hermes lo tenga instalado y avisa si falta alguno
+Get-ChildItem musashi\hermes\skills -Directory | ForEach-Object {
+  $n = $_.Name
+  $d = Get-ChildItem $HOME\.hermes\skills -Recurse -Directory -Filter $n -ErrorAction SilentlyContinue | Select-Object -First 1
+  if ($d) { Copy-Item "$($_.FullName)\SKILL.md" "$($d.FullName)\SKILL.md" -Force; "actualizada: $($d.FullName)" }
+  else { "NO ENCONTRADA: $n" }
+}
 ```
+Deben salir 14 líneas `actualizada:`. Las skills se leen del disco en cada corrida; sólo hay que reiniciar el gateway (stop, revisar puertos, start) si cambiaste el `.env`.
 El archivo `$HOME\.hermes\.env` debe tener `MUSASHI_URL=https://musashi-three.vercel.app` (sin diagonal final) y `MUSASHI_API_KEY`. Prueba que un agente lee datos reales:
 ```powershell
 $k = (Select-String -Path $HOME\.hermes\.env -Pattern '^MUSASHI_API_KEY=').Line.Split('=',2)[1].Trim()
