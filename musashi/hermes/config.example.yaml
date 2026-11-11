@@ -45,4 +45,6 @@ skills:
   write_approval: true
 
 # 5) Modelo por defecto para los agentes (ajusta a tu proveedor)
-# hermes config set model anthropic/claude-sonnet-4-5
+# Con créditos de Anthropic:   hermes model  → Anthropic → un modelo Sonnet
+# Sin créditos (gratis, NVIDIA): hermes model  → NVIDIA NIM → el Nemotron más grande de la lista
+#   (requiere NVIDIA_API_KEY en ~/.hermes/.env; el nivel gratis es para pruebas y tiene límite por minuto)
