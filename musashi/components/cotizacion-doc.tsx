@@ -2,7 +2,7 @@
 import React from "react";
 import { PaperDoc } from "@/components/paper";
 import { fechaLarga } from "@/lib/datos";
-import { mxn, type Cot, type Linea } from "@/lib/cotizaciones";
+import { mxn, renglones, type Cot, type Linea } from "@/lib/cotizaciones";
 import type { Tarifas } from "@/lib/tarifas";
 import type { Fiscales } from "@/lib/ajustes";
 
@@ -24,6 +24,8 @@ export function CotizacionDoc({ cot, emitida, ciudad, contacto, t, fx, publico =
   const total = neto + iva;
   const anticipo = Math.round(total * cot.anticipo) / 100;
   const emisor = fx.razonSocial || fx.nombreComercial || "Ronin Studio";
+  const m = cot.mensual && cot.mensual.monto > 0 ? cot.mensual : null;
+  const mIva = m ? Math.round(m.monto * t.ivaPct) / 100 : 0, mTotal = m ? m.monto + mIva : 0;
 
   return (
     <PaperDoc title={cot.proyecto} kicker={`COTIZACIÓN ${cot.folio} · ${fechaLarga(emitida).toUpperCase()}${cot.vigenciaISO ? ` · VIGENTE AL ${fechaLarga(cot.vigenciaISO).toUpperCase()}` : ""}`} file={`cotizacion-${cot.folio}.html`} back="/cotizaciones" publico={publico} editable={!publico}>
@@ -62,6 +64,28 @@ export function CotizacionDoc({ cot, emitida, ciudad, contacto, t, fx, publico =
       <p>El anticipo se cubre al aceptar esta cotización y aparta la fecha de arranque. El resto se paga conforme se acepta cada hito, en proporción a su monto. Se emite factura (CFDI) por cada pago; los pagos se hacen por transferencia dentro de los cinco días naturales siguientes a la factura.</p>
       {(fx.banco || fx.clabe) && <p className="mono">TRANSFERENCIA · {[fx.banco, fx.titular || emisor, fx.clabe ? `CLABE ${fx.clabe}` : ""].filter(Boolean).join(" · ").toUpperCase()}</p>}
 
+      {m && <>
+        <h2>Costo mensual después de la entrega</h2>
+        <p>{m.arranque.replace(/\.$/, "")}, la plataforma queda en línea con una mensualidad que cubre lo que necesita para seguir funcionando. Se factura cada mes y se paga dentro de los cinco días naturales siguientes.</p>
+        <table>
+          <thead><tr><th>Concepto</th><th>Empieza</th><th className="num">Al mes (MXN)</th></tr></thead>
+          <tbody>
+            <tr><td>{m.concepto}</td><td>{m.arranque}</td><td className="num">{mxn(m.monto)}</td></tr>
+            <tr><td colSpan={2}>IVA {t.ivaPct} %</td><td className="num">{mxn(mIva)}</td></tr>
+            <tr><td colSpan={2}><strong>Mensualidad con IVA</strong></td><td className="num"><strong>{mxn(mTotal)}</strong></td></tr>
+          </tbody>
+        </table>
+        {renglones(m.incluye).length > 0 && <><h3>La mensualidad incluye</h3><ul>{renglones(m.incluye).map((x, i) => <li key={i}>{x}</li>)}</ul></>}
+        {renglones(m.terceros).length > 0 && <><h3>Costos de terceros que paga {cot.cliente} directamente</h3><ul>{renglones(m.terceros).map((x, i) => <li key={i}>{x}</li>)}</ul><p>Se pagan al proveedor de cada servicio; no pasan por Ronin Studio y dependen del uso.</p></>}
+        <h3>Panorama del primer año</h3>
+        <div className="grid">
+          <div className="fact"><div className="k">DESARROLLO · CON IVA</div><div className="v">{mxn(total)}</div></div>
+          <div className="fact"><div className="k">12 MENSUALIDADES · CON IVA</div><div className="v">{mxn(mTotal * 12)}</div></div>
+          <div className="fact"><div className="k">PRIMER AÑO EN OPERACIÓN</div><div className="v">{mxn(total + mTotal * 12)}</div></div>
+        </div>
+        <p>Sin contar los costos de terceros. Los ajustes que excedan lo incluido en la mensualidad se cotizan aparte. La mensualidad puede cancelarse con treinta días de aviso.</p>
+      </>}
+
       <h2>Cómo trabajamos</h2>
       <ol>
         <li><strong>Mapear.</strong> Visitamos el negocio, seguimos el flujo real y medimos dónde se va el tiempo.</li>
@@ -81,7 +105,7 @@ export function CotizacionDoc({ cot, emitida, ciudad, contacto, t, fx, publico =
       <ul>
         <li>Equipo, licencias de terceros, dominios, pasarelas de pago ni costos de envío de mensajes.</li>
         <li>Trabajo fuera del alcance descrito; se cotiza aparte como solicitud de cambio, con su efecto en tiempo y costo.</li>
-        <li>Soporte posterior a la garantía; se contrata como acompañamiento mensual.</li>
+        <li>{m ? "Soporte y cambios fuera de lo que incluye la mensualidad; se cotizan aparte." : "Soporte posterior a la garantía; se contrata como acompañamiento mensual."}</li>
       </ul>
 
       <h2>Condiciones</h2>

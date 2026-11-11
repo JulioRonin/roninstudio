@@ -1,9 +1,18 @@
 // Cotizaciones, facturas, cobros y gastos (demo). Es la entrada del dinero de Musashi.
 export type Estado = "Borrador" | "Enviada" | "Abierta" | "Aceptada" | "Vencida" | "Perdida";
 export type Linea = { c: string; etapa: "Mapear" | "Diseñar" | "Construir" | "Evolucionar"; monto: number; horas?: number };
+/** Mensualidad cotizada junto con el desarrollo. Monto sin IVA; incluye y terceros, un renglón por punto. */
+export type Mensual = { monto: number; concepto: string; arranque: string; incluye: string; terceros: string };
+export const MENSUAL_BASE: Mensual = {
+  monto: 0, concepto: "Plataforma en línea: hospedaje, respaldos y soporte", arranque: "Al salir en vivo",
+  incluye: "Hospedaje de la plataforma y de su base de datos.\nRespaldos de la información.\nCorrección de fallas.\nUna hora al mes de ajustes menores.",
+  terceros: "",
+};
+export const renglones = (s?: string) => (s ?? "").split("\n").map((x) => x.replace(/^[-•·\s]+/, "").trim()).filter(Boolean);
 export type Cot = {
   folio: string; cliente: string; sector: string; proyecto: string; estado: Estado; fecha: string; vigencia: string;
   lineas: Linea[]; credito: number; anticipo: number; notas?: string; abierta?: string; razon?: string; proyectoCode?: string;
+  mensual?: Mensual;
   id?: string; clienteId?: string; vigenciaISO?: string | null;   // sólo con Supabase
 };
 export type Pago = { id: string; tipo: "Cobro" | "Gasto"; fecha: string; mes: string; cliente: string; concepto: string; ref: string; metodo: string; monto: number; fechaISO?: string; clienteId?: string | null };
@@ -15,7 +24,7 @@ const corta = (iso?: string | null) => (iso ? new Date(iso.slice(0, 10) + "T12:0
 const mesDe = (iso?: string | null) => (iso ? iso.slice(0, 7) : "");
 
 export const SELECT_COT = "select=*,cliente:clientes(nombre,sector),cotizacion_lineas(*),proyectos(codigo)&order=creado_en.desc";
-export type FilaCot = { id: string; folio: string; cliente_id: string; proyecto_nombre: string; estado: Estado; vigencia: string | null; anticipo_pct: number; credito: number; notas: string | null; abierta_veces: number; abierta_ultima: string | null; razon_perdida: string | null; creado_en: string; cliente?: { nombre: string; sector: string } | null; cotizacion_lineas?: { orden: number; concepto: string; etapa: Linea["etapa"]; monto: number; horas: number | null }[]; proyectos?: { codigo: string }[] };
+export type FilaCot = { id: string; folio: string; cliente_id: string; proyecto_nombre: string; estado: Estado; vigencia: string | null; anticipo_pct: number; credito: number; notas: string | null; abierta_veces: number; abierta_ultima: string | null; razon_perdida: string | null; creado_en: string; mensualidad?: Partial<Mensual> | null; cliente?: { nombre: string; sector: string } | null; cotizacion_lineas?: { orden: number; concepto: string; etapa: Linea["etapa"]; monto: number; horas: number | null }[]; proyectos?: { codigo: string }[] };
 export const deFilaCot = (f: FilaCot): Cot => ({
   id: f.id, clienteId: f.cliente_id, folio: f.folio, cliente: f.cliente?.nombre ?? "—", sector: f.cliente?.sector ?? "", proyecto: f.proyecto_nombre, estado: f.estado,
   fecha: corta(f.creado_en), vigencia: corta(f.vigencia), vigenciaISO: f.vigencia,
@@ -23,6 +32,7 @@ export const deFilaCot = (f: FilaCot): Cot => ({
   credito: Number(f.credito), anticipo: f.anticipo_pct, notas: f.notas ?? undefined, razon: f.razon_perdida ?? undefined,
   abierta: f.abierta_veces ? `${corta(f.abierta_ultima).toUpperCase()} · ${f.abierta_veces} ${f.abierta_veces === 1 ? "VEZ" : "VECES"}` : undefined,
   proyectoCode: f.proyectos?.[0]?.codigo,
+  mensual: f.mensualidad && Number(f.mensualidad.monto) > 0 ? { ...MENSUAL_BASE, ...f.mensualidad, monto: Number(f.mensualidad.monto) } : undefined,
 });
 
 export const SELECT_MOV = "select=*,cliente:clientes(nombre)&order=fecha.desc,creado_en.desc";

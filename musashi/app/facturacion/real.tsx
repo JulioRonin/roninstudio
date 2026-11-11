@@ -63,7 +63,8 @@ export default function FacturacionReal() {
   const conceptoDe = (x: Factura) => mensDe(x) ?? x.hito?.nombre ?? (x.proyecto ? `Anticipo · ${x.proyecto.codigo}` : "Factura directa");
 
   /* ---------- Mensualidades ---------- */
-  const estadoM = (m: Mens) => (m.fin && m.fin < hoy ? "Terminada" : m.activa ? "Activa" : "En pausa");
+  const sinFacturas = (m: Mens) => !fs.some((x) => x.mensualidad_id === m.id);
+  const estadoM = (m: Mens) => (m.fin && m.fin < hoy ? "Terminada" : m.activa ? "Activa" : sinFacturas(m) ? "Por activar" : "En pausa");
   const vivas = ms.filter((m) => estadoM(m) === "Activa");
   const recurrente = vivas.reduce((s, m) => s + Number(m.monto), 0);
   const prox = vivas.map((m) => ({ m, f: proximoCobro(m, hoy) })).filter((x) => x.f).sort((a, b) => (a.f! < b.f! ? -1 : 1))[0];
@@ -98,7 +99,8 @@ export default function FacturacionReal() {
   const pausar = async (m: Mens) => {
     try {
       await datos.cambia("mensualidades", eq("id", m.id), m.activa ? { activa: false } : { activa: true, reanudada: hoy });
-      if (m.activa) { flash("Mensualidad en pausa: no genera facturas hasta que la reanudes"); await cargarMens(); } else { if (!(await generar())) flash("Mensualidad reanudada: los meses en pausa no se cobran"); await cargar(); }
+      if (m.activa) { flash("Mensualidad en pausa: no genera facturas hasta que la reanudes"); await cargarMens(); }
+      else { const nueva = sinFacturas(m), p = proximoCobro({ ...m, activa: true, reanudada: hoy }, hoy); if (!(await generar())) flash(nueva ? `Mensualidad activa · primer cobro ${fechaCorta(p)}` : "Mensualidad reanudada: los meses en pausa no se cobran"); await cargar(); }
     } catch (e) { flash("No se guardó: " + (e as Error).message); }
   };
   const borrarM = async () => {
@@ -157,10 +159,10 @@ export default function FacturacionReal() {
                     <span style={{ fontFamily: MONO, fontSize: 12 }}>{mxn(Number(m.monto))}</span>
                     <span style={{ fontFamily: MONO, fontSize: 11, color: C.niebla }}>DÍA {m.dia_cobro}</span>
                     <span style={{ fontFamily: MONO, fontSize: 11, color: C.niebla }}>{e === "Activa" && p ? fechaCorta(p).toUpperCase() : "—"}</span>
-                    <span style={{ display: "flex", alignItems: "center", gap: 6, ...mono10, color: C.papel }}><Dot color={e === "Activa" ? C.olivo : e === "En pausa" ? C.ambar : C.acero} />{e.toUpperCase()}</span>
+                    <span style={{ display: "flex", alignItems: "center", gap: 6, ...mono10, color: C.papel }}><Dot color={e === "Activa" ? C.olivo : e === "Terminada" ? C.acero : C.ambar} />{e.toUpperCase()}</span>
                     <span style={{ display: "flex", gap: 6, justifyContent: "flex-end", minWidth: 170 }}>
                       <button type="button" onClick={() => abrirM(m)} style={btn}>Editar</button>
-                      {e !== "Terminada" && <button type="button" onClick={() => void pausar(m)} style={{ ...btn, border: "none", color: C.tenue }}>{m.activa ? "Pausar" : "Reanudar"}</button>}
+                      {e !== "Terminada" && <button type="button" onClick={() => void pausar(m)} style={{ ...btn, border: "none", color: C.tenue }}>{m.activa ? "Pausar" : sinFacturas(m) ? "Activar" : "Reanudar"}</button>}
                     </span>
                   </div>
                 ); })}
@@ -206,7 +208,7 @@ export default function FacturacionReal() {
           <Campo t="Notas internas (opcional)"><input value={fm.notas} onChange={(e) => setFm({ ...fm, notas: e.target.value })} placeholder="Qué incluye, horas de cambios, plazo mínimo…" style={inp} /></Campo>
           <div style={{ fontSize: 12.5, color: p.ya ? C.ambar : C.tenue, lineHeight: 1.5 }}>
             {!fm.id && (p.ya ? `Con estas fechas, al guardar se ${p.ya === 1 ? "genera de inmediato la factura" : `generan de inmediato ${p.ya} facturas`} desde el ${fechaCorta(p.fecha)}. Si no quieres cobrar meses pasados, mueve la fecha en que empieza.` : p.fecha ? `Primer cobro: ${fechaCorta(p.fecha)}. Ese día se genera la factura y vence ${Math.round(num(fm.plazo))} días después.` : "Con estas fechas no se genera ningún cobro: revisa cuándo empieza y cuándo termina.")}
-            {fm.id && "Los cambios aplican a las facturas que se generen de aquí en adelante; las ya generadas no se tocan."}
+            {fm.id && (ms.find((x) => x.id === fm.id && !x.activa && sinFacturas(x)) ? "Está por activar: ajusta aquí el día de cobro y luego usa Activar en la lista. El primer cobro cae en ese día a partir de que la actives." : "Los cambios aplican a las facturas que se generen de aquí en adelante; las ya generadas no se tocan.")}
           </div>
           <div style={{ display: "flex", gap: 8, justifyContent: "space-between" }}>
             <span>{fm.id && <button type="button" onClick={() => void borrarM()} style={{ ...btn, height: 44, border: "none", color: C.oxido }}>Eliminar</button>}</span>

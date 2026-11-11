@@ -4,7 +4,7 @@ import Link from "next/link";
 import { C, MONO } from "@/lib/tokens";
 import { Glass, Eyebrow, H, Dot, PB, SB } from "@/components/ui";
 import { useUI, PageHead } from "@/components/shell";
-import { COTS, PAGOS, FACTURAS, CLIENTES, mxn, total, PESO, SELECT_COT, SELECT_MOV, SELECT_FAC, deFilaCot, deFilaMov, deFilaFactura, type Cot, type Pago, type Linea, type Estado, type Factura, type OpcionCliente, type FilaCot, type FilaMov, type FilaFactura } from "@/lib/cotizaciones";
+import { COTS, PAGOS, FACTURAS, CLIENTES, mxn, total, PESO, SELECT_COT, SELECT_MOV, SELECT_FAC, deFilaCot, deFilaMov, deFilaFactura, type Cot, type Pago, type Linea, type Estado, type Factura, type OpcionCliente, type FilaCot, type FilaMov, type FilaFactura, MENSUAL_BASE, type Mensual } from "@/lib/cotizaciones";
 import { load, save, reset } from "@/lib/store";
 import { useTarifas } from "@/lib/tarifas";
 import { datos, eq, hoyISO, sumaDias, fechaCorta, mesCorto, siguienteFolio } from "@/lib/datos";
@@ -85,7 +85,8 @@ export default function Cotizaciones() {
   const cobradoMes = pagos.filter((p) => p.tipo === "Cobro" && p.mes === mesActual).reduce((s, p) => s + p.monto, 0);
   const gastoMes = pagos.filter((p) => p.tipo === "Gasto" && p.mes === mesActual).reduce((s, p) => s + p.monto, 0);
 
-  const falla = (e: unknown) => { flash("No se guardó: " + (e instanceof Error ? e.message : "error")); return false; };
+  const falla = (e: unknown) => { const m = e instanceof Error ? e.message : "error"; flash(/mensualidad/i.test(m) ? "Falta un paso en Supabase: corre musashi/supabase/migrations/0003_cotizacion_mensualidad.sql en el SQL Editor" : "No se guardó: " + m); return false; };
+  const [tarifasP] = useTarifas();
   const setEstado = (folio: string, estado: Estado, extra: Partial<Cot> = {}) => setCots((cs) => cs.map((c) => (c.folio === folio ? { ...c, estado, ...extra } : c)));
   const patchCot = async (c: Cot, cambios: Record<string, unknown>) => { if (!db || !c.id) return true; try { await datos.cambia("cotizaciones", eq("id", c.id), cambios); return true; } catch (e) { return falla(e); } };
   const nuevaTarea = async (titulo: string, c: Cot, dias: number, canal = "WhatsApp") => {
@@ -105,21 +106,30 @@ export default function Cotizaciones() {
   };
   const aceptar = async (c: Cot) => {
     let codigo = "D" + (14 + cots.filter((x) => x.estado === "Aceptada").length);
+    let extra = "";
     if (db) {
+      let pid: string | undefined;
       try {
         const pr = await datos.lista<{ codigo: string }>("proyectos", "select=codigo");
         codigo = siguienteFolio("P", pr.filas.map((x) => x.codigo), 2);
         const horas = c.lineas.reduce((s, l) => s + (l.horas ?? 0), 0);
         const p = await datos.crea<{ id: string }>("proyectos", { codigo, cliente_id: c.clienteId, cotizacion_id: c.id, nombre: c.proyecto, etapa: "Mapear", inicio: hoyISO(), horas_estimadas: horas, presupuesto: total(c) });
-        const pid = p.filas[0]?.id;
+        pid = p.filas[0]?.id;
         if (pid && c.lineas.length) await datos.crea("hitos", c.lineas.map((l, i) => ({ proyecto_id: pid, orden: i + 1, nombre: l.c, etapa: l.etapa, monto: l.monto })));
       } catch (e) { falla(e); return; }
       if (!(await patchCot(c, { estado: "Aceptada" }))) return;
       await etapaCliente(c, "Cliente");
+      // La mensualidad cotizada nace en pausa: se activa en Facturación cuando toca cobrarla (normalmente al salir en vivo).
+      if (c.mensual && c.mensual.monto > 0) {
+        try {
+          await datos.crea("mensualidades", { cliente_id: c.clienteId, proyecto_id: pid ?? null, concepto: c.mensual.concepto || MENSUAL_BASE.concepto, monto: Math.round(c.mensual.monto * (100 + tarifasP.ivaPct)) / 100, dia_cobro: Math.min(28, Number(hoyISO().slice(8))), dias_para_pagar: 5, inicio: hoyISO(), activa: false, notas: `De la cotización ${c.folio}. Empieza: ${c.mensual.arranque}. Actívala en Facturación → Mensualidades cuando toque cobrarla.` });
+          extra = " · mensualidad lista para activar en Facturación";
+        } catch { extra = " · la mensualidad no se creó: corre 0002_mensualidades.sql en Supabase"; }
+      }
     }
     setEstado(c.folio, "Aceptada", { proyectoCode: codigo });
     await nuevaTarea(`Facturar anticipo ${c.folio} · ${c.cliente}`, c, 0, "Interno");
-    flash(`${c.folio} aceptada · proyecto ${codigo} en Mapear y anticipo por facturar`);
+    flash(`${c.folio} aceptada · proyecto ${codigo} en Mapear y anticipo por facturar${extra}`);
   };
   const perder = async (c: Cot, razon: string) => { if (!(await patchCot(c, { estado: "Perdida", razon_perdida: razon }))) return; setEstado(c.folio, "Perdida", { razon }); setPerdiendo(false); flash(`${c.folio} marcada como perdida · ${razon.toLowerCase()}`); };
   // Liga privada para el cliente. Un borrador no se comparte: al compartir pasa a Enviada.
@@ -139,7 +149,7 @@ export default function Cotizaciones() {
     let nueva = c;
     if (db) {
       try {
-        const r = await datos.crea<FilaCot>("cotizaciones", { folio: c.folio, cliente_id: c.clienteId, proyecto_nombre: c.proyecto, estado: c.estado, vigencia: c.vigenciaISO ?? null, anticipo_pct: c.anticipo, credito: c.credito, notas: c.notas || null });
+        const r = await datos.crea<FilaCot>("cotizaciones", { folio: c.folio, cliente_id: c.clienteId, proyecto_nombre: c.proyecto, estado: c.estado, vigencia: c.vigenciaISO ?? null, anticipo_pct: c.anticipo, credito: c.credito, notas: c.notas || null, ...(c.mensual ? { mensualidad: c.mensual } : {}) });
         const id = r.filas[0]?.id;
         if (id && c.lineas.length) await datos.crea("cotizacion_lineas", c.lineas.map((l, i) => ({ cotizacion_id: id, orden: i + 1, concepto: l.c, etapa: l.etapa, monto: l.monto, horas: l.horas ?? null })));
         nueva = { ...c, id };
@@ -154,7 +164,7 @@ export default function Cotizaciones() {
     const estado: Estado = enviarla ? "Enviada" : previa.estado;
     if (db && previa.id) {
       try {
-        await datos.cambia("cotizaciones", eq("id", previa.id), { cliente_id: c.clienteId, proyecto_nombre: c.proyecto, vigencia: c.vigenciaISO ?? null, anticipo_pct: c.anticipo, credito: c.credito, notas: c.notas || null, estado });
+        await datos.cambia("cotizaciones", eq("id", previa.id), { cliente_id: c.clienteId, proyecto_nombre: c.proyecto, vigencia: c.vigenciaISO ?? null, anticipo_pct: c.anticipo, credito: c.credito, notas: c.notas || null, estado, ...(c.mensual || previa.mensual ? { mensualidad: c.mensual ?? null } : {}) });
         await datos.borra("cotizacion_lineas", eq("cotizacion_id", previa.id));
         if (c.lineas.length) await datos.crea("cotizacion_lineas", c.lineas.map((l, i) => ({ cotizacion_id: previa.id, orden: i + 1, concepto: l.c, etapa: l.etapa, monto: l.monto, horas: l.horas ?? null })));
       } catch (e) { falla(e); return; }
@@ -245,6 +255,7 @@ export default function Cotizaciones() {
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}><span style={{ ...mono10, color: C.acero }}>TOTAL MXN · ANTICIPO {cur.anticipo} %</span><span style={{ fontWeight: 900, fontSize: 26, letterSpacing: "-0.02em" }}>{mxn(total(cur))}</span></div>
               <div style={{ fontSize: 12, color: C.acero }}>Anticipo de {mxn(Math.round(total(cur) * cur.anticipo / 100))} al aceptar; el resto contra aceptación de cada hito. CFDI por cada pago.</div>
+              {cur.mensual && <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 10, borderTop: "1px solid #D6D2C9", paddingTop: 10 }}><span style={{ fontSize: 12.5 }}><span style={{ ...mono10, color: C.acero, display: "block" }}>DESPUÉS · {cur.mensual.arranque.toUpperCase()}</span>{cur.mensual.concepto}</span><span style={{ fontFamily: MONO, fontSize: 13, whiteSpace: "nowrap" }}>{mxn(cur.mensual.monto)}<span style={{ fontSize: 10.5, color: C.acero }}> + IVA / MES</span></span></div>}
               <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 4 }}>
                 {cur.estado === "Borrador" && <><PB small onClick={() => void compartir(cur)} style={{ background: C.tinta, boxShadow: "none" }} title="Crea la liga privada, la marca como enviada y prepara el mensaje de WhatsApp">Compartir con el cliente</PB><button type="button" onClick={() => void enviar(cur)} title="Sólo cambia el estado y crea el seguimiento, sin liga" style={{ height: 36, padding: "0 14px", borderRadius: 999, background: "transparent", border: `1px solid ${C.tinta}`, color: C.tinta, fontSize: 12, cursor: "pointer" }}>Sólo marcar enviada</button></>}
                 {(cur.estado === "Enviada" || cur.estado === "Abierta") && <PB small onClick={() => void compartir(cur)} style={{ background: C.oxido, boxShadow: "none" }}>Compartir liga</PB>}
@@ -317,6 +328,7 @@ function Nueva({ clientes, inicial, onCancel, onSave, next }: { clientes: Opcion
   const [anticipo, setAnticipo] = useState(inicial?.anticipo ?? 30);
   const [credito, setCredito] = useState(inicial?.credito ?? 0);
   const [notas, setNotas] = useState(inicial?.notas ?? "");
+  const [mensual, setMensual] = useState<Mensual | null>(inicial?.mensual ? { ...inicial.mensual } : null);
   const [tarifas] = useTarifas();
   const [lineas, setLineas] = useState<Linea[]>(inicial ? inicial.lineas.map((l) => ({ ...l })) : [{ c: "Hito 1 · Visita, mapa de flujo y propuesta", etapa: "Mapear", horas: 20, monto: 20000 }, { c: "Hito 2 · Plan y prototipo", etapa: "Diseñar", horas: 30, monto: 30000 }, { c: "Hito 3 · Construcción y arranque", etapa: "Construir", horas: 40, monto: 40000 }]);
   // Borrador que manda Flujos de trabajo ("Crear cotización con estos hitos")
@@ -332,7 +344,8 @@ function Nueva({ clientes, inicial, onCancel, onSave, next }: { clientes: Opcion
   const build = (): Cot | null => {
     if (!opt) { flash("Elige un cliente; si es nuevo, dalo de alta en Clientes"); return null; }
     if (!proyecto.trim()) { flash("Ponle nombre al proyecto"); return null; }
-    return { folio: next, cliente: opt.nombre, sector: opt.sector, clienteId: opt.value, proyecto: proyecto.trim(), estado: "Borrador", fecha: fechaCorta(hoyISO()), vigencia: fechaCorta(vigencia), vigenciaISO: vigencia, lineas: lineas.map((l) => ({ ...l, monto: Number(l.monto) || 0 })), credito: Number(credito) || 0, anticipo, notas };
+    if (mensual && !(Number(mensual.monto) > 0)) { flash("Pon el monto de la mensualidad o quítala"); return null; }
+    return { mensual: mensual ? { ...mensual, monto: Number(mensual.monto), concepto: mensual.concepto.trim() || MENSUAL_BASE.concepto, arranque: mensual.arranque.trim() || MENSUAL_BASE.arranque } : undefined, folio: next, cliente: opt.nombre, sector: opt.sector, clienteId: opt.value, proyecto: proyecto.trim(), estado: "Borrador", fecha: fechaCorta(hoyISO()), vigencia: fechaCorta(vigencia), vigenciaISO: vigencia, lineas: lineas.map((l) => ({ ...l, monto: Number(l.monto) || 0 })), credito: Number(credito) || 0, anticipo, notas };
   };
   return (
     <section style={{ padding: "22px 32px 48px", display: "grid", gridTemplateColumns: "1fr 380px", gap: 16 }}>
@@ -368,6 +381,23 @@ function Nueva({ clientes, inicial, onCancel, onSave, next }: { clientes: Opcion
             <label style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 12.5, color: C.niebla }}>Crédito del diagnóstico exprés<input value={credito} inputMode="numeric" onChange={(e) => setCredito(Number(e.target.value.replace(/[^0-9]/g, "")))} style={{ ...input, width: 140, height: 40, fontFamily: MONO, textAlign: "right" }} /></label>
           </div>
         </div>
+        {mensual ? (() => { const conIva = Math.round(Number(mensual.monto || 0) * (100 + tarifas.ivaPct)) / 100, ini = Math.round(tot * (100 + tarifas.ivaPct)) / 100; const L = (t: string, el: React.ReactNode, span = 1) => <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla, gridColumn: `span ${span}` }}>{t}{el}</label>; const ta = { ...input, height: "auto", padding: "10px 14px", borderRadius: 16, resize: "vertical" as const, fontFamily: "inherit", lineHeight: 1.4 }; return (
+          <div style={{ border: `1px solid ${C.borde}`, borderRadius: 20, padding: 16, display: "flex", flexDirection: "column", gap: 12, background: "rgba(238,235,228,0.03)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
+              <div><div style={mono10}>MENSUALIDAD DESPUÉS DE LA ENTREGA</div><div style={{ fontSize: 12.5, color: C.niebla, marginTop: 4, lineHeight: 1.4 }}>Sale en la cotización formal con lo que incluye y el costo del primer año. Al aceptar, queda en Facturación → Mensualidades lista para activar.</div></div>
+              <button type="button" onClick={() => setMensual(null)} style={{ height: 32, padding: "0 12px", borderRadius: 999, background: "transparent", border: `1px solid ${C.borde}`, color: C.niebla, fontSize: 12, cursor: "pointer", whiteSpace: "nowrap" }}>Quitar</button>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "170px 1fr 220px", gap: 10 }}>
+              {L("Monto al mes sin IVA", <input value={mensual.monto || ""} placeholder="1200" inputMode="numeric" onChange={(e) => setMensual({ ...mensual, monto: Number(e.target.value.replace(/[^0-9.]/g, "")) || 0 })} style={{ ...input, fontFamily: MONO, textAlign: "right" }} />)}
+              {L("Concepto", <input value={mensual.concepto} onChange={(e) => setMensual({ ...mensual, concepto: e.target.value })} style={input} />)}
+              {L("Se empieza a cobrar", <><input list="arranques" value={mensual.arranque} onChange={(e) => setMensual({ ...mensual, arranque: e.target.value })} style={input} /><datalist id="arranques"><option value="Al salir en vivo" /><option value="Al aceptar el último hito" /><option value="Al aceptar la cotización" /></datalist></>)}
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+              {L("Qué incluye · un punto por renglón", <textarea value={mensual.incluye} rows={4} onChange={(e) => setMensual({ ...mensual, incluye: e.target.value })} style={ta} />)}
+              {L("Costos de terceros que paga el cliente · un punto por renglón", <textarea value={mensual.terceros} rows={4} placeholder={"Comisión de la pasarela de pago por cada venta\nGuías de envío por paquete\nDominio, una vez al año"} onChange={(e) => setMensual({ ...mensual, terceros: e.target.value })} style={ta} />)}
+            </div>
+            <div style={{ display: "flex", gap: 18, flexWrap: "wrap", ...mono10, color: C.niebla }}><span>CON IVA: <strong style={{ color: C.papel }}>{mxn(conIva)}</strong> AL MES</span><span>12 MESES: <strong style={{ color: C.papel }}>{mxn(conIva * 12)}</strong></span><span>PRIMER AÑO CON EL DESARROLLO: <strong style={{ color: C.papel }}>{mxn(ini + conIva * 12)}</strong></span></div>
+          </div>); })() : <div><SB small onClick={() => setMensual({ ...MENSUAL_BASE })}>+ Agregar mensualidad después de la entrega</SB></div>}
         <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, color: C.niebla }}>Notas y condiciones
           <textarea value={notas} onChange={(e) => setNotas(e.target.value)} rows={3} placeholder="Incluye capacitación de 40 minutos y 30 días de garantía. No incluye hardware." style={{ ...input, height: "auto", padding: "12px 16px", borderRadius: 16, resize: "vertical", fontFamily: "inherit" }} />
         </label>
@@ -387,7 +417,8 @@ function Nueva({ clientes, inicial, onCancel, onSave, next }: { clientes: Opcion
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}><span style={{ ...mono10, color: C.acero }}>TOTAL MXN</span><span style={{ fontWeight: 900, fontSize: 26, letterSpacing: "-0.02em" }}>{mxn(tot)}</span></div>
         <div style={{ fontSize: 12, color: C.acero }}>Anticipo {anticipo} % · {mxn(Math.round(tot * anticipo / 100))} al aceptar. Vigente al {fechaCorta(vigencia)}.</div>
-        <div style={{ ...mono10, color: C.acero, borderTop: "1px solid #D6D2C9", paddingTop: 10 }}>MARCAR ENVIADA NO MANDA NADA: CREA EL SEGUIMIENTO EN 3 DÍAS · AL ACEPTAR: PROYECTO EN MAPEAR Y TAREA DE FACTURAR ANTICIPO</div>
+        {mensual && Number(mensual.monto) > 0 && <div style={{ display: "flex", justifyContent: "space-between", gap: 10, borderTop: "1px solid #D6D2C9", paddingTop: 10, fontSize: 12.5 }}><span><span style={{ ...mono10, color: C.acero, display: "block" }}>DESPUÉS · {(mensual.arranque || "").toUpperCase()}</span>{mensual.concepto}</span><span style={{ fontFamily: MONO, fontSize: 12, whiteSpace: "nowrap" }}>{mxn(Number(mensual.monto))} + IVA / MES</span></div>}
+        <div style={{ ...mono10, color: C.acero, borderTop: "1px solid #D6D2C9", paddingTop: 10 }}>MARCAR ENVIADA NO MANDA NADA: CREA EL SEGUIMIENTO EN 3 DÍAS · AL ACEPTAR: PROYECTO EN MAPEAR, TAREA DE FACTURAR ANTICIPO{mensual ? " Y MENSUALIDAD LISTA PARA ACTIVAR" : ""}</div>
       </div>
     </section>
   );

@@ -13,6 +13,7 @@ Musashi habla con Supabase sólo desde el servidor (route handlers en Vercel). E
 
 Esquema: `supabase/migrations/0001_musashi_base.sql`, se corre una vez en el SQL Editor.
 Después, también una sola vez, `supabase/migrations/0002_mensualidades.sql`: agrega los cobros mensuales recurrentes (Facturación → Mensualidades). Mientras no se corra, esa pestaña muestra el aviso y el resto funciona igual.
+Luego `supabase/migrations/0003_cotizacion_mensualidad.sql`: guarda la mensualidad dentro de la cotización (sale en el PDF y en la liga del cliente, y al aceptar queda lista para activar).
 Más adelante, si se usa Supabase Storage para archivos o el sitio público envía el diagnóstico exprés, se hará a través de rutas de Musashi, sin abrir la base.
 
 ## 2 · Vercel (despliegue de Musashi y del sitio público)

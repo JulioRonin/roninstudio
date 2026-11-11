@@ -8,7 +8,7 @@ import { load, save } from "@/lib/store";
 import { datos, eq, hoyISO, fechaLarga } from "@/lib/datos";
 import { useTarifas, mxn0 } from "@/lib/tarifas";
 import { AbordajeCard } from "@/components/abordaje";
-import { MAPA_DEMO, SECTORES, GUIAS, GUIA_VISITA, nuevoMapa, deFilaMapa, aFilaMapa, minTotal, esperaTotal, minNuevo, ejecSemana, horasSemanaActual, horasSemanaNueva, ahorroHorasSemana, ahorroMesMXN, recapturas, ACCION_COLOR, FASE_COLOR, type Proceso, type Accion, type Fase, type Mapa, type FilaMapa } from "@/lib/flujos";
+import { MAPA_DEMO, SECTORES, GUIAS, GUIA_VISITA, nuevoMapa, deFilaMapa, aFilaMapa, minTotal, esperaTotal, minNuevo, minPropuesto, fmtMin, ejecSemana, horasSemanaActual, horasSemanaNueva, ahorroHorasSemana, ahorroMesMXN, recapturas, ACCION_COLOR, FASE_COLOR, type Proceso, type Accion, type Fase, type Mapa, type FilaMapa } from "@/lib/flujos";
 
 /* =====================================================================
    FLUJOS DE TRABAJO · el bloque central de 01 · Mapear
@@ -251,22 +251,23 @@ function MapaView({ mapa, onChange, onBack }: { mapa: Mapa; onChange: (m: Mapa) 
                   </div>
                 </div>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(3,auto)", gap: 10, textAlign: "right" }}>
-                  <div><div style={mono10}>TRABAJO HOY</div><div style={{ fontWeight: 900, fontSize: 22, letterSpacing: "-0.02em" }}>{minTotal(cur.pasos)} <span style={{ fontWeight: 300, fontSize: 12 }}>min</span></div><div style={{ ...mono10, fontSize: 9 }}>+ {esperaTotal(cur.pasos)} MIN DE ESPERA</div></div>
-                  <div><div style={mono10}>PROPUESTO</div><div style={{ fontWeight: 900, fontSize: 22, letterSpacing: "-0.02em", color: C.olivo }}>{minNuevo(cur.pasos)} <span style={{ fontWeight: 300, fontSize: 12 }}>min</span></div></div>
+                  <div><div style={mono10}>TRABAJO HOY</div><div style={{ fontWeight: 900, fontSize: 22, letterSpacing: "-0.02em" }}>{fmtMin(minTotal(cur.pasos))} <span style={{ fontWeight: 300, fontSize: 12 }}>min</span></div><div style={{ ...mono10, fontSize: 9 }}>+ {fmtMin(esperaTotal(cur.pasos))} MIN DE ESPERA</div></div>
+                  <div><div style={mono10}>PROPUESTO</div><div style={{ fontWeight: 900, fontSize: 22, letterSpacing: "-0.02em", color: C.olivo }}>{fmtMin(minNuevo(cur.pasos))} <span style={{ fontWeight: 300, fontSize: 12 }}>min</span></div></div>
                   <div><div style={mono10}>AHORRO</div><div style={{ fontWeight: 900, fontSize: 22, letterSpacing: "-0.02em" }}>{h1(ahorroHorasSemana(cur))} <span style={{ fontWeight: 300, fontSize: 12 }}>h/sem</span></div></div>
                 </div>
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "28px 1.6fr 110px 120px 70px 70px 1fr 70px", gap: 10, padding: "8px 0", borderBottom: "1px solid rgba(238,235,228,0.09)" }}>{["#", "PASO · FLUJO ACTUAL", "QUIÉN", "HERRAMIENTA", "MIN", "ESPERA", "FLUJO PROPUESTO", "MIN"].map((h) => <div key={h} style={mono10}>{h}</div>)}</div>
+              <AyudaMinutos />
+              <div style={{ display: "grid", gridTemplateColumns: "28px 1.6fr 110px 120px 70px 70px 1fr 70px", gap: 10, padding: "8px 0", borderBottom: "1px solid rgba(238,235,228,0.09)", alignItems: "end" }}>{([["#", "Clic en el número para marcar que en ese paso se atora (recaptura o error)"], ["PASO · FLUJO ACTUAL", "Lo que pasa hoy, en el orden en que pasa"], ["QUIÉN", "Quién hace el paso"], ["HERRAMIENTA", "Con qué lo hace: papel, WhatsApp, Excel…"], ["MIN DE TRABAJO", "Minutos que una persona está ocupada en este paso, una sola vez. Acepta 0.5 o 1:30"], ["MIN DE ESPERA", "Minutos en que nadie trabaja pero el proceso está detenido. No cuenta como horas del personal"], ["FLUJO PROPUESTO", "Qué harías con este paso"], ["MIN CON LA MEJORA", "Minutos de trabajo que quedarían en este paso con la propuesta"]] as const).map(([h, d]) => <div key={h} title={d} style={{ ...mono10, lineHeight: 1.3, cursor: "help" }}>{h}</div>)}</div>
               {cur.pasos.map((s, i) => (
                 <div key={i} style={{ display: "grid", gridTemplateColumns: "28px 1.6fr 110px 120px 70px 70px 1fr 70px", gap: 10, padding: "9px 0", alignItems: "center", borderBottom: "1px solid rgba(238,235,228,0.06)", background: s.atoro ? "rgba(176,81,57,0.07)" : "transparent" }}>
                   <button type="button" title="Marcar punto donde se atora" onClick={() => updPaso(cur.id, i, { atoro: !s.atoro })} style={{ width: 22, height: 22, borderRadius: "50%", border: `1px solid ${s.atoro ? C.oxido : C.borde2}`, background: s.atoro ? C.oxido : "transparent", color: C.papel, fontFamily: MONO, fontSize: 9, cursor: "pointer" }}>{i + 1}</button>
                   <input value={s.p} onChange={(e) => updPaso(cur.id, i, { p: e.target.value })} style={{ background: "transparent", border: "none", color: C.papel, fontSize: 13, outline: "none" }} />
                   <input value={s.quien} onChange={(e) => updPaso(cur.id, i, { quien: e.target.value })} style={{ background: "transparent", border: "none", color: C.niebla, fontSize: 12.5, outline: "none" }} />
                   <input value={s.herr} onChange={(e) => updPaso(cur.id, i, { herr: e.target.value })} style={{ background: "transparent", border: "none", color: C.niebla, fontSize: 12.5, outline: "none" }} />
-                  <input value={s.min} inputMode="numeric" onChange={(e) => updPaso(cur.id, i, { min: Number(e.target.value.replace(/[^0-9]/g, "")) || 0 })} style={{ background: C.p2, border: `1px solid ${C.borde}`, borderRadius: 999, height: 30, color: C.papel, fontFamily: MONO, fontSize: 11, textAlign: "center", outline: "none" }} />
-                  <input value={s.espera} inputMode="numeric" onChange={(e) => updPaso(cur.id, i, { espera: Number(e.target.value.replace(/[^0-9]/g, "")) || 0 })} style={{ background: C.p2, border: `1px solid ${C.borde}`, borderRadius: 999, height: 30, color: s.espera > 10 ? C.ambar : C.papel, fontFamily: MONO, fontSize: 11, textAlign: "center", outline: "none" }} />
-                  <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>{ACCIONES.map((a) => <button key={a} type="button" onClick={() => updPaso(cur.id, i, { accion: a, minNuevo: a === "Eliminar" ? 0 : s.minNuevo })} style={{ height: 24, padding: "0 8px", borderRadius: 999, border: `1px solid ${s.accion === a ? ACCION_COLOR[a] : "rgba(238,235,228,0.1)"}`, background: s.accion === a ? ACCION_COLOR[a] : "transparent", color: s.accion === a ? (a === "Automatizar" || a === "Mantener" ? C.tinta : C.papel) : C.niebla, fontSize: 10.5, cursor: "pointer" }}>{a}</button>)}</div>
-                  <input value={s.accion === "Eliminar" ? 0 : s.minNuevo} disabled={s.accion === "Eliminar"} inputMode="numeric" onChange={(e) => updPaso(cur.id, i, { minNuevo: Number(e.target.value.replace(/[^0-9]/g, "")) || 0 })} style={{ background: C.p2, border: `1px solid ${C.borde}`, borderRadius: 999, height: 30, color: C.olivo, fontFamily: MONO, fontSize: 11, textAlign: "center", outline: "none", opacity: s.accion === "Eliminar" ? 0.4 : 1 }} />
+                  <NumIn value={s.min} title="Minutos de trabajo, una vez. 0.5 = medio minuto · 1:30 = minuto y medio" onChange={(v) => updPaso(cur.id, i, { min: v })} style={{ background: C.p2, border: `1px solid ${C.borde}`, borderRadius: 999, height: 30, color: C.papel, fontFamily: MONO, fontSize: 11, textAlign: "center", outline: "none" }} />
+                  <NumIn value={s.espera} title="Minutos detenido sin que nadie trabaje (esperar respuesta, una transferencia, a que llegue alguien)" onChange={(v) => updPaso(cur.id, i, { espera: v })} style={{ background: C.p2, border: `1px solid ${C.borde}`, borderRadius: 999, height: 30, color: s.espera > 10 ? C.ambar : C.papel, fontFamily: MONO, fontSize: 11, textAlign: "center", outline: "none" }} />
+                  <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>{ACCIONES.map((a) => <button key={a} type="button" onClick={() => updPaso(cur.id, i, { accion: a, minNuevo: a === "Eliminar" ? 0 : s.accion === "Mantener" || s.accion === "Eliminar" ? s.min : s.minNuevo })} style={{ height: 24, padding: "0 8px", borderRadius: 999, border: `1px solid ${s.accion === a ? ACCION_COLOR[a] : "rgba(238,235,228,0.1)"}`, background: s.accion === a ? ACCION_COLOR[a] : "transparent", color: s.accion === a ? (a === "Automatizar" || a === "Mantener" ? C.tinta : C.papel) : C.niebla, fontSize: 10.5, cursor: "pointer" }}>{a}</button>)}</div>
+                  <NumIn value={minPropuesto(s)} disabled={s.accion === "Eliminar" || s.accion === "Mantener"} title={s.accion === "Mantener" ? "Mantener deja los mismos minutos" : s.accion === "Eliminar" ? "El paso desaparece: 0 minutos" : "Minutos de trabajo que quedarían con la mejora"} onChange={(v) => updPaso(cur.id, i, { minNuevo: v })} style={{ background: C.p2, border: `1px solid ${C.borde}`, borderRadius: 999, height: 30, color: C.olivo, fontFamily: MONO, fontSize: 11, textAlign: "center", outline: "none", opacity: s.accion === "Eliminar" || s.accion === "Mantener" ? 0.45 : 1, width: "100%" }} />
                 </div>
               ))}
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 10, gap: 10 }}>
@@ -365,5 +366,45 @@ function MapaView({ mapa, onChange, onBack }: { mapa: Mapa; onChange: (m: Mapa) 
         </div>
       )}
     </section>
+  );
+}
+
+/* Entrada de minutos: acepta enteros, decimales (0.5 o 0,5) y minutos con segundos (1:30 = 1.5).
+   Guarda el texto mientras se escribe para no perder el punto decimal. */
+export function aMinutos(s: string): number {
+  const x = s.trim().replace(",", ".");
+  const ms = /^(\d+):(\d{1,2})$/.exec(x);
+  if (ms) return Math.round((Number(ms[1]) + Math.min(59, Number(ms[2])) / 60) * 100) / 100;
+  const n = Number(x.replace(/[^0-9.]/g, "").replace(/(\..*)\./g, "$1"));
+  return Number.isFinite(n) ? Math.round(n * 100) / 100 : 0;
+}
+function NumIn({ value, onChange, style, title, disabled }: { value: number; onChange: (v: number) => void; style?: React.CSSProperties; title?: string; disabled?: boolean }) {
+  const [txt, setTxt] = useState<string | null>(null);
+  return <input value={txt ?? fmtMin(value)} title={title} disabled={disabled} inputMode="decimal"
+    onChange={(e) => { const v = e.target.value.replace(/[^0-9.,:]/g, ""); setTxt(v); onChange(aMinutos(v)); }}
+    onBlur={() => setTxt(null)} style={{ ...style, minWidth: 0 }} />;
+}
+
+function AyudaMinutos() {
+  const filas: [string, string][] = [
+    ["Veces · por día / por semana", "Cuántas veces ocurre el proceso completo. Ejemplo: 10 pedidos por día. Si pasa pocas veces, cámbialo a por semana."],
+    ["Días/sem", "Cuántos días a la semana ocurre (los días que abre el negocio)."],
+    ["Dolor", "Qué tanto le pesa al dueño, de 1 a 3. No entra en el cálculo; sirve para decidir por dónde empezar."],
+    ["Min de trabajo", "Minutos que una persona está ocupada en ese paso, una sola vez. Cronometra tres veces y anota la de en medio. Acepta medio minuto: escribe 0.5, o 1:30 para minuto y medio."],
+    ["Min de espera", "Tiempo en que el proceso está detenido y nadie trabaja: la clienta espera respuesta, se espera la transferencia. No suma horas del personal; se reporta aparte como tiempo del cliente. Más de 10 se marca en ámbar."],
+    ["Flujo propuesto", "Qué harías con el paso. Mantener: igual. Simplificar: menos vueltas. Automatizar: lo hace el sistema. Agente IA: lo prepara un agente y alguien aprueba. Eliminar: desaparece."],
+    ["Min con la mejora", "Minutos de trabajo que quedarían en ese paso con la propuesta. Con Mantener son los mismos y con Eliminar son cero; en los demás escríbelos tú."],
+    ["Número del paso", "Haz clic para marcar que ahí se atora: el mismo dato se escribe dos veces o ahí nacen los errores."],
+  ];
+  return (
+    <details style={{ margin: "4px 0 12px", border: `1px solid ${C.borde}`, borderRadius: 16, padding: "10px 14px", background: "rgba(238,235,228,0.03)" }}>
+      <summary style={{ cursor: "pointer", fontSize: 13, color: C.papel }}>Cómo llenar esta tabla <span style={{ ...mono10, marginLeft: 6 }}>MINUTOS, ESPERA Y AHORRO</span></summary>
+      <div style={{ display: "grid", gridTemplateColumns: "190px 1fr", gap: "8px 14px", marginTop: 12, fontSize: 12.5, lineHeight: 1.45 }}>
+        {filas.map(([k, v]) => <React.Fragment key={k}><div style={{ color: C.papel, fontWeight: 600 }}>{k}</div><div style={{ color: C.niebla, textWrap: "pretty" }}>{v}</div></React.Fragment>)}
+      </div>
+      <div style={{ marginTop: 12, paddingTop: 10, borderTop: `1px solid ${C.borde}`, fontSize: 12.5, color: C.niebla, lineHeight: 1.5 }}>
+        <strong style={{ color: C.papel }}>Cómo se calcula.</strong> Horas por semana = minutos de trabajo de todos los pasos × veces por día × días ÷ 60. Ejemplo: 10 minutos por pedido × 10 pedidos al día × 6 días = 600 minutos, o sea <strong style={{ color: C.papel }}>10 h/sem</strong>. Si con la mejora quedan 3 minutos por pedido, son 3 h/sem y el ahorro es <strong style={{ color: C.papel }}>7 h/sem</strong>. La espera no entra en estas horas.
+      </div>
+    </details>
   );
 }

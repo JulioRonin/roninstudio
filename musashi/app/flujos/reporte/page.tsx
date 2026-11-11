@@ -5,7 +5,7 @@ import { PaperDoc } from "@/components/paper";
 import { load } from "@/lib/store";
 import { datos, eq } from "@/lib/datos";
 import { TARIFAS_BASE, mxn0, type Tarifas } from "@/lib/tarifas";
-import { MAPA_DEMO, deFilaMapa, type FilaMapa, minTotal, esperaTotal, minNuevo, ejecSemana, horasSemanaActual, ahorroHorasSemana, ahorroMesMXN, recapturas, type Mapa } from "@/lib/flujos";
+import { MAPA_DEMO, deFilaMapa, type FilaMapa, minTotal, esperaTotal, minNuevo, minPropuesto, fmtMin, ejecSemana, horasSemanaActual, ahorroHorasSemana, ahorroMesMXN, recapturas, type Mapa } from "@/lib/flujos";
 
 const h1 = (n: number) => (Math.round(n * 10) / 10).toLocaleString("en-US");
 
@@ -50,16 +50,16 @@ function ReporteFlujos() {
       <h2>Inventario de procesos</h2>
       <table>
         <thead><tr><th>Área</th><th>Proceso</th><th>Quién</th><th>Hoy</th><th className="num">Veces/sem</th><th className="num">Min trabajo</th><th className="num">Min espera</th><th className="num">Min propuesto</th><th className="num">H/sem liberadas</th></tr></thead>
-        <tbody>{procs.map((p) => <tr key={p.id}><td className="mono">{p.area.toUpperCase()}</td><td>{p.nombre}</td><td>{p.dueno}</td><td>{p.herramienta}</td><td className="num">{ejecSemana(p)}</td><td className="num">{minTotal(p.pasos)}</td><td className="num">{esperaTotal(p.pasos)}</td><td className="num">{minNuevo(p.pasos)}</td><td className="num">{h1(ahorroHorasSemana(p))}</td></tr>)}</tbody>
+        <tbody>{procs.map((p) => <tr key={p.id}><td className="mono">{p.area.toUpperCase()}</td><td>{p.nombre}</td><td>{p.dueno}</td><td>{p.herramienta}</td><td className="num">{ejecSemana(p)}</td><td className="num">{fmtMin(minTotal(p.pasos))}</td><td className="num">{fmtMin(esperaTotal(p.pasos))}</td><td className="num">{minNuevo(p.pasos)}</td><td className="num">{h1(ahorroHorasSemana(p))}</td></tr>)}</tbody>
       </table>
 
       <h2>Cómo queda cada flujo</h2>
       {procs.filter((p) => p.pasos.length).map((p) => (
         <div key={p.id} style={{ marginBottom: 14 }}>
-          <h3>{p.id} · {p.nombre} <span className="mono">· {minTotal(p.pasos)} → {minNuevo(p.pasos)} MIN POR VEZ</span></h3>
+          <h3>{p.id} · {p.nombre} <span className="mono">· {fmtMin(minTotal(p.pasos))} → {fmtMin(minNuevo(p.pasos))} MIN POR VEZ</span></h3>
           <table>
             <thead><tr><th>#</th><th>Paso hoy</th><th>Quién · herramienta</th><th className="num">Trabajo</th><th className="num">Espera</th><th>Qué cambia</th><th className="num">Min</th></tr></thead>
-            <tbody>{p.pasos.map((s, i) => <tr key={i}><td className="mono">{i + 1}{s.atoro ? " ●" : ""}</td><td>{s.p}</td><td>{s.quien} · {s.herr}</td><td className="num">{s.min}</td><td className="num">{s.espera || "—"}</td><td>{s.accion === "Eliminar" ? "Se elimina" : s.accion === "Mantener" ? "Se mantiene" : s.accion === "Agente IA" ? "Lo atiende un agente de IA con aprobación" : s.accion === "Automatizar" ? "Se automatiza en la plataforma" : "Se simplifica"}</td><td className="num">{s.accion === "Eliminar" ? 0 : s.minNuevo}</td></tr>)}</tbody>
+            <tbody>{p.pasos.map((s, i) => <tr key={i}><td className="mono">{i + 1}{s.atoro ? " ●" : ""}</td><td>{s.p}</td><td>{s.quien} · {s.herr}</td><td className="num">{fmtMin(s.min)}</td><td className="num">{s.espera ? fmtMin(s.espera) : "—"}</td><td>{s.accion === "Eliminar" ? "Se elimina" : s.accion === "Mantener" ? "Se mantiene" : s.accion === "Agente IA" ? "Lo atiende un agente de IA con aprobación" : s.accion === "Automatizar" ? "Se automatiza en la plataforma" : "Se simplifica"}</td><td className="num">{fmtMin(minPropuesto(s))}</td></tr>)}</tbody>
           </table>
           {p.hallazgos.length > 0 && <p style={{ fontSize: 12.5, color: "#3A4048" }}>{p.hallazgos.join(" ")}</p>}
         </div>

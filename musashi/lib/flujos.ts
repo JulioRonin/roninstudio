@@ -41,7 +41,11 @@ export const PROCESOS: Proceso[] = [
 /** minutos de trabajo de la gente por ejecución (las esperas se reportan aparte: son tiempo del cliente, no horas del personal) */
 export const minTotal = (ps: Paso[]) => ps.reduce((s, p) => s + p.min, 0);
 export const esperaTotal = (ps: Paso[]) => ps.reduce((s, p) => s + p.espera, 0);
-export const minNuevo = (ps: Paso[]) => ps.reduce((s, p) => s + (p.accion === "Eliminar" ? 0 : p.minNuevo), 0);
+/** minutos de trabajo por paso con la mejora: Mantener deja los mismos minutos y Eliminar los deja en cero */
+export const minPropuesto = (p: Paso) => (p.accion === "Eliminar" ? 0 : p.accion === "Mantener" ? p.min : p.minNuevo);
+export const minNuevo = (ps: Paso[]) => ps.reduce((s, p) => s + minPropuesto(p), 0);
+/** 2.5 → "2.5", 3 → "3" (los minutos aceptan decimales) */
+export const fmtMin = (n: number) => (Math.round(n * 10) / 10).toLocaleString("en-US");
 /** ejecuciones por semana */
 export const ejecSemana = (p: Proceso) => (p.porDia ? p.frecuencia * p.dias : p.frecuencia);
 export const horasSemanaActual = (p: Proceso) => (minTotal(p.pasos) * ejecSemana(p)) / 60;
