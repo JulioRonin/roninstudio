@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { autorizado, DEMO } from "@/lib/hermes";
 import { hayDB, sb } from "@/lib/db";
+import { generarMensualidades } from "@/lib/mensualidades";
+import { periodoCorto } from "@/lib/mensualidades-base";
 import { TASKS, TRAY } from "@/lib/demo";
 import { COTS, FACTURAS, PAGOS, total } from "@/lib/cotizaciones";
 import { RESUMENES } from "@/lib/proyectos";
@@ -36,9 +38,11 @@ async function real(para: string) {
   const cli = new Map(clientes.map((c) => [c.id, c]));
   const ref = (id: string | null) => { const c = id ? cli.get(id) : undefined; return c ? { cliente_id: c.id, cliente: c.nombre, sector: c.sector, contacto: principal(c) } : { cliente_id: null, cliente: null, sector: null, contacto: null }; };
 
-  const facturasAbiertas = async () => (await sb<{ id: string; folio: string; monto: number; estado: string; emitida: string | null; vence: string | null; cliente_id: string; proyecto: { codigo: string; nombre: string } | null; hito: { nombre: string } | null }[]>(
+  // Antes de leer la cobranza se generan las facturas de mensualidad que ya tocan, para que el agente las vea.
+  const mensualidades = async () => { const m = new Map<string, string>(); try { const g = await generarMensualidades(); if (g.lista) (await sb<{ id: string; periodo: string; mensualidad: { concepto: string } | null }[]>("facturas?select=id,periodo,mensualidad:mensualidades(concepto)&periodo=not.is.null&estado=in.(Vigente,Vencida)")).forEach((x) => m.set(x.id, `${x.mensualidad?.concepto ?? "Mensualidad"} · ${periodoCorto(x.periodo)}`)); } catch {} return m; };
+  const facturasAbiertas = async () => { const mens = await mensualidades(); return (await sb<{ id: string; folio: string; monto: number; estado: string; emitida: string | null; vence: string | null; cliente_id: string; proyecto: { codigo: string; nombre: string } | null; hito: { nombre: string } | null }[]>(
     "facturas?select=id,folio,monto,estado,emitida,vence,cliente_id,proyecto:proyectos(codigo,nombre),hito:hitos(nombre)&estado=in.(Vigente,Vencida)&order=vence.asc"))
-    .map((f) => ({ factura_id: f.id, folio: f.folio, monto: Number(f.monto), emitida: f.emitida, vence: f.vence, dias_vencida: f.vence && f.vence < hoy ? dias(hoy, f.vence) : 0, concepto: f.hito?.nombre ?? (f.proyecto ? `Anticipo · ${f.proyecto.nombre}` : "Factura directa"), proyecto: f.proyecto?.codigo ?? null, ...ref(f.cliente_id) }));
+    .map((f) => ({ factura_id: f.id, folio: f.folio, monto: Number(f.monto), emitida: f.emitida, vence: f.vence, dias_vencida: f.vence && f.vence < hoy ? dias(hoy, f.vence) : 0, concepto: mens.get(f.id) ?? f.hito?.nombre ?? (f.proyecto ? `Anticipo · ${f.proyecto.nombre}` : "Factura directa"), proyecto: f.proyecto?.codigo ?? null, ...ref(f.cliente_id) })); };
   const cotizacionesVivas = async () => (await sb<{ id: string; folio: string; proyecto_nombre: string; estado: string; vigencia: string | null; abierta_veces: number; abierta_ultima: string | null; credito: number; cliente_id: string; creado_en: string; cotizacion_lineas: { monto: number }[] }[]>(
     "cotizaciones?select=id,folio,proyecto_nombre,estado,vigencia,abierta_veces,abierta_ultima,credito,cliente_id,creado_en,cotizacion_lineas(monto)&estado=in.(Enviada,Abierta)&order=creado_en.desc"))
     .map((c) => ({ cotizacion_id: c.id, folio: c.folio, proyecto: c.proyecto_nombre, estado: c.estado, total_sin_iva: c.cotizacion_lineas.reduce((s, l) => s + Number(l.monto), 0) - Number(c.credito), vigencia: c.vigencia, dias_para_vencer: c.vigencia ? dias(c.vigencia, hoy) : null, veces_abierta: c.abierta_veces, ultima_apertura: c.abierta_ultima, enviada: c.creado_en.slice(0, 10), ...ref(c.cliente_id) }));

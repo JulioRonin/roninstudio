@@ -12,6 +12,7 @@ Musashi habla con Supabase sólo desde el servidor (route handlers en Vercel). E
 | `SUPABASE_SECRET_KEY` | Supabase → Project Settings → API Keys → Secret keys (`sb_secret_…`) | Llave de servidor con todos los permisos. Sólo en Vercel, marcada como Sensitive. Si se filtra, se revoca ahí mismo y se crea otra. |
 
 Esquema: `supabase/migrations/0001_musashi_base.sql`, se corre una vez en el SQL Editor.
+Después, también una sola vez, `supabase/migrations/0002_mensualidades.sql`: agrega los cobros mensuales recurrentes (Facturación → Mensualidades). Mientras no se corra, esa pestaña muestra el aviso y el resto funciona igual.
 Más adelante, si se usa Supabase Storage para archivos o el sitio público envía el diagnóstico exprés, se hará a través de rutas de Musashi, sin abrir la base.
 
 ## 2 · Vercel (despliegue de Musashi y del sitio público)

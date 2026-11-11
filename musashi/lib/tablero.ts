@@ -133,6 +133,10 @@ export function useTablero() {
   const [modo, setModo] = useState<"cargando" | "db" | "demo" | "error">("cargando");
   const [t, setT] = useState<Tablero | null>(null);
   const refrescar = useCallback(() => { cargar().then((x) => { if (x) { setT(x); setModo("db"); } else setModo("demo"); }).catch(() => setModo((m) => (m === "cargando" ? "error" : m))); }, []);
-  useEffect(() => { refrescar(); }, [refrescar]);
+  useEffect(() => {
+    refrescar();
+    // Facturas de mensualidad cuyo día de cobro ya llegó: se generan al abrir y, si hubo alguna, se recarga.
+    fetch("/api/mensualidades/generar", { method: "POST" }).then((r) => (r.ok ? r.json() : null)).then((d) => { if (d?.generadas?.length) refrescar(); }).catch(() => {});
+  }, [refrescar]);
   return { modo, t, refrescar };
 }

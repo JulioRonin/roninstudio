@@ -29,7 +29,7 @@ export async function sb<T = unknown>(path: string, o: { method?: string; body?:
 /** Tablas y vistas que la API de datos de Musashi puede tocar. */
 export const TABLAS = new Set([
   "clientes", "contactos", "diagnosticos_expres", "cotizaciones", "cotizacion_lineas", "proyectos", "hitos", "horas", "riesgos",
-  "tareas", "facturas", "movimientos", "mapas_flujo", "configuracion", "piezas", "propuestas_ia", "corridas_agente",
+  "tareas", "facturas", "movimientos", "mapas_flujo", "configuracion", "piezas", "propuestas_ia", "corridas_agente", "mensualidades",
   "balance_mensual", "saldos_cliente",
 ]);
 export const VISTAS = new Set(["balance_mensual", "saldos_cliente"]);
