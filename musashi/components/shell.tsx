@@ -87,15 +87,30 @@ export function Shell({ children, demo = true }: { children: ReactNode; demo?: b
 
   const value = useMemo<UI>(() => ({ flash, tray, trayOpen, toggleTray, approve, discard, demo: demo && !db, db }), [flash, tray, trayOpen, toggleTray, approve, discard, demo, db]);
 
+  useEffect(() => { if (path.startsWith("/c/") || !("serviceWorker" in navigator)) return; navigator.serviceWorker.register("/sw.js").catch(() => {}); }, [path]);
+  // Android/Chrome avisan que Musashi se puede instalar: se guarda el aviso para el botón "Instalar".
+  const [instalable, setInstalable] = useState(false);
+  useEffect(() => {
+    const f = (e: Event) => { e.preventDefault(); (window as Window & { __instalar?: Event }).__instalar = e; try { if (!sessionStorage.getItem("musashi-instalar-no")) setInstalable(true); } catch { setInstalable(true); } };
+    const g = () => setInstalable(false);
+    window.addEventListener("beforeinstallprompt", f); window.addEventListener("appinstalled", g);
+    return () => { window.removeEventListener("beforeinstallprompt", f); window.removeEventListener("appinstalled", g); };
+  }, []);
   if (BARE.some((b) => path.startsWith(b))) return <UICtx.Provider value={value}>{children}</UICtx.Provider>;
 
   return (
     <UICtx.Provider value={value}>
-      <div style={{ maxWidth: 1440, width: "100%", margin: "0 auto", background: C.tinta, minHeight: "100vh", position: "relative", overflow: "hidden", isolation: "isolate" }}>
+      <div className="m-app" style={{ maxWidth: 1440, width: "100%", margin: "0 auto", background: C.tinta, minHeight: "100vh", position: "relative", overflow: "hidden", isolation: "isolate" }}>
         <Glows />
         <Header onSearch={() => setPalette(true)} />
         {children}
         {trayOpen && <Tray />}
+        {instalable && (
+          <div style={{ position: "fixed", left: 12, bottom: "calc(12px + env(safe-area-inset-bottom))", zIndex: 30, display: "flex", gap: 6, alignItems: "center", background: "rgba(19,23,29,0.92)", border: `1px solid ${C.borde2}`, borderRadius: 999, padding: 6, backdropFilter: "blur(18px)" }}>
+            <button type="button" onClick={() => { const ev = (window as Window & { __instalar?: { prompt: () => Promise<void> } }).__instalar; void ev?.prompt(); setInstalable(false); }} style={{ height: 36, padding: "0 14px", borderRadius: 999, background: C.papel, color: C.tinta, border: "none", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Instalar Musashi</button>
+            <button type="button" aria-label="Ahora no" onClick={() => { setInstalable(false); try { sessionStorage.setItem("musashi-instalar-no", "1"); } catch {} }} style={{ width: 32, height: 32, borderRadius: "50%", background: "transparent", border: "none", color: C.tenue, cursor: "pointer" }}>✕</button>
+          </div>
+        )}
         {palette && <Palette close={() => setPalette(false)} />}
         {toast && <Toast msg={toast} />}
       </div>
@@ -140,7 +155,7 @@ function Palette({ close }: { close: () => void }) {
   return (
     <>
       <div onClick={close} style={{ position: "fixed", inset: 0, background: "rgba(7,9,12,0.6)", zIndex: 70 }} />
-      <div style={{ position: "fixed", top: 120, left: "50%", transform: "translateX(-50%)", width: 560, background: "rgba(19,23,29,0.9)", backdropFilter: "blur(28px)", border: "1px solid rgba(238,235,228,0.12)", borderRadius: 24, padding: 10, zIndex: 71, animation: "rise .25s ease both" }}>
+      <div className="m-palette" style={{ position: "fixed", top: 120, left: "50%", transform: "translateX(-50%)", width: 560, background: "rgba(19,23,29,0.9)", backdropFilter: "blur(28px)", border: "1px solid rgba(238,235,228,0.12)", borderRadius: 24, padding: 10, zIndex: 71, animation: "rise .25s ease both" }}>
         <input autoFocus value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && items[0]) go(items[0].href); }} placeholder="Buscar pantalla, cliente, factura, documento…" style={{ width: "100%", height: 48, padding: "0 18px", borderRadius: 999, background: C.p2, border: `1px solid ${C.borde}`, color: C.papel, fontSize: 14, outline: "none" }} />
         <div style={{ display: "flex", flexDirection: "column", gap: 2, marginTop: 8 }}>
           {items.map((i, k) => (
@@ -181,21 +196,21 @@ function Header({ onSearch }: { onSearch: () => void }) {
           {db ? <><Dot color={C.olivo} />DATOS REALES · GUARDADOS EN TU BASE</> : <><Dot color={C.oxido} />MODO DEMO · DATOS DE EJEMPLO</>}
         </div>
       )}
-      <header style={{ display: "flex", alignItems: "center", gap: 12, padding: "22px 32px 0" }}>
+      <header className="m-header" style={{ display: "flex", alignItems: "center", gap: 12, padding: "22px 32px 0" }}>
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, marginRight: 6, flexShrink: 0 }}>
           <RGlyph active={1} size={26} />
           <span style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
             <span style={{ fontWeight: 900, fontSize: 17, letterSpacing: "-0.02em" }}>MUSASHI</span>
           </span>
         </Link>
-        <H as="button" type="button" onClick={onSearch} title="Buscar · Ctrl K" style={{ display: "flex", alignItems: "center", gap: 8, height: 48, padding: "0 10px 0 6px", borderRadius: 999, background: "rgba(22,26,33,0.55)", backdropFilter: "blur(18px)", border: "1px solid rgba(238,235,228,0.09)", flexShrink: 0, cursor: "pointer", color: C.papel, textAlign: "left" }} hover={{ borderColor: C.acero }}>
+        <H as="button" type="button" className="m-search" onClick={onSearch} title="Buscar · Ctrl K" style={{ display: "flex", alignItems: "center", gap: 8, height: 48, padding: "0 10px 0 6px", borderRadius: 999, background: "rgba(22,26,33,0.55)", backdropFilter: "blur(18px)", border: "1px solid rgba(238,235,228,0.09)", flexShrink: 0, cursor: "pointer", color: C.papel, textAlign: "left" }} hover={{ borderColor: C.acero }}>
           <span style={{ width: 36, height: 36, borderRadius: "50%", background: C.p3, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
             <span style={{ width: 11, height: 11, border: `1.5px solid ${C.papel}`, borderRadius: "50%" }} />
           </span>
           
           <span style={{ fontFamily: MONO, fontSize: 9, letterSpacing: "0.1em", color: C.tenue, padding: "4px 7px", border: `1px solid ${C.borde}`, borderRadius: 999, whiteSpace: "nowrap", flexShrink: 0 }}>CTRL K</span>
         </H>
-        <nav style={{ display: "flex", gap: 3, flex: 1, justifyContent: "center", minWidth: 0 }}>
+        <nav className="m-nav" style={{ display: "flex", gap: 3, flex: 1, justifyContent: "center", minWidth: 0 }}>
           {NAV.map(([label, href]) => {
             const a = isActive(href);
             return (
@@ -227,7 +242,7 @@ function Tray() {
   return (
     <>
       <div onClick={toggleTray} style={{ position: "fixed", inset: 0, background: "rgba(7,9,12,0.6)", zIndex: 50 }} />
-      <aside style={{ position: "fixed", top: 16, right: 16, bottom: 16, width: 440, background: "rgba(19,23,29,0.78)", backdropFilter: "blur(28px)", WebkitBackdropFilter: "blur(28px)", border: "1px solid rgba(238,235,228,0.1)", borderRadius: 28, padding: 24, display: "flex", flexDirection: "column", gap: 14, overflow: "auto", zIndex: 51, animation: "rise .35s ease both" }}>
+      <aside className="m-tray" style={{ position: "fixed", top: 16, right: 16, bottom: 16, width: 440, background: "rgba(19,23,29,0.78)", backdropFilter: "blur(28px)", WebkitBackdropFilter: "blur(28px)", border: "1px solid rgba(238,235,228,0.1)", borderRadius: 28, padding: 24, display: "flex", flexDirection: "column", gap: 14, overflow: "auto", zIndex: 51, animation: "rise .35s ease both" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <div>
             <div style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.14em", color: C.tenue }}>A APROBAR · D DESCARTAR</div>
@@ -267,18 +282,18 @@ function Toast({ msg }: { msg: string }) {
 /* ---------- Encabezado de pantalla (glifo + eyebrow + título) ---------- */
 export function PageHead({ stage = 1, eyebrow, title, sub, right, style }: { stage?: number; eyebrow: ReactNode; title: ReactNode; sub?: ReactNode; right?: ReactNode; style?: React.CSSProperties }) {
   return (
-    <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 20, padding: "28px 32px 0", ...style }}>
+    <div className="m-pagehead" style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 20, padding: "28px 32px 0", ...style }}>
       <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-        <span style={{ width: 64, height: 64, borderRadius: "50%", background: "rgba(22,26,33,0.8)", border: `1px solid ${C.borde}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><RGlyph active={stage} size={30} /></span>
+        <span className="m-glyph" style={{ width: 64, height: 64, borderRadius: "50%", background: "rgba(22,26,33,0.8)", border: `1px solid ${C.borde}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><RGlyph active={stage} size={30} /></span>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: 8, fontFamily: MONO, fontSize: 10, letterSpacing: "0.14em", color: C.tenue }}>
             <span style={{ width: 3, height: 12, background: C.oxido, transform: "skewY(-14deg)", boxShadow: `0 0 8px ${C.oxido}` }} />{eyebrow}
           </div>
-          <div style={{ fontWeight: 900, fontSize: 44, letterSpacing: "-0.02em", lineHeight: 1, marginTop: 8 }}>{title}</div>
+          <div className="m-title" style={{ fontWeight: 900, fontSize: 44, letterSpacing: "-0.02em", lineHeight: 1, marginTop: 8 }}>{title}</div>
           {sub && <div style={{ fontWeight: 300, fontSize: 15, color: C.niebla, marginTop: 8 }}>{sub}</div>}
         </div>
       </div>
-      {right && <div style={{ display: "flex", gap: 8, alignItems: "center", flexShrink: 0 }}>{right}</div>}
+      {right && <div className="m-right" style={{ display: "flex", gap: 8, alignItems: "center", flexShrink: 0 }}>{right}</div>}
     </div>
   );
 }

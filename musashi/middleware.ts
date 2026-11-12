@@ -4,7 +4,7 @@ import { COOKIE, configurado, tokenValido } from "@/lib/sesion";
 // Todo Musashi pide sesión, salvo el login y las rutas que usan los agentes de Hermes,
 // que se autentican en el propio handler con Authorization: Bearer MUSASHI_API_KEY.
 const ABIERTAS = ["/login", "/api/login", "/api/logout"];
-const AGENTES = ["/api/hermes/propuestas", "/api/hermes/contexto", "/api/hermes/corridas"];
+const AGENTES = ["/api/hermes/propuestas", "/api/hermes/contexto", "/api/hermes/corridas", "/api/cron/resumen"];
 // Públicas: la liga privada de una cotización (firma en la URL) y lo que manda el sitio público.
 const PUBLICAS = ["/c/", "/api/publico/"];
 
@@ -29,5 +29,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon\\.ico|.*\\.(?:webp|png|jpg|jpeg|svg|ico|txt)$).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon\\.ico|manifest\\.webmanifest|sw\\.js|offline\\.html|.*\\.(?:webp|png|jpg|jpeg|svg|ico|txt)$).*)"],
 };

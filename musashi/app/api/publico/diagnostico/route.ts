@@ -1,4 +1,5 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse, after, type NextRequest } from "next/server";
+import { notificar } from "@/lib/push";
 import { hayDB, sb } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
@@ -29,6 +30,7 @@ export async function POST(req: NextRequest) {
       hallazgos: { lista: lista(b.hallazgos, 12, 300), horas: txt(b.horas, 160), contexto: lista(b.contexto_otro, 12, 500) },
       lectura_interna: { nivel: txt(b.lectura_interna, 80) },
     } });
+    after(() => notificar("diagnosticos", { titulo: "Nuevo diagnóstico exprés", cuerpo: `${negocio}${txt(b.sector, 60) ? " · " + txt(b.sector, 60) : ""} · ${nombre}`, url: "/diagnosticos?tab=expres", tag: "diagnostico" }));
     return NextResponse.json({ ok: true, guardado: true }, { status: 201 });
   } catch (e) { console.error("[diagnostico exprés]", e); return NextResponse.json({ error: "no se pudo guardar" }, { status: 502 }); }
 }

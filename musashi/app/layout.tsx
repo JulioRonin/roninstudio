@@ -6,8 +6,12 @@ export const metadata: Metadata = {
   title: "Musashi · Ronin Studio",
   description: "Plataforma interna de Ronin Studio: clientes, diagnósticos, proyectos, finanzas, agentes y marketing.",
   robots: { index: false, follow: false },
+  applicationName: "Musashi",
+  appleWebApp: { capable: true, title: "Musashi", statusBarStyle: "black-translucent" },
+  icons: { icon: [{ url: "/icon.svg", type: "image/svg+xml" }, { url: "/icon-192.png", sizes: "192x192" }], apple: "/apple-touch-icon.png" },
+  formatDetection: { telephone: false },
 };
-export const viewport: Viewport = { themeColor: "#0C0F14", width: "device-width", initialScale: 1 };
+export const viewport: Viewport = { themeColor: "#0C0F14", width: "device-width", initialScale: 1, viewportFit: "cover" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

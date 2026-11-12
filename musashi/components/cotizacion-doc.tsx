@@ -110,10 +110,10 @@ export function CotizacionDoc({ cot, emitida, ciudad, contacto, t, fx, publico =
 
       <h2>Condiciones</h2>
       <ul>
-        <li>Precios en pesos mexicanos. Esta cotización vence el {cot.vigenciaISO ? fechaLarga(cot.vigenciaISO) : <F>[fecha]</F>}.</li>
+        <li>Precios en pesos mexicanos.{cot.vigenciaISO ? ` Esta cotización vence el ${fechaLarga(cot.vigenciaISO)}.` : publico ? "" : <> Esta cotización vence el <F>[fecha]</F>.</>}</li>
         <li>Lo desarrollado específicamente para tu negocio es tuyo al cubrir el total. Las herramientas y componentes propios de Ronin Studio se licencian para su uso dentro de la solución.</li>
         <li>La información que nos compartas es confidencial. Las acciones de agentes de IA hacia terceros pasan por aprobación humana.</li>
-        <li>Al aceptarse, esta cotización forma parte del contrato de prestación de servicios como Anexo A.</li>
+        <li>Al aceptarse, esta cotización forma parte del contrato de prestación de servicios como Anexo A. Aplican los <a href="https://www.roninstudio.com.mx/legal/terminos/" target="_blank" rel="noopener noreferrer">Términos y condiciones</a> y el <a href="https://www.roninstudio.com.mx/legal/privacidad/" target="_blank" rel="noopener noreferrer">Aviso de privacidad</a> de Ronin Studio (roninstudio.com.mx/legal).</li>
       </ul>
 
       {publico && aceptar && <p className="paper-actions" style={{ marginTop: 22 }}><a href={aceptar} target="_blank" rel="noopener noreferrer" style={{ display: "inline-block", background: "#B05139", color: "#EEEBE4", fontWeight: 600, padding: "12px 20px", borderRadius: 999, textDecoration: "none" }}>Aceptar esta cotización por WhatsApp</a> <span className="mono" style={{ marginLeft: 10 }}>O RESPONDE AL MENSAJE DONDE LA RECIBISTE</span></p>}

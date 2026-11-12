@@ -50,6 +50,7 @@ const CSS = `
 .paper p{margin:0 0 8px;text-wrap:pretty}
 .paper ul,.paper ol{margin:0 0 8px;padding-left:20px}
 .paper li{margin-bottom:3px}
+.paper a{color:#B05139;text-decoration:underline}
 .paper table{width:100%;border-collapse:collapse;margin:8px 0 12px;font-size:13px}
 .paper th{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;color:#5B6068;text-align:left;padding:6px 8px;border-bottom:1px solid #0C0F14}
 .paper td{padding:7px 8px;border-bottom:1px solid #D6D2C9;vertical-align:top}
@@ -67,5 +68,6 @@ const CSS = `
 .paper .sign{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:40px}
 .paper .sign div{border-top:1px solid #0C0F14;padding-top:8px;font-size:12px}
 .paper-foot{margin-top:36px;border-top:1px solid #0C0F14;padding-top:10px;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.1em;color:#5B6068}
+@media (max-width:700px){.paper{padding:26px 18px;border-radius:0;font-size:14px}.paper h1{font-size:24px}.paper .grid{grid-template-columns:1fr}.paper .sign{grid-template-columns:1fr;gap:24px}.paper table{display:block;overflow-x:auto;white-space:normal}.paper-actions{padding:0 12px;flex-wrap:wrap}}
 @media print{body{background:#fff!important}.paper-actions{display:none}.paper{box-shadow:none;border-radius:0;max-width:none;padding:0;background:#fff}@page{margin:18mm 16mm}}
 `;

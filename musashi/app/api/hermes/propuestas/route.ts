@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { autorizado, DEMO, validarPropuesta } from "@/lib/hermes";
 import { hayDB, sb } from "@/lib/db";
+import { after } from "next/server";
+import { notificar } from "@/lib/push";
+import { AGENTES } from "@/lib/hermes-agentes";
 
 export const dynamic = "force-dynamic";
 
@@ -24,6 +27,7 @@ export async function POST(req: Request) {
       }
       if (/PERFIL/.test(v.p.tipo) && !d.cliente_id) return NextResponse.json({ error: "Un PERFIL necesita datos.cliente_id del cliente que describe, tomado del contexto." }, { status: 400 });
       const r = await sb<{ id: string }[]>("propuestas_ia?select=id", { method: "POST", prefer: "return=representation", body: { agente: v.p.agente, tipo: v.p.tipo, titulo: v.p.titulo, cuerpo: v.p.cuerpo, datos: v.p.datos ?? null, modelo: v.p.modelo ?? null, referencia: v.p.referencia ?? null } });
+      after(() => notificar("propuestas", { titulo: `Nueva propuesta · ${AGENTES.find((a) => a.id === v.p.agente)?.nombre ?? v.p.agente}`, cuerpo: v.p.titulo, url: "/agentes", tag: "propuestas" }));
       return NextResponse.json({ ok: true, id: r[0]?.id, estado: "en la bandeja de aprobación", propuesta: v.p }, { status: 201 });
     } catch (e) { return NextResponse.json({ error: "no se pudo guardar: " + (e instanceof Error ? e.message : "error") }, { status: 502 }); }
   }

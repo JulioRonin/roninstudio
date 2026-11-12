@@ -14,7 +14,9 @@ export async function GET(req: NextRequest) {
     const c = (await sb<{ cliente_id: string; proyecto_nombre: string; vigencia: string | null; cliente: { nombre: string } | null }[]>(`cotizaciones?select=cliente_id,proyecto_nombre,vigencia,cliente:clientes(nombre)&folio=eq.${encodeURIComponent(folio)}`))[0];
     if (!c) return NextResponse.json({ error: "no existe esa cotización" }, { status: 404 });
     const con = (await sb<{ nombre: string; whatsapp: string | null }[]>(`contactos?select=nombre,whatsapp&cliente_id=eq.${c.cliente_id}&order=decide.desc&limit=1`))[0];
-    const url = `${req.nextUrl.origin}/c/${refDe(folio)}`;
+    // Siempre el dominio público: si Musashi se abrió desde una dirección interna de Vercel, esa pide login.
+    const base = (process.env.LIGA_BASE_URL || "https://www.roninstudio.com.mx").trim().replace(/\/$/, "");
+    const url = `${base}/c/${refDe(folio)}`;
     const nombre = con?.nombre?.split(/\s+/)[0];
     const vig = c.vigencia ? new Date(c.vigencia + "T12:00:00").toLocaleDateString("es-MX", { day: "numeric", month: "long" }) : null;
     const mensaje = `Hola${nombre ? " " + nombre : ""}, te comparto la cotización ${folio} de ${c.proyecto_nombre}:\n${url}\n${vig ? `Está vigente hasta el ${vig}. ` : ""}Cualquier duda la vemos por aquí.`;

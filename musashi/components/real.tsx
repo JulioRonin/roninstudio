@@ -65,7 +65,7 @@ export function Tabla({ cols, heads, children, titulo, extra }: { cols: string; 
   return (
     <Glass pad="4px 22px 10px" radius={24}>
       {(titulo || extra) && <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, padding: "16px 0 6px" }}><div style={{ fontWeight: 900, fontSize: 22, letterSpacing: "-0.02em" }}>{titulo}</div>{extra}</div>}
-      <div style={{ display: "grid", gridTemplateColumns: cols, gap: 12, padding: "10px 0", borderBottom: "1px solid rgba(238,235,228,0.09)" }}>{heads.map((h) => <div key={h} style={mono10}>{h}</div>)}</div>
+      <div className="m-thead" style={{ display: "grid", gridTemplateColumns: cols, gap: 12, padding: "10px 0", borderBottom: "1px solid rgba(238,235,228,0.09)" }}>{heads.map((h) => <div key={h} style={mono10}>{h}</div>)}</div>
       {children}
     </Glass>
   );

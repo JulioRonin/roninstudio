@@ -12,6 +12,18 @@
       "handle": "filesystem"
     },
     {
+      "src": "/c/(.*)",
+      "dest": "https://musashi-three.vercel.app/c/$1"
+    },
+    {
+      "src": "/_next/(.*)",
+      "dest": "https://musashi-three.vercel.app/_next/$1"
+    },
+    {
+      "src": "/api/publico/(.*)",
+      "dest": "https://musashi-three.vercel.app/api/publico/$1"
+    },
+    {
       "src": "/api/diagnostico",
       "dest": "https://musashi-three.vercel.app/api/publico/diagnostico"
     },

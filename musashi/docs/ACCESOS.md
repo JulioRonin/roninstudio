@@ -15,6 +15,16 @@ Esquema: `supabase/migrations/0001_musashi_base.sql`, se corre una vez en el SQL
 Después, también una sola vez, `supabase/migrations/0002_mensualidades.sql`: agrega los cobros mensuales recurrentes (Facturación → Mensualidades). Mientras no se corra, esa pestaña muestra el aviso y el resto funciona igual.
 Luego `supabase/migrations/0003_cotizacion_mensualidad.sql`: guarda la mensualidad dentro de la cotización (sale en el PDF y en la liga del cliente, y al aceptar queda lista para activar).
 Luego `supabase/migrations/0004_numeros_negocio.sql`: guarda los números del negocio de cada cliente (Diagnósticos → Números del negocio).
+Luego `supabase/migrations/0005_notificaciones.sql`: dispositivos que reciben notificaciones push.
+
+## Notificaciones push (opcional)
+Variables en Vercel (proyecto musashi, Production), generadas desde Configuración → Notificaciones y app → Generar llaves:
+- `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`: firman los avisos push. La privada es secreta.
+- `CRON_SECRET`: protege el resumen de la mañana (Vercel Cron, `vercel.json`).
+- `VAPID_SUBJECT` (opcional): `mailto:` de contacto; por omisión project@roninstudio.com.mx.
+
+## Liga de cotización para el cliente
+Se arma con `LIGA_BASE_URL` (por omisión https://www.roninstudio.com.mx). El sitio público reenvía `/c/`, `/_next/` y `/api/publico/` a Musashi (vercel.json de la raíz), así que el cliente nunca ve una dirección de Vercel que pida login.
 Más adelante, si se usa Supabase Storage para archivos o el sitio público envía el diagnóstico exprés, se hará a través de rutas de Musashi, sin abrir la base.
 
 ## 2 · Vercel (despliegue de Musashi y del sitio público)

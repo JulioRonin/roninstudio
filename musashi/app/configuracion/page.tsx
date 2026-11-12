@@ -8,11 +8,12 @@ import { useAjuste, FISCALES_BASE, TOPE_BASE, type Fiscales, type Tope } from "@
 import { SECTORES, GUIAS } from "@/lib/flujos";
 import { abordajeDe } from "@/lib/abordaje";
 import { datos } from "@/lib/datos";
+import { Notificaciones } from "./notificaciones";
 
 /* ---------- Datos demo (idénticos al prototipo; sin claves reales) ---------- */
 const SECS: [string, string][] = [
   ["Tarifas y costos", "POR HORA · MXN"], ["Usuarios y roles", "1 ACCESO"], ["Sectores y guías", `${SECTORES.length} SECTORES`], ["Plantillas de documentos", "6 PLANTILLAS"],
-  ["Datos fiscales", "EMISOR · SE GUARDAN SOLOS"], ["Integraciones", "ESTADO REAL"], ["Hermes Agent", "13 AGENTES · PUENTE"], ["Tope de tokens", "POR AGENTE Y TOTAL"],
+  ["Datos fiscales", "EMISOR · SE GUARDAN SOLOS"], ["Integraciones", "ESTADO REAL"], ["Hermes Agent", "13 AGENTES · PUENTE"], ["Tope de tokens", "POR AGENTE Y TOTAL"], ["Notificaciones y app", "PUSH · INSTALAR"],
 ];
 const USERS = [{ ini: "JC", n: "Julio César Ibarra", role: "DUEÑO", mods: "Todos los módulos", st: "ACTIVO", bg: C.papel, fc: C.tinta }];
 const TEMPLATES: { n: string; v: string; href?: string }[] = [
@@ -63,7 +64,7 @@ export default function Configuracion() {
   const [tope, setTope] = useAjuste<Tope>("tope-tokens", TOPE_BASE);
   const [usado, setUsado] = useState(0);
   const [tarifas, setTarifas, resetTarifas] = useTarifas();
-  useEffect(() => { try { const q = new URLSearchParams(window.location.search).get("sec"); if (q === "tarifas") setSec("Tarifas y costos"); if (q === "hermes") setSec("Hermes Agent"); if (q === "fiscales") setSec("Datos fiscales"); } catch {} }, []);
+  useEffect(() => { try { const q = new URLSearchParams(window.location.search).get("sec"); if (q === "tarifas") setSec("Tarifas y costos"); if (q === "hermes") setSec("Hermes Agent"); if (q === "fiscales") setSec("Datos fiscales"); if (q === "notificaciones") setSec("Notificaciones y app"); } catch {} }, []);
   type Estado = { demo: boolean; vars: Record<string, boolean>; hermes: { alcanzable: boolean; detalle: string }; webhook: { alcanzable: boolean; detalle: string }; supabase?: { alcanzable: boolean; detalle: string }; ahora: string };
   const [estado, setEstado] = useState<Estado | null>(null);
   const [probando, setProbando] = useState(false);
@@ -92,7 +93,7 @@ export default function Configuracion() {
 
       <section style={{ display: "grid", gridTemplateColumns: "240px minmax(0,1fr)", gap: 20, padding: "26px 32px 56px" }}>
         {/* Menú lateral */}
-        <nav style={{ display: "flex", flexDirection: "column", gap: 4, alignSelf: "start", ...GLASS, borderRadius: 24, padding: 10 }}>
+        <nav className="m-subnav" style={{ display: "flex", flexDirection: "column", gap: 4, alignSelf: "start", ...GLASS, borderRadius: 24, padding: 10 }}>
           {SECS.map(([l]) => {
             const a = l === sec;
             const dot = "transparent";
@@ -248,6 +249,7 @@ export default function Configuracion() {
             </div>
           )}
 
+          {sec === "Notificaciones y app" && <Notificaciones />}
           {sec === "Tope de tokens" && (
             <>
               <div style={{ display: "flex", alignItems: "center", gap: 20, padding: "8px 0 20px", borderBottom: "1px solid rgba(238,235,228,0.08)" }}>

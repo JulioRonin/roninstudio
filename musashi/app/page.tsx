@@ -174,7 +174,7 @@ function Tablero({ real, refrescar }: { real: ReturnType<typeof useTablero>["t"]
           </div>
         </Glass>
         <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
-          <div style={{ display: "flex", alignItems: "flex-end", gap: 10, height: 156 }}>
+          <div className="m-kpis" style={{ display: "flex", alignItems: "flex-end", gap: 10, height: 156 }}>
             {kpis.map((k, i) => (
               <H key={k.name} style={{ flex: k.flex, height: k.h, background: k.bg, backdropFilter: "blur(24px) saturate(150%)", WebkitBackdropFilter: "blur(24px) saturate(150%)", border: `1px solid ${k.edge}`, boxShadow: k.shadow, borderRadius: k.r, padding: "16px 18px", display: "flex", flexDirection: "column", justifyContent: "space-between", position: "relative", minWidth: 0, overflow: "hidden", animation: "rise .7s cubic-bezier(.2,.7,.2,1) both", animationDelay: `${0.08 * i}s`, transition: "transform .3s" }} hover={{ transform: "translateY(-4px)" }}>
                 <div style={{ position: "absolute", inset: 0, borderRadius: "inherit", background: "linear-gradient(180deg,rgba(255,255,255,0.10),rgba(255,255,255,0) 45%)", pointerEvents: "none" }} />
