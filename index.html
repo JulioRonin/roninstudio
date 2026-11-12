@@ -357,7 +357,7 @@
   .form-status a{color:inherit}
   .site-foot{background:var(--bg);border-top:1px solid var(--border);padding-block:56px 28px}
   .footgrid{display:grid;grid-template-columns:1fr;gap:32px}
-  @media (min-width:760px){ .footgrid{grid-template-columns:1.4fr 1fr 1fr} }
+  @media (min-width:760px){ .footgrid{grid-template-columns:1.4fr 1fr 1fr 1fr} }
   .footbrand p{margin:14px 0 0;max-width:34ch;font-size:13.5px;line-height:1.55;color:var(--mist)}
   .footcol{display:flex;flex-direction:column;gap:10px;font-size:13.5px}
   .footcol a{color:var(--mist);text-decoration:none}
@@ -795,6 +795,7 @@
         <input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
         <button class="cta-solid form-submit" type="submit" id="lf-submit" data-i18n="fSend">Solicitar diagnóstico</button>
         <p class="form-status" id="lf-status" role="status" aria-live="polite"></p>
+        <p style="font-size:12.5px;opacity:.7;margin:10px 0 0"><span data-i18n="fPriv">Al enviar aceptas el</span> <a href="/legal/privacidad/" target="_blank" rel="noopener" style="text-decoration:underline" data-i18n="fPrivLink">aviso de privacidad</a>.</p>
       </form>
     </div>
   </section>
@@ -818,6 +819,13 @@
       <a href="https://www.linkedin.com/company/ronin-studio-project/" target="_blank" rel="noopener">LinkedIn</a>
       <a href="https://www.instagram.com/roninstudioprojects/" target="_blank" rel="noopener">Instagram</a>
       <span>Cd. Juárez, MX · El Paso, TX</span>
+    </div>
+    <div class="footcol">
+      <span data-i18n="footLegal">Legal</span>
+      <a href="/legal/terminos/" hreflang="es" data-i18n="lgTerms">Términos</a>
+      <a href="/legal/privacidad/" hreflang="es" data-i18n="lgPriv">Privacidad</a>
+      <a href="/legal/cookies/" hreflang="es" data-i18n="lgCookies">Cookies</a>
+      <a href="/legal/datos/" hreflang="es" data-i18n="lgData">Datos</a>
     </div>
   </div>
   <div class="wrap side footline">© 2026 Ronin Studio. <span data-i18n="footLine">Diseñado para hacer avanzar el trabajo.</span></div>
@@ -916,7 +924,8 @@
       fOk:"Listo, recibimos tus datos. Te contactamos en menos de 24 horas hábiles.",
       fMissing:"Completa nombre, empresa, un correo válido y el flujo que quieres mejorar.",
       fErr:"No pudimos enviar el formulario. Escríbenos por WhatsApp o a project@roninstudio.com.mx.",
-      footTag:"Workflows y agentes de IA para operaciones que quieren avanzar mejor.", footLine:"Diseñado para hacer avanzar el trabajo."
+      footTag:"Workflows y agentes de IA para operaciones que quieren avanzar mejor.", footLine:"Diseñado para hacer avanzar el trabajo.",
+      footLegal:"Legal", lgTerms:"Términos", lgPriv:"Privacidad", lgCookies:"Cookies", lgData:"Datos", fPriv:"Al enviar aceptas el", fPrivLink:"aviso de privacidad"
     },
     en: {
       navMethod:"Method", navWorkflows:"Workflows", navPort:"Portfolio", navCasos:"Cases", navAgents:"Agents", ctaShort:"Request a diagnostic", catBill:"Invoicing",
@@ -1008,7 +1017,8 @@
       fOk:"Done, we got your details. We'll reach out within 24 business hours.",
       fMissing:"Please fill in name, company, a valid email and the workflow you want to improve.",
       fErr:"We couldn't send the form. Message us on WhatsApp or at project@roninstudio.com.mx.",
-      footTag:"AI workflows and agents for operations that want to move better.", footLine:"Designed to move work forward."
+      footTag:"AI workflows and agents for operations that want to move better.", footLine:"Designed to move work forward.",
+      footLegal:"Legal (in Spanish)", lgTerms:"Terms", lgPriv:"Privacy", lgCookies:"Cookies", lgData:"Data", fPriv:"By sending, you accept the", fPrivLink:"privacy notice (in Spanish)"
     }
   };
 
