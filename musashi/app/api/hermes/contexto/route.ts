@@ -3,6 +3,7 @@ import { autorizado, DEMO } from "@/lib/hermes";
 import { hayDB, sb } from "@/lib/db";
 import { generarMensualidades } from "@/lib/mensualidades";
 import { periodoCorto } from "@/lib/mensualidades-base";
+import { resumenNumeros, type Datos, type ModeloId } from "@/lib/numeros";
 import { TASKS, TRAY } from "@/lib/demo";
 import { COTS, FACTURAS, PAGOS, total } from "@/lib/cotizaciones";
 import { RESUMENES } from "@/lib/proyectos";
@@ -66,8 +67,10 @@ async function real(para: string) {
     case "perfilador": {
       const dx = await sb<{ cliente_id: string | null; negocio: string; sector: string | null; hallazgos: unknown; respuestas: unknown; creado_en: string }[]>("diagnosticos_expres?select=cliente_id,negocio,sector,hallazgos,respuestas,creado_en&order=creado_en.desc&limit=30");
       const mapas = await sb<{ cliente_id: string | null; cliente_nombre: string; procesos: { nombre: string; hallazgos?: string[]; estado?: string }[] }[]>("mapas_flujo?select=cliente_id,cliente_nombre,procesos");
+      const nums = await sb<{ cliente_id: string; modelo: ModeloId; datos: Datos; notas: string | null }[]>("numeros_negocio?select=cliente_id,modelo,datos,notas").catch(() => []);
       return { ...base, clientes_sin_perfil: clientes.filter((c) => !c.perfil_ia && c.etapa_embudo !== "Perdido").map((c) => ({ cliente_id: c.id, nombre: c.nombre, sector: c.sector, ciudad: c.ciudad, etapa: c.etapa_embudo, origen: c.origen, siguiente_paso: c.siguiente_paso, contactos: (c.contactos ?? []).map((x) => ({ nombre: x.nombre, puesto: x.puesto, decide: x.decide })),
-        diagnostico_expres: dx.find((d) => d.cliente_id === c.id) ?? null, mapa_de_flujos: (mapas.find((m) => m.cliente_id === c.id)?.procesos ?? []).map((p) => ({ proceso: p.nombre, estado: p.estado, hallazgos: p.hallazgos ?? [] })) })),
+        diagnostico_expres: dx.find((d) => d.cliente_id === c.id) ?? null, mapa_de_flujos: (mapas.find((m) => m.cliente_id === c.id)?.procesos ?? []).map((p) => ({ proceso: p.nombre, estado: p.estado, hallazgos: p.hallazgos ?? [] })),
+        numeros_del_negocio: (() => { const n = nums.find((x) => x.cliente_id === c.id); return n ? { ...resumenNumeros(n.modelo, n.datos), notas: n.notas } : null; })() })),
         instrucciones: "Por cada cliente sin perfil propón un PERFIL de cinco líneas: quién es, su dolor principal, qué ha intentado, quién decide y el siguiente paso sugerido. Sólo con lo que hay aquí." };
     }
     case "reportero":
