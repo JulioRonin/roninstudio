@@ -199,3 +199,10 @@ h3{font-size:19px;line-height:1.15;letter-spacing:-.01em}
 .otro textarea:focus{outline:none;border-color:var(--oxido);box-shadow:0 0 0 3px rgba(176,81,57,.22)}
 .qnav .cta-solid{border:none;cursor:pointer;font:inherit}
 .qnav .cta-solid:disabled{opacity:.4;cursor:not-allowed}
+
+/* Galería de capturas en las páginas de producto */
+.galeria{margin-top:44px;display:grid;grid-template-columns:1fr;gap:32px}
+@media (min-width:960px){.galeria{grid-template-columns:1fr 1fr;gap:40px 32px}.galeria .ancha{grid-column:1/-1}}
+.galeria figure{margin:0}
+.galeria figcaption{margin-top:12px;font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--faint)}
+.galeria figcaption b{color:var(--mist);font-weight:500}
