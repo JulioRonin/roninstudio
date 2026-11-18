@@ -62,7 +62,7 @@ cambia("<dd>Claude · API de Anthropic</dd>", "<dd>Claude · Anthropic API</dd>"
 # Textos alternativos y etiquetas de accesibilidad
 ATRIBUTOS = {
     "Plataforma de Orka: índices de margen, diferencial competitivo, crédito y precios de combustibles en un solo tablero": "Orka platform: margin indexes, competitive spread, credit and fuel prices in a single dashboard",
-    "Kanri: resumen operativo del taller con piezas en producción, aprobación de calidad, no conformidades y producción semanal": "Kanri: shop operations overview with parts in production, quality approval, non-conformances and weekly output",
+    "Kanri: tablero de planta con piezas terminadas en la semana, proyectos por etapa, alertas, calidad y máquinas": "Kanri: plant dashboard with parts finished this week, projects by stage, alerts, quality and machines",
     "Serie Método": "Method series",
     "Técnico recorriendo una línea de producción con su tableta": "Technician walking a production line with a tablet",
     "Manos en el teclado junto a un diagrama de flujo dibujado a mano": "Hands on a keyboard next to a hand-drawn flow diagram",
@@ -75,6 +75,8 @@ ATRIBUTOS = {
     "Tablero ejecutivo de Mono Atelier": "Mono Atelier executive dashboard",
     "Dogma: mesa de diseño por pieza de una colección": "Dogma: design board for each piece of a collection",
     "App de Lana con saldos y movimientos difuminados": "Lana app with balances and transactions blurred",
+    "Inicio de Atelia con datos de demostración": "Atelia home screen with demo data",
+    "Panel de Aló con datos ilustrativos de demostración": "Aló panel with illustrative demo data",
     "Inicio de Vértice para la dirección escolar, con datos de demostración": "Vértice home screen for school leadership, with demo data",
     "Panel de Dojo con datos de demostración": "Dojo dashboard with demo data",
     "GENBA: panel de planta con balance de línea y cuello de botella": "GENBA: plant dashboard with line balance and bottleneck",
@@ -97,7 +99,7 @@ cambia(es_txt + ",", "")
 visible = re.sub(r"<!--.*?-->|<style.*?</style>|<script.*?</script>", " ", out, flags=re.S)
 visible = re.sub(r'(?:href|src|srcset|imagesrcset|content|d|points|viewBox|class|id|style|name|for|value)="[^"]*"', " ", visible)
 visible = re.sub(r"<[^>]+>", " ", visible)
-PROPIOS = {"Juárez", "Vértice", "Andén", "Ramírez", "César", "Versión", "español"}
+PROPIOS = {"Juárez", "Vértice", "Andén", "Aló", "Ramírez", "César", "Versión", "español"}
 restos = sorted({w for w in re.findall(r"[\w¿¡]*[áéíóúñÁÉÍÓÚÑ¿¡][\w?!]*", visible) if w not in PROPIOS})
 if restos: errores.append("posible español sin traducir: " + ", ".join(restos))
 
