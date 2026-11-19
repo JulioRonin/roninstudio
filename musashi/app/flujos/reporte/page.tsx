@@ -64,7 +64,7 @@ function ReporteFlujos() {
           {p.hallazgos.length > 0 && <p style={{ fontSize: 12.5, color: "#3A4048" }}>{p.hallazgos.join(" ")}</p>}
         </div>
       ))}
-      <p className="mono">● = punto donde hoy se atora: recaptura o espera larga. Las horas liberadas se calculan sólo con minutos de trabajo del personal; las esperas se reportan aparte porque son tiempo del cliente.</p>
+      <p className="mono">● = cuello de botella: recaptura o espera larga. Las horas liberadas se calculan sólo con minutos de trabajo del personal; las esperas se reportan aparte porque son tiempo del cliente.</p>
 
       <h2>Qué proponemos</h2>
       <h3>Construir ahora</h3>

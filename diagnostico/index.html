@@ -7,7 +7,7 @@
 <meta name="description" content="En 5 minutos, descubre dónde se le va el tiempo y el dinero a tu negocio. 12 preguntas, resultado al instante. Gratis.">
 <link rel="canonical" href="https://www.roninstudio.com.mx/diagnostico/">
 <meta property="og:title" content="Diagnóstico exprés de operación | Ronin Studio">
-<meta property="og:description" content="12 preguntas, 5 minutos, resultado al instante. Dónde se atora tu operación y qué hacer primero.">
+<meta property="og:description" content="12 preguntas, 5 minutos, resultado al instante. Los cuellos de botella de tu operación y qué hacer primero.">
 <meta property="og:image" content="https://www.roninstudio.com.mx/assets/og-ronin.jpg">
 <link rel="icon" type="image/svg+xml" href="/assets/brand/logo/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,7 +30,7 @@
     <section class="hero" style="padding-bottom:0">
       <span class="eyebrow">Diagnóstico exprés de operación</span>
       <h1 id="title">¿Dónde se le va el tiempo y el dinero a tu negocio?</h1>
-      <p class="lead" id="intro">12 preguntas, 5 minutos. Al terminar ves los tres puntos donde se atora tu operación y qué conviene arreglar primero. Sin tecnicismos.</p>
+      <p class="lead" id="intro">12 preguntas, 5 minutos. Al terminar ves los tres cuellos de botella de tu operación y qué conviene arreglar primero. Sin tecnicismos.</p>
       <div class="progress" id="progress" hidden><i id="bar"></i></div>
     </section>
 
@@ -299,7 +299,7 @@
     step.hidden = true; result.hidden = false;
     var h = '';
     if (r.findings.length) {
-      h += '<h2 style="font-size:clamp(24px,3.4vw,36px)">Dónde se atora ' + esc(c.negocio) + '</h2><ol class="findings">';
+      h += '<h2 style="font-size:clamp(24px,3.4vw,36px)">Los cuellos de botella de ' + esc(c.negocio) + '</h2><ol class="findings">';
       r.findings.forEach(function (f, i) { h += '<li><b>0' + (i + 1) + '</b><p>' + esc(f.t) + '</p></li>'; });
       h += '</ol>';
     }

@@ -61,7 +61,7 @@ const PLAN = ([
 const L = (arr: [number, string][]) => arr.map(([w, c]) => ({ w, c }));
 const PAGES = [
   { n: "01", title: "Negocio demo 2", size: 34, sub: "Diagnóstico completo · 22 de octubre de 2026", lines: L([[30, C.oxido], [80, C.acero], [60, C.acero]]) },
-  { n: "02", title: "Mapa del flujo actual", size: 24, sub: "3 responsables · 6 pasos · 3 puntos donde se atora", lines: L([[90, C.acero], [45, C.oxido], [70, C.acero], [55, C.acero]]) },
+  { n: "02", title: "Mapa del flujo actual", size: 24, sub: "3 responsables · 6 pasos · 3 cuellos de botella", lines: L([[90, C.acero], [45, C.oxido], [70, C.acero], [55, C.acero]]) },
   { n: "03", title: "Hallazgos y plan", size: 24, sub: "4 hitos · 10 semanas · $140,000.00 MXN", lines: L([[85, C.tinta], [70, C.acero], [50, C.acero], [30, C.olivo]]) },
 ].map((p, i) => ({ ...p, delay: 0.1 * i + "s" }));
 
@@ -213,7 +213,7 @@ export default function Diagnosticos() {
                 </div>
                 <div style={{ position: "relative", borderRadius: 24, border: "1px solid rgba(238,235,228,0.09)", backgroundColor: "rgba(16,19,24,0.7)", backgroundImage: "radial-gradient(rgba(238,235,228,0.08) 1px,transparent 1px)", backgroundSize: "20px 20px", overflow: "hidden", padding: "46px 18px 18px" }}>
                   <span style={{ position: "absolute", top: 14, left: 14, display: "flex", alignItems: "center", gap: 8, fontFamily: MONO, fontSize: 10, letterSpacing: "0.14em", padding: "6px 10px", borderRadius: 999, border: `1px dashed ${C.niebla}`, color: C.papel }}>BORRADOR DE IA · MAPEADOR · CAPA EDITABLE</span>
-                  <span style={{ position: "absolute", top: 14, right: 14, ...MONO10 }}>3 PUNTOS DONDE SE ATORA</span>
+                  <span style={{ position: "absolute", top: 14, right: 14, ...MONO10 }}>3 CUELLOS DE BOTELLA</span>
                   {LANES.map((name, li) => {
                     const laneCols = STEPS.filter((x) => x.lane === li).map((x) => x.col);
                     const mn = Math.min(...laneCols), mx = Math.max(...laneCols);
@@ -250,7 +250,7 @@ export default function Diagnosticos() {
                       <div style={{ height: 38, borderRadius: 10, background: C.p2, border: `1px solid ${C.borde}`, display: "flex", alignItems: "center", padding: "0 12px", fontSize: 13 }}>{v}</div>
                     </div>
                   ))}
-                  {ss.stuck && <div style={{ border: `1px solid ${C.oxido}`, borderRadius: 14, padding: 12, fontSize: 13, lineHeight: 1.45, background: "rgba(176,81,57,0.12)" }}>Punto donde se atora. {ss.why}</div>}
+                  {ss.stuck && <div style={{ border: `1px solid ${C.oxido}`, borderRadius: 14, padding: 12, fontSize: 13, lineHeight: 1.45, background: "rgba(176,81,57,0.12)" }}>Cuello de botella. {ss.why}</div>}
                 </div>
               </div>
             )}

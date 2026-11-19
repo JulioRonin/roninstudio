@@ -82,14 +82,14 @@ function script(topic: string, b: Record<string, string>, real = false) {
   if (real) return [
     { t: "0:00–0:03", k: "GANCHO", s: `${topic}.` },
     { t: "0:03–0:15", k: "EL DOLOR", s: "[Escena concreta del problema, con las palabras que usa el cliente.]" },
-    { t: "0:15–0:35", k: "QUÉ HACEMOS", s: "Nosotros primero vamos al negocio y mapeamos el flujo real, no el del manual. Ahí aparece dónde se atora. Y sólo después decidimos qué parte conviene automatizar." },
+    { t: "0:15–0:35", k: "QUÉ HACEMOS", s: "Nosotros primero vamos al negocio y mapeamos el flujo real, no el del manual. Ahí aparecen los cuellos de botella. Y sólo después decidimos qué parte conviene automatizar." },
     { t: "0:35–0:50", k: "LA PRUEBA", s: "[Un caso o dato real y verificable. Si no lo hay, este bloque se quita.]" },
     { t: "0:50–0:60", k: "CIERRE", s: cta },
   ];
   return [
     { t: "0:00–0:03", k: "GANCHO", s: `${topic}. Y no, no se arregla con un chatbot.` },
     { t: "0:03–0:15", k: "EL DOLOR", s: "Mesero anota en libreta. Cocina reescribe en el tablero. Caja captura en el POS. Tres veces la misma orden, y en una de las tres se equivoca alguien." },
-    { t: "0:15–0:35", k: "QUÉ HACEMOS", s: "Nosotros primero vamos a la cocina y mapeamos el flujo real, no el que está en el manual. Ahí aparece dónde se atora. Y solo después decidimos qué parte conviene automatizar." },
+    { t: "0:15–0:35", k: "QUÉ HACEMOS", s: "Nosotros primero vamos a la cocina y mapeamos el flujo real, no el que está en el manual. Ahí aparecen los cuellos de botella. Y solo después decidimos qué parte conviene automatizar." },
     { t: "0:35–0:50", k: "LA PRUEBA", s: "En una cadena de steakhouses el cierre de caja pasó de una hoja de cálculo a un cierre automático. Lo que cambió no fue la tecnología: fue que la orden entra una sola vez." },
     { t: "0:50–0:60", k: "CIERRE", s: cta },
   ];

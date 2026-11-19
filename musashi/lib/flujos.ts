@@ -158,7 +158,7 @@ export const GUIA_VISITA: [string, string][] = [
   ["Antes de llegar", "Confirma quién decide y quién ejecuta cada proceso. Pide 90 minutos con el dueño y acceso al piso en hora de operación."],
   ["Recorrido", "Camina el flujo real siguiendo a la persona, no al manual. Anota herramienta, papel y pantalla en cada paso."],
   ["Medición", "Cronometra tres ejecuciones por paso y usa la mediana. Separa trabajo de espera. Pregunta cuántas veces al día pasa."],
-  ["Puntos donde se atora", "Marca cada recaptura (mismo dato escrito dos veces) y cada espera mayor a 10 minutos. Pregunta qué pasa cuando sale mal."],
+  ["Cuellos de botella", "Marca cada recaptura (mismo dato escrito dos veces) y cada espera mayor a 10 minutos. Pregunta qué pasa cuando sale mal."],
   ["Costo de la hora", "Pregunta sueldos promedio por puesto para fijar el costo hora del personal; si no lo dan, usa el de la casa y dilo en el reporte."],
   ["Cierre de visita", "Lee los hallazgos en voz alta con el dueño antes de irte. Lo que no reconozca como cierto, se quita."],
 ];
