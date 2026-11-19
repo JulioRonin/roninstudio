@@ -11,7 +11,7 @@ export const MENSUAL_BASE: Mensual = {
 export const renglones = (s?: string) => (s ?? "").split("\n").map((x) => x.replace(/^[-•·\s]+/, "").trim()).filter(Boolean);
 export type Cot = {
   folio: string; cliente: string; sector: string; proyecto: string; estado: Estado; fecha: string; vigencia: string;
-  lineas: Linea[]; credito: number; anticipo: number; notas?: string; abierta?: string; razon?: string; proyectoCode?: string;
+  lineas: Linea[]; credito: number; anticipo: number; notas?: string; abierta?: string; veces?: number; razon?: string; proyectoCode?: string;
   mensual?: Mensual;
   id?: string; clienteId?: string; vigenciaISO?: string | null;   // sólo con Supabase
 };
@@ -30,6 +30,7 @@ export const deFilaCot = (f: FilaCot): Cot => ({
   fecha: corta(f.creado_en), vigencia: corta(f.vigencia), vigenciaISO: f.vigencia,
   lineas: [...(f.cotizacion_lineas ?? [])].sort((a, b) => a.orden - b.orden).map((l) => ({ c: l.concepto, etapa: l.etapa, monto: Number(l.monto), ...(l.horas != null ? { horas: Number(l.horas) } : {}) })),
   credito: Number(f.credito), anticipo: f.anticipo_pct, notas: f.notas ?? undefined, razon: f.razon_perdida ?? undefined,
+  veces: f.abierta_veces ?? 0,
   abierta: f.abierta_veces ? `${corta(f.abierta_ultima).toUpperCase()} · ${f.abierta_veces} ${f.abierta_veces === 1 ? "VEZ" : "VECES"}` : undefined,
   proyectoCode: f.proyectos?.[0]?.codigo,
   mensual: f.mensualidad && Number(f.mensualidad.monto) > 0 ? { ...MENSUAL_BASE, ...f.mensualidad, monto: Number(f.mensualidad.monto) } : undefined,

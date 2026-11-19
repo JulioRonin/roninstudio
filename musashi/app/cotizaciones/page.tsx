@@ -42,7 +42,8 @@ export default function Cotizaciones() {
   const [tareas, setTareas] = useState<string[]>([]);
   const [perdiendo, setPerdiendo] = useState(false);
   const [editando, setEditando] = useState<string | null>(null);
-  const [liga, setLiga] = useState<{ folio: string; url: string; contacto: string | null; whatsapp: string | null; mensaje: string } | null>(null);
+  const [liga, setLiga] = useState<{ folio: string; url: string; interna: string; contacto: string | null; whatsapp: string | null; mensaje: string } | null>(null);
+  const [aperturas, setAperturas] = useState<{ folio: string; filas: Apertura[] | null; falta?: boolean }>({ folio: "", filas: null });
   const [loaded, setLoaded] = useState(false);
 
   const cargarTareas = () => datos.lista<{ titulo: string; fecha: string }>("tareas", `select=titulo,fecha&${eq("origen", "Cotización")}&${eq("estado", "Pendiente")}&order=fecha.asc&limit=8`).then((r) => setTareas(r.filas.map((t) => `${t.titulo} · ${fechaCorta(t.fecha)}`)));
@@ -71,6 +72,14 @@ export default function Cotizaciones() {
 
   const mesActual = db ? hoyISO().slice(0, 7) : "NOV";
   const cur: Cot | undefined = cots.find((c) => c.folio === sel) ?? cots[0];
+  useEffect(() => {
+    if (!db || !cur?.id || cur.estado === "Borrador") { setAperturas({ folio: cur?.folio ?? "", filas: null }); return; }
+    let vivo = true;
+    datos.lista<Apertura>("cotizacion_aperturas", `select=abierta_en,propia,dispositivo,navegador,ciudad&${eq("cotizacion_id", cur.id)}&order=abierta_en.desc&limit=30`)
+      .then((r) => { if (vivo) setAperturas({ folio: cur.folio, filas: r.filas }); })
+      .catch(() => { if (vivo) setAperturas({ folio: cur.folio, filas: [], falta: true }); });
+    return () => { vivo = false; };
+  }, [db, cur?.id, cur?.folio, cur?.estado, cur?.veces]);
   const lista = cots.filter((c) => filtro === "Todas" || c.estado === filtro);
   const enJuego = cots.filter((c) => ["Borrador", "Enviada", "Abierta"].includes(c.estado));
   const pipeline = enJuego.reduce((s, c) => s + total(c), 0);
@@ -141,6 +150,17 @@ export default function Cotizaciones() {
       if (!r.ok) throw new Error(d.error ?? "error");
       setLiga({ folio: c.folio, ...d });
     } catch (e) { falla(e); }
+  };
+  // Ver como cliente: abre la cotización en el dominio de Musashi, con tu sesión, para que no cuente como apertura.
+  // La ventana se abre antes de pedir la liga para que el navegador no la bloquee.
+  const verComoCliente = async (c: Cot) => {
+    if (!db) { flash("Ver como cliente funciona con la base de datos conectada"); return; }
+    const w = window.open("about:blank", "_blank");
+    try {
+      const r = await fetch(`/api/cotizaciones/liga?f=${encodeURIComponent(c.folio)}`, { cache: "no-store" }); const d = await r.json();
+      if (!r.ok) throw new Error(d.error ?? "error");
+      if (w) w.location.href = d.interna; else window.location.href = d.interna;
+    } catch (e) { w?.close(); falla(e); }
   };
   const copiar = (t: string, msg: string) => { void navigator.clipboard.writeText(t).then(() => flash(msg)).catch(() => flash("No se pudo copiar; selecciona el texto y cópialo")); };
   const aBorrador = async (c: Cot) => { if (!(await patchCot(c, { estado: "Borrador" }))) return; setEstado(c.folio, "Borrador"); flash(`${c.folio} regresó a borrador`); };
@@ -263,10 +283,12 @@ export default function Cotizaciones() {
                 {cur.estado === "Aceptada" && <><Link href="/proyectos" style={{ height: 36, padding: "0 14px", borderRadius: 999, background: C.tinta, color: C.papel, fontSize: 12, fontWeight: 600, display: "flex", alignItems: "center" }}>Ver proyecto {cur.proyectoCode ?? ""}</Link><Link href="/facturacion" style={{ height: 36, padding: "0 14px", borderRadius: 999, border: `1px solid ${C.tinta}`, color: C.tinta, fontSize: 12, display: "flex", alignItems: "center" }}>Facturas</Link></>}
                 {(cur.estado === "Perdida" || cur.estado === "Vencida") && <PB small onClick={() => void reabrir(cur)} style={{ background: C.tinta, boxShadow: "none" }}>Reabrir</PB>}
                 {cur.estado !== "Aceptada" && <button type="button" onClick={() => { setEditando(cur.folio); setTab(1); }} style={{ height: 36, padding: "0 14px", borderRadius: 999, background: "transparent", border: `1px solid ${C.tinta}`, color: C.tinta, fontSize: 12, cursor: "pointer" }}>Editar</button>}
+                {cur.estado !== "Borrador" && <button type="button" onClick={() => void verComoCliente(cur)} title="La abre con tu sesión de Musashi: no cuenta como apertura del cliente" style={{ height: 36, padding: "0 14px", borderRadius: 999, background: "transparent", border: `1px solid ${C.acero}`, color: C.tinta, fontSize: 12, cursor: "pointer" }}>Ver como cliente ↗</button>}
                 <Link href={`/documentos/cotizacion?f=${encodeURIComponent(cur.folio)}`} target="_blank" title="Documento formal para el cliente: se imprime o se guarda como PDF" style={{ height: 36, padding: "0 14px", borderRadius: 999, border: `1px solid ${C.acero}`, color: C.tinta, fontSize: 12, display: "flex", alignItems: "center" }}>Cotización formal · PDF ↗</Link>
                 {cur.estado !== "Aceptada" && <button type="button" onClick={() => void eliminar(cur)} style={{ height: 36, padding: "0 14px", borderRadius: 999, background: "transparent", border: "none", color: C.acero, fontSize: 12, cursor: "pointer" }}>Eliminar</button>}
               </div>
               {perdiendo && <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}><span style={{ ...mono10, color: C.acero }}>¿POR QUÉ?</span>{RAZONES.map((r) => <button key={r} type="button" onClick={() => void perder(cur, r)} style={{ height: 32, padding: "0 12px", borderRadius: 999, background: "transparent", border: `1px solid ${C.tinta}`, color: C.tinta, fontSize: 12, cursor: "pointer" }}>{r}</button>)}</div>}
+              {cur.estado !== "Borrador" && db && <Aperturas cot={cur} a={aperturas.folio === cur.folio ? aperturas : { filas: null }} />}
               <div style={{ borderTop: "1px solid #D6D2C9", paddingTop: 10, marginTop: 4 }}>
                 <div style={{ ...mono10, color: C.acero, marginBottom: 6 }}>LIGADO A</div>
                 <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
@@ -298,9 +320,9 @@ export default function Cotizaciones() {
           <Campo t={`Mensaje${liga.contacto ? ` para ${liga.contacto}` : ""} · puedes editarlo`}>
             <textarea value={liga.mensaje} onChange={(e) => setLiga({ ...liga, mensaje: e.target.value })} rows={5} style={{ ...input, height: "auto", padding: "12px 16px", borderRadius: 16, resize: "vertical", fontFamily: "inherit", lineHeight: 1.45 }} />
           </Campo>
-          <div style={{ fontSize: 12.5, color: C.tenue, lineHeight: 1.5 }}>Musashi no manda nada por su cuenta: el botón abre WhatsApp con el mensaje listo y tú das enviar. Cuando el cliente abra la liga, la cotización pasa a "Abierta" y verás cuántas veces la vio.{!liga.whatsapp && " Este cliente no tiene WhatsApp registrado en su contacto: se abrirá WhatsApp para que elijas a quién mandarlo."}</div>
+          <div style={{ fontSize: 12.5, color: C.tenue, lineHeight: 1.5 }}>Musashi no manda nada por su cuenta: el botón abre WhatsApp con el mensaje listo y tú das enviar. Cuando el cliente abra la liga, la cotización pasa a "Abierta" y verás cada apertura. Para revisarla tú sin que cuente, usa "Ver como cliente"; si la abres desde WhatsApp, marca antes ese navegador en Configuración → Tus dispositivos.{!liga.whatsapp && " Este cliente no tiene WhatsApp registrado en su contacto: se abrirá WhatsApp para que elijas a quién mandarlo."}</div>
           <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", flexWrap: "wrap" }}>
-            <a href={liga.url} target="_blank" rel="noreferrer" style={{ height: 44, padding: "0 16px", borderRadius: 999, border: `1px solid ${C.borde2}`, color: C.papel, fontSize: 13, display: "flex", alignItems: "center" }}>Ver como la ve el cliente ↗</a>
+            <a href={liga.interna} target="_blank" rel="noreferrer" title="Se abre con tu sesión de Musashi: no cuenta como apertura del cliente" style={{ height: 44, padding: "0 16px", borderRadius: 999, border: `1px solid ${C.borde2}`, color: C.papel, fontSize: 13, display: "flex", alignItems: "center" }}>Ver como cliente ↗</a>
             <SB onClick={() => copiar(liga.mensaje, "Mensaje copiado")}>Copiar mensaje</SB>
             <a href={`https://wa.me/${liga.whatsapp ?? ""}?text=${encodeURIComponent(liga.mensaje)}`} target="_blank" rel="noreferrer" style={{ height: 44, padding: "0 20px", borderRadius: 999, background: "#25D366", color: C.tinta, fontSize: 14, fontWeight: 600, display: "flex", alignItems: "center" }}>Abrir WhatsApp</a>
           </div>
@@ -561,5 +583,30 @@ function Balance({ db, pagos, cobradoMes, gastoMes, porCobrar, pipeline, pondera
         </Glass>
       </div>
     </section>
+  );
+}
+
+/* ---------- Aperturas de la liga: cada vez que alguien la abrió, y cuáles fueron tuyas ---------- */
+type Apertura = { abierta_en: string; propia: boolean; dispositivo: string | null; navegador: string | null; ciudad: string | null };
+const cuando = (iso: string) => new Date(iso).toLocaleString("es-MX", { timeZone: "America/Ciudad_Juarez", weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }).replace(/\./g, "");
+
+function Aperturas({ cot, a }: { cot: Cot; a: { filas: Apertura[] | null; falta?: boolean } }) {
+  const m10: CSSProperties = { fontFamily: MONO, fontSize: 10, letterSpacing: "0.12em" };
+  if (a.falta) return <div style={{ borderTop: "1px solid #D6D2C9", paddingTop: 10, fontSize: 12.5, color: C.acero }}>Para ver cada apertura, corre una vez <span style={{ fontFamily: MONO, fontSize: 11.5 }}>0006_aperturas.sql</span> en el SQL Editor de Supabase.</div>;
+  if (!a.filas) return null;
+  const cliente = a.filas.filter((x) => !x.propia).length, tuyas = a.filas.length - cliente;
+  const previas = Math.max(0, (cot.veces ?? 0) - cliente);
+  return (
+    <div style={{ borderTop: "1px solid #D6D2C9", paddingTop: 10, marginTop: 4 }}>
+      <div style={{ ...m10, color: C.acero, marginBottom: 6 }}>APERTURAS · {cliente} DEL CLIENTE{tuyas ? ` · ${tuyas} ${tuyas === 1 ? "TUYA" : "TUYAS"}` : ""}</div>
+      {a.filas.length === 0 && previas === 0 && <div style={{ fontSize: 12.5, color: C.acero }}>Nadie ha abierto la liga todavía.</div>}
+      {a.filas.map((x, i) => (
+        <div key={i} style={{ display: "flex", justifyContent: "space-between", gap: 10, padding: "6px 0", borderBottom: "1px solid #E4E0D8", fontSize: 12.5, color: x.propia ? C.acero : C.tinta }}>
+          <span>{[x.dispositivo, x.navegador, x.ciudad].filter(Boolean).join(" · ") || "Navegador sin datos"}{x.propia && <span style={{ ...m10, marginLeft: 8, padding: "2px 7px", border: "1px solid #D6D2C9", borderRadius: 999 }}>TÚ</span>}</span>
+          <span style={{ fontFamily: MONO, fontSize: 11.5, whiteSpace: "nowrap" }}>{cuando(x.abierta_en)}</span>
+        </div>
+      ))}
+      {previas > 0 && <div style={{ fontSize: 12, color: C.acero, marginTop: 6, lineHeight: 1.45 }}>{previas === 1 ? "1 apertura" : `${previas} aperturas`} de antes de este registro, sin detalle; {previas === 1 ? "puede ser tuya" : "pueden incluir las tuyas"}.</div>}
+    </div>
   );
 }

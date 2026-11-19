@@ -44,5 +44,25 @@ export async function tokenValido(t?: string | null) {
   return igual(sig, await hmac(secret, `musashi:${exp}`));
 }
 
+/* ---------- Firmas con propósito (pase para marcar un dispositivo y la marca misma) ---------- */
+// La cookie de "dispositivo propio" vive en el dominio de la liga pública (www.roninstudio.com.mx),
+// no en el de Musashi: así, cuando abres una liga desde ese navegador, Musashi sabe que eres tú.
+export const COOKIE_PROPIO = "musashi_propio";
+export const DURACION_PROPIO_S = 60 * 60 * 24 * 400; // el máximo que aceptan los navegadores
+export const DURACION_PASE_S = 60 * 30;
+
+export async function firmar(proposito: string, segundos: number) {
+  const exp = Math.floor(Date.now() / 1000) + segundos;
+  return `${exp}.${await hmac(process.env.MUSASHI_SESSION_SECRET ?? "", `${proposito}:${exp}`)}`;
+}
+
+export async function firmaValida(proposito: string, t?: string | null) {
+  const secret = process.env.MUSASHI_SESSION_SECRET ?? "";
+  if (!t || !secret) return false;
+  const [exp, sig] = t.split(".");
+  if (!exp || !sig || !/^\d+$/.test(exp) || Number(exp) < Date.now() / 1000) return false;
+  return igual(sig, await hmac(secret, `${proposito}:${exp}`));
+}
+
 /** Sólo rutas internas: evita redirecciones abiertas a otros dominios. */
 export const destinoSeguro = (n?: string | null) => (n && n.startsWith("/") && !n.startsWith("//") && !n.startsWith("/api/") ? n : "/");

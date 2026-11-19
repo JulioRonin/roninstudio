@@ -16,3 +16,6 @@ export function folioDe(ref: string): string | null {
   if (sig.length !== ok.length || !/^[A-Za-z0-9-]{1,24}$/.test(folio)) return null;
   return timingSafeEqual(Buffer.from(sig), Buffer.from(ok)) ? folio : null;
 }
+
+/** Dominio público de las ligas: siempre el del sitio, porque las direcciones internas de Vercel piden login. */
+export const ligaBase = () => (process.env.LIGA_BASE_URL || "https://www.roninstudio.com.mx").trim().replace(/\/$/, "");

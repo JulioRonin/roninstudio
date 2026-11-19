@@ -17,6 +17,8 @@ Luego `supabase/migrations/0003_cotizacion_mensualidad.sql`: guarda la mensualid
 Luego `supabase/migrations/0004_numeros_negocio.sql`: guarda los números del negocio de cada cliente (Diagnósticos → Números del negocio).
 Luego `supabase/migrations/0005_notificaciones.sql`: dispositivos que reciben notificaciones push.
 
+Luego `supabase/migrations/0006_aperturas.sql`: cada apertura de la liga de una cotización (fecha, dispositivo, navegador, ciudad aproximada y si fuiste tú). Sin esta tabla la cuenta de aperturas sigue funcionando, pero sin detalle. Para que tus propias aperturas no cuenten, marca tus navegadores en Configuración → Tus dispositivos.
+
 ## Notificaciones push (opcional)
 Variables en Vercel (proyecto musashi, Production), generadas desde Configuración → Notificaciones y app → Generar llaves:
 - `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`: firman los avisos push. La privada es secreta.

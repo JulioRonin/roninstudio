@@ -9,11 +9,12 @@ import { SECTORES, GUIAS } from "@/lib/flujos";
 import { abordajeDe } from "@/lib/abordaje";
 import { datos } from "@/lib/datos";
 import { Notificaciones } from "./notificaciones";
+import { Dispositivos } from "./dispositivos";
 
 /* ---------- Datos demo (idénticos al prototipo; sin claves reales) ---------- */
 const SECS: [string, string][] = [
   ["Tarifas y costos", "POR HORA · MXN"], ["Usuarios y roles", "1 ACCESO"], ["Sectores y guías", `${SECTORES.length} SECTORES`], ["Plantillas de documentos", "6 PLANTILLAS"],
-  ["Datos fiscales", "EMISOR · SE GUARDAN SOLOS"], ["Integraciones", "ESTADO REAL"], ["Hermes Agent", "13 AGENTES · PUENTE"], ["Tope de tokens", "POR AGENTE Y TOTAL"], ["Notificaciones y app", "PUSH · INSTALAR"],
+  ["Datos fiscales", "EMISOR · SE GUARDAN SOLOS"], ["Integraciones", "ESTADO REAL"], ["Hermes Agent", "13 AGENTES · PUENTE"], ["Tope de tokens", "POR AGENTE Y TOTAL"], ["Notificaciones y app", "PUSH · INSTALAR"], ["Tus dispositivos", "NO CONTAR TUS APERTURAS"],
 ];
 const USERS = [{ ini: "JC", n: "Julio César Ibarra", role: "DUEÑO", mods: "Todos los módulos", st: "ACTIVO", bg: C.papel, fc: C.tinta }];
 const TEMPLATES: { n: string; v: string; href?: string }[] = [
@@ -64,7 +65,7 @@ export default function Configuracion() {
   const [tope, setTope] = useAjuste<Tope>("tope-tokens", TOPE_BASE);
   const [usado, setUsado] = useState(0);
   const [tarifas, setTarifas, resetTarifas] = useTarifas();
-  useEffect(() => { try { const q = new URLSearchParams(window.location.search).get("sec"); if (q === "tarifas") setSec("Tarifas y costos"); if (q === "hermes") setSec("Hermes Agent"); if (q === "fiscales") setSec("Datos fiscales"); if (q === "notificaciones") setSec("Notificaciones y app"); } catch {} }, []);
+  useEffect(() => { try { const q = new URLSearchParams(window.location.search).get("sec"); if (q === "tarifas") setSec("Tarifas y costos"); if (q === "hermes") setSec("Hermes Agent"); if (q === "fiscales") setSec("Datos fiscales"); if (q === "notificaciones") setSec("Notificaciones y app"); if (q === "dispositivos") setSec("Tus dispositivos"); } catch {} }, []);
   type Estado = { demo: boolean; vars: Record<string, boolean>; hermes: { alcanzable: boolean; detalle: string }; webhook: { alcanzable: boolean; detalle: string }; supabase?: { alcanzable: boolean; detalle: string }; ahora: string };
   const [estado, setEstado] = useState<Estado | null>(null);
   const [probando, setProbando] = useState(false);
@@ -250,6 +251,7 @@ export default function Configuracion() {
           )}
 
           {sec === "Notificaciones y app" && <Notificaciones />}
+          {sec === "Tus dispositivos" && <Dispositivos />}
           {sec === "Tope de tokens" && (
             <>
               <div style={{ display: "flex", alignItems: "center", gap: 20, padding: "8px 0 20px", borderBottom: "1px solid rgba(238,235,228,0.08)" }}>
